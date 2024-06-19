@@ -1,0 +1,1144 @@
+{
+    "Helmets": [
+        {
+            "ItemInstance": "3454825582367585698",
+            "ItemHash": 669492071,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 28,
+                "Resilience": 8,
+                "Discipline": 7,
+                "Recovery": 22,
+                "Mobility": 8,
+                "Strength": 4
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585702",
+            "ItemHash": 669492075,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 4,
+                "Resilience": 13,
+                "Discipline": 14,
+                "Recovery": 27,
+                "Mobility": 24,
+                "Strength": 3
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585706",
+            "ItemHash": 669492079,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 29,
+                "Resilience": 16,
+                "Discipline": 26,
+                "Recovery": 25,
+                "Mobility": 28,
+                "Strength": 14
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585710",
+            "ItemHash": 669492083,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 24,
+                "Resilience": 5,
+                "Discipline": 14,
+                "Recovery": 8,
+                "Mobility": 11,
+                "Strength": 25
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585714",
+            "ItemHash": 669492087,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 2,
+                "Resilience": 22,
+                "Discipline": 23,
+                "Recovery": 30,
+                "Mobility": 17,
+                "Strength": 6
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585718",
+            "ItemHash": 669492091,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 3,
+                "Resilience": 3,
+                "Discipline": 7,
+                "Recovery": 9,
+                "Mobility": 29,
+                "Strength": 17
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585722",
+            "ItemHash": 669492095,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 28,
+                "Resilience": 13,
+                "Discipline": 6,
+                "Recovery": 29,
+                "Mobility": 3,
+                "Strength": 11
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585726",
+            "ItemHash": 669492099,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 15,
+                "Resilience": 8,
+                "Discipline": 17,
+                "Recovery": 1,
+                "Mobility": 23,
+                "Strength": 15
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585730",
+            "ItemHash": 669492103,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 10,
+                "Resilience": 8,
+                "Discipline": 26,
+                "Recovery": 22,
+                "Mobility": 12,
+                "Strength": 26
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585734",
+            "ItemHash": 669492107,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 25,
+                "Resilience": 3,
+                "Discipline": 14,
+                "Recovery": 11,
+                "Mobility": 29,
+                "Strength": 28
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585738",
+            "ItemHash": 669492111,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 23,
+                "Resilience": 3,
+                "Discipline": 21,
+                "Recovery": 28,
+                "Mobility": 24,
+                "Strength": 26
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585742",
+            "ItemHash": 669492115,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 18,
+                "Resilience": 7,
+                "Discipline": 11,
+                "Recovery": 27,
+                "Mobility": 9,
+                "Strength": 28
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585746",
+            "ItemHash": 669492119,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 16,
+                "Resilience": 16,
+                "Discipline": 24,
+                "Recovery": 6,
+                "Mobility": 22,
+                "Strength": 30
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585750",
+            "ItemHash": 669492123,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 27,
+                "Resilience": 20,
+                "Discipline": 27,
+                "Recovery": 25,
+                "Mobility": 8,
+                "Strength": 8
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585754",
+            "ItemHash": 669492127,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 3,
+                "Resilience": 28,
+                "Discipline": 18,
+                "Recovery": 12,
+                "Mobility": 8,
+                "Strength": 4
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585758",
+            "ItemHash": 669492131,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 8,
+                "Resilience": 10,
+                "Discipline": 9,
+                "Recovery": 5,
+                "Mobility": 17,
+                "Strength": 19
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585762",
+            "ItemHash": 669492135,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 27,
+                "Resilience": 4,
+                "Discipline": 26,
+                "Recovery": 29,
+                "Mobility": 9,
+                "Strength": 25
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585766",
+            "ItemHash": 669492139,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 26,
+                "Resilience": 24,
+                "Discipline": 15,
+                "Recovery": 11,
+                "Mobility": 25,
+                "Strength": 16
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585770",
+            "ItemHash": 669492143,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 1,
+                "Resilience": 24,
+                "Discipline": 22,
+                "Recovery": 21,
+                "Mobility": 20,
+                "Strength": 27
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585774",
+            "ItemHash": 669492147,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 14,
+                "Resilience": 25,
+                "Discipline": 19,
+                "Recovery": 6,
+                "Mobility": 10,
+                "Strength": 29
+            }
+        }
+    ],
+    "Arms": [
+        {
+            "ItemInstance": "3454825582367585699",
+            "ItemHash": 669492072,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 6,
+                "Resilience": 11,
+                "Discipline": 29,
+                "Recovery": 28,
+                "Mobility": 25,
+                "Strength": 13
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585703",
+            "ItemHash": 669492076,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 13,
+                "Resilience": 21,
+                "Discipline": 13,
+                "Recovery": 20,
+                "Mobility": 23,
+                "Strength": 19
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585707",
+            "ItemHash": 669492080,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 5,
+                "Resilience": 25,
+                "Discipline": 4,
+                "Recovery": 8,
+                "Mobility": 5,
+                "Strength": 17
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585711",
+            "ItemHash": 669492084,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 20,
+                "Resilience": 5,
+                "Discipline": 19,
+                "Recovery": 3,
+                "Mobility": 4,
+                "Strength": 10
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585715",
+            "ItemHash": 669492088,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 15,
+                "Resilience": 16,
+                "Discipline": 26,
+                "Recovery": 2,
+                "Mobility": 19,
+                "Strength": 29
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585719",
+            "ItemHash": 669492092,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 26,
+                "Resilience": 5,
+                "Discipline": 14,
+                "Recovery": 3,
+                "Mobility": 20,
+                "Strength": 16
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585723",
+            "ItemHash": 669492096,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 25,
+                "Resilience": 20,
+                "Discipline": 13,
+                "Recovery": 5,
+                "Mobility": 11,
+                "Strength": 29
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585727",
+            "ItemHash": 669492100,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 19,
+                "Resilience": 16,
+                "Discipline": 11,
+                "Recovery": 9,
+                "Mobility": 14,
+                "Strength": 29
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585731",
+            "ItemHash": 669492104,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 16,
+                "Resilience": 21,
+                "Discipline": 13,
+                "Recovery": 12,
+                "Mobility": 19,
+                "Strength": 28
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585735",
+            "ItemHash": 669492108,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 1,
+                "Resilience": 5,
+                "Discipline": 18,
+                "Recovery": 6,
+                "Mobility": 12,
+                "Strength": 14
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585739",
+            "ItemHash": 669492112,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 20,
+                "Resilience": 29,
+                "Discipline": 2,
+                "Recovery": 9,
+                "Mobility": 15,
+                "Strength": 9
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585743",
+            "ItemHash": 669492116,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 10,
+                "Resilience": 16,
+                "Discipline": 30,
+                "Recovery": 21,
+                "Mobility": 11,
+                "Strength": 29
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585747",
+            "ItemHash": 669492120,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 23,
+                "Resilience": 25,
+                "Discipline": 13,
+                "Recovery": 30,
+                "Mobility": 9,
+                "Strength": 6
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585751",
+            "ItemHash": 669492124,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 17,
+                "Resilience": 17,
+                "Discipline": 14,
+                "Recovery": 9,
+                "Mobility": 9,
+                "Strength": 22
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585755",
+            "ItemHash": 669492128,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 2,
+                "Resilience": 29,
+                "Discipline": 18,
+                "Recovery": 1,
+                "Mobility": 30,
+                "Strength": 16
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585759",
+            "ItemHash": 669492132,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 25,
+                "Resilience": 5,
+                "Discipline": 7,
+                "Recovery": 26,
+                "Mobility": 29,
+                "Strength": 4
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585763",
+            "ItemHash": 669492136,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 3,
+                "Resilience": 24,
+                "Discipline": 4,
+                "Recovery": 12,
+                "Mobility": 14,
+                "Strength": 20
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585767",
+            "ItemHash": 669492140,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 2,
+                "Resilience": 25,
+                "Discipline": 22,
+                "Recovery": 30,
+                "Mobility": 25,
+                "Strength": 15
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585771",
+            "ItemHash": 669492144,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 7,
+                "Resilience": 15,
+                "Discipline": 28,
+                "Recovery": 28,
+                "Mobility": 21,
+                "Strength": 23
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585775",
+            "ItemHash": 669492148,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 30,
+                "Resilience": 6,
+                "Discipline": 21,
+                "Recovery": 1,
+                "Mobility": 3,
+                "Strength": 30
+            }
+        }
+    ],
+    "Chests": [
+        {
+            "ItemInstance": "3454825582367585700",
+            "ItemHash": 669492073,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 2,
+                "Resilience": 29,
+                "Discipline": 14,
+                "Recovery": 4,
+                "Mobility": 15,
+                "Strength": 9
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585704",
+            "ItemHash": 669492077,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 17,
+                "Resilience": 2,
+                "Discipline": 29,
+                "Recovery": 21,
+                "Mobility": 18,
+                "Strength": 25
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585708",
+            "ItemHash": 669492081,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 26,
+                "Resilience": 25,
+                "Discipline": 8,
+                "Recovery": 18,
+                "Mobility": 18,
+                "Strength": 2
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585712",
+            "ItemHash": 669492085,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 16,
+                "Resilience": 26,
+                "Discipline": 7,
+                "Recovery": 15,
+                "Mobility": 9,
+                "Strength": 25
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585716",
+            "ItemHash": 669492089,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 18,
+                "Resilience": 4,
+                "Discipline": 20,
+                "Recovery": 2,
+                "Mobility": 21,
+                "Strength": 21
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585720",
+            "ItemHash": 669492093,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 6,
+                "Resilience": 5,
+                "Discipline": 17,
+                "Recovery": 17,
+                "Mobility": 28,
+                "Strength": 5
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585724",
+            "ItemHash": 669492097,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 1,
+                "Resilience": 23,
+                "Discipline": 7,
+                "Recovery": 1,
+                "Mobility": 21,
+                "Strength": 1
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585728",
+            "ItemHash": 669492101,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 4,
+                "Resilience": 9,
+                "Discipline": 10,
+                "Recovery": 27,
+                "Mobility": 2,
+                "Strength": 26
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585732",
+            "ItemHash": 669492105,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 1,
+                "Resilience": 1,
+                "Discipline": 6,
+                "Recovery": 11,
+                "Mobility": 15,
+                "Strength": 20
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585736",
+            "ItemHash": 669492109,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 17,
+                "Resilience": 11,
+                "Discipline": 25,
+                "Recovery": 7,
+                "Mobility": 23,
+                "Strength": 3
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585740",
+            "ItemHash": 669492113,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 6,
+                "Resilience": 20,
+                "Discipline": 15,
+                "Recovery": 11,
+                "Mobility": 4,
+                "Strength": 27
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585744",
+            "ItemHash": 669492117,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 8,
+                "Resilience": 13,
+                "Discipline": 12,
+                "Recovery": 24,
+                "Mobility": 4,
+                "Strength": 8
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585748",
+            "ItemHash": 669492121,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 8,
+                "Resilience": 3,
+                "Discipline": 23,
+                "Recovery": 7,
+                "Mobility": 17,
+                "Strength": 4
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585752",
+            "ItemHash": 669492125,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 8,
+                "Resilience": 21,
+                "Discipline": 30,
+                "Recovery": 23,
+                "Mobility": 10,
+                "Strength": 26
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585756",
+            "ItemHash": 669492129,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 5,
+                "Resilience": 12,
+                "Discipline": 30,
+                "Recovery": 14,
+                "Mobility": 21,
+                "Strength": 18
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585760",
+            "ItemHash": 669492133,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 28,
+                "Resilience": 24,
+                "Discipline": 22,
+                "Recovery": 15,
+                "Mobility": 21,
+                "Strength": 26
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585764",
+            "ItemHash": 669492137,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 21,
+                "Resilience": 14,
+                "Discipline": 8,
+                "Recovery": 19,
+                "Mobility": 30,
+                "Strength": 6
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585768",
+            "ItemHash": 669492141,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 27,
+                "Resilience": 5,
+                "Discipline": 12,
+                "Recovery": 1,
+                "Mobility": 25,
+                "Strength": 11
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585772",
+            "ItemHash": 669492145,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 3,
+                "Resilience": 8,
+                "Discipline": 16,
+                "Recovery": 2,
+                "Mobility": 5,
+                "Strength": 30
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585776",
+            "ItemHash": 669492149,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 24,
+                "Resilience": 10,
+                "Discipline": 28,
+                "Recovery": 25,
+                "Mobility": 10,
+                "Strength": 24
+            }
+        }
+    ],
+    "Legs": [
+        {
+            "ItemInstance": "3454825582367585701",
+            "ItemHash": 669492074,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 11,
+                "Resilience": 16,
+                "Discipline": 7,
+                "Recovery": 8,
+                "Mobility": 20,
+                "Strength": 10
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585705",
+            "ItemHash": 669492078,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 12,
+                "Resilience": 27,
+                "Discipline": 16,
+                "Recovery": 19,
+                "Mobility": 28,
+                "Strength": 2
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585709",
+            "ItemHash": 669492082,
+            "EnergyCapacity": 5,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 16,
+                "Resilience": 23,
+                "Discipline": 9,
+                "Recovery": 20,
+                "Mobility": 5,
+                "Strength": 29
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585713",
+            "ItemHash": 669492086,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 4,
+                "Resilience": 16,
+                "Discipline": 1,
+                "Recovery": 11,
+                "Mobility": 11,
+                "Strength": 14
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585717",
+            "ItemHash": 669492090,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 18,
+                "Resilience": 14,
+                "Discipline": 29,
+                "Recovery": 26,
+                "Mobility": 10,
+                "Strength": 21
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585721",
+            "ItemHash": 669492094,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 8,
+                "Resilience": 11,
+                "Discipline": 3,
+                "Recovery": 13,
+                "Mobility": 17,
+                "Strength": 21
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585725",
+            "ItemHash": 669492098,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 10,
+                "Resilience": 26,
+                "Discipline": 30,
+                "Recovery": 24,
+                "Mobility": 1,
+                "Strength": 6
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585729",
+            "ItemHash": 669492102,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 13,
+                "Resilience": 30,
+                "Discipline": 15,
+                "Recovery": 27,
+                "Mobility": 8,
+                "Strength": 26
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585733",
+            "ItemHash": 669492106,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 27,
+                "Resilience": 10,
+                "Discipline": 17,
+                "Recovery": 25,
+                "Mobility": 16,
+                "Strength": 8
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585737",
+            "ItemHash": 669492110,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 20,
+                "Resilience": 19,
+                "Discipline": 3,
+                "Recovery": 23,
+                "Mobility": 16,
+                "Strength": 26
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585741",
+            "ItemHash": 669492114,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 16,
+                "Resilience": 3,
+                "Discipline": 18,
+                "Recovery": 27,
+                "Mobility": 9,
+                "Strength": 20
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585745",
+            "ItemHash": 669492118,
+            "EnergyCapacity": 9,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 5,
+                "Resilience": 6,
+                "Discipline": 3,
+                "Recovery": 11,
+                "Mobility": 7,
+                "Strength": 18
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585749",
+            "ItemHash": 669492122,
+            "EnergyCapacity": 7,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 22,
+                "Resilience": 9,
+                "Discipline": 19,
+                "Recovery": 2,
+                "Mobility": 26,
+                "Strength": 22
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585753",
+            "ItemHash": 669492126,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 3,
+                "Resilience": 4,
+                "Discipline": 24,
+                "Recovery": 7,
+                "Mobility": 23,
+                "Strength": 19
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585757",
+            "ItemHash": 669492130,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 12,
+                "Resilience": 20,
+                "Discipline": 8,
+                "Recovery": 25,
+                "Mobility": 17,
+                "Strength": 20
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585761",
+            "ItemHash": 669492134,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 20,
+                "Resilience": 25,
+                "Discipline": 28,
+                "Recovery": 28,
+                "Mobility": 1,
+                "Strength": 22
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585765",
+            "ItemHash": 669492138,
+            "EnergyCapacity": 8,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 22,
+                "Resilience": 29,
+                "Discipline": 6,
+                "Recovery": 3,
+                "Mobility": 2,
+                "Strength": 15
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585769",
+            "ItemHash": 669492142,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 25,
+                "Resilience": 29,
+                "Discipline": 27,
+                "Recovery": 13,
+                "Mobility": 18,
+                "Strength": 8
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585773",
+            "ItemHash": 669492146,
+            "EnergyCapacity": 6,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 21,
+                "Resilience": 9,
+                "Discipline": 29,
+                "Recovery": 15,
+                "Mobility": 13,
+                "Strength": 24
+            }
+        },
+        {
+            "ItemInstance": "3454825582367585777",
+            "ItemHash": 669492150,
+            "EnergyCapacity": 10,
+            "Artifice": false,
+            "Stats": {
+                "Intellect": 20,
+                "Resilience": 27,
+                "Discipline": 21,
+                "Recovery": 27,
+                "Mobility": 13,
+                "Strength": 3
+            }
+        }
+    ],
+    "ClassItem": {
+        "ItemInstance": "1234567890123456789",
+        "ItemHash": 102938475,
+        "EnergyCapacity": 5,
+        "Artifice": false,
+        "Stats": {
+            "Intellect": 2,
+            "Resilience": 2,
+            "Discipline": 2,
+            "Recovery": 2,
+            "Mobility": 2,
+            "Strength": 2
+        }
+    }
+}

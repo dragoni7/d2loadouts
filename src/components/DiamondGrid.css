@@ -1,0 +1,42 @@
+.diamond-grid {
+  position: relative;
+  width: 120px; /* Adjust width and height to fit the buttons together */
+  height: 120px;
+  margin: 50px auto;
+}
+
+.diamond-button {
+  width: 60px; /* Adjust size for better fit */
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  transform: rotate(45deg);
+  color: white;
+  font-weight: bold;
+}
+
+.diamond-button span {
+  transform: rotate(-45deg);
+}
+
+.button-1 {
+  top: -15px;
+  left: 30px;
+}
+
+.button-2 {
+  top: 30px;
+  left: -15px;
+}
+
+.button-3 {
+  top: 30px;
+  left: 75px;
+}
+
+.button-4 {
+  top: 75px;
+  left: 30px;
+}
