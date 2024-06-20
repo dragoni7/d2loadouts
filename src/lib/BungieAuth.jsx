@@ -3,7 +3,7 @@ import { _get, _post } from './BungieApiClient'
 const BungieAuth = {
 
     authenticate: () => {
-        window.location.replace(`https://www.bungie.net/en/OAuth/Authorize?client_id=${process.env.REACT_APP_CLIENT_ID}&response_type=code`)
+        window.location.replace(`https://www.bungie.net/en/OAuth/Authorize?client_id=${import.meta.env.VITE_CLIENT_ID}&response_type=code`)
     },
 
     isTokenExpired: () => {
@@ -32,8 +32,8 @@ const BungieAuth = {
     },
     
     generateToken: (refresh = false) => {
-        const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
-        const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET
+        const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
+        const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET
         const TOKEN = localStorage.getItem("authCode")
 
         let body = refresh === false ? 
