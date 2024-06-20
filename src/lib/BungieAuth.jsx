@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { _get, _post } from './BungieApiClient'
 
 const BungieAuth = {
@@ -9,6 +8,27 @@ const BungieAuth = {
 
     isTokenExpired: () => {
         return localStorage.getItem("refreshTokenExpiringAt") < Date.now()
+    },
+
+    autoRegenerateTokens: () => {
+        const timing = 1000 * 3600 * 0.5
+        const refreshToken = localStorage.getItem("refreshToken")
+        const refreshTokenExpiringAt = localStorage.getItem("refreshTokenExpiringAt")
+        const lastRefresh = localStorage.getItem("lastRefresh")
+
+        console.log("autoRegenerateTokens", {
+            token: refreshToken,
+            datenow: Date.now(),
+            refreshTokenExpiringAt: refreshTokenExpiringAt,
+            lastRefresh: lastRefresh,
+            "Date.now() > (lastRefresh + timing)": Date.now() > lastRefresh + timing
+        })
+
+        if (refreshToken && Date.now() < refreshTokenExpiringAt && Date.now() > lastRefresh + timing) {
+            return generateToken(true)
+        }
+
+        return true
     },
     
     generateToken: (refresh = false) => {
