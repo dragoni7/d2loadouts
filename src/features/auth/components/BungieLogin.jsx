@@ -13,5 +13,5 @@ export default () => {
         }
     }, [])
 
-    return BungieAuth.isAuthenticated() ? null : ( <button onClick={onLogIn}>Log In</button> )
+    return BungieAuth.isAuthenticated() ? null : ( <button onClick={onLogIn}>Log In, Client id: {import.meta.env.VITE_CLIENT_ID}</button> )
 }
