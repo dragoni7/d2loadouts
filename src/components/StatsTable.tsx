@@ -5,21 +5,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import RowDetails from "./RowDetails";
 
-type Stats = {
-  exotic: string;
-  mobility: number;
-  resilience: number;
-  recovery: number;
-  discipline: number;
-  intellect: number;
-  strength: number;
-  tiers: number;
-  usedMods: string;
-};
-
-const defaultData: Stats[] = [
+const defaultData = [
   // Add your data here
   {
     exotic: "image_url",
@@ -35,7 +22,7 @@ const defaultData: Stats[] = [
   // Add the rest of the data
 ];
 
-const columnHelper = createColumnHelper<Stats>();
+const columnHelper = createColumnHelper();
 
 const columns = [
   columnHelper.accessor("exotic", {
@@ -43,7 +30,7 @@ const columns = [
       <img
         src={info.getValue()}
         alt="exotic"
-        style={{ width: "40px", height: "40px" }}
+        style={{ width: "30px", height: "30px" }}
       />
     ),
     header: "Exotic",
@@ -92,9 +79,7 @@ const columns = [
 ];
 
 function StatsTable() {
-  const [data, setData] = React.useState(() => [...defaultData]);
-  const [selectedRow, setSelectedRow] = useState<Stats | null>(null);
-  const rerender = React.useReducer(() => ({}), {})[1];
+  const [data, setData] = useState(() => [...defaultData]);
 
   const table = useReactTable({
     data,
@@ -102,18 +87,30 @@ function StatsTable() {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleRowClick = (row: Stats) => {
-    setSelectedRow(row);
-  };
-
   return (
-    <div className="p-2">
-      <table>
+    <div className="p-2" style={{ fontSize: "10px" }}>
+      <table
+        style={{
+          width: "100%",
+          border: "1px solid white",
+          borderCollapse: "collapse",
+        }}
+      >
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <tr
+              key={headerGroup.id}
+              style={{ borderBottom: "1px solid white" }}
+            >
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th
+                  key={header.id}
+                  style={{
+                    fontSize: "10px",
+                    padding: "4px",
+                    border: "1px solid white",
+                  }}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -129,11 +126,13 @@ function StatsTable() {
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              onClick={() => handleRowClick(row.original)}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", borderBottom: "1px solid white" }}
             >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+                <td
+                  key={cell.id}
+                  style={{ padding: "4px", border: "1px solid white" }}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -142,9 +141,16 @@ function StatsTable() {
         </tbody>
         <tfoot>
           {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
+            <tr key={footerGroup.id} style={{ borderTop: "1px solid white" }}>
               {footerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th
+                  key={header.id}
+                  style={{
+                    fontSize: "10px",
+                    padding: "4px",
+                    border: "1px solid white",
+                  }}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -157,11 +163,6 @@ function StatsTable() {
           ))}
         </tfoot>
       </table>
-      <div className="h-4" />
-      <button onClick={() => rerender()} className="border p-2">
-        Rerender
-      </button>
-      {selectedRow && <RowDetails row={selectedRow} />}
     </div>
   );
 }

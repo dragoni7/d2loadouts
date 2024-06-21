@@ -1,77 +1,91 @@
 .button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+}
+
+.mini-animated-button .button-container {
+  transform: scale(0.5);
+}
+
+.animated-button {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(255, 105, 180, 1) 0%, rgba(255, 105, 180, 0) 70%);
+  border-radius: 50%;
+  animation: rotate 10s infinite linear;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s;
+}
+
+.animated-button:hover {
+  transform: scale(1.1);
+}
+
+.shape {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  background-color: transparent;
+  border: 0.5px solid #fff;
+  transform-origin: center center;
+  animation: morph 10s infinite linear;
+  transition: width 0.3s, height 0.3s; /* Ensure smooth transition */
+}
+
+.shape1 {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.shape2 {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.shape3 {
+  transform: translate(-50%, -50%) rotate(70deg);
+}
+
+.shape4 {
+  transform: translate(-50%, -50%) rotate(115deg);
+}
+
+.animated-button:hover .shape {
+  width: 120px !important; /* Increase dimensions on hover */
+  height: 120px !important;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .animated-button {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, rgba(255, 105, 180, 1) 0%, rgba(255, 105, 180, 0) 70%);
-    border-radius: 50%;
-    animation: rotate 10s infinite linear;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .shape {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+}
+
+@keyframes morph {
+  0%, 100% {
+    border-radius: 0%;
     width: 100px;
     height: 100px;
-    background-color: transparent;
-    border: 0.5px solid #fff; /* Finer lines */
-    transform-origin: center center;
-    animation: morph 10s infinite linear;
   }
-  
-  .shape1 {
-    transform: translate(-50%, -50%) rotate(0deg);
+  50% {
+    border-radius: 50%;
+    width: 80px;
+    height: 120px;
   }
-  
-  .shape2 {
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-  
-  .shape3 {
-    transform: translate(-50%, -50%) rotate(70deg);
-  }
-  
-  .shape4 {
-    transform: translate(-50%, -50%) rotate(115deg);
-  }
-  
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
-  @keyframes morph {
-    0%, 100% {
-      border-radius: 0%;
-      width: 100px;
-      height: 100px;
-    }
-    50% {
-      border-radius: 50%;
-      width: 80px;
-      height: 120px;
-    }
-  }
-  
-  .animated-button {
-    animation-timing-function: linear;
-  }
-  
-  .shape {
-    animation-timing-function: linear;
-  }
-  
+}
+
+.animated-button {
+  animation-timing-function: linear;
+}
+
+.shape {
+  animation-timing-function: linear;
+}

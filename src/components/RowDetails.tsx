@@ -1,22 +1,6 @@
 import React from "react";
 
-type Stats = {
-  exotic: string;
-  mobility: number;
-  resilience: number;
-  recovery: number;
-  discipline: number;
-  intellect: number;
-  strength: number;
-  tiers: number;
-  usedMods: string;
-};
-
-type RowDetailsProps = {
-  row: Stats | null;
-};
-
-const RowDetails: React.FC<RowDetailsProps> = ({ row }) => {
+const RowDetails = ({ row }) => {
   if (!row) {
     return <div>No row selected</div>;
   }

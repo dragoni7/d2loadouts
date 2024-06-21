@@ -1,9 +1,13 @@
 import React from "react";
 import "./AnimatedButton.css";
 
-const AnimatedButton: React.FC = () => {
+const AnimatedButton = ({ onSelect }) => {
+  const handleClick = () => {
+    onSelect("Animated", "rgba(255, 105, 180, 1)"); // Example label and color for the animated button
+  };
+
   return (
-    <div className="button-container">
+    <div className="button-container" onClick={handleClick}>
       <div className="animated-button">
         <div className="shape shape1"></div>
         <div className="shape shape2"></div>

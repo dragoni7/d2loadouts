@@ -1,7 +1,7 @@
 import React from "react";
 import "./DiamondGrid.css";
 
-const DiamondGrid: React.FC = () => {
+const DiamondGrid = ({ onSelect }) => {
   const buttons = [
     { id: 1, label: "1", color: "#3b82f6" }, // top
     { id: 2, label: "2", color: "#10b981" }, // left
@@ -16,6 +16,7 @@ const DiamondGrid: React.FC = () => {
           key={button.id}
           className={`diamond-button button-${button.id}`}
           style={{ backgroundColor: button.color }}
+          onClick={() => onSelect(button.label, button.color)}
         >
           <span>{button.label}</span>
         </div>

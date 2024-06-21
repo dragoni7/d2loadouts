@@ -1,12 +1,12 @@
 .diamond-grid {
   position: relative;
-  width: 120px; /* Adjust width and height to fit the buttons together */
+  width: 120px;
   height: 120px;
-  margin: 50px auto;
+  margin: 0 auto;
 }
 
 .diamond-button {
-  width: 60px; /* Adjust size for better fit */
+  width: 60px;
   height: 60px;
   display: flex;
   justify-content: center;
@@ -15,6 +15,23 @@
   transform: rotate(45deg);
   color: white;
   font-weight: bold;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: transform 0.3s, border 0.3s;
+}
+
+.diamond-button::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 1px solid rgba(255, 255, 255, 0);
+  transition: border 0.3s;
+}
+
+.diamond-button:hover::before {
+  border-color: rgba(255, 255, 255, 1);
 }
 
 .diamond-button span {
