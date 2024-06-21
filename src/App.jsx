@@ -9,6 +9,9 @@ function App() {
     <Background>
       <div className="overlay-container">
         <BungieLogin />
+        <div>
+          TEST
+        </div>
         <CustomizationPanel />
       </div>
     </Background>
