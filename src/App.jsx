@@ -20,6 +20,7 @@ import { styled } from "@mui/system";
 import StatsTable from "./components/StatsTable";
 import NumberBoxes from "./components/NumberBoxes"; // Updated import path
 import SingleDiamondButton from "./components/SingleDiamondButton"; // New import for SingleDiamondButton
+import BungieLogin from './features/auth/components/BungieLogin'
 
 const Container = styled('div')({
   display: 'flex',
@@ -57,6 +58,7 @@ const RightPane = styled('div')({
 function App() {
   return (
     <Container>
+      <BungieLogin />
       <HeaderContainer>
         <SingleDiamondButton />
       </HeaderContainer>
