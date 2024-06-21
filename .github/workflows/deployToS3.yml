@@ -5,13 +5,14 @@ on:
     branches:
       - master
 
+env:
+  VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+  VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
+  VITE_CLIENT_SECRET: ${{ secrets.VITE_CLIENT_SECRET }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
-      VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
-      VITE_CLIENT_SECRET: ${{ secrets.VITE_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v2
       - name: Configure AWS Credentials
