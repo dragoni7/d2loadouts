@@ -40,4 +40,4 @@ jobs:
           VITE_CLIENT_SECRET: ${{ secrets.VITE_CLIENT_SECRET }}
 
       - name: Deploy app build to S3 bucket
-        run: aws s3 sync ./build/ s3://${{ secrets.AWS_S3_BUCKET }} --delete
+        run: aws s3 sync ./dist/ s3://${{ secrets.AWS_S3_BUCKET }} --delete
