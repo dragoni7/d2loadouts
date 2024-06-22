@@ -15,7 +15,7 @@ class BungieLogin extends Component<BungieLoginProps, BungieLoginState> {
         super(props)
 
         this.state = {
-            isLoggedIn: true
+            isLoggedIn: BungieAuth.isAuthenticated()
         }
     }
 
