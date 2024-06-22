@@ -1,6 +1,10 @@
 import React from "react";
 
-const RowDetails = ({ row }) => {
+interface RowDetailsProps {
+  row: any;
+}
+
+const RowDetails: React.FC<RowDetailsProps> = ({ row }) => {
   if (!row) {
     return <div>No row selected</div>;
   }

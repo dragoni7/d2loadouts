@@ -24,7 +24,7 @@ const defaultData = [
 
 const columnHelper = createColumnHelper();
 
-const columns = [
+const columns: any = [
   columnHelper.accessor("exotic", {
     cell: (info) => (
       <img
@@ -78,7 +78,7 @@ const columns = [
   }),
 ];
 
-function StatsTable() {
+const StatsTable: React.FC = () => {
   const [data, setData] = useState(() => [...defaultData]);
 
   const table = useReactTable({

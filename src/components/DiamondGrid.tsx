@@ -1,7 +1,11 @@
 import React from "react";
 import "./DiamondGrid.css";
 
-const DiamondGrid = ({ onSelect }) => {
+interface DiamondGridProps {
+  onSelect: any;
+}
+
+const DiamondGrid: React.FC<DiamondGridProps> = ({ onSelect }) => {
   const buttons = [
     { id: 1, label: "1", color: "#3b82f6" }, // top
     { id: 2, label: "2", color: "#10b981" }, // left
