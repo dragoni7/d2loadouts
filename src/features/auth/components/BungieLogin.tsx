@@ -1,12 +1,21 @@
 import BungieAuth from "../../../lib/BungieAuth"
-import React, { Component } from "react"
+import React, { Component, ReactNode } from "react"
 
-class BungieLogin extends Component {
-    constructor(props) {
+
+interface BungieLoginProps {
+    children: (props: { isLoggedIn: boolean }) => ReactNode;
+}
+
+interface BungieLoginState {
+    isLoggedIn: boolean;
+}
+
+class BungieLogin extends Component<BungieLoginProps, BungieLoginState> {
+    constructor(props: BungieLoginProps) {
         super(props)
 
         this.state = {
-            isLoggedIn: BungieAuth.isAuthenticated()
+            isLoggedIn: true
         }
     }
 

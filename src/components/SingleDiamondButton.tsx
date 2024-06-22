@@ -3,7 +3,7 @@ import DiamondGrid from './DiamondGrid';
 import AnimatedButton from './AnimatedButton';
 import './SingleDiamondButton.css';
 
-const SingleDiamondButton = () => {
+const SingleDiamondButton: React.FC = () => {
   const [hovered, setHovered] = useState(false);
   const [currentButton, setCurrentButton] = useState({
     label: '5',
@@ -13,7 +13,7 @@ const SingleDiamondButton = () => {
 
   const handleHover = () => setHovered(true);
   const handleLeave = () => setHovered(false);
-  const handleSelect = (label, color, type) => {
+  const handleSelect = (label: string, color: string, type: 'single' | 'animated') => {
     setCurrentButton({ label, color, type });
     setHovered(false);
   };
@@ -47,7 +47,7 @@ const SingleDiamondButton = () => {
       {hovered && (
         <div className="diamond-grid-animated-container">
           <div className="diamond-grid-wrapper">
-            <DiamondGrid onSelect={(label, color) => handleSelect(label, color, 'single')} />
+            <DiamondGrid onSelect={(label: string, color: string) => handleSelect(label, color, 'single')} />
           </div>
         </div>
       )}

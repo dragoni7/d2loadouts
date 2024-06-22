@@ -18,7 +18,11 @@ const NumberBoxContainer = styled('div')({
   alignItems: 'center',
 });
 
-const NumberBox = styled('div')(({ isSelected }) => ({
+interface NumberBoxProps {
+  isSelected: boolean;
+}
+
+const NumberBox = styled('div')<NumberBoxProps>(({ isSelected }) => ({
   display: 'inline-block',
   width: '14px', // Smaller width
   height: '14px', // Smaller height
@@ -41,10 +45,14 @@ const stats = [
   'Strength',
 ];
 
-const NumberBoxes = () => {
-  const [selectedNumbers, setSelectedNumbers] = useState({});
+interface selectedNumbers {
+  [key: string]: number
+}
 
-  const handleSelect = (stat, number) => {
+const NumberBoxes: React.FC = () => {
+  const [selectedNumbers, setSelectedNumbers] = useState<selectedNumbers>({});
+
+  const handleSelect = (stat : string, number : number) => {
     setSelectedNumbers((prev) => ({
       ...prev,
       [stat]: number,
@@ -62,7 +70,7 @@ const NumberBoxes = () => {
             {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => (
               <NumberBox
                 key={number}
-                isSelected={selectedNumbers[stat] && number <= selectedNumbers[stat]}
+                isSelected={selectedNumbers[stat] !== undefined && number <= selectedNumbers[stat]}
                 onClick={() => handleSelect(stat, number)}
               >
                 {number}

@@ -9,11 +9,11 @@ const apiClient = axios.create({
     }
 })
 
-const _get = (url, config = {}) => {
+const _get = (url: string, config = {}) => {
     return apiClient.get(url, config)
 }
 
-const _post = (url, data = {}, config = {}) => {
+const _post = (url: string, data = {}, config = {}) => {
     return apiClient.post(url, data, config)
 }
 
