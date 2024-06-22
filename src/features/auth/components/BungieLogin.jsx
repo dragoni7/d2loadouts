@@ -1,17 +1,35 @@
 import BungieAuth from "../../../lib/BungieAuth"
-import React, { useEffect } from "react"
+import React, { Component } from "react"
 
-export default () => {
+class BungieLogin extends Component {
+    constructor(props) {
+        super(props)
 
-    function onLogIn() {
-        BungieAuth.authenticate()
+        this.state = {
+            isLoggedIn: BungieAuth.isAuthenticated()
+        }
     }
 
-    useEffect ( () => {
+    componentDidMount() {
         if (BungieAuth.setAuthCode()) {
             BungieAuth.generateToken()
         }
-    }, [])
+    }
 
-    return BungieAuth.isAuthenticated() ? null : ( <button onClick={onLogIn}>Log In</button> )
+    onLogIn () {
+        BungieAuth.authenticate()
+    }
+
+    onLogOut () {
+        // TODO: log out 
+    }
+
+    render() {
+        return <div>
+                { this.props.children({ isLoggedIn: this.state.isLoggedIn }) }
+                { this.state.isLoggedIn ? ( <button onClick={this.onLogOut}>Log Out</button> ) : ( <button onClick={this.onLogIn}>Log In</button> ) }
+            </div>
+    }
 }
+
+export default BungieLogin

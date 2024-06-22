@@ -58,21 +58,30 @@ const RightPane = styled('div')({
 function App() {
   return (
     <Container>
-      <BungieLogin />
-      <HeaderContainer>
-        <SingleDiamondButton />
-      </HeaderContainer>
-      <ContentContainer>
-        <LeftPane>
-          <NumberBoxes />
-        </LeftPane>
-        <RightPane>
-          <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
-          <StatsTable />
-        </RightPane>
-      </ContentContainer>
+      <BungieLogin>{({ isLoggedIn }) => (
+        <div>
+          { isLoggedIn ? (
+            <Container>
+              <HeaderContainer>
+              <SingleDiamondButton />
+              </HeaderContainer>
+                <ContentContainer>
+                  <LeftPane>
+                    <NumberBoxes />
+                  </LeftPane>
+                  <RightPane>
+                    <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
+                    <StatsTable />
+                  </RightPane>
+                </ContentContainer>
+            </Container>
+          ) : (
+            <div> Please log in to continue...</div>
+          )}
+      </div>
+      )}
+      </BungieLogin>
     </Container>
-
   );
 }
 

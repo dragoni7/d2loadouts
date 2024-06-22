@@ -25,7 +25,7 @@ const BungieAuth = {
         })
 
         if (refreshToken && Date.now() < refreshTokenExpiringAt && Date.now() > lastRefresh + timing) {
-            return generateToken(true)
+            return BungieAuth.generateToken(true)
         }
 
         return true
@@ -52,15 +52,17 @@ const BungieAuth = {
                 localStorage.setItem("refreshToken", response.data.refresh_token)
                 localStorage.setItem("refreshTokenExpiringAt", Date.now() + response.data.refresh_expires_in * 1000 - 10 * 1000)
                 localStorage.setItem("lastRefresh", Date.now())
+                return true
             }
             else {
-                return new Error('Could not get access token')
+                console.log("Could not get access token")
+                return false
             }
         })
     },
 
     isAuthenticated: () => {
-        return (localStorage.getItem("accessToken") !== null)
+        return (localStorage.getItem("accessToken") !== null && BungieAuth.autoRegenerateTokens())
     },
 
     setAuthCode: () => {
