@@ -30,7 +30,9 @@ export function removeTokens() {
 export function getMembershipId(): string | undefined {
     const tokens = getTokens()
 
-    if (tokens?.membershipId) {
+    if (tokens && tokens?.membershipId) {
         return tokens.membershipId
     }
+
+    return undefined
 }

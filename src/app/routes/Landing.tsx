@@ -45,7 +45,3 @@ export const LandingRoute = () => {
         </div>
     )
 }
-
-function getAuthCodeFromURL() {
-    throw new Error('Function not implemented.')
-}
