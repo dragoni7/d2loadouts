@@ -12,7 +12,7 @@ export interface Tokens {
     membershipId: string
 }
 
-const key = 'Tokens'
+const key = 'authTokens'
 
 export function getTokens(): Tokens | null {
     const tokenString = localStorage.getItem(key)

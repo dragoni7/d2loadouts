@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom"
 import { isTokenExpired } from "./TokenService"
-import { getTokens } from "./TokenStoreService"
+import { getTokens } from "./TokensStore"
 
 export function authenticate(): void {
     window.location.replace(`https://www.bungie.net/en/OAuth/Authorize?client_id=${import.meta.env.VITE_CLIENT_ID}&response_type=code`)

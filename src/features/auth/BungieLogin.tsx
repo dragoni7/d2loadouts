@@ -1,5 +1,5 @@
 import React from "react"
-import { authenticate } from "../../lib/AuthService"
+import { authenticate } from "../../lib/bungie_api/AuthService"
 
 const BungieLogin: React.FC = () => {
 

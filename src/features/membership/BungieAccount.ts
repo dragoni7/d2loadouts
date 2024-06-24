@@ -1,5 +1,5 @@
-import { _get } from "../../lib/BungieApiClient";
-import { getMembershipId, getTokens } from "../../lib/TokenStoreService";
+import { _get } from "../../lib/bungie_api/BungieApiClient";
+import { getMembershipId, getTokens } from "../../lib/bungie_api/TokensStore";
 
 export function getCurrentMembershipData() {
 

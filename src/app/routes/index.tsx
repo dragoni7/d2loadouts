@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { Dashboard } from './Dashboard';
-import { ProtectedRoute } from '../../lib/AuthService';
+import { ProtectedRoute } from '../../lib/bungie_api/AuthService';
 
 export const createRouter = () => {
     return createBrowserRouter ([
@@ -9,6 +9,13 @@ export const createRouter = () => {
             lazy: async () => {
                 const { LandingRoute } = await import ('./Landing')
                 return { Component: LandingRoute }
+            }
+        },
+        {
+            path: '/return',
+            lazy: async () => {
+                const { ReturnRoute } = await import ('./Return')
+                return { Component: ReturnRoute }
             }
         },
         {

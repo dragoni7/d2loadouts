@@ -1,5 +1,5 @@
-import { _get } from "../../lib/BungieApiClient"
-import { getTokens } from "../../lib/TokenStoreService"
+import { _get } from "../../lib/bungie_api/BungieApiClient"
+import { getTokens } from "../../lib/bungie_api/TokensStore"
 
 export function getProfile(destinyMembershipId: string) {
 
