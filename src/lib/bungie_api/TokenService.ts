@@ -34,8 +34,14 @@ export function isTokenExpired(token?: Token) {
     return Date.now() > expiration
 }
 
-function getTokenExpiration(token?: Token): number {
-    return (token && 'acquired' in token && 'expires' in token) ? token.acquired + token.expires * 1000 : 0
+export function regenerateTokens(): boolean {
+    
+    if (canTokensRefresh()) {
+        generateToken(true)
+        return true
+    }
+
+    return false
 }
 
 export function generateToken(refresh: boolean, authCode=""): Tokens | null {
@@ -68,6 +74,10 @@ export function generateToken(refresh: boolean, authCode=""): Tokens | null {
     return returnToken
 }
 
+function getTokenExpiration(token?: Token): number {
+    return (token && 'acquired' in token && 'expires' in token) ? token.acquired + token.expires * 1000 : 0
+}
+
 function handleTokenResponse(response: AxiosResponse): Tokens {
     if (response.data.access_token) {
 
@@ -98,14 +108,4 @@ function handleTokenResponse(response: AxiosResponse): Tokens {
     else {
         throw new Error(`Invalid response: ${JSON.stringify(response)}`)
     }
-}
-
-export function regenerateTokens(): boolean {
-    
-    if (canTokensRefresh()) {
-        generateToken(true)
-        return true
-    }
-
-    return false
 }

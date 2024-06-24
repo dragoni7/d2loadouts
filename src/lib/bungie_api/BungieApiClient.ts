@@ -9,10 +9,23 @@ const apiClient = axios.create({
     }
 })
 
+/**
+ * Bungie get request
+ * @param url 
+ * @param config axios config
+ * @returns 
+ */
 const _get = (url: string, config = {}) => {
     return apiClient.get(url, config)
 }
 
+/**
+ * Bungie post request
+ * @param url 
+ * @param data request body
+ * @param config axios config
+ * @returns 
+ */
 const _post = (url: string, data = {}, config = {}) => {
     return apiClient.post(url, data, config)
 }

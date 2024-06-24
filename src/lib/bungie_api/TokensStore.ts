@@ -14,19 +14,33 @@ export interface Tokens {
 
 const key = 'authTokens'
 
+/**
+ * Gets the locally stored auth tokens
+ * @returns the tokens or null
+ */
 export function getTokens(): Tokens | null {
     const tokenString = localStorage.getItem(key)
     return tokenString ? (JSON.parse(tokenString) as Tokens) : null
 }
 
+/**
+ * Stores auth tokens in local storage.
+ */
 export function setTokens(tokens: Tokens) {
     localStorage.setItem(key, JSON.stringify(tokens))
 }
 
+/**
+ * Removes the locally stored auth tokens
+ */
 export function removeTokens() {
     localStorage.removeItem(key)
 }
 
+/**
+ * Gets the membersip id from the locally stored auth tokens
+ * @returns membershipId
+ */
 export function getMembershipId(): string | undefined {
     const tokens = getTokens()
 

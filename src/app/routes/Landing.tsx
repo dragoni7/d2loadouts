@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router'
 
 import { useEffect} from "react"
 import BungieLogin from '../../features/auth/BungieLogin'
-import { generateToken, regenerateTokens } from '../../lib/bungie_api/TokenService'
+import { regenerateTokens } from '../../lib/bungie_api/TokenService'
 import { isAuthenticated } from '../../lib/bungie_api/AuthService'
 
 
@@ -19,6 +19,8 @@ export const LandingRoute = () => {
             console.log("Token regenerated and authenticated")
             navigate('/app')
         }
+
+        console.log("Not authenticated")
 
     }, [])
 
