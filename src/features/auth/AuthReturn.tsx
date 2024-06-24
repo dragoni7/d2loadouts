@@ -5,6 +5,10 @@ function getAuthCodeFromURL(): string | null {
     return window.location.href.includes("code=") ? window.location.href.split('code=')[1] : null
 }
 
+/**
+ * Get auth tokens from auth code
+ * @returns whether or not tokens were successfully generated
+ */
 export function handleAuthReturn(): boolean {
 
     const code = getAuthCodeFromURL()
