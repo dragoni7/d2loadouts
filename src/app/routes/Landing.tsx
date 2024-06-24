@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { useEffect} from "react"
 import BungieLogin from '../../features/auth/BungieLogin'
 import { generateToken, regenerateTokens } from '../../lib/TokenService'
+import { isAuthenticated } from '../../lib/AuthService'
 
 
 export const LandingRoute = () => {
@@ -15,24 +16,38 @@ export const LandingRoute = () => {
 
     useEffect( () => {
 
-        if (regenerateTokens()) {
-            navigate('/app')
-        }
-        else {
+        const handleAuth = async() => {
 
-            const authCode = getAuthCodeFromURL()
+            var authenticated = false
 
-            if (authCode !== null) {
-                localStorage.setItem("authCode", "" + authCode)
-
-                if (generateToken(false)) {
-                    navigate('/app')
-                }
+            if (await isAuthenticated()) {
+                authenticated = true
+            }
+            else if (regenerateTokens()) {
+                authenticated = true
             }
             else {
-                localStorage.removeItem("authCode")
+    
+                const authCode = getAuthCodeFromURL()
+    
+                if (authCode !== null) {
+                    localStorage.setItem("authCode", "" + authCode)
+    
+                    if (await generateToken(false)) {
+                        authenticated = true
+                    }
+                }
+                else {
+                    localStorage.removeItem("authCode")
+                }
+            }
+
+            if (authenticated) {
+                navigate('/app')
             }
         }
+
+        handleAuth()
 
     }, [])
 

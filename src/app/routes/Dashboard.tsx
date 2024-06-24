@@ -2,6 +2,9 @@ import { styled } from "@mui/system"
 import SingleDiamondButton from "../../components/SingleDiamondButton"
 import NumberBoxes from "../../components/NumberBoxes"
 import StatsTable from "../../components/StatsTable"
+import { getCurrentMembershipData } from "../../features/membership/BungieAccount";
+import { useEffect } from "react";
+import { getProfile } from "../../features/profile/DestinyProfile";
 
 // import React from 'react';
 // import './App.css';
@@ -54,8 +57,19 @@ const Container = styled('div')({
   });
 
 export const Dashboard = () => {
+
+  useEffect( () => {
+
+    getCurrentMembershipData()
+    getProfile(localStorage.getItem("primaryMembershipId") as string)
+
+  }, [])
+
     return (
         <Container>
+          <div>
+            { localStorage.getItem("profile") }
+          </div>
           <HeaderContainer>
             <SingleDiamondButton />
           </HeaderContainer>
