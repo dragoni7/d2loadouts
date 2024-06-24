@@ -43,7 +43,7 @@ export const LandingRoute = () => {
 
         handleAuth()
 
-    }, [])
+    }, [navigate])
 
     return (
         <div>
