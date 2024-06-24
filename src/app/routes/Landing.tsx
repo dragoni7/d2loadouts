@@ -18,11 +18,13 @@ export const LandingRoute = () => {
 
         const handleAuth = async() => {
 
+            var authenticated = false
+
             if (await isAuthenticated()) {
-                navigate('/app')
+                authenticated = true
             }
             else if (regenerateTokens()) {
-                navigate('/app')
+                authenticated = true
             }
             else {
     
@@ -32,18 +34,22 @@ export const LandingRoute = () => {
                     localStorage.setItem("authCode", "" + authCode)
     
                     if (await generateToken(false)) {
-                        navigate('/app')
+                        authenticated = true
                     }
                 }
                 else {
                     localStorage.removeItem("authCode")
                 }
             }
+
+            if (authenticated) {
+                navigate('/app')
+            }
         }
 
         handleAuth()
 
-    }, [navigate])
+    }, [])
 
     return (
         <div>
