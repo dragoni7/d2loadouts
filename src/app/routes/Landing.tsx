@@ -16,38 +16,28 @@ export const LandingRoute = () => {
 
     useEffect( () => {
 
-        const handleAuth = async() => {
+        if (isAuthenticated()) {
+            console.log("Already authenticated")
+            navigate('/app')
+        }
+        else if (regenerateTokens()) {
+            console.log("Token regenerated and authenticated")
+            navigate('/app')
+        }
+        else {
+            console.log("Not authenticated")
+            const authCode = getAuthCodeFromURL()
 
-            var authenticated = false
+            if (authCode !== null) {
+                console.log("Auth code found, storing and attempting token generation")
+                localStorage.setItem("authCode", "" + authCode)
 
-            if (await isAuthenticated()) {
-                authenticated = true
-            }
-            else if (regenerateTokens()) {
-                authenticated = true
-            }
-            else {
-    
-                const authCode = getAuthCodeFromURL()
-    
-                if (authCode !== null) {
-                    localStorage.setItem("authCode", "" + authCode)
-    
-                    if (await generateToken(false)) {
-                        authenticated = true
-                    }
+                if (generateToken(false)) {
+                    console.log("Fresh token generated")
+                    navigate('/app')
                 }
-                else {
-                    localStorage.removeItem("authCode")
-                }
-            }
-
-            if (authenticated) {
-                navigate('/app')
             }
         }
-
-        handleAuth()
 
     }, [])
 
