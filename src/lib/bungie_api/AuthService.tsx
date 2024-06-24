@@ -18,7 +18,11 @@ export function isAuthenticated(): boolean {
     
     const tokens = getTokens()
 
-    return !tokens ? false : !isTokenExpired(tokens.accessToken)
+    if (!tokens) {
+        return false
+    }
+
+    return !isTokenExpired(tokens.accessToken)
 }
 
 /**

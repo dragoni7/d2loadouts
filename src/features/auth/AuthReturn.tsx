@@ -13,24 +13,20 @@ export function handleAuthReturn(): boolean {
 
     const code = getAuthCodeFromURL()
 
+    console.log("auth code is " + code)
+
     if (!code?.length) {
         console.log("Could not find authorization code")
         return false
     }
 
     try {
-        const tokens = generateToken(false, code)
-
-        if (tokens) {
-            setTokens(tokens)
-
-            return true
-        }
-        
+        generateToken(false, code)
     }
     catch (error) {
         console.log(error)
+        return false
     }
 
-    return false
+    return true
 }

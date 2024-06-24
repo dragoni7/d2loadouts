@@ -9,19 +9,22 @@ import { isAuthenticated } from '../../lib/bungie_api/AuthService'
 export const LandingRoute = () => {
 
     const navigate = useNavigate()
+    
     useEffect( () => {
 
-        if (isAuthenticated()) {
-            console.log("Already authenticated")
-            navigate('/app')
-        }
-        else if (regenerateTokens()) {
-            console.log("Token regenerated and authenticated")
-            navigate('/app')
-        }
-
-        console.log("Not authenticated")
-
+        setTimeout(()=>{
+            if (isAuthenticated()) {
+                console.log("Already authenticated")
+                navigate('/app')
+            }
+            else if (regenerateTokens()) {
+                console.log("Tokens regenerated and authenticated")
+                navigate('/app')
+            }
+            else {
+                console.log("Not authenticated")
+            }
+           }, 50)
     }, [])
 
     return (

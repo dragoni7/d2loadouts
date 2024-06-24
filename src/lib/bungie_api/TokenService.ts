@@ -62,10 +62,7 @@ export function generateToken(refresh: boolean, authCode=""): Tokens | null {
 
         returnToken = handleTokenResponse(response)
 
-        if (refresh) {
-            setTokens(returnToken)
-            console.log("Tokens successfully generated")
-        }
+        setTokens(returnToken)
     })
     .catch(error => {
         throw new Error(error)
