@@ -45,7 +45,7 @@ export function regenerateTokens(): boolean {
 }
 
 export function generateToken(refresh: boolean, authCode=""): Tokens | null {
-    const REFRESH_TOKEN = getTokens()?.refreshToken
+    const REFRESH_TOKEN = getTokens()?.refreshToken?.value
     var returnToken = null
 
     let body = refresh === false ? 

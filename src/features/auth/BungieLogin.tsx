@@ -7,7 +7,7 @@ const BungieLogin: React.FC = () => {
         authenticate()
     }
 
-    return ( <button onClick={onLogIn}>Log In</button> )
+    return ( <button onClick={onLogIn}>Authorize with Bungie.net</button> )
 }
 
 export default BungieLogin
