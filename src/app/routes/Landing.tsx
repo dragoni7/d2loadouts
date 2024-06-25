@@ -4,7 +4,6 @@ import React, { useEffect} from "react"
 import BungieLogin from '../../features/auth/BungieLogin'
 import { regenerateTokens } from '../../lib/bungie_api/TokenService'
 import { isAuthenticated } from '../../lib/bungie_api/AuthService'
-import { bgcolor, styled } from '@mui/system'
 import { Container, Grid, Paper } from '@mui/material'
 
 export const LandingRoute = () => {
