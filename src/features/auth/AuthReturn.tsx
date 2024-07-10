@@ -1,8 +1,9 @@
-import { generateToken } from "../../lib/bungie_api/TokenService"
-import { setTokens } from "../../lib/bungie_api/TokensStore"
+import { generateToken } from "../../lib/bungie_api/TokenService";
 
 function getAuthCodeFromURL(): string | null {
-    return window.location.href.includes("code=") ? window.location.href.split('code=')[1] : null
+  return window.location.href.includes("code=")
+    ? window.location.href.split("code=")[1]
+    : null;
 }
 
 /**
@@ -10,23 +11,21 @@ function getAuthCodeFromURL(): string | null {
  * @returns whether or not tokens were successfully generated
  */
 export function handleAuthReturn(): boolean {
+  const code = getAuthCodeFromURL();
 
-    const code = getAuthCodeFromURL()
+  console.log("auth code is " + code);
 
-    console.log("auth code is " + code)
+  if (!code?.length) {
+    console.log("Could not find authorization code");
+    return false;
+  }
 
-    if (!code?.length) {
-        console.log("Could not find authorization code")
-        return false
-    }
+  try {
+    generateToken(false, code);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 
-    try {
-        generateToken(false, code)
-    }
-    catch (error) {
-        console.log(error)
-        return false
-    }
-
-    return true
+  return true;
 }

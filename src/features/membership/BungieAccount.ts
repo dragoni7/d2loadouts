@@ -1,7 +1,7 @@
 import { _get } from "../../lib/bungie_api/BungieApiClient";
 import { getMembershipId, getTokens } from "../../lib/bungie_api/TokensStore";
 
-export async function getCurrentMembershipData(): Promise<string> {
+export async function getDestinyMembershipId(): Promise<string> {
   const membershipId = getMembershipId();
   const accessToken = getTokens()?.accessToken.value;
 

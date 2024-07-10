@@ -6,8 +6,8 @@ import { regenerateTokens } from "../../lib/bungie_api/TokenService";
 import { isAuthenticated } from "../../lib/bungie_api/AuthService";
 import { Container, Grid, Paper } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { updateMembershipId } from "../../redux/MembershipReducer";
-import { getCurrentMembershipData } from "../../features/membership/BungieAccount";
+import { updateMembershipId } from "../../store/MembershipReducer";
+import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
 
 export const LandingRoute = () => {
   const navigate = useNavigate();
@@ -17,15 +17,13 @@ export const LandingRoute = () => {
     setTimeout(async () => {
       if (isAuthenticated()) {
         console.log("Already authenticated");
-        var destinyMembershipId = await getCurrentMembershipData();
-        console.log(destinyMembershipId);
+        var destinyMembershipId = await getDestinyMembershipId();
         dispatch(updateMembershipId(destinyMembershipId));
 
         navigate("/app");
       } else if (regenerateTokens()) {
         console.log("Tokens regenerated and authenticated");
-        var destinyMembershipId = await getCurrentMembershipData();
-        console.log(destinyMembershipId);
+        var destinyMembershipId = await getDestinyMembershipId();
         dispatch(updateMembershipId(destinyMembershipId));
         navigate("/app");
       } else {

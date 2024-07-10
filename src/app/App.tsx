@@ -2,7 +2,7 @@ import { RouterProvider } from "react-router-dom";
 import { useMemo } from "react";
 import { createRouter } from "./routes";
 import { Provider } from "react-redux";
-import { store } from "../redux";
+import { store } from "../store";
 
 const AppRouter = () => {
   const router = useMemo(() => createRouter(), []);
