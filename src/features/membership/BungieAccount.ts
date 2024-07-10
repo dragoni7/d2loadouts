@@ -1,30 +1,26 @@
 import { _get } from "../../lib/bungie_api/BungieApiClient";
 import { getMembershipId, getTokens } from "../../lib/bungie_api/TokensStore";
 
-export function getCurrentMembershipData() {
+export async function getCurrentMembershipData(): Promise<string> {
+  const membershipId = getMembershipId();
+  const accessToken = getTokens()?.accessToken.value;
 
-    const membershipId = getMembershipId()
-    const accessToken = getTokens()?.accessToken
+  const response = await _get(
+    `/Platform/User/GetMembershipsById/${membershipId}/1/`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 
-    _get(`/Platform/User/GetMembershipsById/${membershipId}/1/`, {
-        headers: {
-            'Authorization': `Bearer ${accessToken}}`
-        }
-    })
-    .then(response => {
-        if (response.data.Response) {
+  if (response.data.Response) {
+    const primaryMembershipId = response.data.Response.primaryMembershipId;
 
-            const primaryMembershipId = response.data.Response.primaryMembershipId
-            const displayName = response.data.Response.bungieNetUser.displayName
+    return primaryMembershipId;
+  } else {
+    console.log("Could not get response");
+  }
 
-            localStorage.setItem("primaryMembershipId", JSON.stringify(primaryMembershipId))
-
-            return true
-        }
-        else {
-            console.log("Could not get response")
-            return false
-        }
-    })
+  return "";
 }
-

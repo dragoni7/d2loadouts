@@ -58,8 +58,8 @@ const RightPane = styled("div")({
 
 export const Dashboard = () => {
   useEffect(() => {
-    getCurrentMembershipData();
-    getProfile(localStorage.getItem("primaryMembershipId") as string);
+    //getCurrentMembershipData();
+    //getProfile(localStorage.getItem("primaryMembershipId") as string);
   }, []);
 
   return (
