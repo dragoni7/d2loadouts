@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import BungieLogin from "../../features/auth/BungieLogin";
 import { regenerateTokens } from "../../lib/bungie_api/TokenService";
 import { isAuthenticated } from "../../lib/bungie_api/AuthService";
@@ -8,6 +8,8 @@ import { Container, Grid, Paper } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { updateMembershipId } from "../../store/MembershipReducer";
 import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
+import { getProfile } from "../../features/profile/DestinyProfile";
+import { store } from "../../store";
 
 export const LandingRoute = () => {
   const navigate = useNavigate();
@@ -19,6 +21,10 @@ export const LandingRoute = () => {
         console.log("Already authenticated");
         var destinyMembershipId = await getDestinyMembershipId();
         dispatch(updateMembershipId(destinyMembershipId));
+
+        // update / get manifest
+        // get player data
+        await getProfile(store.getState().membership.membershipId);
 
         navigate("/app");
       } else if (regenerateTokens()) {
