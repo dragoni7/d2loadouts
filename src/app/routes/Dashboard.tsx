@@ -2,6 +2,13 @@ import { styled } from "@mui/system";
 import SingleDiamondButton from "../../components/SingleDiamondButton";
 import NumberBoxes from "../../components/NumberBoxes";
 import StatsTable from "../../components/StatsTable";
+import { useEffect } from "react";
+import { store } from "../../store";
+import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
+import { updateMembershipId } from "../../store/MembershipReducer";
+import { getProfileArmor } from "../../features/profile/DestinyProfile";
+import { updateProfileArmor } from "../../store/ProfileReducer";
+import { useDispatch } from "react-redux";
 
 // import React from 'react';
 // import './App.css';
@@ -54,6 +61,29 @@ const RightPane = styled("div")({
 });
 
 export const Dashboard = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const updateProfile = async () => {
+      // store membership id into store
+      var destinyMembershipId = await getDestinyMembershipId();
+      dispatch(updateMembershipId(destinyMembershipId));
+
+      // update / get manifest
+
+      // store profile armor array into store
+      var armor = await getProfileArmor(
+        store.getState().membership.membershipId
+      );
+      dispatch(updateProfileArmor(armor));
+
+      console.log(store.getState().profile.armor);
+      console.log(store.getState().membership.membershipId);
+    };
+
+    updateProfile().catch(console.error);
+  }, []);
+
   return (
     <Container>
       <div>{localStorage.getItem("profile")}</div>
@@ -72,3 +102,9 @@ export const Dashboard = () => {
     </Container>
   );
 };
+function dispatch(arg0: {
+  payload: string;
+  type: "membership/updateMembershipId";
+}) {
+  throw new Error("Function not implemented.");
+}

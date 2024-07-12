@@ -1,6 +1,6 @@
 import { _get } from "../../lib/bungie_api/BungieApiClient";
 import { getTokens } from "../../store/TokensStore";
-import { DestinyArmor } from "../../types/DestinyTypes";
+import { DestinyArmor } from "../../types";
 
 const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
   2724608735: (armor: DestinyArmor) => (armor.intellect = armor.intellect - 10),

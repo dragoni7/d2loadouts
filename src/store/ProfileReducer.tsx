@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DestinyArmor } from "../types/DestinyTypes";
+import { DestinyArmor } from "../types";
 
 export interface ProfileInitialState {
   armor: DestinyArmor[];

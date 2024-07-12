@@ -5,43 +5,18 @@ import BungieLogin from "../../features/auth/BungieLogin";
 import { regenerateTokens } from "../../lib/bungie_api/TokenService";
 import { isAuthenticated } from "../../lib/bungie_api/AuthService";
 import { Container, Grid, Paper } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { updateMembershipId } from "../../store/MembershipReducer";
-import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
-import { getProfileArmor } from "../../features/profile/DestinyProfile";
-import { store } from "../../store";
-import { updateProfileArmor } from "../../store/ProfileReducer";
 
 export const LandingRoute = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  async function initProfile() {
-    // store membership id into store
-    var destinyMembershipId = await getDestinyMembershipId();
-    dispatch(updateMembershipId(destinyMembershipId));
-
-    // update / get manifest
-
-    // store profile armor array into store
-    var armor = await getProfileArmor(store.getState().membership.membershipId);
-    dispatch(updateProfileArmor(armor));
-
-    console.log(store.getState().profile.armor);
-  }
 
   useEffect(() => {
-    setTimeout(async () => {
+    setTimeout(() => {
       if (isAuthenticated()) {
         console.log("Already authenticated");
-
-        await initProfile();
 
         navigate("/app");
       } else if (regenerateTokens()) {
         console.log("Tokens regenerated and authenticated");
-
-        await initProfile();
 
         navigate("/app");
       } else {
