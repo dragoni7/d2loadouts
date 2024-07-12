@@ -1,44 +1,40 @@
-import { Navigate } from "react-router-dom"
-import { isTokenExpired } from "./TokenService"
-import { getTokens } from "./TokensStore"
+import { Navigate } from "react-router-dom";
+import { isTokenExpired } from "./TokenService";
+import { getTokens } from "../../store/TokensStore";
 
 /**
  * Navigates to the Bungie OAuth url
  */
 export function authenticate(): void {
-    window.location.replace(`https://www.bungie.net/en/OAuth/Authorize?client_id=${import.meta.env.VITE_CLIENT_ID}&response_type=code`)
+  window.location.replace(
+    `https://www.bungie.net/en/OAuth/Authorize?client_id=${
+      import.meta.env.VITE_CLIENT_ID
+    }&response_type=code`
+  );
 }
 
 /**
  * Whether or not the user is authenticated.
- * 
+ *
  * @returns if auth tokens are present in local store
  */
 export function isAuthenticated(): boolean {
-    
-    const tokens = getTokens()
+  const tokens = getTokens();
 
-    if (!tokens) {
-        return false
-    }
+  if (!tokens) {
+    return false;
+  }
 
-    return !isTokenExpired(tokens.accessToken)
+  return !isTokenExpired(tokens.accessToken);
 }
 
 /**
  * Restricts rendering of children if not authenticated
  */
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to={"/"} replace />;
+  }
 
-    if (!isAuthenticated()) {
-        return (
-            <Navigate
-            to={'/'}
-            replace
-          />
-        )
-    }
-
-    return children
-}
-
+  return children;
+};

@@ -8,29 +8,41 @@ import { Container, Grid, Paper } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { updateMembershipId } from "../../store/MembershipReducer";
 import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
-import { getProfile } from "../../features/profile/DestinyProfile";
+import { getProfileArmor } from "../../features/profile/DestinyProfile";
 import { store } from "../../store";
+import { updateProfileArmor } from "../../store/ProfileReducer";
 
 export const LandingRoute = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  async function initProfile() {
+    // store membership id into store
+    var destinyMembershipId = await getDestinyMembershipId();
+    dispatch(updateMembershipId(destinyMembershipId));
+
+    // update / get manifest
+
+    // store profile armor array into store
+    var armor = await getProfileArmor(store.getState().membership.membershipId);
+    dispatch(updateProfileArmor(armor));
+
+    console.log(store.getState().profile.armor);
+  }
+
   useEffect(() => {
     setTimeout(async () => {
       if (isAuthenticated()) {
         console.log("Already authenticated");
-        var destinyMembershipId = await getDestinyMembershipId();
-        dispatch(updateMembershipId(destinyMembershipId));
 
-        // update / get manifest
-        // get player data
-        await getProfile(store.getState().membership.membershipId);
+        await initProfile();
 
         navigate("/app");
       } else if (regenerateTokens()) {
         console.log("Tokens regenerated and authenticated");
-        var destinyMembershipId = await getDestinyMembershipId();
-        dispatch(updateMembershipId(destinyMembershipId));
+
+        await initProfile();
+
         navigate("/app");
       } else {
         console.log("Not authenticated");

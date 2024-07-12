@@ -1,22 +1,7 @@
 import { _get } from "../../lib/bungie_api/BungieApiClient";
-import { getTokens } from "../../lib/bungie_api/TokensStore";
+import { getTokens } from "../../store/TokensStore";
+import { DestinyArmor } from "../../types/DestinyTypes";
 
-export interface DestinyArmor {
-  intellect: number;
-  discipline: number;
-  resilience: number;
-  mobility: number;
-  strength: number;
-  recovery: number;
-  instanceHash: string;
-  itemHash?: string;
-  artifice?: boolean;
-  masterwork: boolean;
-  exotic?: boolean;
-  class?: string;
-  type?: string;
-  socket?: string;
-}
 const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
   2724608735: (armor: DestinyArmor) => (armor.intellect = armor.intellect - 10),
   3897511453: (armor: DestinyArmor) => (armor.intellect = armor.intellect - 5),
@@ -57,8 +42,12 @@ const CLASS = 1585787867;
 
 const ARTIFICE_ARMOR = 3727270518;
 
-export async function getProfile(destinyMembershipId: string) {
+export async function getProfileArmor(
+  destinyMembershipId: string
+): Promise<DestinyArmor[]> {
   const accessToken = getTokens()?.accessToken.value;
+
+  const destinyArmors: DestinyArmor[] = [];
 
   const response = await _get(
     `/Platform/Destiny2/1/Profile/${destinyMembershipId}/?components=102,201,300,205,302,304,305`,
@@ -71,8 +60,6 @@ export async function getProfile(destinyMembershipId: string) {
 
   if (response.data.Response) {
     var itemComponents = response.data.Response.itemComponents;
-
-    const destinyArmors: DestinyArmor[] = [];
 
     for (const instanceHash in itemComponents.instances.data) {
       if (
@@ -117,8 +104,9 @@ export async function getProfile(destinyMembershipId: string) {
         }
       }
     }
-    console.log(destinyArmors);
   } else {
     console.log("Could not get response");
   }
+
+  return destinyArmors;
 }
