@@ -4,7 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
   reducer: {
-    membership: MembershipReducer,
+    destinyMembership: MembershipReducer,
     profile: ProfileReducer,
   },
 });

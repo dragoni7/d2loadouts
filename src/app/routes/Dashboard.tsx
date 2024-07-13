@@ -5,7 +5,7 @@ import StatsTable from "../../components/StatsTable";
 import { useEffect } from "react";
 import { store } from "../../store";
 import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
-import { updateMembershipId } from "../../store/MembershipReducer";
+import { updateMembership } from "../../store/MembershipReducer";
 import { getProfileArmor } from "../../features/profile/DestinyProfile";
 import { updateProfileArmor } from "../../store/ProfileReducer";
 import { useDispatch } from "react-redux";
@@ -66,19 +66,21 @@ export const Dashboard = () => {
   useEffect(() => {
     const updateProfile = async () => {
       // store membership id into store
-      var destinyMembershipId = await getDestinyMembershipId();
-      dispatch(updateMembershipId(destinyMembershipId));
+      const destinyMembership = await getDestinyMembershipId();
+
+      dispatch(updateMembership(destinyMembership));
 
       // update / get manifest
 
       // store profile armor array into store
       var armor = await getProfileArmor(
-        store.getState().membership.membershipId
+        store.getState().destinyMembership.membership
       );
+
       dispatch(updateProfileArmor(armor));
 
       console.log(store.getState().profile.armor);
-      console.log(store.getState().membership.membershipId);
+      console.log(store.getState().destinyMembership.membership);
     };
 
     updateProfile().catch(console.error);
@@ -102,9 +104,3 @@ export const Dashboard = () => {
     </Container>
   );
 };
-function dispatch(arg0: {
-  payload: string;
-  type: "membership/updateMembershipId";
-}) {
-  throw new Error("Function not implemented.");
-}

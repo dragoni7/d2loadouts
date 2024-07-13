@@ -14,3 +14,8 @@ export type DestinyArmor = {
   type?: string;
   socket?: string;
 };
+
+export type DestinyMembership = {
+  membershipId: string;
+  membershipType: number;
+};

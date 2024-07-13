@@ -1,6 +1,6 @@
 import { _get } from "../../lib/bungie_api/BungieApiClient";
 import { getTokens } from "../../store/TokensStore";
-import { DestinyArmor } from "../../types";
+import { DestinyArmor, DestinyMembership } from "../../types";
 
 const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
   2724608735: (armor: DestinyArmor) => (armor.intellect = armor.intellect - 10),
@@ -43,14 +43,14 @@ const CLASS = 1585787867;
 const ARTIFICE_ARMOR = 3727270518;
 
 export async function getProfileArmor(
-  destinyMembershipId: string
+  destinyMembership: DestinyMembership
 ): Promise<DestinyArmor[]> {
   const accessToken = getTokens()?.accessToken.value;
 
   const destinyArmors: DestinyArmor[] = [];
 
   const response = await _get(
-    `/Platform/Destiny2/1/Profile/${destinyMembershipId}/?components=102,201,300,205,302,304,305`,
+    `/Platform/Destiny2/${destinyMembership.membershipType}/Profile/${destinyMembership.membershipId}/?components=102,201,300,205,302,304,305`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
