@@ -26,7 +26,8 @@ const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
   2639422088: (armor: DestinyArmor) => (armor.strength = armor.strength - 5),
   2507624050: (armor: DestinyArmor) => (armor.strength = armor.strength - 3),
 };
-const IS_ARMOR = 3897883278;
+const DEFENSE = 3897883278;
+
 const INTELLECT = 144602215;
 const RESILIENCE = 392767087;
 const DISCIPLINE = 1735777505;
@@ -39,6 +40,10 @@ const ARMS = 3551918588;
 const CHEST = 14239492;
 const LEG = 20886954;
 const CLASS = 1585787867;
+
+const WARLOCK_REQUIRED = 3485532491;
+const HUNTER_REQUIRED = 0;
+const TITAN_REQUIRED = 0;
 
 const ARTIFICE_ARMOR = 3727270518;
 
@@ -59,13 +64,17 @@ export async function getProfileArmor(
   );
 
   if (response.data.Response) {
-    var itemComponents = response.data.Response.itemComponents;
+    const itemComponents = response.data.Response.itemComponents;
+    const profileInventory = response.data.Response.profileInventory.data.items;
+    const characterInventories =
+      response.data.Response.characterInventories.data;
+    const characterEquipment = response.data.Response.characterEquipment.data;
 
     for (const instanceHash in itemComponents.instances.data) {
+      const currentInstance = itemComponents.instances.data[instanceHash];
       if (
-        itemComponents.instances.data[instanceHash].primaryStat &&
-        itemComponents.instances.data[instanceHash].primaryStat.statHash ===
-          IS_ARMOR
+        currentInstance.primaryStat &&
+        currentInstance.primaryStat.statHash === DEFENSE
       ) {
         if (itemComponents.stats.data.hasOwnProperty(instanceHash)) {
           const stats = itemComponents.stats.data[instanceHash].stats;
@@ -79,11 +88,13 @@ export async function getProfileArmor(
             recovery: stats[1943323491]?.value || 0,
             instanceHash: instanceHash,
             masterwork:
-              itemComponents.instances.data[instanceHash]?.energy &&
-              itemComponents.instances.data[instanceHash].energy
-                .energyCapacity === 10,
+              currentInstance?.energy &&
+              currentInstance.energy.energyCapacity === 10,
           };
 
+          // determine required class
+
+          // undo armor mod stat increases
           if (itemComponents.sockets.data.hasOwnProperty(instanceHash)) {
             for (const key in modReverseDict) {
               if (
@@ -95,9 +106,43 @@ export async function getProfileArmor(
               }
             }
 
+            // check if armor is artifice
             destinyArmor.artifice = itemComponents.sockets.data[
               instanceHash
             ].sockets.some((mod: any) => mod.plugHash === ARTIFICE_ARMOR);
+
+            // get item instance's item hash
+            // first check profile inventory
+            for (const item of profileInventory) {
+              if (item.itemInstanceId && item.itemInstanceId === instanceHash) {
+                destinyArmor.itemHash = item.itemHash;
+                break;
+              }
+            }
+
+            if (!destinyArmor.itemHash) {
+              // also need to check character items
+              for (const key in characterInventories) {
+                for (const item of characterInventories[key].items) {
+                  if (item.itemInstanceId === instanceHash) {
+                    destinyArmor.itemHash = item.itemHash;
+                    break;
+                  }
+                }
+              }
+            }
+
+            if (!destinyArmor.itemHash) {
+              // and equipped items
+              for (const key in characterEquipment) {
+                for (const item of characterEquipment[key].items) {
+                  if (item.itemInstanceId === instanceHash) {
+                    destinyArmor.itemHash = item.itemHash;
+                    break;
+                  }
+                }
+              }
+            }
 
             destinyArmors.push(destinyArmor);
           }

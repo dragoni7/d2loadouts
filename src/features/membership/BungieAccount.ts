@@ -23,11 +23,12 @@ export async function getDestinyMembershipId(): Promise<DestinyMembership> {
   if (response.data.Response) {
     membership.membershipId = response.data.Response.primaryMembershipId;
 
-    response.data.Response.destinyMemberships.forEach((m: any) => {
+    for (const m of response.data.Response.destinyMemberships) {
       if (membership.membershipId === m.membershipId) {
         membership.membershipType = m.membershipType;
+        break;
       }
-    });
+    }
   } else {
     console.log("Could not get response");
   }
