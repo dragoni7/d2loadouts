@@ -19,3 +19,13 @@ export type DestinyMembership = {
   membershipId: string;
   membershipType: number;
 };
+
+export interface ManifestArmor {
+  id: number;
+  hash: number;
+  name: string;
+  isExotic: boolean;
+  characterClass: string;
+  slot: string;
+  icon: string;
+}

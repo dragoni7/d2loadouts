@@ -1,4 +1,6 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import { _get } from "../../lib/bungie_api/BungieApiClient";
+import { db } from "../../store/db";
 import { getTokens } from "../../store/TokensStore";
 import { DestinyArmor, DestinyMembership } from "../../types";
 
@@ -35,16 +37,6 @@ const RECOVERY = 1943323491;
 const MOBILITY = 2996146975;
 const STRENGTH = 4244567218;
 
-const HELMET = 3448274439;
-const ARMS = 3551918588;
-const CHEST = 14239492;
-const LEG = 20886954;
-const CLASS = 1585787867;
-
-const WARLOCK_REQUIRED = 3485532491;
-const HUNTER_REQUIRED = 0;
-const TITAN_REQUIRED = 0;
-
 const ARTIFICE_ARMOR = 3727270518;
 
 export async function getProfileArmor(
@@ -80,19 +72,17 @@ export async function getProfileArmor(
           const stats = itemComponents.stats.data[instanceHash].stats;
 
           const destinyArmor: DestinyArmor = {
-            intellect: stats[144602215]?.value || 0,
-            discipline: stats[1735777505]?.value || 0,
-            resilience: stats[392767087]?.value || 0,
-            mobility: stats[2996146975]?.value || 0,
-            strength: stats[4244567218]?.value || 0,
-            recovery: stats[1943323491]?.value || 0,
+            intellect: stats[INTELLECT]?.value || 0,
+            discipline: stats[DISCIPLINE]?.value || 0,
+            resilience: stats[RESILIENCE]?.value || 0,
+            mobility: stats[MOBILITY]?.value || 0,
+            strength: stats[STRENGTH]?.value || 0,
+            recovery: stats[RECOVERY]?.value || 0,
             instanceHash: instanceHash,
             masterwork:
               currentInstance?.energy &&
               currentInstance.energy.energyCapacity === 10,
           };
-
-          // determine required class
 
           // undo armor mod stat increases
           if (itemComponents.sockets.data.hasOwnProperty(instanceHash)) {
@@ -112,7 +102,7 @@ export async function getProfileArmor(
             ].sockets.some((mod: any) => mod.plugHash === ARTIFICE_ARMOR);
 
             // get item instance's item hash
-            // first check profile inventory
+            // check profile inventory
             for (const item of profileInventory) {
               if (item.itemInstanceId && item.itemInstanceId === instanceHash) {
                 destinyArmor.itemHash = item.itemHash;
@@ -143,6 +133,19 @@ export async function getProfileArmor(
                 }
               }
             }
+
+            // get item instance's manifest def
+            const armorDef = await db.manifestArmorDef
+              .where("hash")
+              .equals(Number(destinyArmor.itemHash))
+              .first();
+
+            // determine required class
+            destinyArmor.class = armorDef?.characterClass;
+            // determine armor slot
+            destinyArmor.type = armorDef?.slot;
+            // determine if exotic
+            destinyArmor.exotic = armorDef?.isExotic;
 
             destinyArmors.push(destinyArmor);
           }

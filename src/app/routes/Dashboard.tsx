@@ -9,6 +9,7 @@ import { updateMembership } from "../../store/MembershipReducer";
 import { getProfileArmor } from "../../features/profile/DestinyProfile";
 import { updateProfileArmor } from "../../store/ProfileReducer";
 import { useDispatch } from "react-redux";
+import { updateManifest } from "../../lib/bungie_api/Manifest";
 
 // import React from 'react';
 // import './App.css';
@@ -65,12 +66,13 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const updateProfile = async () => {
-      // store membership id into store
+      // update / get manifest
+      await updateManifest();
+
+      // store membership details into store
       const destinyMembership = await getDestinyMembershipId();
 
       dispatch(updateMembership(destinyMembership));
-
-      // update / get manifest
 
       // store profile armor array into store
       var armor = await getProfileArmor(
@@ -80,7 +82,6 @@ export const Dashboard = () => {
       dispatch(updateProfileArmor(armor));
 
       console.log(store.getState().profile.armor);
-      console.log(store.getState().destinyMembership.membership);
     };
 
     updateProfile().catch(console.error);
@@ -88,7 +89,6 @@ export const Dashboard = () => {
 
   return (
     <Container>
-      <div>{localStorage.getItem("profile")}</div>
       <HeaderContainer>
         <SingleDiamondButton />
       </HeaderContainer>
