@@ -75,9 +75,7 @@ export const Dashboard = () => {
       dispatch(updateMembership(destinyMembership));
 
       // store profile armor array into store
-      var armor = await getProfileArmor(
-        store.getState().destinyMembership.membership
-      );
+      var armor = await getProfileArmor();
 
       dispatch(updateProfileArmor(armor));
 

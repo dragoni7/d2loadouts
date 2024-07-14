@@ -1,7 +1,7 @@
 import { Token, Tokens, getTokens, setTokens } from "../../store/TokensStore";
 import { _post } from "./BungieApiClient";
-import { CLIENT_ID, CLIENT_SECRET } from "./utils";
 import { AxiosResponse } from "axios";
+import { getOAuthTokensRequest } from "./Requests";
 
 export function canTokensRefresh() {
   const tokens = getTokens();
@@ -33,38 +33,28 @@ export function isTokenExpired(token?: Token) {
   return Date.now() > expiration;
 }
 
-export function regenerateTokens(): boolean {
+export async function regenerateTokens(): Promise<boolean> {
   if (canTokensRefresh()) {
-    generateToken(true);
+    await generateToken(true);
     return true;
   }
 
   return false;
 }
 
-export function generateToken(refresh: boolean, authCode = ""): Tokens | null {
-  const REFRESH_TOKEN = getTokens()?.refreshToken?.value;
+export async function generateToken(
+  refresh: boolean,
+  authCode = ""
+): Promise<Tokens | null> {
   var returnToken = null;
 
-  let body =
-    refresh === false
-      ? `grant_type=authorization_code&code=${authCode}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`
-      : `grant_type=refresh_token&refresh_token=${REFRESH_TOKEN}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`;
+  const response = await getOAuthTokensRequest(refresh, authCode);
 
-  _post("/Platform/App/OAuth/Token/", body, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Basic ${window.btoa(`${CLIENT_ID}:${CLIENT_SECRET}`)}`,
-    },
-  })
-    .then((response) => {
-      returnToken = handleTokenResponse(response);
+  if (response) {
+    returnToken = handleTokenResponse(response);
 
-      setTokens(returnToken);
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
+    setTokens(returnToken);
+  }
 
   return returnToken;
 }

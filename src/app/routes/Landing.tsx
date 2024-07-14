@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import BungieLogin from "../../features/auth/BungieLogin";
 import { regenerateTokens } from "../../lib/bungie_api/TokenService";
 import { isAuthenticated } from "../../lib/bungie_api/Authorization";
@@ -9,24 +9,28 @@ import { Container, Grid, Paper } from "@mui/material";
 export const LandingRoute = () => {
   const navigate = useNavigate();
 
+  const [hidden, setHidden] = useState(true);
+
   useEffect(() => {
-    setTimeout(() => {
+    setTimeout(async () => {
       if (isAuthenticated()) {
         console.log("Already authenticated");
 
         navigate("/app");
-      } else if (regenerateTokens()) {
+      } else if (await regenerateTokens()) {
         console.log("Tokens regenerated and authenticated");
 
         navigate("/app");
       } else {
         console.log("Not authenticated");
       }
+
+      setHidden(false);
     }, 300);
   }, []);
 
-  return (
-    <React.Fragment>
+  return !hidden ? (
+    <div>
       <Container maxWidth="md">
         <Paper
           elevation={8}
@@ -53,6 +57,8 @@ export const LandingRoute = () => {
           </Grid>
         </Paper>
       </Container>
-    </React.Fragment>
+    </div>
+  ) : (
+    false
   );
 };

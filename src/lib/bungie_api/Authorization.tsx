@@ -1,15 +1,14 @@
 import { Navigate } from "react-router-dom";
 import { isTokenExpired } from "./TokenService";
 import { getTokens } from "../../store/TokensStore";
+import { API_CREDENTIALS } from "./Constants";
 
 /**
  * Navigates to the Bungie OAuth url
  */
 export function authenticate(): void {
   window.location.replace(
-    `https://www.bungie.net/en/OAuth/Authorize?client_id=${
-      import.meta.env.VITE_CLIENT_ID
-    }&response_type=code`
+    `https://www.bungie.net/en/OAuth/Authorize?client_id=${API_CREDENTIALS.CLIENT_ID}&response_type=code`
   );
 }
 

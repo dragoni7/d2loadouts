@@ -40,7 +40,7 @@ export function removeTokens() {
  * Gets the membersip id from the locally stored auth tokens
  * @returns membershipId
  */
-export function getMembershipId(): string | undefined {
+export function getBungieMembershipId(): string | undefined {
   const tokens = getTokens();
 
   if (tokens && tokens?.membershipId) {

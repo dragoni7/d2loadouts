@@ -10,7 +10,7 @@ function getAuthCodeFromURL(): string | null {
  * Get auth tokens from auth code
  * @returns whether or not tokens were successfully generated
  */
-export function handleAuthReturn(): boolean {
+export async function handleAuthReturn(): Promise<boolean> {
   const code = getAuthCodeFromURL();
 
   console.log("auth code is " + code);
@@ -21,7 +21,7 @@ export function handleAuthReturn(): boolean {
   }
 
   try {
-    generateToken(false, code);
+    await generateToken(false, code);
   } catch (error) {
     console.log(error);
     return false;

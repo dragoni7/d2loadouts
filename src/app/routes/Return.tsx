@@ -9,11 +9,15 @@ export const ReturnRoute = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (handleAuthReturn()) {
-      // exit component if successful
-      navigate("/");
-    }
+    const init = async () => {
+      if (await handleAuthReturn()) {
+        // exit component if successful
+        navigate("/");
+      }
+    };
+
+    init().catch(console.error);
   }, []);
 
-  return <div>Authentication Error</div>;
+  return false;
 };

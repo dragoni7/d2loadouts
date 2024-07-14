@@ -1,24 +1,13 @@
-import { _get } from "../../lib/bungie_api/BungieApiClient";
-import { getMembershipId, getTokens } from "../../store/TokensStore";
+import { getDestinyMembershipsRequest } from "../../lib/bungie_api/Requests";
 import { DestinyMembership } from "../../types";
 
 export async function getDestinyMembershipId(): Promise<DestinyMembership> {
-  const membershipId = getMembershipId();
-  const accessToken = getTokens()?.accessToken.value;
-
   const membership: DestinyMembership = {
     membershipId: "",
     membershipType: 0,
   };
 
-  const response = await _get(
-    `/Platform/User/GetMembershipsById/${membershipId}/1/`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const response = await getDestinyMembershipsRequest();
 
   if (response.data.Response) {
     membership.membershipId = response.data.Response.primaryMembershipId;

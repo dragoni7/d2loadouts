@@ -1,63 +1,13 @@
 import { db } from "../../store/db";
-import { _get } from "./BungieApiClient";
-import axios from "axios";
+import { getManifestItemClass, getManifestItemSlot } from "./utils";
+import { getManifestComponentRequest, getManifestRequest } from "./Requests";
 
 const ARMOR_TYPE = 2;
 
-const HELMET = 26;
-const CHEST = 28;
-const CLASS = 30;
-const GAUNTLETS = 27;
-const LEGS = 29;
-
-const HUNTER = 1;
-const WARLOCK = 2;
-const TITAN = 0;
-
 const EXOTIC = 2759499571;
 
-function getSlot(slotNum: number): string {
-  switch (slotNum) {
-    case HELMET: {
-      return "helmet";
-    }
-    case CHEST: {
-      return "chest";
-    }
-    case GAUNTLETS: {
-      return "arms";
-    }
-    case LEGS: {
-      return "legs";
-    }
-    case CLASS: {
-      return "class";
-    }
-    default: {
-      return "";
-    }
-  }
-}
-
-function getClass(classNum: number): string {
-  switch (classNum) {
-    case HUNTER: {
-      return "hunter";
-    }
-    case WARLOCK: {
-      return "warlock";
-    }
-    case TITAN: {
-      return "titan";
-    }
-    default: {
-      return "";
-    }
-  }
-}
-
 export async function updateManifest() {
-  const response = await _get("/Platform/Destiny2/Manifest/");
+  const response = await getManifestRequest();
 
   if (response.data.Response) {
     const currentVersion = localStorage.getItem("manifestVersion");
@@ -71,12 +21,7 @@ export async function updateManifest() {
           "DestinyInventoryItemDefinition"
         ];
 
-      const itemDefResponse = await axios.get(
-        "https://www.bungie.net" + component,
-        {
-          responseType: "json",
-        }
-      );
+      const itemDefResponse = await getManifestComponentRequest(component);
 
       if (itemDefResponse.data && itemDefResponse.status === 200) {
         for (const itemHash in itemDefResponse.data) {
@@ -88,8 +33,8 @@ export async function updateManifest() {
               hash: Number(itemHash),
               name: current.displayProperties.name,
               isExotic: current.inventory.tierTypeHash === EXOTIC,
-              characterClass: getClass(current.classType),
-              slot: getSlot(current.itemSubType),
+              characterClass: getManifestItemClass(current.classType),
+              slot: getManifestItemSlot(current.itemSubType),
               icon: "https://bungie.net" + current.displayProperties.icon,
             });
           }
