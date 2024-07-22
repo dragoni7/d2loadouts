@@ -29,3 +29,17 @@ export interface ManifestArmor {
   slot: string;
   icon: string;
 }
+
+export interface ArmorByType {
+  helmet: DestinyArmor[];
+  arms: DestinyArmor[];
+  legs: DestinyArmor[];
+  chest: DestinyArmor[];
+  classItem: DestinyArmor[];
+}
+
+export interface ArmorByClass {
+  warlock: ArmorByType;
+  hunter: ArmorByType;
+  titan: ArmorByType;
+}

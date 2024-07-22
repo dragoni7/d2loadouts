@@ -2,7 +2,7 @@ import { styled } from "@mui/system";
 import SingleDiamondButton from "../../components/SingleDiamondButton";
 import NumberBoxes from "../../components/NumberBoxes";
 import StatsTable from "../../components/StatsTable";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { store } from "../../store";
 import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
 import { updateMembership } from "../../store/MembershipReducer";
@@ -11,6 +11,8 @@ import { updateProfileArmor } from "../../store/ProfileReducer";
 import { useDispatch } from "react-redux";
 import { updateManifest } from "../../lib/bungie_api/Manifest";
 import { separateArmor } from "../../features/armor-optimization/separatedaArmor";
+import { generatePermutations } from "../../features/armor-optimization/generatePermutations";
+import { DestinyArmor, ArmorByClass } from "../../types";
 
 const Container = styled("div")({
   display: "flex",
@@ -47,6 +49,12 @@ const RightPane = styled("div")({
 
 export const Dashboard = () => {
   const dispatch = useDispatch();
+  const [separatedArmor, setSeparatedArmor] = useState<ArmorByClass | null>(
+    null
+  );
+  const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(
+    null
+  );
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -69,6 +77,9 @@ export const Dashboard = () => {
       const separated = separateArmor(armor);
 
       console.log(separated);
+      const warlockPermutations = generatePermutations(separated.warlock);
+      setPermutations(warlockPermutations);
+      console.log("Warlock Armor Permutations:", warlockPermutations);
     };
 
     updateProfile().catch(console.error);

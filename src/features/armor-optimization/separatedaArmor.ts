@@ -1,20 +1,6 @@
 import { store } from '../../store';
-import { DestinyArmor } from '../../types';
+import { DestinyArmor, ArmorByClass, ArmorByType } from '../../types';
 
-
-interface ArmorByType {
-  helmet: DestinyArmor[];
-  arms: DestinyArmor[];
-  legs: DestinyArmor[];
-  chest: DestinyArmor[];
-  classItem: DestinyArmor[];
-}
-
-interface ArmorByClass {
-  warlock: ArmorByType;
-  hunter: ArmorByType;
-  titan: ArmorByType;
-}
 
 export const separateArmor = (armorArray: DestinyArmor[]): ArmorByClass => {
   const result: ArmorByClass = {
