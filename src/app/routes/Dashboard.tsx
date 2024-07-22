@@ -10,23 +10,7 @@ import { getProfileArmor } from "../../features/profile/DestinyProfile";
 import { updateProfileArmor } from "../../store/ProfileReducer";
 import { useDispatch } from "react-redux";
 import { updateManifest } from "../../lib/bungie_api/Manifest";
-
-// import React from 'react';
-// import './App.css';
-// import Background from './components/Background';
-// import CustomizationPanel from './components/CustomizationPanel';
-
-// function App() {
-//   return (
-//     <Background>
-//       <div className="overlay-container">
-//         <CustomizationPanel />
-//       </div>
-//     </Background>
-//   );
-// }
-
-// export default App;
+import { separateArmor } from "../../features/armor-optimization/separatedaArmor";
 
 const Container = styled("div")({
   display: "flex",
@@ -69,6 +53,8 @@ export const Dashboard = () => {
       // update / get manifest
       await updateManifest();
 
+      console.log("Manifest updated");
+
       // store membership details into store
       const destinyMembership = await getDestinyMembershipId();
 
@@ -80,6 +66,9 @@ export const Dashboard = () => {
       dispatch(updateProfileArmor(armor));
 
       console.log(store.getState().profile.armor);
+      const separated = separateArmor(armor);
+
+      console.log(separated);
     };
 
     updateProfile().catch(console.error);

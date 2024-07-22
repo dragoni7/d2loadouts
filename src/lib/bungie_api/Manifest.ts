@@ -22,7 +22,6 @@ export async function updateManifest() {
         ];
 
       const itemDefResponse = await getManifestComponentRequest(component);
-
       if (itemDefResponse.data && itemDefResponse.status === 200) {
         for (const itemHash in itemDefResponse.data) {
           const current = itemDefResponse.data[itemHash];
