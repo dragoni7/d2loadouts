@@ -1,26 +1,26 @@
-import { _get } from "../../lib/bungie_api/BungieApiClient";
-import { getMembershipId, getTokens } from "../../lib/bungie_api/TokensStore";
+import { getDestinyMembershipsRequest } from "../../lib/bungie_api/Requests";
+import { DestinyMembership } from "../../types";
 
-export async function getDestinyMembershipId(): Promise<string> {
-  const membershipId = getMembershipId();
-  const accessToken = getTokens()?.accessToken.value;
+export async function getDestinyMembershipId(): Promise<DestinyMembership> {
+  const membership: DestinyMembership = {
+    membershipId: "",
+    membershipType: 0,
+  };
 
-  const response = await _get(
-    `/Platform/User/GetMembershipsById/${membershipId}/1/`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const response = await getDestinyMembershipsRequest();
 
   if (response.data.Response) {
-    const primaryMembershipId = response.data.Response.primaryMembershipId;
+    membership.membershipId = response.data.Response.primaryMembershipId;
 
-    return primaryMembershipId;
+    for (const m of response.data.Response.destinyMemberships) {
+      if (membership.membershipId === m.membershipId) {
+        membership.membershipType = m.membershipType;
+        break;
+      }
+    }
   } else {
     console.log("Could not get response");
   }
 
-  return "";
+  return membership;
 }

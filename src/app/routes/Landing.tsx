@@ -1,45 +1,36 @@
 import { useNavigate } from "react-router";
 
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import BungieLogin from "../../features/auth/BungieLogin";
 import { regenerateTokens } from "../../lib/bungie_api/TokenService";
-import { isAuthenticated } from "../../lib/bungie_api/AuthService";
+import { isAuthenticated } from "../../lib/bungie_api/Authorization";
 import { Container, Grid, Paper } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { updateMembershipId } from "../../store/MembershipReducer";
-import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
-import { getProfile } from "../../features/profile/DestinyProfile";
-import { store } from "../../store";
 
 export const LandingRoute = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
+  const [hidden, setHidden] = useState(true);
 
   useEffect(() => {
     setTimeout(async () => {
       if (isAuthenticated()) {
         console.log("Already authenticated");
-        var destinyMembershipId = await getDestinyMembershipId();
-        dispatch(updateMembershipId(destinyMembershipId));
-
-        // update / get manifest
-        // get player data
-        await getProfile(store.getState().membership.membershipId);
 
         navigate("/app");
-      } else if (regenerateTokens()) {
+      } else if (await regenerateTokens()) {
         console.log("Tokens regenerated and authenticated");
-        var destinyMembershipId = await getDestinyMembershipId();
-        dispatch(updateMembershipId(destinyMembershipId));
+
         navigate("/app");
       } else {
         console.log("Not authenticated");
       }
+
+      setHidden(false);
     }, 300);
   }, []);
 
-  return (
-    <React.Fragment>
+  return !hidden ? (
+    <div>
       <Container maxWidth="md">
         <Paper
           elevation={8}
@@ -66,6 +57,8 @@ export const LandingRoute = () => {
           </Grid>
         </Paper>
       </Container>
-    </React.Fragment>
+    </div>
+  ) : (
+    false
   );
 };

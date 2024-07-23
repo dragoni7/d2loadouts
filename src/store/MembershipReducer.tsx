@@ -1,21 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { DestinyMembership } from "../types";
 
 export interface InitialState {
-  membershipId: string;
+  membership: DestinyMembership;
 }
 const initialState: InitialState = {
-  membershipId: "",
+  membership: { membershipId: "", membershipType: 0 },
 };
 
 export const membershipSlice = createSlice({
-  name: "membership",
+  name: "destinyMembership",
   initialState,
   reducers: {
-    updateMembershipId: (state, action: PayloadAction<string>) => {
-      state.membershipId = action.payload;
+    updateMembership: (state, action: PayloadAction<DestinyMembership>) => {
+      state.membership = action.payload;
     },
   },
 });
 
-export const { updateMembershipId } = membershipSlice.actions;
+export const { updateMembership } = membershipSlice.actions;
 export default membershipSlice.reducer;

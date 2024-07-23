@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Dashboard } from "./Dashboard";
-import { ProtectedRoute } from "../../lib/bungie_api/AuthService";
+import { ProtectedRoute } from "../../lib/bungie_api/Authorization";
 
 export const createRouter = () => {
   return createBrowserRouter([

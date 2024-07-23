@@ -1,6 +1,41 @@
+import { MANIFEST_ARMOR, MANIFEST_CLASS } from "./Constants";
 
-export const API_KEY = import.meta.env.VITE_API_KEY
+export function getManifestItemSlot(slotNum: number): string {
+  switch (slotNum) {
+    case MANIFEST_ARMOR.HELMET: {
+      return "helmet";
+    }
+    case MANIFEST_ARMOR.CHEST: {
+      return "chest";
+    }
+    case MANIFEST_ARMOR.GAUNTLETS: {
+      return "arms";
+    }
+    case MANIFEST_ARMOR.LEGS: {
+      return "legs";
+    }
+    case MANIFEST_ARMOR.CLASS: {
+      return "class";
+    }
+    default: {
+      return "";
+    }
+  }
+}
 
-export const CLIENT_ID = import.meta.env.VITE_CLIENT_ID
-
-export const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET
+export function getManifestItemClass(classNum: number): string {
+  switch (classNum) {
+    case MANIFEST_CLASS.HUNTER: {
+      return "hunter";
+    }
+    case MANIFEST_CLASS.WARLOCK: {
+      return "warlock";
+    }
+    case MANIFEST_CLASS.TITAN: {
+      return "titan";
+    }
+    default: {
+      return "";
+    }
+  }
+}
