@@ -1,8 +1,8 @@
+import React, { useEffect, useState, useMemo } from "react";
 import { styled } from "@mui/system";
 import SingleDiamondButton from "../../components/SingleDiamondButton";
 import NumberBoxes from "../../components/NumberBoxes";
 import StatsTable from "../../components/StatsTable";
-import { useEffect, useState } from "react";
 import { store } from "../../store";
 import { getDestinyMembershipId } from "../../features/membership/BungieAccount";
 import { updateMembership } from "../../store/MembershipReducer";
@@ -13,7 +13,7 @@ import { updateManifest } from "../../lib/bungie_api/Manifest";
 import { separateArmor } from "../../features/armor-optimization/separatedArmor";
 import { generatePermutations } from "../../features/armor-optimization/generatePermutations";
 import { filterPermutations } from "../../features/armor-optimization/filterPermutations";
-import { DestinyArmor, ArmorByClass } from "../../types";
+import { DestinyArmor, ArmorByClass } from "../../types"; // Corrected import
 
 const Container = styled("div")({
   display: "flex",
@@ -27,8 +27,8 @@ const HeaderContainer = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  marginBottom: "10px", // Further reduced margin to bring items closer
-  gap: "20px", // Add gap to ensure proper spacing
+  marginBottom: "10px",
+  gap: "20px",
 });
 
 const ContentContainer = styled("div")({
@@ -37,11 +37,11 @@ const ContentContainer = styled("div")({
   justifyContent: "center",
   alignItems: "flex-start",
   width: "100%",
-  padding: "10px", // Further reduced padding to bring items closer
+  padding: "10px",
 });
 
 const LeftPane = styled("div")({
-  marginRight: "10px", // Reduced margin
+  marginRight: "10px",
 });
 
 const RightPane = styled("div")({
@@ -65,30 +65,15 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const updateProfile = async () => {
-      // update / get manifest
       await updateManifest();
-
-      console.log("Manifest updated");
-
-      // store membership details into store
       const destinyMembership = await getDestinyMembershipId();
-
       dispatch(updateMembership(destinyMembership));
-
-      // store profile armor array into store
       const armor = await getProfileArmor();
-
       dispatch(updateProfileArmor(armor));
-
-      console.log(store.getState().profile.armor);
       const separated = separateArmor(armor);
-
-      console.log(separated);
       const warlockPermutations = generatePermutations(separated.warlock);
       setPermutations(warlockPermutations);
       setFilteredPermutations(warlockPermutations);
-
-      console.log("Warlock Armor Permutations:", warlockPermutations);
     };
 
     updateProfile().catch(console.error);
@@ -98,13 +83,11 @@ export const Dashboard = () => {
     if (permutations) {
       const filtered = filterPermutations(permutations, selectedValues);
       setFilteredPermutations(filtered);
-      console.log("Filtered permutations:", filtered);
     }
   }, [selectedValues, permutations]);
 
   const handleThresholdChange = (thresholds: { [key: string]: number }) => {
     setSelectedValues(thresholds);
-    console.log("Selected thresholds:", thresholds);
   };
 
   return (
@@ -118,7 +101,11 @@ export const Dashboard = () => {
         </LeftPane>
         <RightPane>
           <h1 style={{ fontSize: "16px" }}>Armour Combinations</h1>
-          {filteredPermutations ? <StatsTable /> : <p>Loading...</p>}
+          {filteredPermutations ? (
+            <StatsTable permutations={filteredPermutations} />
+          ) : (
+            <p>Loading...</p>
+          )}
         </RightPane>
       </ContentContainer>
     </Container>
