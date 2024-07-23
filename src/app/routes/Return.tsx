@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { handleAuthReturn } from "../../features/auth/AuthReturn";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { handleAuthReturn } from '../../features/auth/AuthReturn';
 
 /**
  * Bungie OAuth redirects here
@@ -12,7 +12,7 @@ export const ReturnRoute = () => {
     const init = async () => {
       if (await handleAuthReturn()) {
         // exit component if successful
-        navigate("/");
+        navigate('/');
       }
     };
 

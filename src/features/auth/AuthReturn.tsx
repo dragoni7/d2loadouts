@@ -1,9 +1,7 @@
-import { generateToken } from "../../lib/bungie_api/TokenService";
+import { generateToken } from '../../lib/bungie_api/TokenService';
 
 function getAuthCodeFromURL(): string | null {
-  return window.location.href.includes("code=")
-    ? window.location.href.split("code=")[1]
-    : null;
+  return window.location.href.includes('code=') ? window.location.href.split('code=')[1] : null;
 }
 
 /**
@@ -13,10 +11,10 @@ function getAuthCodeFromURL(): string | null {
 export async function handleAuthReturn(): Promise<boolean> {
   const code = getAuthCodeFromURL();
 
-  console.log("auth code is " + code);
+  console.log('auth code is ' + code);
 
   if (!code?.length) {
-    console.log("Could not find authorization code");
+    console.log('Could not find authorization code');
     return false;
   }
 

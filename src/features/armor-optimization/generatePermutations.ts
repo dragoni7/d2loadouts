@@ -1,12 +1,15 @@
 import { DestinyArmor, ArmorByType } from '../../types';
 
-
 export const generatePermutations = (armorClass: ArmorByType): DestinyArmor[][] => {
   const { helmet, arms, legs, chest } = armorClass;
   const armorTypes = [helmet, arms, legs, chest];
   const permutations: DestinyArmor[][] = [];
 
-  const generate = (currentPermutation: DestinyArmor[], currentTypeIndex: number, exoticCount: number) => {
+  const generate = (
+    currentPermutation: DestinyArmor[],
+    currentTypeIndex: number,
+    exoticCount: number
+  ) => {
     if (currentTypeIndex === armorTypes.length) {
       permutations.push([...currentPermutation]);
       return;

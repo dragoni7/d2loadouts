@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router';
 
-import { useEffect, useState } from "react";
-import BungieLogin from "../../features/auth/BungieLogin";
-import { regenerateTokens } from "../../lib/bungie_api/TokenService";
-import { isAuthenticated } from "../../lib/bungie_api/Authorization";
-import { Container, Grid, Paper } from "@mui/material";
+import { useEffect, useState } from 'react';
+import BungieLogin from '../../features/auth/BungieLogin';
+import { regenerateTokens } from '../../lib/bungie_api/TokenService';
+import { isAuthenticated } from '../../lib/bungie_api/Authorization';
+import { Container, Grid, Paper } from '@mui/material';
 
 export const LandingRoute = () => {
   const navigate = useNavigate();
@@ -14,15 +14,15 @@ export const LandingRoute = () => {
   useEffect(() => {
     setTimeout(async () => {
       if (isAuthenticated()) {
-        console.log("Already authenticated");
+        console.log('Already authenticated');
 
-        navigate("/app");
+        navigate('/app');
       } else if (await regenerateTokens()) {
-        console.log("Tokens regenerated and authenticated");
+        console.log('Tokens regenerated and authenticated');
 
-        navigate("/app");
+        navigate('/app');
       } else {
-        console.log("Not authenticated");
+        console.log('Not authenticated');
       }
 
       setHidden(false);
@@ -32,17 +32,13 @@ export const LandingRoute = () => {
   return !hidden ? (
     <div>
       <Container maxWidth="md">
-        <Paper
-          elevation={8}
-          square={false}
-          sx={{ bgcolor: "#375873", marginTop: 10 }}
-        >
+        <Paper elevation={8} square={false} sx={{ bgcolor: '#375873', marginTop: 10 }}>
           <Grid
             container
             spacing={3}
-            direction={"column"}
-            justifyContent={"space-around"}
-            alignItems={"center"}
+            direction={'column'}
+            justifyContent={'space-around'}
+            alignItems={'center'}
             padding={6}
           >
             <Grid item md={12} marginBottom={12}>

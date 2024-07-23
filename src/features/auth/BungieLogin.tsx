@@ -1,5 +1,5 @@
-import React from "react";
-import { authenticate } from "../../lib/bungie_api/Authorization";
+import React from 'react';
+import { authenticate } from '../../lib/bungie_api/Authorization';
 
 const BungieLogin: React.FC = () => {
   function onLogIn() {

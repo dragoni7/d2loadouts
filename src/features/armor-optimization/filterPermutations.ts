@@ -1,4 +1,4 @@
-import { DestinyArmor } from "../../types";
+import { DestinyArmor } from '../../types';
 
 interface SelectedThresholds {
   [key: string]: number;
@@ -8,7 +8,7 @@ export const filterPermutations = (
   permutations: DestinyArmor[][],
   thresholds: SelectedThresholds
 ): DestinyArmor[][] => {
-  return permutations.filter(permutation => {
+  return permutations.filter((permutation) => {
     for (const stat of Object.keys(thresholds)) {
       const key = stat.toLowerCase() as keyof DestinyArmor;
       const totalStat = permutation.reduce((sum, item) => {

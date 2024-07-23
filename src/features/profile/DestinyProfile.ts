@@ -1,12 +1,8 @@
-import {
-  PRIMARY_STATS,
-  SOCKET_HASH,
-  STAT_HASH,
-} from "../../lib/bungie_api/Constants";
-import { getProfileDataRequest } from "../../lib/bungie_api/Requests";
-import { db } from "../../store/db";
-import { DestinyArmor } from "../../types";
-import { modReverseDict } from "./util";
+import { PRIMARY_STATS, SOCKET_HASH, STAT_HASH } from '../../lib/bungie_api/Constants';
+import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
+import { db } from '../../store/db';
+import { DestinyArmor } from '../../types';
+import { modReverseDict } from './util';
 
 export async function getProfileArmor(): Promise<DestinyArmor[]> {
   const destinyArmors: DestinyArmor[] = [];
@@ -16,8 +12,7 @@ export async function getProfileArmor(): Promise<DestinyArmor[]> {
   if (response.data.Response) {
     const itemComponents = response.data.Response.itemComponents;
     const profileInventory = response.data.Response.profileInventory.data.items;
-    const characterInventories =
-      response.data.Response.characterInventories.data;
+    const characterInventories = response.data.Response.characterInventories.data;
     const characterEquipment = response.data.Response.characterEquipment.data;
 
     for (const instanceHash in itemComponents.instances.data) {
@@ -37,9 +32,7 @@ export async function getProfileArmor(): Promise<DestinyArmor[]> {
             strength: stats[STAT_HASH.STRENGTH]?.value || 0,
             recovery: stats[STAT_HASH.RECOVERY]?.value || 0,
             instanceHash: instanceHash,
-            masterwork:
-              currentInstance?.energy &&
-              currentInstance.energy.energyCapacity === 10,
+            masterwork: currentInstance?.energy && currentInstance.energy.energyCapacity === 10,
           };
 
           // undo armor mod stat increases
@@ -55,9 +48,7 @@ export async function getProfileArmor(): Promise<DestinyArmor[]> {
             }
 
             // check if armor is artifice
-            destinyArmor.artifice = itemComponents.sockets.data[
-              instanceHash
-            ].sockets.some(
+            destinyArmor.artifice = itemComponents.sockets.data[instanceHash].sockets.some(
               (mod: any) => mod.plugHash === SOCKET_HASH.ARTIFICE_ARMOR
             );
 
@@ -96,7 +87,7 @@ export async function getProfileArmor(): Promise<DestinyArmor[]> {
 
             // get item instance's manifest def
             const armorDef = await db.manifestArmorDef
-              .where("hash")
+              .where('hash')
               .equals(Number(destinyArmor.itemHash))
               .first();
 
@@ -113,7 +104,7 @@ export async function getProfileArmor(): Promise<DestinyArmor[]> {
       }
     }
   } else {
-    console.log("Could not get response");
+    console.log('Could not get response');
   }
 
   return destinyArmors;

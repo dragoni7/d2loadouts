@@ -1,9 +1,9 @@
-import { getDestinyMembershipsRequest } from "../../lib/bungie_api/Requests";
-import { DestinyMembership } from "../../types";
+import { getDestinyMembershipsRequest } from '../../lib/bungie_api/Requests';
+import { DestinyMembership } from '../../types';
 
 export async function getDestinyMembershipId(): Promise<DestinyMembership> {
   const membership: DestinyMembership = {
-    membershipId: "",
+    membershipId: '',
     membershipType: 0,
   };
 
@@ -19,7 +19,7 @@ export async function getDestinyMembershipId(): Promise<DestinyMembership> {
       }
     }
   } else {
-    console.log("Could not get response");
+    console.log('Could not get response');
   }
 
   return membership;
