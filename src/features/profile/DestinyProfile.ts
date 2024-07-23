@@ -1,11 +1,12 @@
-import { PRIMARY_STATS, SOCKET_HASH, STAT_HASH } from '../../lib/bungie_api/Constants';
+import { BUCKET_HASH, PRIMARY_STATS, SOCKET_HASH, STAT_HASH } from '../../lib/bungie_api/Constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
 import { db } from '../../store/db';
-import { DestinyArmor } from '../../types';
-import { modReverseDict } from './util';
+import { Character, DestinyArmor, Emblem, ProfileData } from '../../types';
+import { getCharacterClass, modReverseDict } from './util';
 
-export async function getProfileArmor(): Promise<DestinyArmor[]> {
+export async function getProfileData(): Promise<ProfileData> {
   const destinyArmors: DestinyArmor[] = [];
+  const characters: Character[] = [];
 
   const response = await getProfileDataRequest();
 
@@ -14,7 +15,34 @@ export async function getProfileArmor(): Promise<DestinyArmor[]> {
     const profileInventory = response.data.Response.profileInventory.data.items;
     const characterInventories = response.data.Response.characterInventories.data;
     const characterEquipment = response.data.Response.characterEquipment.data;
+    const characterData = response.data.Response.characters.data;
 
+    // character
+    for (const key in characterData) {
+      const character: Character = {
+        id: characterData[key].characterId,
+        class: getCharacterClass(characterData[key].classHash),
+      };
+
+      for (const item of characterEquipment[key].items) {
+        if (item.bucketHash === BUCKET_HASH.EMBLEM) {
+          // get item instance's manifest def
+          const emblemDef = await db.manifestEmblemDef.where('hash').equals(item.itemHash).first();
+
+          const emblem: Emblem = {
+            secondaryOverlay: emblemDef?.secondaryOverlay,
+            secondarySpecial: emblemDef?.secondarySpecial,
+          };
+
+          character.emblem = emblem;
+          break;
+        }
+      }
+
+      characters.push(character);
+    }
+
+    // armor
     for (const instanceHash in itemComponents.instances.data) {
       const currentInstance = itemComponents.instances.data[instanceHash];
       if (
@@ -107,5 +135,10 @@ export async function getProfileArmor(): Promise<DestinyArmor[]> {
     console.log('Could not get response');
   }
 
-  return destinyArmors;
+  const profile: ProfileData = {
+    characters: characters,
+    armor: destinyArmors,
+  };
+
+  return profile;
 }

@@ -10,6 +10,10 @@ export module PRIMARY_STATS {
   export const DEFENSE = 3897883278;
 }
 
+export module BUCKET_HASH {
+  export const EMBLEM = 4274335291;
+}
+
 export module STAT_HASH {
   export const INTELLECT = 144602215;
   export const RESILIENCE = 392767087;
@@ -17,6 +21,12 @@ export module STAT_HASH {
   export const RECOVERY = 1943323491;
   export const MOBILITY = 2996146975;
   export const STRENGTH = 4244567218;
+}
+
+export module CLASS_HASH {
+  export const TITAN = 3655393761;
+  export const HUNTER = 671679327;
+  export const WARLOCK = 2271682572;
 }
 
 export module SOCKET_HASH {
@@ -29,6 +39,11 @@ export module MANIFEST_ARMOR {
   export const CLASS = 30;
   export const GAUNTLETS = 27;
   export const LEGS = 29;
+}
+
+export module MANIFEST_TYPES {
+  export const ARMOR = 2;
+  export const EMBLEM = 14;
 }
 
 export module MANIFEST_CLASS {

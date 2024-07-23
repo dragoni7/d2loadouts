@@ -1,3 +1,4 @@
+import { CLASS_HASH } from '../../lib/bungie_api/Constants';
 import { DestinyArmor } from '../../types';
 
 export const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
@@ -20,3 +21,20 @@ export const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = 
   2639422088: (armor: DestinyArmor) => (armor.strength = armor.strength - 5),
   2507624050: (armor: DestinyArmor) => (armor.strength = armor.strength - 3),
 };
+
+export function getCharacterClass(classHash: number) {
+  switch (classHash) {
+    case CLASS_HASH.TITAN: {
+      return 'titan';
+    }
+    case CLASS_HASH.HUNTER: {
+      return 'hunter';
+    }
+    case CLASS_HASH.WARLOCK: {
+      return 'warlock';
+    }
+    default: {
+      return '';
+    }
+  }
+}
