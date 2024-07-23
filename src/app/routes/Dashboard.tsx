@@ -10,8 +10,9 @@ import { getProfileArmor } from "../../features/profile/DestinyProfile";
 import { updateProfileArmor } from "../../store/ProfileReducer";
 import { useDispatch } from "react-redux";
 import { updateManifest } from "../../lib/bungie_api/Manifest";
-import { separateArmor } from "../../features/armor-optimization/separatedaArmor";
+import { separateArmor } from "../../features/armor-optimization/separatedArmor";
 import { generatePermutations } from "../../features/armor-optimization/generatePermutations";
+import { filterPermutations } from "../../features/armor-optimization/filterPermutations";
 import { DestinyArmor, ArmorByClass } from "../../types";
 
 const Container = styled("div")({
@@ -55,6 +56,12 @@ export const Dashboard = () => {
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(
     null
   );
+  const [filteredPermutations, setFilteredPermutations] = useState<
+    DestinyArmor[][] | null
+  >(null);
+  const [selectedValues, setSelectedValues] = useState<{
+    [key: string]: number;
+  }>({});
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -69,7 +76,7 @@ export const Dashboard = () => {
       dispatch(updateMembership(destinyMembership));
 
       // store profile armor array into store
-      var armor = await getProfileArmor();
+      const armor = await getProfileArmor();
 
       dispatch(updateProfileArmor(armor));
 
@@ -79,11 +86,26 @@ export const Dashboard = () => {
       console.log(separated);
       const warlockPermutations = generatePermutations(separated.warlock);
       setPermutations(warlockPermutations);
+      setFilteredPermutations(warlockPermutations);
+
       console.log("Warlock Armor Permutations:", warlockPermutations);
     };
 
     updateProfile().catch(console.error);
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (permutations) {
+      const filtered = filterPermutations(permutations, selectedValues);
+      setFilteredPermutations(filtered);
+      console.log("Filtered permutations:", filtered);
+    }
+  }, [selectedValues, permutations]);
+
+  const handleThresholdChange = (thresholds: { [key: string]: number }) => {
+    setSelectedValues(thresholds);
+    console.log("Selected thresholds:", thresholds);
+  };
 
   return (
     <Container>
@@ -92,11 +114,11 @@ export const Dashboard = () => {
       </HeaderContainer>
       <ContentContainer>
         <LeftPane>
-          <NumberBoxes />
+          <NumberBoxes onThresholdChange={handleThresholdChange} />
         </LeftPane>
         <RightPane>
           <h1 style={{ fontSize: "16px" }}>Armour Combinations</h1>
-          <StatsTable />
+          {filteredPermutations ? <StatsTable /> : <p>Loading...</p>}
         </RightPane>
       </ContentContainer>
     </Container>

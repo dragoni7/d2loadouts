@@ -165,6 +165,6 @@ const StatsTable: React.FC = () => {
       </table>
     </div>
   );
-}
+};
 
 export default StatsTable;
