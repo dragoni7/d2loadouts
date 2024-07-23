@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
-import NumberBoxes from '../../components/NumberBoxes';
-import StatsTable from '../../components/StatsTable';
-import { store } from '../../store';
+import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/BungieAccount';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileArmor } from '../../features/profile/DestinyProfile';
@@ -13,7 +11,8 @@ import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { separateArmor } from '../../features/armor-optimization/separatedArmor';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorByClass } from '../../types'; // Corrected import
+import { DestinyArmor, ArmorByClass } from '../../types';
+import StatsTable from '../../features/armor-optimization/StatsTable';
 
 const Container = styled('div')({
   display: 'flex',

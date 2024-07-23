@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { DestinyArmor } from "../types";
+} from '@tanstack/react-table';
+import { DestinyArmor } from '../../types';
 
 const columnHelper = createColumnHelper<{
   type: string;
@@ -18,33 +18,33 @@ const columnHelper = createColumnHelper<{
 }>();
 
 const columns: any = [
-  columnHelper.accessor("type", {
+  columnHelper.accessor('type', {
     cell: (info) => info.getValue(),
-    header: "Type",
+    header: 'Type',
   }),
-  columnHelper.accessor("mobility", {
+  columnHelper.accessor('mobility', {
     cell: (info) => info.getValue(),
-    header: "Mobility",
+    header: 'Mobility',
   }),
-  columnHelper.accessor("resilience", {
+  columnHelper.accessor('resilience', {
     cell: (info) => info.getValue(),
-    header: "Resilience",
+    header: 'Resilience',
   }),
-  columnHelper.accessor("recovery", {
+  columnHelper.accessor('recovery', {
     cell: (info) => info.getValue(),
-    header: "Recovery",
+    header: 'Recovery',
   }),
-  columnHelper.accessor("discipline", {
+  columnHelper.accessor('discipline', {
     cell: (info) => info.getValue(),
-    header: "Discipline",
+    header: 'Discipline',
   }),
-  columnHelper.accessor("intellect", {
+  columnHelper.accessor('intellect', {
     cell: (info) => info.getValue(),
-    header: "Intellect",
+    header: 'Intellect',
   }),
-  columnHelper.accessor("strength", {
+  columnHelper.accessor('strength', {
     cell: (info) => info.getValue(),
-    header: "Strength",
+    header: 'Strength',
   }),
 ];
 
@@ -83,41 +83,35 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
   });
 
   return (
-    <div className="p-2" style={{ fontSize: "10px", width: "100%" }}>
-      <div style={{ display: "flex", borderBottom: "1px solid white" }}>
+    <div className="p-2" style={{ fontSize: '10px', width: '100%' }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid white' }}>
         {table.getHeaderGroups().map((headerGroup) =>
           headerGroup.headers.map((header) => (
             <div
               key={header.id}
               style={{
-                fontSize: "10px",
-                padding: "4px",
-                border: "1px solid white",
+                fontSize: '10px',
+                padding: '4px',
+                border: '1px solid white',
                 flex: 1,
               }}
             >
               {header.isPlaceholder
                 ? null
-                : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
+                : flexRender(header.column.columnDef.header, header.getContext())}
             </div>
           ))
         )}
       </div>
       <div>
         {table.getRowModel().rows.map((row) => (
-          <div
-            key={row.id}
-            style={{ display: "flex", borderBottom: "1px solid white" }}
-          >
+          <div key={row.id} style={{ display: 'flex', borderBottom: '1px solid white' }}>
             {row.getVisibleCells().map((cell) => (
               <div
                 key={cell.id}
                 style={{
-                  padding: "4px",
-                  border: "1px solid white",
+                  padding: '4px',
+                  border: '1px solid white',
                   flex: 1,
                 }}
               >
@@ -129,9 +123,9 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
       </div>
       <div
         style={{
-          marginTop: "10px",
-          display: "flex",
-          justifyContent: "space-between",
+          marginTop: '10px',
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
         <button
@@ -145,9 +139,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
         </span>
         <button
           onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, Math.ceil(data.length / itemsPerPage) - 1)
-            )
+            setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(data.length / itemsPerPage) - 1))
           }
           disabled={currentPage === Math.ceil(data.length / itemsPerPage) - 1}
         >
