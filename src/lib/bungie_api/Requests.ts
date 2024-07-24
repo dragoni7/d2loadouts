@@ -55,6 +55,46 @@ export function transferItemRequest(
   });
 }
 
+export function equipItemRequest(
+  itemId: string,
+  characterId: number
+): Promise<AxiosResponse<any, any>> {
+  const accessToken = getTokens()?.accessToken.value;
+  const membershipType = store.getState().destinyMembership.membership.membershipType;
+
+  let body = {
+    characterId: characterId,
+    itemId: itemId,
+    membershipType: membershipType,
+  };
+
+  return _post('/Platform/Destiny2/Actions/Items/EquipItem/', body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export function equipItemsRequest(
+  itemIds: string[],
+  characterId: number
+): Promise<AxiosResponse<any, any>> {
+  const accessToken = getTokens()?.accessToken.value;
+  const membershipType = store.getState().destinyMembership.membership.membershipType;
+
+  let body = {
+    characterId: characterId,
+    itemIds: itemIds,
+    membershipType: membershipType,
+  };
+
+  return _post('/Platform/Destiny2/Actions/Items/EquipItems/', body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
 export function getOAuthTokensRequest(
   refresh: boolean,
   authCode: string

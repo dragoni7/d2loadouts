@@ -68,7 +68,7 @@ export async function getProfileData(): Promise<ProfileData> {
             instanceHash: instanceHash,
             masterwork: currentInstance?.energy && currentInstance.energy.energyCapacity === 10,
             itemHash: '',
-            location: ITEM_LOCATIONS.PROFILE_INVENTORY,
+            location: ITEM_LOCATIONS.VAULT,
           };
 
           // undo armor mod stat increases

@@ -6,8 +6,12 @@ export module API_CREDENTIALS {
   export const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET;
 }
 
+export module ERRORS {
+  export const INVALID_EQUIP_LOCATION = 1671;
+}
+
 export module ITEM_LOCATIONS {
-  export const PROFILE_INVENTORY = 0;
+  export const VAULT = 0;
   export const CHARACTER_INVENTORY = 1;
   export const CHARACTER_EQUIPMENT = 2;
 }

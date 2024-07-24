@@ -16,6 +16,15 @@ export type DestinyArmor = {
   location: number;
 };
 
+export type Loadout = {
+  armor: DestinyArmor[];
+  characterId: number;
+  // super
+  // aspects
+  // fragments
+  // others?
+};
+
 export type Character = {
   id: number;
   class: string;
