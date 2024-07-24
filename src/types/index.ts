@@ -1,5 +1,3 @@
-import { extname } from 'path';
-
 export type DestinyArmor = {
   intellect: number;
   discipline: number;
@@ -8,13 +6,14 @@ export type DestinyArmor = {
   strength: number;
   recovery: number;
   instanceHash: string;
-  itemHash?: string;
+  itemHash: string;
   artifice?: boolean;
   masterwork: boolean;
   exotic?: boolean;
   class?: string;
   type?: string;
   socket?: string;
+  location: number;
 };
 
 export type Character = {

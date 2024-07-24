@@ -1,4 +1,10 @@
-import { BUCKET_HASH, PRIMARY_STATS, SOCKET_HASH, STAT_HASH } from '../../lib/bungie_api/Constants';
+import {
+  BUCKET_HASH,
+  ITEM_LOCATIONS,
+  PRIMARY_STATS,
+  SOCKET_HASH,
+  STAT_HASH,
+} from '../../lib/bungie_api/Constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
 import { db } from '../../store/db';
 import { Character, DestinyArmor, Emblem, ProfileData } from '../../types';
@@ -61,6 +67,8 @@ export async function getProfileData(): Promise<ProfileData> {
             recovery: stats[STAT_HASH.RECOVERY]?.value || 0,
             instanceHash: instanceHash,
             masterwork: currentInstance?.energy && currentInstance.energy.energyCapacity === 10,
+            itemHash: '',
+            location: ITEM_LOCATIONS.PROFILE_INVENTORY,
           };
 
           // undo armor mod stat increases
@@ -95,6 +103,7 @@ export async function getProfileData(): Promise<ProfileData> {
                 for (const item of characterInventories[key].items) {
                   if (item.itemInstanceId === instanceHash) {
                     destinyArmor.itemHash = item.itemHash;
+                    destinyArmor.location = ITEM_LOCATIONS.CHARACTER_INVENTORY;
                     break;
                   }
                 }
@@ -107,6 +116,7 @@ export async function getProfileData(): Promise<ProfileData> {
                 for (const item of characterEquipment[key].items) {
                   if (item.itemInstanceId === instanceHash) {
                     destinyArmor.itemHash = item.itemHash;
+                    destinyArmor.location = ITEM_LOCATIONS.CHARACTER_EQUIPMENT;
                     break;
                   }
                 }

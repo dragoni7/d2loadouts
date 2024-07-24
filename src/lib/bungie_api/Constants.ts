@@ -6,6 +6,12 @@ export module API_CREDENTIALS {
   export const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET;
 }
 
+export module ITEM_LOCATIONS {
+  export const PROFILE_INVENTORY = 0;
+  export const CHARACTER_INVENTORY = 1;
+  export const CHARACTER_EQUIPMENT = 2;
+}
+
 export module PRIMARY_STATS {
   export const DEFENSE = 3897883278;
 }

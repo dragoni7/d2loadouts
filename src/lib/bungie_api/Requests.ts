@@ -29,6 +29,32 @@ export function getProfileDataRequest(): Promise<AxiosResponse<any, any>> {
   );
 }
 
+export function transferItemRequest(
+  itemReferenceHash: number,
+  stackSize: number,
+  transferToVault: boolean,
+  itemId: string,
+  characterId: number
+): Promise<AxiosResponse<any, any>> {
+  const accessToken = getTokens()?.accessToken.value;
+  const membershipType = store.getState().destinyMembership.membership.membershipType;
+
+  let body = {
+    characterId: characterId,
+    itemId: itemId,
+    itemReferenceHash: itemReferenceHash,
+    membershipType: membershipType,
+    stackSize: stackSize,
+    transferToVault: transferToVault,
+  };
+
+  return _post('/Platform/Destiny2/Actions/Items/TransferItem/', body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
 export function getOAuthTokensRequest(
   refresh: boolean,
   authCode: string
