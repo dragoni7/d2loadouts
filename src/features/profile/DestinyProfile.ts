@@ -69,6 +69,7 @@ export async function getProfileData(): Promise<ProfileData> {
             masterwork: currentInstance?.energy && currentInstance.energy.energyCapacity === 10,
             itemHash: '',
             location: ITEM_LOCATIONS.VAULT,
+            type: '',
           };
 
           // undo armor mod stat increases
@@ -129,12 +130,14 @@ export async function getProfileData(): Promise<ProfileData> {
               .equals(Number(destinyArmor.itemHash))
               .first();
 
-            // determine required class
-            destinyArmor.class = armorDef?.characterClass;
-            // determine armor slot
-            destinyArmor.type = armorDef?.slot;
-            // determine if exotic
-            destinyArmor.exotic = armorDef?.isExotic;
+            if (armorDef) {
+              // determine required class
+              destinyArmor.class = armorDef.characterClass;
+              // determine armor slot
+              destinyArmor.type = armorDef.slot;
+              // determine if exotic
+              destinyArmor.exotic = armorDef.isExotic;
+            }
 
             destinyArmors.push(destinyArmor);
           }

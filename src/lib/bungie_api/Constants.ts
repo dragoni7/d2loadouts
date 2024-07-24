@@ -8,6 +8,7 @@ export module API_CREDENTIALS {
 
 export module ERRORS {
   export const INVALID_EQUIP_LOCATION = 1671;
+  export const CANNOT_FIND_ITEM = 1623;
 }
 
 export module ITEM_LOCATIONS {
@@ -22,6 +23,11 @@ export module PRIMARY_STATS {
 
 export module BUCKET_HASH {
   export const EMBLEM = 4274335291;
+  export const HELMET = 3448274439;
+  export const GAUNTLETS = 3551918588;
+  export const CHEST_ARMOR = 14239492;
+  export const LEG_ARMOR = 20886954;
+  export const CLASS_ARMOR = 1585787867;
 }
 
 export module STAT_HASH {

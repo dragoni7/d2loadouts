@@ -11,7 +11,7 @@ export type DestinyArmor = {
   masterwork: boolean;
   exotic?: boolean;
   class?: string;
-  type?: string;
+  type: string;
   socket?: string;
   location: number;
 };
