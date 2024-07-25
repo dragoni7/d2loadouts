@@ -11,24 +11,19 @@ import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { separateArmor } from '../../features/armor-optimization/separatedArmor';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorByClass, ManifestEmblem } from '../../types';
+import { DestinyArmor, ArmorByClass } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
+import HeaderComponent from '../../components/HeaderComponent';
 
 const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
   alignItems: 'center',
   padding: '20px',
-});
-
-const HeaderContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginBottom: '10px',
-  gap: '20px',
+  paddingTop: '170px',
+  width: '100vw',
+  boxSizing: 'border-box',
 });
 
 const ContentContainer = styled('div')({
@@ -55,9 +50,7 @@ export const Dashboard = () => {
   const [separatedArmor, setSeparatedArmor] = useState<ArmorByClass | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
   const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
-  const [selectedValues, setSelectedValues] = useState<{
-    [key: string]: number;
-  }>({});
+  const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -86,11 +79,10 @@ export const Dashboard = () => {
   const handleThresholdChange = (thresholds: { [key: string]: number }) => {
     setSelectedValues(thresholds);
   };
+
   useEffect(() => {
-    console.log('Membership:', membership);
     if (characters.length > 0) {
       const character = characters[0];
-      console.log('Character:', character);
       if (character.emblem) {
         console.log(
           `Emblem: ${character.emblem.secondaryOverlay || ''} ${
@@ -105,16 +97,13 @@ export const Dashboard = () => {
 
   return (
     <Container>
-      <HeaderContainer>
-        <SingleDiamondButton />
-        <div>{membership.bungieGlobalDisplayName}</div>
-        {character?.emblem && (
-          <div>
-            Emblem1: {character.emblem.secondaryOverlay || ''}{' '}
-            {character.emblem.secondarySpecial || ''}
-          </div>
-        )}
-      </HeaderContainer>
+      {character?.emblem?.secondarySpecial && (
+        <HeaderComponent
+          emblemUrl={character.emblem.secondarySpecial}
+          overlayUrl={character.emblem.secondaryOverlay || ''}
+          displayName={membership.bungieGlobalDisplayName}
+        />
+      )}
       <ContentContainer>
         <LeftPane>
           <NumberBoxes onThresholdChange={handleThresholdChange} />
