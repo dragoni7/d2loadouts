@@ -3,6 +3,7 @@ import { getBungieMembershipId, getTokens } from '../../store/TokensStore';
 import { _get, _post } from './BungieApiClient';
 import { API_CREDENTIALS } from './Constants';
 import { store } from '../../store';
+import { Plug } from '../../types';
 
 export function getDestinyMembershipsRequest(): Promise<AxiosResponse<any, any>> {
   const bungieMembershipId = getBungieMembershipId();
@@ -105,6 +106,28 @@ export function equipItemsRequest(
   };
 
   return _post('/Platform/Destiny2/Actions/Items/EquipItems/', body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+export function insertSocketPlugFreeRequest(
+  itemId: string,
+  plug: Plug,
+  characterId: number
+): Promise<AxiosResponse<any, any>> {
+  const accessToken = getTokens()?.accessToken.value;
+  const membershipType = store.getState().destinyMembership.membership.membershipType;
+
+  let body = {
+    characterId: characterId,
+    itemId: itemId,
+    membershipType: membershipType,
+    plug: plug,
+  };
+
+  return _post('/Platform/Destiny2/Actions/Items/InsertSocketPlugFree/', body, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

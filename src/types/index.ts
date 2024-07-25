@@ -16,13 +16,24 @@ export type DestinyArmor = {
   location: number;
 };
 
+export type Subclass = {
+  itemId: string;
+  super: Plug;
+  abilities: Plug[];
+  aspects: Plug[];
+  fragments: Plug[];
+};
+
+export type Plug = {
+  plugItemHash: string;
+  socketArrayType: number;
+  socketIndex: number;
+};
+
 export type Loadout = {
   armor: DestinyArmor[];
   characterId: number;
-  // super
-  // aspects
-  // fragments
-  // others?
+  subclass: Subclass;
 };
 
 export type Character = {
