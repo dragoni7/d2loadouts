@@ -5,7 +5,7 @@ export interface InitialState {
   membership: DestinyMembership;
 }
 const initialState: InitialState = {
-  membership: { membershipId: '', membershipType: 0 },
+  membership: { membershipId: '', membershipType: 0, bungieGlobalDisplayName: '' },
 };
 
 export const membershipSlice = createSlice({

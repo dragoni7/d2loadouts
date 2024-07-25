@@ -36,6 +36,7 @@ export type Emblem = {
 export type DestinyMembership = {
   membershipId: string;
   membershipType: number;
+  bungieGlobalDisplayName: string;
 };
 
 export interface ManifestEntry {

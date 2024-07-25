@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
@@ -6,13 +6,14 @@ import { getDestinyMembershipId } from '../../features/membership/BungieAccount'
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/DestinyProfile';
 import { updateProfileArmor, updateProfileCharacters } from '../../store/ProfileReducer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { separateArmor } from '../../features/armor-optimization/separatedArmor';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorByClass } from '../../types';
+import { DestinyArmor, ArmorByClass, ManifestEmblem } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
+import { RootState } from '../../store';
 
 const Container = styled('div')({
   display: 'flex',
@@ -49,6 +50,8 @@ const RightPane = styled('div')({
 
 export const Dashboard = () => {
   const dispatch = useDispatch();
+  const membership = useSelector((state: RootState) => state.destinyMembership.membership);
+  const characters = useSelector((state: RootState) => state.profile.characters);
   const [separatedArmor, setSeparatedArmor] = useState<ArmorByClass | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
   const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
@@ -83,11 +86,34 @@ export const Dashboard = () => {
   const handleThresholdChange = (thresholds: { [key: string]: number }) => {
     setSelectedValues(thresholds);
   };
+  useEffect(() => {
+    console.log('Membership:', membership);
+    if (characters.length > 0) {
+      const character = characters[0];
+      console.log('Character:', character);
+      if (character.emblem) {
+        console.log(
+          `Emblem: ${character.emblem.secondaryOverlay || ''} ${
+            character.emblem.secondarySpecial || ''
+          }`
+        );
+      }
+    }
+  }, [membership, characters]);
+
+  const character = characters[0];
 
   return (
     <Container>
       <HeaderContainer>
         <SingleDiamondButton />
+        <div>{membership.bungieGlobalDisplayName}</div>
+        {character?.emblem && (
+          <div>
+            Emblem1: {character.emblem.secondaryOverlay || ''}{' '}
+            {character.emblem.secondarySpecial || ''}
+          </div>
+        )}
       </HeaderContainer>
       <ContentContainer>
         <LeftPane>

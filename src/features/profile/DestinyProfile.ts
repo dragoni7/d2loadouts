@@ -29,6 +29,12 @@ export async function getProfileData(): Promise<ProfileData> {
           // get item instance's manifest def
           const emblemDef = await db.manifestEmblemDef.where('hash').equals(item.itemHash).first();
 
+          if (emblemDef) {
+            console.log(`Fetched emblem data for hash ${item.itemHash}: ${JSON.stringify(emblemDef)}`);
+          } else {
+            console.log(`No emblem data found for hash ${item.itemHash}`);
+          }
+
           const emblem: Emblem = {
             secondaryOverlay: emblemDef?.secondaryOverlay,
             secondarySpecial: emblemDef?.secondarySpecial,
