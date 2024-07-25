@@ -11,7 +11,7 @@ import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { separateArmor } from '../../features/armor-optimization/separatedArmor';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorByClass } from '../../types';
+import { DestinyArmor, ArmorByClass, Character, CharacterClass } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -24,16 +24,23 @@ const Container = styled('div')({
   paddingTop: '170px',
   width: '100vw',
   boxSizing: 'border-box',
+  overflow: 'hidden',
 });
 
-const ContentContainer = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
-  width: '100%',
-  padding: '10px',
-});
+const ContentContainer = styled('div')<{ isTransitioning: boolean; direction: 'left' | 'right' }>(
+  ({ isTransitioning, direction }) => ({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    width: '100%',
+    padding: '10px',
+    transition: 'transform 0.3s ease-in-out',
+    transform: isTransitioning
+      ? `translateX(${direction === 'left' ? '-100vw' : '100vw'})`
+      : 'translateX(0)',
+  })
+);
 
 const LeftPane = styled('div')({
   marginRight: '10px',
@@ -47,10 +54,13 @@ export const Dashboard = () => {
   const dispatch = useDispatch();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.characters);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [separatedArmor, setSeparatedArmor] = useState<ArmorByClass | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
   const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [direction, setDirection] = useState<'left' | 'right'>('left');
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -61,9 +71,15 @@ export const Dashboard = () => {
       dispatch(updateProfileArmor(profileData.armor));
       dispatch(updateProfileCharacters(profileData.characters));
       const separated = separateArmor(profileData.armor);
-      const warlockPermutations = generatePermutations(separated.warlock);
-      setPermutations(warlockPermutations);
-      setFilteredPermutations(warlockPermutations);
+      setSeparatedArmor(separated);
+      if (profileData.characters.length > 0) {
+        setSelectedCharacter(profileData.characters[0]);
+        const initialPermutations = generatePermutations(
+          separated[profileData.characters[0].class as CharacterClass]
+        );
+        setPermutations(initialPermutations);
+        setFilteredPermutations(initialPermutations);
+      }
     };
 
     updateProfile().catch(console.error);
@@ -80,31 +96,36 @@ export const Dashboard = () => {
     setSelectedValues(thresholds);
   };
 
-  useEffect(() => {
-    if (characters.length > 0) {
-      const character = characters[0];
-      if (character.emblem) {
-        console.log(
-          `Emblem: ${character.emblem.secondaryOverlay || ''} ${
-            character.emblem.secondarySpecial || ''
-          }`
-        );
-      }
+  const handleCharacterClick = (character: Character) => {
+    if (selectedCharacter?.id !== character.id) {
+      setDirection(character.class === 'warlock' ? 'left' : 'right');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setSelectedCharacter(character);
+        if (separatedArmor) {
+          const characterClass: CharacterClass = character.class as CharacterClass;
+          const newPermutations = generatePermutations(separatedArmor[characterClass]);
+          setPermutations(newPermutations);
+          setFilteredPermutations(newPermutations);
+        }
+        setIsTransitioning(false);
+      }, 300);
     }
-  }, [membership, characters]);
-
-  const character = characters[0];
+  };
 
   return (
     <Container>
-      {character?.emblem?.secondarySpecial && (
+      {selectedCharacter?.emblem?.secondarySpecial && (
         <HeaderComponent
-          emblemUrl={character.emblem.secondarySpecial}
-          overlayUrl={character.emblem.secondaryOverlay || ''}
+          emblemUrl={selectedCharacter.emblem.secondarySpecial}
+          overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
           displayName={membership.bungieGlobalDisplayName}
+          characters={characters}
+          selectedCharacter={selectedCharacter}
+          onCharacterClick={handleCharacterClick}
         />
       )}
-      <ContentContainer>
+      <ContentContainer isTransitioning={isTransitioning} direction={direction}>
         <LeftPane>
           <NumberBoxes onThresholdChange={handleThresholdChange} />
         </LeftPane>

@@ -1,4 +1,4 @@
-import { extname } from 'path';
+export type CharacterClass = 'warlock' | 'hunter' | 'titan';
 
 export type DestinyArmor = {
   intellect: number;
@@ -19,7 +19,7 @@ export type DestinyArmor = {
 
 export type Character = {
   id: number;
-  class: string;
+  class: CharacterClass;
   emblem?: Emblem;
 };
 
