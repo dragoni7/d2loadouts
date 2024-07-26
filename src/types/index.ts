@@ -1,3 +1,5 @@
+export type CharacterClass = 'warlock' | 'hunter' | 'titan';
+
 export type DestinyArmor = {
   intellect: number;
   discipline: number;
@@ -47,7 +49,7 @@ export type Loadout = {
 
 export type Character = {
   id: number;
-  class: string;
+  class: CharacterClass;
   emblem?: Emblem;
 };
 
@@ -64,6 +66,7 @@ export type Emblem = {
 export type DestinyMembership = {
   membershipId: string;
   membershipType: number;
+  bungieGlobalDisplayName: string;
 };
 
 export interface ManifestEntry {

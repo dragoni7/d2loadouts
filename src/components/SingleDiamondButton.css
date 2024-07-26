@@ -6,21 +6,22 @@
 }
 
 .button-container {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
 .single-diamond-button {
-  width: 60px;
-  height: 60px;
+  width: 140px;
+  height: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
   transform: rotate(45deg);
   color: white;
   font-weight: bold;
-  border: 1px solid rgba(255, 255, 255, 0.5); /* Initial border with 50% opacity */
+  border: 1px solid rgba(255, 255, 255, 0.5);
   transition: opacity 0.3s, transform 0.3s, border 0.3s;
   cursor: pointer;
   z-index: 2;
@@ -38,7 +39,7 @@
 }
 
 .single-diamond-button:hover::before {
-  border-color: rgba(255, 255, 255, 1); /* 100% opacity border on hover */
+  border-color: rgba(255, 255, 255, 1);
 }
 
 .single-diamond-button span {
@@ -48,7 +49,7 @@
 .diamond-grid-animated-container {
   position: absolute;
   top: 50%;
-  left: -120px; /* Adjust position to appear to the left */
+  left: -200px;
   transform: translateY(-50%);
   display: flex;
   justify-content: center;
@@ -61,8 +62,10 @@
 }
 
 .mini-diamond-button {
-  width: 30px;
-  height: 30px;
+  position: absolute;
+  left: -90px;
+  width: 40px;
+  height: 40px; 
   background-color: #ff6347;
   opacity: 0.5;
   transform: rotate(45deg);
@@ -71,14 +74,19 @@
 }
 
 .mini-animated-button {
-  width: 75px;
-  height: 75px;
+  width: 150px;
+  height: 150px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: scale(0.5);
+  transform: scale(1.5); 
 }
 
 .hide-mini-diamond .mini-diamond-button {
   opacity: 0;
+}
+
+.placeholder {
+  width: 150px;
+  height: 150px;
 }

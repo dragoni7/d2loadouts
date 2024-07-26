@@ -5,6 +5,7 @@ export async function getDestinyMembershipId(): Promise<DestinyMembership> {
   const membership: DestinyMembership = {
     membershipId: '',
     membershipType: 0,
+    bungieGlobalDisplayName:''
   };
 
   const response = await getDestinyMembershipsRequest();
@@ -15,6 +16,7 @@ export async function getDestinyMembershipId(): Promise<DestinyMembership> {
     for (const m of response.data.Response.destinyMemberships) {
       if (membership.membershipId === m.membershipId) {
         membership.membershipType = m.membershipType;
+        membership.bungieGlobalDisplayName = m.bungieGlobalDisplayName;
         break;
       }
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
@@ -6,55 +6,111 @@ import { getDestinyMembershipId } from '../../features/membership/BungieAccount'
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/DestinyProfile';
 import { updateProfileArmor, updateProfileCharacters } from '../../store/ProfileReducer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { separateArmor } from '../../features/armor-optimization/separatedArmor';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorByClass } from '../../types';
+import { DestinyArmor, ArmorByClass, Character, CharacterClass } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
+import { RootState } from '../../store';
+import HeaderComponent from '../../components/HeaderComponent';
+import NewComponent from '../../components/ExoticSearch';
+import greyBackground from '../../assets/grey.png';
 
-const Container = styled('div')({
+const PageContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  height: '100vh',
+  overflow: 'hidden',
+});
+
+const Container = styled('div')({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
   padding: '20px',
+  width: '100vw',
+  boxSizing: 'border-box',
+  overflow: 'hidden',
+  backgroundImage: `url(${greyBackground})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  marginTop: '130px',
 });
 
-const HeaderContainer = styled('div')({
+const TopPane = styled('div')({
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
-  marginBottom: '10px',
-  gap: '20px',
-});
-
-const ContentContainer = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
   width: '100%',
   padding: '10px',
+  boxSizing: 'border-box',
+  marginBottom: '20px',
+  backgroundColor: 'transparent',
+  border: '2px solid white',
+});
+
+const BottomPane = styled('div')({
+  display: 'flex',
+  width: '100%',
+  padding: '10px',
+  boxSizing: 'border-box',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  border: '2px solid white',
 });
 
 const LeftPane = styled('div')({
-  marginRight: '10px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  width: '100%',
+  maxWidth: '600px',
+  padding: '10px',
+  boxSizing: 'border-box',
+  marginTop: '-80px',
+  margin: '0 auto',
 });
 
 const RightPane = styled('div')({
-  flexGrow: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  width: '100%',
+  maxWidth: '600px',
+  padding: '10px',
+  boxSizing: 'border-box',
+  margin: '0 auto',
+  border: '2px solid white',
+});
+
+const DiamondButtonWrapper = styled('div')({
+  marginTop: '50px',
+  marginBottom: '80px',
+  marginRight: '40px',
+  alignSelf: 'flex-end',
+});
+
+const NumberBoxesWrapper = styled('div')({
+  marginBottom: '20px',
+});
+
+const NewComponentWrapper = styled('div')({
+  marginBottom: '20px',
 });
 
 export const Dashboard = () => {
   const dispatch = useDispatch();
+  const membership = useSelector((state: RootState) => state.destinyMembership.membership);
+  const characters = useSelector((state: RootState) => state.profile.characters);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [separatedArmor, setSeparatedArmor] = useState<ArmorByClass | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
   const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
-  const [selectedValues, setSelectedValues] = useState<{
-    [key: string]: number;
-  }>({});
+  const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [direction, setDirection] = useState<'left' | 'right'>('left');
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -65,9 +121,15 @@ export const Dashboard = () => {
       dispatch(updateProfileArmor(profileData.armor));
       dispatch(updateProfileCharacters(profileData.characters));
       const separated = separateArmor(profileData.armor);
-      const warlockPermutations = generatePermutations(separated.warlock);
-      setPermutations(warlockPermutations);
-      setFilteredPermutations(warlockPermutations);
+      setSeparatedArmor(separated);
+      if (profileData.characters.length > 0) {
+        setSelectedCharacter(profileData.characters[0]);
+        const initialPermutations = generatePermutations(
+          separated[profileData.characters[0].class as CharacterClass]
+        );
+        setPermutations(initialPermutations);
+        setFilteredPermutations(initialPermutations);
+      }
     };
 
     updateProfile().catch(console.error);
@@ -84,24 +146,58 @@ export const Dashboard = () => {
     setSelectedValues(thresholds);
   };
 
+  const handleCharacterClick = (character: Character) => {
+    if (selectedCharacter?.id !== character.id) {
+      setDirection(character.class === 'warlock' ? 'left' : 'right');
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setSelectedCharacter(character);
+        if (separatedArmor) {
+          const characterClass: CharacterClass = character.class as CharacterClass;
+          const newPermutations = generatePermutations(separatedArmor[characterClass]);
+          setPermutations(newPermutations);
+          setFilteredPermutations(newPermutations);
+        }
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
+
   return (
-    <Container>
-      <HeaderContainer>
-        <SingleDiamondButton />
-      </HeaderContainer>
-      <ContentContainer>
-        <LeftPane>
-          <NumberBoxes onThresholdChange={handleThresholdChange} />
-        </LeftPane>
-        <RightPane>
-          <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
-          {filteredPermutations ? (
-            <StatsTable permutations={filteredPermutations} />
-          ) : (
-            <p>Loading...</p>
-          )}
-        </RightPane>
-      </ContentContainer>
-    </Container>
+    <PageContainer>
+      {selectedCharacter?.emblem?.secondarySpecial && (
+        <HeaderComponent
+          emblemUrl={selectedCharacter.emblem.secondarySpecial}
+          overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
+          displayName={membership.bungieGlobalDisplayName}
+          characters={characters}
+          selectedCharacter={selectedCharacter}
+          onCharacterClick={handleCharacterClick}
+        />
+      )}
+      <Container>
+        <NewComponentWrapper>
+          <NewComponent />
+        </NewComponentWrapper>
+        <BottomPane>
+          <LeftPane>
+            <DiamondButtonWrapper>
+              <SingleDiamondButton />
+            </DiamondButtonWrapper>
+            <NumberBoxesWrapper>
+              <NumberBoxes onThresholdChange={handleThresholdChange} />
+            </NumberBoxesWrapper>
+          </LeftPane>
+          <RightPane>
+            <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
+            {filteredPermutations ? (
+              <StatsTable permutations={filteredPermutations} />
+            ) : (
+              <p>Loading...</p>
+            )}
+          </RightPane>
+        </BottomPane>
+      </Container>
+    </PageContainer>
   );
 };

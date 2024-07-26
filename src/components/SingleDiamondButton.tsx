@@ -8,7 +8,7 @@ const SingleDiamondButton: React.FC = () => {
   const [currentButton, setCurrentButton] = useState({
     label: '5',
     color: '#ff6347',
-    type: 'single' // Added type to differentiate between single diamond and animated button
+    type: 'single', // Added type to differentiate between single diamond and animated button
   });
 
   const handleHover = () => setHovered(true);
@@ -19,11 +19,7 @@ const SingleDiamondButton: React.FC = () => {
   };
 
   return (
-    <div 
-      className="single-diamond-wrapper" 
-      onMouseEnter={handleHover} 
-      onMouseLeave={handleLeave}
-    >
+    <div className="single-diamond-wrapper" onMouseEnter={handleHover} onMouseLeave={handleLeave}>
       <div className={`button-container ${hovered ? 'hide-mini-diamond' : ''}`}>
         <div className="mini-diamond-button" />
         {currentButton.type === 'single' ? (
@@ -40,17 +36,22 @@ const SingleDiamondButton: React.FC = () => {
         )}
         {currentButton.type !== 'animated' && (
           <div className="mini-animated-button">
-            <AnimatedButton onSelect={() => handleSelect('Animated', 'rgba(255, 105, 180, 1)', 'animated')} />
+            <AnimatedButton
+              onSelect={() => handleSelect('Animated', 'rgba(255, 105, 180, 1)', 'animated')}
+            />
           </div>
         )}
       </div>
       {hovered && (
         <div className="diamond-grid-animated-container">
           <div className="diamond-grid-wrapper">
-            <DiamondGrid onSelect={(label: string, color: string) => handleSelect(label, color, 'single')} />
+            <DiamondGrid
+              onSelect={(label: string, color: string) => handleSelect(label, color, 'single')}
+            />
           </div>
         </div>
       )}
+      {currentButton.type === 'animated' && <div className="placeholder"></div>}
     </div>
   );
 };

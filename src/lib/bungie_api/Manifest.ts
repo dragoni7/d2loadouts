@@ -37,6 +37,9 @@ export async function updateManifest() {
 
           // store emblem defs in indexdb
           if (current.itemType === MANIFEST_TYPES.EMBLEM) {
+            console.log(`Adding emblem: ${current.displayProperties.name}, hash: ${itemHash}`);
+
+
             await db.manifestEmblemDef.add({
               hash: Number(itemHash),
               secondaryOverlay: 'https://bungie.net' + current.secondaryOverlay,

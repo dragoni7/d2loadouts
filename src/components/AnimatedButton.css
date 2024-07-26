@@ -36,7 +36,7 @@
   border: 0.5px solid #fff;
   transform-origin: center center;
   animation: morph 10s infinite linear;
-  transition: width 0.3s, height 0.3s; /* Ensure smooth transition */
+  transition: width 0.3s, height 0.3s;
 }
 
 .shape1 {
@@ -56,7 +56,7 @@
 }
 
 .animated-button:hover .shape {
-  width: 120px !important; /* Increase dimensions on hover */
+  width: 120px !important; 
   height: 120px !important;
 }
 
