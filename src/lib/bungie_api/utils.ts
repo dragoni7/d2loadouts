@@ -1,24 +1,24 @@
-import { MANIFEST_ARMOR, MANIFEST_CLASS } from "./Constants";
+import { MANIFEST_ARMOR, MANIFEST_CLASS } from './Constants';
 
 export function getManifestItemSlot(slotNum: number): string {
   switch (slotNum) {
     case MANIFEST_ARMOR.HELMET: {
-      return "helmet";
+      return 'helmet';
     }
     case MANIFEST_ARMOR.CHEST: {
-      return "chest";
+      return 'chest';
     }
     case MANIFEST_ARMOR.GAUNTLETS: {
-      return "arms";
+      return 'arms';
     }
     case MANIFEST_ARMOR.LEGS: {
-      return "legs";
+      return 'legs';
     }
     case MANIFEST_ARMOR.CLASS: {
-      return "class";
+      return 'class';
     }
     default: {
-      return "";
+      return '';
     }
   }
 }
@@ -26,16 +26,16 @@ export function getManifestItemSlot(slotNum: number): string {
 export function getManifestItemClass(classNum: number): string {
   switch (classNum) {
     case MANIFEST_CLASS.HUNTER: {
-      return "hunter";
+      return 'hunter';
     }
     case MANIFEST_CLASS.WARLOCK: {
-      return "warlock";
+      return 'warlock';
     }
     case MANIFEST_CLASS.TITAN: {
-      return "titan";
+      return 'titan';
     }
     default: {
-      return "";
+      return '';
     }
   }
 }

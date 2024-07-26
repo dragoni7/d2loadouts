@@ -71,6 +71,13 @@ export interface ManifestEntry {
   hash: number;
 }
 
+export interface ManifestPlug extends ManifestEntry {
+  name: string;
+  icon: string;
+  energyCost: number;
+  category: number;
+}
+
 export interface ManifestArmor extends ManifestEntry {
   name: string;
   isExotic: boolean;
@@ -79,10 +86,7 @@ export interface ManifestArmor extends ManifestEntry {
   icon: string;
 }
 
-export interface ManifestEmblem extends Emblem {
-  id: number;
-  hash: number;
-}
+export interface ManifestEmblem extends Emblem, ManifestEntry {}
 
 export interface ArmorByType {
   helmet: DestinyArmor[];

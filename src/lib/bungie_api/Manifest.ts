@@ -1,7 +1,7 @@
 import { db } from '../../store/db';
 import { getManifestItemClass, getManifestItemSlot } from './utils';
 import { getManifestComponentRequest, getManifestRequest } from './Requests';
-import { MANIFEST_TYPES } from './Constants';
+import { ITEM_CATEGORY_HASHES, MANIFEST_TYPES } from './Constants';
 
 const EXOTIC = 2759499571;
 
@@ -42,6 +42,30 @@ export async function updateManifest() {
               secondaryOverlay: 'https://bungie.net' + current.secondaryOverlay,
               secondarySpecial: 'https://bungie.net' + current.secondarySpecial,
             });
+          }
+
+          // store plug defs in indexdb
+          if (current.itemType === MANIFEST_TYPES.PLUG && current.plug) {
+            if (
+              current.itemSubType !== MANIFEST_TYPES.ORNAMENTS &&
+              current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS)
+            ) {
+              await db.manifestArmorModDef.add({
+                hash: Number(itemHash),
+                name: current.displayProperties.name,
+                icon: 'https://bungie.net' + current.displayProperties.icon,
+                energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
+                category: current.plug.plugCategoryHash,
+              });
+            } else if (current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.SUBCLASS_MODS)) {
+              await db.manifestSubclassModDef.add({
+                hash: Number(itemHash),
+                name: current.displayProperties.name,
+                icon: 'https://bungie.net' + current.displayProperties.icon,
+                energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
+                category: current.plug.plugCategoryHash,
+              });
+            }
           }
         }
       }
