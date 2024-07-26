@@ -48,6 +48,7 @@ const TopPane = styled('div')({
   boxSizing: 'border-box',
   marginBottom: '20px',
   backgroundColor: 'transparent',
+  border: '2px solid white',
 });
 
 const BottomPane = styled('div')({
@@ -56,30 +57,39 @@ const BottomPane = styled('div')({
   padding: '10px',
   boxSizing: 'border-box',
   justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  border: '2px solid white',
 });
 
 const LeftPane = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  width: '50%',
+  width: '100%',
+  maxWidth: '600px',
   padding: '10px',
   boxSizing: 'border-box',
   marginTop: '-80px',
+  margin: '0 auto',
 });
 
 const RightPane = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  width: '50%',
+  width: '100%',
+  maxWidth: '600px',
   padding: '10px',
   boxSizing: 'border-box',
+  margin: '0 auto',
+  border: '2px solid white',
 });
 
 const DiamondButtonWrapper = styled('div')({
-  marginTop: '80px',
+  marginTop: '50px',
   marginBottom: '80px',
+  marginRight: '40px',
+  alignSelf: 'flex-end',
 });
 
 const NumberBoxesWrapper = styled('div')({

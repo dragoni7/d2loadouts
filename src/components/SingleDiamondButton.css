@@ -85,3 +85,8 @@
 .hide-mini-diamond .mini-diamond-button {
   opacity: 0;
 }
+
+.placeholder {
+  width: 150px;
+  height: 150px;
+}

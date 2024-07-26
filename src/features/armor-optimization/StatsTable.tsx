@@ -5,6 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { styled } from '@mui/system';
 import { DestinyArmor } from '../../types';
 
 const columnHelper = createColumnHelper<{
@@ -52,6 +53,61 @@ interface StatsTableProps {
   permutations: DestinyArmor[][];
 }
 
+const StatsTableContainer = styled('div')({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  overflowX: 'auto',
+});
+
+const TableHeader = styled('div')({
+  display: 'flex',
+});
+
+const TableRow = styled('div')({
+  display: 'flex',
+});
+
+const TableCell = styled('div')({
+  flex: 1,
+  padding: '8px',
+  border: '1px solid white',
+  fontSize: '10px',
+  textAlign: 'center',
+});
+
+const TableHeaderCell = styled(TableCell)({
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  fontWeight: 'bold',
+});
+
+const TableFooter = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  padding: '10px',
+});
+
+const TableFooterButton = styled('button')({
+  padding: '5px 10px',
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  border: '1px solid white',
+  color: 'white',
+  cursor: 'pointer',
+  fontSize: '10px',
+  '&:disabled': {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+  '@media (max-width: 768px)': {
+    padding: '3px 6px',
+    fontSize: '8px',
+  },
+  '@media (max-width: 480px)': {
+    padding: '2px 4px',
+    fontSize: '6px',
+  },
+});
+
 const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
@@ -83,70 +139,51 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
   });
 
   return (
-    <div className="p-2" style={{ fontSize: '10px', width: '50%' }}>
-      <div style={{ display: 'flex', borderBottom: '1px solid white' }}>
-        {table.getHeaderGroups().map((headerGroup) =>
-          headerGroup.headers.map((header) => (
-            <div
-              key={header.id}
-              style={{
-                fontSize: '10px',
-                padding: '2px',
-                border: '1px solid white',
-                flex: 1,
-              }}
-            >
-              {header.isPlaceholder
-                ? null
-                : flexRender(header.column.columnDef.header, header.getContext())}
-            </div>
-          ))
-        )}
-      </div>
+    <StatsTableContainer>
+      <TableHeader>
+        {table
+          .getHeaderGroups()
+          .map((headerGroup) =>
+            headerGroup.headers.map((header) => (
+              <TableHeaderCell key={header.id}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(header.column.columnDef.header, header.getContext())}
+              </TableHeaderCell>
+            ))
+          )}
+      </TableHeader>
       <div>
         {table.getRowModel().rows.map((row) => (
-          <div key={row.id} style={{ display: 'flex', borderBottom: '1px solid white' }}>
+          <TableRow key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <div
-                key={cell.id}
-                style={{
-                  padding: '2px',
-                  border: '1px solid white',
-                  flex: 1,
-                }}
-              >
+              <TableCell key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </div>
+              </TableCell>
             ))}
-          </div>
+          </TableRow>
         ))}
       </div>
-      <div
-        style={{
-          marginTop: '10px',
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}
-      >
-        <button
+      <TableFooter>
+        <TableFooterButton
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
           disabled={currentPage === 0}
         >
           Previous
-        </button>
+        </TableFooterButton>
         <span>
           Page {currentPage + 1} of {Math.ceil(data.length / itemsPerPage)}
         </span>
-        <button
+        <TableFooterButton
           onClick={() =>
             setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(data.length / itemsPerPage) - 1))
           }
           disabled={currentPage === Math.ceil(data.length / itemsPerPage) - 1}
         >
           Next
-        </button>
-      </div>
-    </div>
+        </TableFooterButton>
+      </TableFooter>
+    </StatsTableContainer>
   );
 };
 

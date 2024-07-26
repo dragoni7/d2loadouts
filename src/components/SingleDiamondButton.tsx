@@ -51,6 +51,7 @@ const SingleDiamondButton: React.FC = () => {
           </div>
         </div>
       )}
+      {currentButton.type === 'animated' && <div className="placeholder"></div>}
     </div>
   );
 };
