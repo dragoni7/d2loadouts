@@ -3,14 +3,14 @@ import {
   equipItemRequest,
   getCharacterInventoryRequest,
   insertSocketPlugFreeRequest,
+  snapShotLoadoutRequest,
   transferItemRequest,
 } from '../../lib/bungie_api/Requests';
 import { store } from '../../store';
-import { Loadout } from '../../types';
+import { DestinyArmor, Loadout } from '../../types';
 
 export async function loadoutTest() {
   let loadout: Loadout = {
-    armor: [],
     characterId: store.getState().profile.characters[0].id,
     subclass: {
       itemId: '6917530019218633578',
@@ -61,19 +61,79 @@ export async function loadoutTest() {
         },
       ],
     },
+    helmet: store
+      .getState()
+      .profile.armor.find((a) => a.instanceHash === '6917530019848092198') as DestinyArmor,
+    gauntlets: store
+      .getState()
+      .profile.armor.find((a) => a.instanceHash === '6917529814662006519') as DestinyArmor,
+    chestArmor: store
+      .getState()
+      .profile.armor.find((a) => a.instanceHash === '6917529901137607811') as DestinyArmor,
+    legArmor: store
+      .getState()
+      .profile.armor.find((a) => a.instanceHash === '6917530035321702679') as DestinyArmor,
+    classArmor: store
+      .getState()
+      .profile.armor.find((a) => a.instanceHash === '6917529546691296363') as DestinyArmor,
+    helmetMods: [
+      {
+        plugItemHash: '1435557120',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+    ],
+    gauntletMods: [
+      {
+        plugItemHash: '1435557120',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+    ],
+    chestArmorMods: [
+      {
+        plugItemHash: '1435557120',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+    ],
+    legArmorMods: [
+      {
+        plugItemHash: '1435557120',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+    ],
+    classArmorMods: [
+      {
+        plugItemHash: '1435557120',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+    ],
   };
   await equipLoadout(loadout);
 }
 
 export async function equipLoadout(loadout: Loadout) {
-  //await handleArmor(loadout);
+  await handleArmor(loadout);
   await handleSubclass(loadout);
+}
+
+export async function createInGameLoadout(
+  characterId: string,
+  colorHash: number,
+  iconHash: number,
+  loadoutIndex: number,
+  nameHash: number
+) {
+  await snapShotLoadoutRequest(characterId, colorHash, iconHash, loadoutIndex, nameHash);
 }
 
 async function handleArmor(loadout: Loadout) {
   // determine armor inventory space
-
-  const response = await getCharacterInventoryRequest(loadout.characterId);
+  const characterId = loadout.characterId;
+  const response = await getCharacterInventoryRequest(characterId);
 
   let inventorySlots: { [key: string]: any[] } = {
     helmet: [],
@@ -116,35 +176,56 @@ async function handleArmor(loadout: Loadout) {
     }
   }
 
-  // armor
-  loadout.armor.forEach(async (armor) => {
-    // if armor not in character inventory, transfer first
-    if (armor.location !== ITEM_LOCATIONS.CHARACTER_INVENTORY) {
-      // inventory doesn't have space, transfer last item out first
-      if (inventorySlots[armor.type].length === 9) {
-        let toVault = inventorySlots[armor.type].at(-1);
-        await transferItemRequest(
-          Number(toVault.itemHash),
-          1,
-          true,
-          toVault.itemInstanceId,
-          loadout.characterId
-        );
-      }
+  // insert mods in armor
+  loadout.helmetMods.forEach(async (mod) => {
+    await insertSocketPlugFreeRequest(loadout.helmet.instanceHash, mod, characterId);
+  });
 
-      // transfer item to inventory
+  loadout.gauntletMods.forEach(async (mod) => {
+    await insertSocketPlugFreeRequest(loadout.gauntlets.instanceHash, mod, characterId);
+  });
+
+  loadout.chestArmorMods.forEach(async (mod) => {
+    await insertSocketPlugFreeRequest(loadout.chestArmor.instanceHash, mod, characterId);
+  });
+
+  loadout.legArmorMods.forEach(async (mod) => {
+    await insertSocketPlugFreeRequest(loadout.legArmor.instanceHash, mod, characterId);
+  });
+
+  loadout.classArmorMods.forEach(async (mod) => {
+    await insertSocketPlugFreeRequest(loadout.legArmor.instanceHash, mod, characterId);
+  });
+
+  // armor
+  await equipArmor(loadout.helmet, characterId, inventorySlots);
+  await equipArmor(loadout.gauntlets, characterId, inventorySlots);
+  await equipArmor(loadout.chestArmor, characterId, inventorySlots);
+  await equipArmor(loadout.legArmor, characterId, inventorySlots);
+  await equipArmor(loadout.classArmor, characterId, inventorySlots);
+}
+
+async function equipArmor(armor: DestinyArmor, characterId: number, inventorySlots: any) {
+  // if armor not in character inventory, transfer first
+  if (armor.location !== ITEM_LOCATIONS.CHARACTER_INVENTORY) {
+    // inventory doesn't have space, transfer last item out first
+    if (inventorySlots[armor.type].length === 9) {
+      let toVault = inventorySlots[armor.type].at(-1);
       await transferItemRequest(
-        Number(armor.itemHash),
+        Number(toVault.itemHash),
         1,
-        false,
-        armor.instanceHash,
-        loadout.characterId
+        true,
+        toVault.itemInstanceId,
+        characterId
       );
     }
 
-    // equip
-    await equipItemRequest(armor.instanceHash, loadout.characterId);
-  });
+    // transfer item to inventory
+    await transferItemRequest(Number(armor.itemHash), 1, false, armor.instanceHash, characterId);
+  }
+
+  // equip
+  await equipItemRequest(armor.instanceHash, characterId);
 }
 
 async function handleSubclass(loadout: Loadout) {

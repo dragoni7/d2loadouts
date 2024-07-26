@@ -112,6 +112,32 @@ export function equipItemsRequest(
   });
 }
 
+export function snapShotLoadoutRequest(
+  characterId: string,
+  colorHash: number,
+  iconHash: number,
+  loadoutIndex: number,
+  nameHash: number
+): Promise<AxiosResponse<any, any>> {
+  const accessToken = getTokens()?.accessToken.value;
+  const membershipType = store.getState().destinyMembership.membership.membershipType;
+
+  let body = {
+    characterId: characterId,
+    colorHash: colorHash,
+    iconHash: iconHash,
+    loadoutIndex: loadoutIndex,
+    nameHash: nameHash,
+    membershipType: membershipType,
+  };
+
+  return _post('/Platform/Destiny2/Actions/Loadouts/SnapshotLoadout/', body, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
 export function insertSocketPlugFreeRequest(
   itemId: string,
   plug: Plug,

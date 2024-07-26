@@ -31,7 +31,16 @@ export type Plug = {
 };
 
 export type Loadout = {
-  armor: DestinyArmor[];
+  helmet: DestinyArmor;
+  gauntlets: DestinyArmor;
+  chestArmor: DestinyArmor;
+  legArmor: DestinyArmor;
+  classArmor: DestinyArmor;
+  helmetMods: Plug[];
+  gauntletMods: Plug[];
+  chestArmorMods: Plug[];
+  legArmorMods: Plug[];
+  classArmorMods: Plug[];
   characterId: number;
   subclass: Subclass;
 };
