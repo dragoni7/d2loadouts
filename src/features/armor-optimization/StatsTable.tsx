@@ -83,7 +83,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
   });
 
   return (
-    <div className="p-2" style={{ fontSize: '10px', width: '100%' }}>
+    <div className="p-2" style={{ fontSize: '10px', width: '50%' }}>
       <div style={{ display: 'flex', borderBottom: '1px solid white' }}>
         {table.getHeaderGroups().map((headerGroup) =>
           headerGroup.headers.map((header) => (
@@ -91,7 +91,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
               key={header.id}
               style={{
                 fontSize: '10px',
-                padding: '4px',
+                padding: '2px',
                 border: '1px solid white',
                 flex: 1,
               }}
@@ -110,7 +110,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
               <div
                 key={cell.id}
                 style={{
-                  padding: '4px',
+                  padding: '2px',
                   border: '1px solid white',
                   flex: 1,
                 }}

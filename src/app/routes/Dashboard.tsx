@@ -15,39 +15,79 @@ import { DestinyArmor, ArmorByClass, Character, CharacterClass } from '../../typ
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
+import NewComponent from '../../components/ExoticSearch';
+import greyBackground from '../../assets/grey.png';
+
+const PageContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100vh',
+  overflow: 'hidden',
+});
 
 const Container = styled('div')({
+  flex: 1,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   padding: '20px',
-  paddingTop: '170px',
   width: '100vw',
   boxSizing: 'border-box',
   overflow: 'hidden',
+  backgroundImage: `url(${greyBackground})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  marginTop: '130px',
 });
 
-const ContentContainer = styled('div')<{ isTransitioning: boolean; direction: 'left' | 'right' }>(
-  ({ isTransitioning, direction }) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    width: '100%',
-    padding: '10px',
-    transition: 'transform 0.3s ease-in-out',
-    transform: isTransitioning
-      ? `translateX(${direction === 'left' ? '-100vw' : '100vw'})`
-      : 'translateX(0)',
-  })
-);
+const TopPane = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  width: '100%',
+  padding: '10px',
+  boxSizing: 'border-box',
+  marginBottom: '20px',
+  backgroundColor: 'transparent',
+});
+
+const BottomPane = styled('div')({
+  display: 'flex',
+  width: '100%',
+  padding: '10px',
+  boxSizing: 'border-box',
+  justifyContent: 'space-between',
+});
 
 const LeftPane = styled('div')({
-  marginRight: '10px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  width: '50%',
+  padding: '10px',
+  boxSizing: 'border-box',
+  marginTop: '-80px',
 });
 
 const RightPane = styled('div')({
-  flexGrow: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  width: '50%',
+  padding: '10px',
+  boxSizing: 'border-box',
+});
+
+const DiamondButtonWrapper = styled('div')({
+  marginTop: '80px',
+  marginBottom: '80px',
+});
+
+const NumberBoxesWrapper = styled('div')({
+  marginBottom: '20px',
+});
+
+const NewComponentWrapper = styled('div')({
+  marginBottom: '20px',
 });
 
 export const Dashboard = () => {
@@ -114,7 +154,7 @@ export const Dashboard = () => {
   };
 
   return (
-    <Container>
+    <PageContainer>
       {selectedCharacter?.emblem?.secondarySpecial && (
         <HeaderComponent
           emblemUrl={selectedCharacter.emblem.secondarySpecial}
@@ -125,19 +165,29 @@ export const Dashboard = () => {
           onCharacterClick={handleCharacterClick}
         />
       )}
-      <ContentContainer isTransitioning={isTransitioning} direction={direction}>
-        <LeftPane>
-          <NumberBoxes onThresholdChange={handleThresholdChange} />
-        </LeftPane>
-        <RightPane>
-          <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
-          {filteredPermutations ? (
-            <StatsTable permutations={filteredPermutations} />
-          ) : (
-            <p>Loading...</p>
-          )}
-        </RightPane>
-      </ContentContainer>
-    </Container>
+      <Container>
+        <NewComponentWrapper>
+          <NewComponent />
+        </NewComponentWrapper>
+        <BottomPane>
+          <LeftPane>
+            <DiamondButtonWrapper>
+              <SingleDiamondButton />
+            </DiamondButtonWrapper>
+            <NumberBoxesWrapper>
+              <NumberBoxes onThresholdChange={handleThresholdChange} />
+            </NumberBoxesWrapper>
+          </LeftPane>
+          <RightPane>
+            <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
+            {filteredPermutations ? (
+              <StatsTable permutations={filteredPermutations} />
+            ) : (
+              <p>Loading...</p>
+            )}
+          </RightPane>
+        </BottomPane>
+      </Container>
+    </PageContainer>
   );
 };
