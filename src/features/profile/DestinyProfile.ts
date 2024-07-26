@@ -1,7 +1,7 @@
 import { BUCKET_HASH, PRIMARY_STATS, SOCKET_HASH, STAT_HASH } from '../../lib/bungie_api/Constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
 import { db } from '../../store/db';
-import { Character, DestinyArmor, Emblem, ProfileData } from '../../types';
+import { Character, DestinyArmor, Emblem, ProfileData, CharacterClass } from '../../types';
 import { getCharacterClass, modReverseDict } from './util';
 
 export async function getProfileData(): Promise<ProfileData> {
@@ -17,17 +17,28 @@ export async function getProfileData(): Promise<ProfileData> {
     const characterEquipment = response.data.Response.characterEquipment.data;
     const characterData = response.data.Response.characters.data;
 
-    // character
     for (const key in characterData) {
+      const characterClass = getCharacterClass(characterData[key].classHash);
+
+      if (characterClass === null) {
+        console.error(`Unknown class hash: ${characterData[key].classHash}`);
+        continue;
+      }
+
       const character: Character = {
         id: characterData[key].characterId,
-        class: getCharacterClass(characterData[key].classHash),
+        class: characterClass,
       };
 
       for (const item of characterEquipment[key].items) {
         if (item.bucketHash === BUCKET_HASH.EMBLEM) {
-          // get item instance's manifest def
           const emblemDef = await db.manifestEmblemDef.where('hash').equals(item.itemHash).first();
+
+          if (emblemDef) {
+            console.log(`Fetched emblem data for hash ${item.itemHash}: ${JSON.stringify(emblemDef)}`);
+          } else {
+            console.log(`No emblem data found for hash ${item.itemHash}`);
+          }
 
           const emblem: Emblem = {
             secondaryOverlay: emblemDef?.secondaryOverlay,
@@ -42,7 +53,6 @@ export async function getProfileData(): Promise<ProfileData> {
       characters.push(character);
     }
 
-    // armor
     for (const instanceHash in itemComponents.instances.data) {
       const currentInstance = itemComponents.instances.data[instanceHash];
       if (
@@ -63,7 +73,6 @@ export async function getProfileData(): Promise<ProfileData> {
             masterwork: currentInstance?.energy && currentInstance.energy.energyCapacity === 10,
           };
 
-          // undo armor mod stat increases
           if (itemComponents.sockets.data.hasOwnProperty(instanceHash)) {
             for (const key in modReverseDict) {
               if (
@@ -75,13 +84,10 @@ export async function getProfileData(): Promise<ProfileData> {
               }
             }
 
-            // check if armor is artifice
             destinyArmor.artifice = itemComponents.sockets.data[instanceHash].sockets.some(
               (mod: any) => mod.plugHash === SOCKET_HASH.ARTIFICE_ARMOR
             );
 
-            // get item instance's item hash
-            // check profile inventory
             for (const item of profileInventory) {
               if (item.itemInstanceId && item.itemInstanceId === instanceHash) {
                 destinyArmor.itemHash = item.itemHash;
@@ -90,7 +96,6 @@ export async function getProfileData(): Promise<ProfileData> {
             }
 
             if (!destinyArmor.itemHash) {
-              // also need to check character items
               for (const key in characterInventories) {
                 for (const item of characterInventories[key].items) {
                   if (item.itemInstanceId === instanceHash) {
@@ -102,7 +107,6 @@ export async function getProfileData(): Promise<ProfileData> {
             }
 
             if (!destinyArmor.itemHash) {
-              // and equipped items
               for (const key in characterEquipment) {
                 for (const item of characterEquipment[key].items) {
                   if (item.itemInstanceId === instanceHash) {
@@ -113,17 +117,13 @@ export async function getProfileData(): Promise<ProfileData> {
               }
             }
 
-            // get item instance's manifest def
             const armorDef = await db.manifestArmorDef
               .where('hash')
               .equals(Number(destinyArmor.itemHash))
               .first();
 
-            // determine required class
             destinyArmor.class = armorDef?.characterClass;
-            // determine armor slot
             destinyArmor.type = armorDef?.slot;
-            // determine if exotic
             destinyArmor.exotic = armorDef?.isExotic;
 
             destinyArmors.push(destinyArmor);

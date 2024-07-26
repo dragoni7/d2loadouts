@@ -34,7 +34,7 @@ export function getCharacterClass(classHash: number) {
       return 'warlock';
     }
     default: {
-      return '';
+      return null;
     }
   }
 }
