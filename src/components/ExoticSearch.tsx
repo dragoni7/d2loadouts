@@ -57,73 +57,106 @@ const SelectExotic = styled('span')({
   fontWeight: 'bold',
 });
 
-const ExoticSearch: React.FC = () => {
-  const [exotics, setExotics] = useState<DestinyArmor[]>([]);
-  const [isExoticSelected, setIsExoticSelected] = useState(false);
-  const [selectedExotic, setSelectedExotic] = useState<string | null>(null);
+type ExoticViewModel = {
+  itemHash: string;
+  name: string;
+  icon: string;
+};
 
-  const handleSelectExotic = () => {
-    setSelectedExotic('https://path-to-exotic-icon.png'); // Replace with the path to the selected exotic icon
-    setIsExoticSelected(true);
-  };
+const ExoticSearch: React.FC = () => {
+  const [exotics, setExotics] = useState<Map<string, ExoticViewModel>>(new Map());
+  const [selectedExotic, setSelectedExotic] = useState<ExoticViewModel | null>(null);
+  const [inputValue, setInputValue] = React.useState('');
 
   const handleClearSelection = () => {
     setSelectedExotic(null);
-    setIsExoticSelected(false);
   };
-
-  async function getManifestItemName(itemHash: string): Promise<string | undefined> {
-    const itemDef = await db.manifestArmorDef.where('hash').equals(Number(itemHash)).first();
-    return itemDef?.name;
-  }
 
   useEffect(() => {
     const exoticItemInstances = store.getState().profile.profileData.characters[0]?.exotics;
 
     if (exoticItemInstances) {
-      const obtainedExotics = new Set<DestinyArmor>();
+      const obtainedExotics = new Map<string, ExoticViewModel>();
 
       exoticItemInstances.helmet.forEach((exotic) => {
-        obtainedExotics.add(exotic);
+        if (!(exotic.itemHash in obtainedExotics)) {
+          obtainedExotics.set(exotic.itemHash, {
+            itemHash: exotic.itemHash,
+            name: exotic.name,
+            icon: exotic.icon,
+          });
+        }
       });
 
       exoticItemInstances.arms.forEach((exotic) => {
-        obtainedExotics.add(exotic);
+        if (!(exotic.itemHash in obtainedExotics)) {
+          obtainedExotics.set(exotic.itemHash, {
+            itemHash: exotic.itemHash,
+            name: exotic.name,
+            icon: exotic.icon,
+          });
+        }
       });
 
       exoticItemInstances.chest.forEach((exotic) => {
-        obtainedExotics.add(exotic);
+        if (!(exotic.itemHash in obtainedExotics)) {
+          obtainedExotics.set(exotic.itemHash, {
+            itemHash: exotic.itemHash,
+            name: exotic.name,
+            icon: exotic.icon,
+          });
+        }
       });
 
       exoticItemInstances.legs.forEach((exotic) => {
-        obtainedExotics.add(exotic);
+        if (!(exotic.itemHash in obtainedExotics)) {
+          obtainedExotics.set(exotic.itemHash, {
+            itemHash: exotic.itemHash,
+            name: exotic.name,
+            icon: exotic.icon,
+          });
+        }
       });
 
       exoticItemInstances.classItem.forEach((exotic) => {
-        obtainedExotics.add(exotic);
+        if (!(exotic.itemHash in obtainedExotics)) {
+          obtainedExotics.set(exotic.itemHash, {
+            itemHash: exotic.itemHash,
+            name: exotic.name,
+            icon: exotic.icon,
+          });
+        }
       });
 
-      const obtainedExoticArray = [...obtainedExotics];
-      setExotics(obtainedExoticArray);
+      setExotics(obtainedExotics);
     }
   });
 
   return (
     <NewComponentContainer>
-      {!isExoticSelected ? (
+      {!selectedExotic ? (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <SelectExotic>Select Exotic</SelectExotic>
           <Autocomplete
             disablePortal
+            value={selectedExotic}
+            onChange={(event: any, newValue: ExoticViewModel | null) => {
+              setSelectedExotic(newValue);
+            }}
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue);
+            }}
             id="exotics"
-            options={exotics.map(async (e) => e.itemHash)}
+            options={Array.from(exotics.values())}
+            getOptionLabel={(option: ExoticViewModel) => option.name}
             sx={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Exotics" />}
           />
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {selectedExotic && <ExoticIcon src={selectedExotic} alt="Exotic Icon" />}
+          {selectedExotic && <ExoticIcon src={selectedExotic.icon} alt="Exotic Icon" />}
           <ArrowButton onClick={handleClearSelection}>
             <ArrowIcon />
           </ArrowButton>

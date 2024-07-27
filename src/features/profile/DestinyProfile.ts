@@ -88,6 +88,8 @@ export async function getProfileData(): Promise<ProfileData> {
             itemHash: '',
             location: ITEM_LOCATIONS.VAULT,
             type: '',
+            icon: '',
+            name: '',
           };
 
           if (itemComponents.sockets.data.hasOwnProperty(instanceHash)) {
@@ -148,6 +150,10 @@ export async function getProfileData(): Promise<ProfileData> {
               destinyArmor.type = armorDef.slot;
               // determine if exotic
               destinyArmor.exotic = armorDef.isExotic;
+              // get name
+              destinyArmor.name = armorDef.name;
+              // get icon
+              destinyArmor.icon = armorDef.icon;
             }
 
             // add armor to character of same class

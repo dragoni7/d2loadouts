@@ -16,6 +16,8 @@ export type DestinyArmor = {
   type: string;
   socket?: string;
   location: number;
+  icon: string;
+  name: string;
   // TODO: name, icon, etc
 };
 
