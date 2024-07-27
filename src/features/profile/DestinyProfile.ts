@@ -7,7 +7,7 @@ import {
 } from '../../lib/bungie_api/Constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
 import { db } from '../../store/db';
-import { Character, DestinyArmor, Emblem, ProfileData } from '../../types';
+import { Character, CharacterClass, DestinyArmor, Emblem, ProfileData } from '../../types';
 import { getCharacterClass, modReverseDict } from './util';
 
 export async function getProfileData(): Promise<ProfileData> {
@@ -34,19 +34,25 @@ export async function getProfileData(): Promise<ProfileData> {
       const character: Character = {
         id: characterData[key].characterId,
         class: characterClass,
+        armor: {
+          helmet: [],
+          arms: [],
+          legs: [],
+          chest: [],
+          classItem: [],
+        },
+        exotics: {
+          helmet: [],
+          arms: [],
+          legs: [],
+          chest: [],
+          classItem: [],
+        },
       };
 
       for (const item of characterEquipment[key].items) {
         if (item.bucketHash === BUCKET_HASH.EMBLEM) {
           const emblemDef = await db.manifestEmblemDef.where('hash').equals(item.itemHash).first();
-
-          if (emblemDef) {
-            console.log(
-              `Fetched emblem data for hash ${item.itemHash}: ${JSON.stringify(emblemDef)}`
-            );
-          } else {
-            console.log(`No emblem data found for hash ${item.itemHash}`);
-          }
 
           const emblem: Emblem = {
             secondaryOverlay: emblemDef?.secondaryOverlay,
@@ -137,14 +143,72 @@ export async function getProfileData(): Promise<ProfileData> {
 
             if (armorDef) {
               // determine required class
-              destinyArmor.class = armorDef.characterClass;
+              destinyArmor.class = armorDef.characterClass as CharacterClass;
               // determine armor slot
               destinyArmor.type = armorDef.slot;
               // determine if exotic
               destinyArmor.exotic = armorDef.isExotic;
             }
 
-            destinyArmors.push(destinyArmor);
+            // add armor to character of same class
+            let target = characters.filter((c) => c.class === destinyArmor.class);
+
+            for (const character of target) {
+              if (destinyArmor.exotic) {
+                switch (destinyArmor.type) {
+                  case 'helmet': {
+                    character.exotics.helmet.push(destinyArmor);
+                    character.armor.helmet.push(destinyArmor);
+                    continue;
+                  }
+                  case 'arms': {
+                    character.exotics.arms.push(destinyArmor);
+                    character.armor.arms.push(destinyArmor);
+                    continue;
+                  }
+                  case 'chest': {
+                    character.exotics.chest.push(destinyArmor);
+                    character.armor.chest.push(destinyArmor);
+                    continue;
+                  }
+                  case 'legs': {
+                    character.exotics.legs.push(destinyArmor);
+                    character.armor.legs.push(destinyArmor);
+                    continue;
+                  }
+                  case 'class': {
+                    character.exotics.classItem.push(destinyArmor);
+                    character.armor.classItem.push(destinyArmor);
+                    continue;
+                  }
+                }
+              } else {
+                switch (destinyArmor.type) {
+                  case 'helmet': {
+                    character.armor.helmet.push(destinyArmor);
+                    continue;
+                  }
+                  case 'arms': {
+                    character.armor.arms.push(destinyArmor);
+                    continue;
+                  }
+                  case 'chest': {
+                    character.armor.chest.push(destinyArmor);
+                    continue;
+                  }
+                  case 'legs': {
+                    character.armor.legs.push(destinyArmor);
+                    continue;
+                  }
+                  case 'class': {
+                    character.armor.classItem.push(destinyArmor);
+                    continue;
+                  }
+                }
+              }
+            }
+
+            // TODO: add plugs
           }
         }
       }
@@ -155,7 +219,6 @@ export async function getProfileData(): Promise<ProfileData> {
 
   const profile: ProfileData = {
     characters: characters,
-    armor: destinyArmors,
   };
 
   return profile;

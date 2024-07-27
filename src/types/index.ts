@@ -12,11 +12,20 @@ export type DestinyArmor = {
   artifice?: boolean;
   masterwork: boolean;
   exotic?: boolean;
-  class?: string;
+  class?: CharacterClass;
   type: string;
   socket?: string;
   location: number;
+  // TODO: name, icon, etc
 };
+
+export interface ArmorBySlot {
+  helmet: DestinyArmor[];
+  arms: DestinyArmor[];
+  legs: DestinyArmor[];
+  chest: DestinyArmor[];
+  classItem: DestinyArmor[];
+}
 
 export type Subclass = {
   itemId: string;
@@ -47,15 +56,17 @@ export type Loadout = {
   subclass: Subclass;
 };
 
+export type ProfileData = {
+  characters: Character[];
+};
+
 export type Character = {
   id: number;
   class: CharacterClass;
   emblem?: Emblem;
-};
-
-export type ProfileData = {
-  characters: Character[];
-  armor: DestinyArmor[];
+  armor: ArmorBySlot;
+  exotics: ArmorBySlot;
+  // TODO: plugs
 };
 
 export type Emblem = {
@@ -90,17 +101,3 @@ export interface ManifestArmor extends ManifestEntry {
 }
 
 export interface ManifestEmblem extends Emblem, ManifestEntry {}
-
-export interface ArmorByType {
-  helmet: DestinyArmor[];
-  arms: DestinyArmor[];
-  legs: DestinyArmor[];
-  chest: DestinyArmor[];
-  classItem: DestinyArmor[];
-}
-
-export interface ArmorByClass {
-  warlock: ArmorByType;
-  hunter: ArmorByType;
-  titan: ArmorByType;
-}

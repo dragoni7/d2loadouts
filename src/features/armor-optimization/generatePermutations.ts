@@ -1,6 +1,6 @@
-import { DestinyArmor, ArmorByType } from '../../types';
+import { DestinyArmor, ArmorBySlot } from '../../types';
 
-export const generatePermutations = (armorClass: ArmorByType): DestinyArmor[][] => {
+export const generatePermutations = (armorClass: ArmorBySlot): DestinyArmor[][] => {
   const { helmet, arms, legs, chest } = armorClass;
   const armorTypes = [helmet, arms, legs, chest];
   const permutations: DestinyArmor[][] = [];

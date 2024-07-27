@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/BungieAccount';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/DestinyProfile';
-import { updateProfileArmor, updateProfileCharacters } from '../../store/ProfileReducer';
+import { updateProfileData } from '../../store/ProfileReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateManifest } from '../../lib/bungie_api/Manifest';
-import { separateArmor } from '../../features/armor-optimization/separatedArmor';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorByClass, Character, CharacterClass } from '../../types';
+import { DestinyArmor, ArmorBySlot, Character } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -103,9 +102,8 @@ const NewComponentWrapper = styled('div')({
 export const Dashboard = () => {
   const dispatch = useDispatch();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
-  const characters = useSelector((state: RootState) => state.profile.characters);
+  const characters = useSelector((state: RootState) => state.profile.profileData.characters);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
-  const [separatedArmor, setSeparatedArmor] = useState<ArmorByClass | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
   const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
@@ -118,17 +116,12 @@ export const Dashboard = () => {
       const destinyMembership = await getDestinyMembershipId();
       dispatch(updateMembership(destinyMembership));
       const profileData = await getProfileData();
-      dispatch(updateProfileArmor(profileData.armor));
-      dispatch(updateProfileCharacters(profileData.characters));
-      const separated = separateArmor(profileData.armor);
-      setSeparatedArmor(separated);
+      dispatch(updateProfileData(profileData));
+
       if (profileData.characters.length > 0) {
         setSelectedCharacter(profileData.characters[0]);
-        const initialPermutations = generatePermutations(
-          separated[profileData.characters[0].class as CharacterClass]
-        );
+        const initialPermutations = generatePermutations(profileData.characters[0].armor);
         setPermutations(initialPermutations);
-        setFilteredPermutations(initialPermutations);
       }
     };
 
@@ -147,17 +140,14 @@ export const Dashboard = () => {
   };
 
   const handleCharacterClick = (character: Character) => {
-    if (selectedCharacter?.id !== character.id) {
+    if (selectedCharacter && selectedCharacter?.id !== character.id) {
       setDirection(character.class === 'warlock' ? 'left' : 'right');
       setIsTransitioning(true);
       setTimeout(() => {
         setSelectedCharacter(character);
-        if (separatedArmor) {
-          const characterClass: CharacterClass = character.class as CharacterClass;
-          const newPermutations = generatePermutations(separatedArmor[characterClass]);
-          setPermutations(newPermutations);
-          setFilteredPermutations(newPermutations);
-        }
+        const newPermutations = generatePermutations(selectedCharacter.armor);
+        setPermutations(newPermutations);
+        setFilteredPermutations(newPermutations);
         setIsTransitioning(false);
       }, 300);
     }

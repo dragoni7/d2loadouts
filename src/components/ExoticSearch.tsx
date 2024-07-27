@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
+import { Autocomplete, TextField } from '@mui/material';
+import { RootState, store } from '../store';
+import { DestinyArmor } from '../types';
+import { useSelector } from 'react-redux';
+import { db } from '../store/db';
 
 const NewComponentContainer = styled('div')({
   backgroundColor: 'transparent',
@@ -53,6 +58,7 @@ const SelectExotic = styled('span')({
 });
 
 const ExoticSearch: React.FC = () => {
+  const [exotics, setExotics] = useState<DestinyArmor[]>([]);
   const [isExoticSelected, setIsExoticSelected] = useState(false);
   const [selectedExotic, setSelectedExotic] = useState<string | null>(null);
 
@@ -66,15 +72,54 @@ const ExoticSearch: React.FC = () => {
     setIsExoticSelected(false);
   };
 
+  async function getManifestItemName(itemHash: string): Promise<string | undefined> {
+    const itemDef = await db.manifestArmorDef.where('hash').equals(Number(itemHash)).first();
+    return itemDef?.name;
+  }
+
+  useEffect(() => {
+    const exoticItemInstances = store.getState().profile.profileData.characters[0]?.exotics;
+
+    if (exoticItemInstances) {
+      const obtainedExotics = new Set<DestinyArmor>();
+
+      exoticItemInstances.helmet.forEach((exotic) => {
+        obtainedExotics.add(exotic);
+      });
+
+      exoticItemInstances.arms.forEach((exotic) => {
+        obtainedExotics.add(exotic);
+      });
+
+      exoticItemInstances.chest.forEach((exotic) => {
+        obtainedExotics.add(exotic);
+      });
+
+      exoticItemInstances.legs.forEach((exotic) => {
+        obtainedExotics.add(exotic);
+      });
+
+      exoticItemInstances.classItem.forEach((exotic) => {
+        obtainedExotics.add(exotic);
+      });
+
+      const obtainedExoticArray = [...obtainedExotics];
+      setExotics(obtainedExoticArray);
+    }
+  });
+
   return (
     <NewComponentContainer>
       {!isExoticSelected ? (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <SelectExotic>Select Exotic</SelectExotic>
-          <SearchInput placeholder="Search for an exotic..." />
-          <button onClick={handleSelectExotic} style={{ display: 'none' }}>
-            Select
-          </button>
+          <Autocomplete
+            disablePortal
+            id="exotics"
+            options={exotics.map(async (e) => e.itemHash)}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Exotics" />}
+          />
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center' }}>
