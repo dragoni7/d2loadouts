@@ -1,4 +1,4 @@
-export type CharacterClass = 'warlock' | 'hunter' | 'titan';
+export type CharacterClass = 'warlock' | 'hunter' | 'titan' | '';
 
 export type DestinyArmor = {
   intellect: number;
