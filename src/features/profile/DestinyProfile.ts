@@ -7,11 +7,17 @@ import {
 } from '../../lib/bungie_api/Constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
 import { db } from '../../store/db';
-import { Character, CharacterClass, DestinyArmor, Emblem, ProfileData } from '../../types';
+import {
+  Character,
+  CharacterClass,
+  DestinyArmor,
+  Emblem,
+  ProfileData,
+  Subclass,
+} from '../../types';
 import { getCharacterClass, modReverseDict } from './util';
 
 export async function getProfileData(): Promise<ProfileData> {
-  const destinyArmors: DestinyArmor[] = [];
   const characters: Character[] = [];
 
   const response = await getProfileDataRequest();
@@ -48,19 +54,76 @@ export async function getProfileData(): Promise<ProfileData> {
           chest: [],
           classItem: [],
         },
+        subclasses: {},
       };
 
+      // iterate character's equipped items
       for (const item of characterEquipment[key].items) {
-        if (item.bucketHash === BUCKET_HASH.EMBLEM) {
-          const emblemDef = await db.manifestEmblemDef.where('hash').equals(item.itemHash).first();
+        switch (item.bucketHash) {
+          case BUCKET_HASH.EMBLEM: {
+            const emblemDef = await db.manifestEmblemDef
+              .where('hash')
+              .equals(item.itemHash)
+              .first();
 
-          const emblem: Emblem = {
-            secondaryOverlay: emblemDef?.secondaryOverlay,
-            secondarySpecial: emblemDef?.secondarySpecial,
-          };
+            if (emblemDef) {
+              const emblem: Emblem = {
+                secondaryOverlay: emblemDef.secondaryOverlay,
+                secondarySpecial: emblemDef.secondarySpecial,
+              };
 
-          character.emblem = emblem;
-          break;
+              character.emblem = emblem;
+            }
+
+            continue;
+          }
+
+          case BUCKET_HASH.SUBCLASS: {
+            const subclassDef = await db.manifestSubclass
+              .where('hash')
+              .equals(item.itemHash)
+              .first();
+
+            if (subclassDef) {
+              const subclass: Subclass = {
+                instanceId: item.itemInstanceId,
+                itemHash: item.itemHash,
+                supers: [],
+                aspects: [],
+              };
+
+              // insert subclass into character's subclasses dict
+
+              character.subclasses[subclassDef.damageType] = subclass;
+            }
+            continue;
+          }
+        }
+      }
+
+      // iterate character's inventory
+      for (const item of characterInventories[key].items) {
+        switch (item.bucketHash) {
+          case BUCKET_HASH.SUBCLASS: {
+            const subclassDef = await db.manifestSubclass
+              .where('hash')
+              .equals(item.itemHash)
+              .first();
+
+            if (subclassDef) {
+              const subclass: Subclass = {
+                instanceId: item.itemInstanceId,
+                itemHash: item.itemHash,
+                supers: [],
+                aspects: [],
+              };
+
+              // insert subclass into character's subclasses dict
+
+              character.subclasses[subclassDef.damageType] = subclass;
+            }
+            continue;
+          }
         }
       }
 
@@ -225,6 +288,7 @@ export async function getProfileData(): Promise<ProfileData> {
 
   const profile: ProfileData = {
     characters: characters,
+    unlockedArmorModPlugs: [],
   };
 
   return profile;

@@ -290,6 +290,7 @@ export enum MANIFEST_TYPES {
   EMBLEM = 14,
   PLUG = 19,
   ORNAMENTS = 21,
+  SUBCLASS = 16,
 }
 
 export enum MANIFEST_CLASS {

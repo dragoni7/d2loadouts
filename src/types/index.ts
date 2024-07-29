@@ -79,8 +79,8 @@ export type Subclass = {
 };
 
 export type Emblem = {
-  secondaryOverlay?: string;
-  secondarySpecial?: string;
+  secondaryOverlay: string;
+  secondarySpecial: string;
 };
 
 export type DestinyMembership = {
@@ -92,21 +92,24 @@ export type DestinyMembership = {
 export interface ManifestEntry {
   id: number;
   hash: number;
+  name: string;
+  icon: string;
+}
+
+export interface ManifestSubclass extends ManifestEntry {
+  screenshot: string;
+  damageType: number;
 }
 
 export interface ManifestPlug extends ManifestEntry {
-  name: string;
-  icon: string;
   energyCost: number;
   category: number;
 }
 
 export interface ManifestArmor extends ManifestEntry {
-  name: string;
   isExotic: boolean;
   characterClass: string;
   slot: string;
-  icon: string;
 }
 
 export interface ManifestEmblem extends Emblem, ManifestEntry {}

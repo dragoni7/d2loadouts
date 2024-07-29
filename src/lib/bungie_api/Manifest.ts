@@ -4,6 +4,7 @@ import { getManifestComponentRequest, getManifestRequest } from './Requests';
 import { ITEM_CATEGORY_HASHES, MANIFEST_TYPES } from './Constants';
 
 const EXOTIC = 2759499571;
+const urlPrefix = 'https://bungie.net';
 
 export async function updateManifest() {
   const response = await getManifestRequest();
@@ -31,7 +32,7 @@ export async function updateManifest() {
               isExotic: current.inventory.tierTypeHash === EXOTIC,
               characterClass: getManifestItemClass(current.classType),
               slot: getManifestItemSlot(current.itemSubType),
-              icon: 'https://bungie.net' + current.displayProperties.icon,
+              icon: urlPrefix + current.displayProperties.icon,
             });
           }
 
@@ -39,8 +40,21 @@ export async function updateManifest() {
           if (current.itemType === MANIFEST_TYPES.EMBLEM) {
             await db.manifestEmblemDef.add({
               hash: Number(itemHash),
-              secondaryOverlay: 'https://bungie.net' + current.secondaryOverlay,
-              secondarySpecial: 'https://bungie.net' + current.secondarySpecial,
+              secondaryOverlay: urlPrefix + current.secondaryOverlay,
+              secondarySpecial: urlPrefix + current.secondarySpecial,
+              name: current.displayProperties.name,
+              icon: urlPrefix + current.displayProperties.icon,
+            });
+          }
+
+          // store subclass defs in indexdb
+          if (current.itemType === MANIFEST_TYPES.SUBCLASS) {
+            await db.manifestSubclass.add({
+              hash: Number(itemHash),
+              name: current.displayProperties.name,
+              icon: urlPrefix + current.displayProperties.icon,
+              screenshot: urlPrefix + current.screenshot,
+              damageType: current.talentGrid.hudDamageType,
             });
           }
 
@@ -53,7 +67,7 @@ export async function updateManifest() {
               await db.manifestArmorModDef.add({
                 hash: Number(itemHash),
                 name: current.displayProperties.name,
-                icon: 'https://bungie.net' + current.displayProperties.icon,
+                icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                 category: current.plug.plugCategoryHash,
               });
@@ -61,7 +75,7 @@ export async function updateManifest() {
               await db.manifestSubclassModDef.add({
                 hash: Number(itemHash),
                 name: current.displayProperties.name,
-                icon: 'https://bungie.net' + current.displayProperties.icon,
+                icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                 category: current.plug.plugCategoryHash,
               });
