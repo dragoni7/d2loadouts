@@ -11,7 +11,7 @@ import { DestinyArmor, Loadout } from '../../types';
 
 export async function loadoutTest() {
   let loadout: Loadout = {
-    characterId: store.getState().profile.characters[0].id,
+    characterId: store.getState().profile.profileData.characters[0].id,
     subclass: {
       itemId: '6917530019218633578',
       super: {
@@ -63,19 +63,29 @@ export async function loadoutTest() {
     },
     helmet: store
       .getState()
-      .profile.armor.find((a) => a.instanceHash === '6917530019848092198') as DestinyArmor,
+      .profile.profileData.characters[0].armor.helmet.find(
+        (a) => a.instanceHash === '6917530019848092198'
+      ) as DestinyArmor,
     gauntlets: store
       .getState()
-      .profile.armor.find((a) => a.instanceHash === '6917529814662006519') as DestinyArmor,
+      .profile.profileData.characters[0].armor.arms.find(
+        (a) => a.instanceHash === '6917529814662006519'
+      ) as DestinyArmor,
     chestArmor: store
       .getState()
-      .profile.armor.find((a) => a.instanceHash === '6917529901137607811') as DestinyArmor,
+      .profile.profileData.characters[0].armor.chest.find(
+        (a) => a.instanceHash === '6917529901137607811'
+      ) as DestinyArmor,
     legArmor: store
       .getState()
-      .profile.armor.find((a) => a.instanceHash === '6917530035321702679') as DestinyArmor,
+      .profile.profileData.characters[0].armor.legs.find(
+        (a) => a.instanceHash === '6917530035321702679'
+      ) as DestinyArmor,
     classArmor: store
       .getState()
-      .profile.armor.find((a) => a.instanceHash === '6917529546691296363') as DestinyArmor,
+      .profile.profileData.characters[0].armor.classItem.find(
+        (a) => a.instanceHash === '6917529546691296363'
+      ) as DestinyArmor,
     helmetMods: [
       {
         plugItemHash: '1435557120',

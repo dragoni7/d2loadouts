@@ -18,7 +18,6 @@ export type DestinyArmor = {
   location: number;
   icon: string;
   name: string;
-  // TODO: name, icon, etc
 };
 
 export interface ArmorBySlot {
@@ -29,7 +28,7 @@ export interface ArmorBySlot {
   classItem: DestinyArmor[];
 }
 
-export type Subclass = {
+export type SubclassConfig = {
   itemId: string;
   super: Plug;
   abilities: Plug[];
@@ -55,11 +54,12 @@ export type Loadout = {
   legArmorMods: Plug[];
   classArmorMods: Plug[];
   characterId: number;
-  subclass: Subclass;
+  subclass: SubclassConfig;
 };
 
 export type ProfileData = {
   characters: Character[];
+  unlockedArmorModPlugs: string[];
 };
 
 export type Character = {
@@ -68,7 +68,14 @@ export type Character = {
   emblem?: Emblem;
   armor: ArmorBySlot;
   exotics: ArmorBySlot;
-  // TODO: plugs
+  subclasses: { [key: number]: Subclass };
+};
+
+export type Subclass = {
+  instanceId: string;
+  itemHash: string;
+  supers: string[];
+  aspects: string[];
 };
 
 export type Emblem = {
