@@ -21,7 +21,7 @@ export function getProfileDataRequest(): Promise<AxiosResponse<any, any>> {
   const destinyMembership = store.getState().destinyMembership.membership;
 
   return _get(
-    `/Platform/Destiny2/${destinyMembership.membershipType}/Profile/${destinyMembership.membershipId}/?components=102,200,201,300,205,302,304,305`,
+    `/Platform/Destiny2/${destinyMembership.membershipType}/Profile/${destinyMembership.membershipId}/?components=102,200,201,300,205,302,304,305,800`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

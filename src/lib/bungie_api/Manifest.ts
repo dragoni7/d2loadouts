@@ -1,7 +1,7 @@
 import { db } from '../../store/db';
 import { getManifestItemClass, getManifestItemSlot } from './utils';
 import { getManifestComponentRequest, getManifestRequest } from './Requests';
-import { ITEM_CATEGORY_HASHES, MANIFEST_TYPES } from './Constants';
+import { ITEM_CATEGORY_HASHES, MANIFEST_CLASS, MANIFEST_TYPES } from './Constants';
 
 const EXOTIC = 2759499571;
 const urlPrefix = 'https://bungie.net';
@@ -16,10 +16,11 @@ export async function updateManifest() {
       await db.manifestArmorDef.clear();
       localStorage.setItem('manifestVersion', response.data.Response.version);
 
-      const component =
+      const itemInventoryComponent =
         response.data.Response.jsonWorldComponentContentPaths.en['DestinyInventoryItemDefinition'];
 
-      const itemDefResponse = await getManifestComponentRequest(component);
+      const itemDefResponse = await getManifestComponentRequest(itemInventoryComponent);
+
       if (itemDefResponse.data && itemDefResponse.status === 200) {
         for (const itemHash in itemDefResponse.data) {
           const current = itemDefResponse.data[itemHash];
@@ -30,7 +31,7 @@ export async function updateManifest() {
               hash: Number(itemHash),
               name: current.displayProperties.name,
               isExotic: current.inventory.tierTypeHash === EXOTIC,
-              characterClass: getManifestItemClass(current.classType),
+              class: getManifestItemClass(current.classType),
               slot: getManifestItemSlot(current.itemSubType),
               icon: urlPrefix + current.displayProperties.icon,
             });
@@ -48,13 +49,18 @@ export async function updateManifest() {
           }
 
           // store subclass defs in indexdb
-          if (current.itemType === MANIFEST_TYPES.SUBCLASS) {
+          if (
+            current.itemType === MANIFEST_TYPES.SUBCLASS &&
+            current.classType !== MANIFEST_CLASS.UNKNOWN
+          ) {
             await db.manifestSubclass.add({
               hash: Number(itemHash),
               name: current.displayProperties.name,
               icon: urlPrefix + current.displayProperties.icon,
               screenshot: urlPrefix + current.screenshot,
               damageType: current.talentGrid.hudDamageType,
+              isOwned: false,
+              class: getManifestItemClass(current.classType),
             });
           }
 
@@ -70,6 +76,7 @@ export async function updateManifest() {
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                 category: current.plug.plugCategoryHash,
+                isOwned: false,
               });
             } else if (current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.SUBCLASS_MODS)) {
               await db.manifestSubclassModDef.add({
@@ -78,8 +85,37 @@ export async function updateManifest() {
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                 category: current.plug.plugCategoryHash,
+                isOwned: false,
               });
             }
+          }
+        }
+      }
+
+      const collectiblesComponent =
+        response.data.Response.jsonWorldComponentContentPaths.en['DestinyCollectibleDefinition'];
+
+      const collectiblesResponse = await getManifestComponentRequest(collectiblesComponent);
+
+      if (collectiblesResponse && collectiblesResponse.status === 200) {
+        for (const collectionHash in collectiblesResponse.data) {
+          const current = collectiblesResponse.data[collectionHash];
+
+          const armorDef = await db.manifestArmorDef
+            .where('hash')
+            .equals(current.itemHash)
+            .and((entry) => entry.isExotic === true)
+            .first();
+
+          if (armorDef && armorDef.isExotic) {
+            await db.manifestExoticArmorCollection.add({
+              hash: Number(collectionHash),
+              name: armorDef.name,
+              class: armorDef.class,
+              slot: armorDef.slot,
+              icon: armorDef.icon,
+              isOwned: false,
+            });
           }
         }
       }

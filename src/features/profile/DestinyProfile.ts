@@ -1,18 +1,20 @@
-import { BUCKET_HASH, PRIMARY_STATS, SOCKET_HASH, STAT_HASH } from '../../lib/bungie_api/Constants';
+import {
+  BUCKET_HASH,
+  PLUG_SET,
+  PRIMARY_STATS,
+  SOCKET_HASH,
+  STAT_HASH,
+  SUBCLASS_PLUG_SETS,
+} from '../../lib/bungie_api/Constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
 import { db } from '../../store/db';
-import {
-  Character,
-  CharacterClass,
-  DestinyArmor,
-  Emblem,
-  ProfileData,
-  Subclass,
-} from '../../types';
+import { Character, CharacterClass, DestinyArmor, Emblem, ProfileData } from '../../types';
 import { getCharacterClass, modReverseDict } from './util';
 
 export async function getProfileData(): Promise<ProfileData> {
-  const characters: Character[] = [];
+  const profile: ProfileData = {
+    characters: [],
+  };
 
   const response = await getProfileDataRequest();
 
@@ -22,9 +24,12 @@ export async function getProfileData(): Promise<ProfileData> {
     const characterInventories = response.data.Response.characterInventories.data;
     const characterEquipment = response.data.Response.characterEquipment.data;
     const characterData = response.data.Response.characters.data;
+    const profilePlugSets = response.data.Response.profilePlugSets.data.plugs;
+    const profileCollectibles = response.data.Response.profileCollectibles.data.collectibles;
 
     for (const key in characterData) {
       const characterClass = getCharacterClass(characterData[key].classHash);
+      const plugSets = response.data.Response.characterPlugSets.data[key].plugs;
 
       const character: Character = {
         id: characterData[key].characterId,
@@ -36,6 +41,7 @@ export async function getProfileData(): Promise<ProfileData> {
           chest: [],
           classItem: [],
         },
+        // TODO: remove this?
         exotics: {
           helmet: [],
           arms: [],
@@ -43,7 +49,6 @@ export async function getProfileData(): Promise<ProfileData> {
           chest: [],
           classItem: [],
         },
-        subclasses: {},
       };
 
       // iterate character's equipped items
@@ -68,23 +73,7 @@ export async function getProfileData(): Promise<ProfileData> {
           }
 
           case BUCKET_HASH.SUBCLASS: {
-            const subclassDef = await db.manifestSubclass
-              .where('hash')
-              .equals(item.itemHash)
-              .first();
-
-            if (subclassDef) {
-              const subclass: Subclass = {
-                instanceId: item.itemInstanceId,
-                itemHash: item.itemHash,
-                supers: [],
-                aspects: [],
-              };
-
-              // insert subclass into character's subclasses dict
-
-              character.subclasses[subclassDef.damageType] = subclass;
-            }
+            await db.manifestSubclass.where('hash').equals(item.itemHash).modify({ isOwned: true });
             continue;
           }
 
@@ -129,23 +118,7 @@ export async function getProfileData(): Promise<ProfileData> {
       for (const item of characterInventories[key].items) {
         switch (item.bucketHash) {
           case BUCKET_HASH.SUBCLASS: {
-            const subclassDef = await db.manifestSubclass
-              .where('hash')
-              .equals(item.itemHash)
-              .first();
-
-            if (subclassDef) {
-              const subclass: Subclass = {
-                instanceId: item.itemInstanceId,
-                itemHash: item.itemHash,
-                supers: [],
-                aspects: [],
-              };
-
-              // insert subclass into character's subclasses dict
-
-              character.subclasses[subclassDef.damageType] = subclass;
-            }
+            await db.manifestSubclass.where('hash').equals(item.itemHash).modify({ isOwned: true });
             continue;
           }
 
@@ -186,7 +159,43 @@ export async function getProfileData(): Promise<ProfileData> {
         }
       }
 
-      characters.push(character);
+      // iterate character's armor plug sets
+      for (const plug of plugSets[PLUG_SET.HELMET_PLUGS]) {
+        await db.manifestArmorModDef
+          .where('hash')
+          .equals(plug.plugItemHash)
+          .modify({ isOwned: true });
+      }
+
+      for (const plug of plugSets[PLUG_SET.ARM_PLUGS]) {
+        await db.manifestArmorModDef
+          .where('hash')
+          .equals(plug.plugItemHash)
+          .modify({ isOwned: true });
+      }
+
+      for (const plug of plugSets[PLUG_SET.CHEST_PLUGS]) {
+        await db.manifestArmorModDef
+          .where('hash')
+          .equals(plug.plugItemHash)
+          .modify({ isOwned: true });
+      }
+
+      for (const plug of plugSets[PLUG_SET.LEG_PLUGS]) {
+        await db.manifestArmorModDef
+          .where('hash')
+          .equals(plug.plugItemHash)
+          .modify({ isOwned: true });
+      }
+
+      for (const plug of plugSets[PLUG_SET.CLASS_ITEM_PLUGS]) {
+        await db.manifestArmorModDef
+          .where('hash')
+          .equals(plug.plugItemHash)
+          .modify({ isOwned: true });
+      }
+
+      profile.characters.push(character);
     }
 
     // iterate profile inventory
@@ -228,7 +237,7 @@ export async function getProfileData(): Promise<ProfileData> {
 
         if (armorDef) {
           // determine required class
-          destinyArmor.class = armorDef.characterClass as CharacterClass;
+          destinyArmor.class = armorDef.class as CharacterClass;
           // determine armor slot
           destinyArmor.type = armorDef.slot;
           // determine if exotic
@@ -239,7 +248,7 @@ export async function getProfileData(): Promise<ProfileData> {
           destinyArmor.icon = armorDef.icon;
         }
 
-        let target = characters.filter((c) => c.class === destinyArmor.class);
+        let target = profile.characters.filter((c) => c.class === destinyArmor.class);
 
         for (const character of target) {
           if (destinyArmor.exotic) {
@@ -297,14 +306,110 @@ export async function getProfileData(): Promise<ProfileData> {
         }
       }
     }
+
+    // iterate profile plugs
+    let abilityPlugSets: number[] = [
+      SUBCLASS_PLUG_SETS.FRAGMENTS.ARC,
+      SUBCLASS_PLUG_SETS.FRAGMENTS.SOLAR,
+      SUBCLASS_PLUG_SETS.FRAGMENTS.VOID,
+      SUBCLASS_PLUG_SETS.FRAGMENTS.STASIS,
+      SUBCLASS_PLUG_SETS.FRAGMENTS.STRAND,
+      SUBCLASS_PLUG_SETS.FRAGMENTS.PRISMATIC,
+
+      SUBCLASS_PLUG_SETS.GRENADES.ARC,
+      SUBCLASS_PLUG_SETS.GRENADES.SOLAR,
+      SUBCLASS_PLUG_SETS.GRENADES.VOID,
+      SUBCLASS_PLUG_SETS.GRENADES.STASIS,
+      SUBCLASS_PLUG_SETS.GRENADES.STRAND,
+      SUBCLASS_PLUG_SETS.GRENADES.PRISMATIC_HUNTER,
+      SUBCLASS_PLUG_SETS.GRENADES.PRISMATIC_WARLOCK,
+
+      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.ARC,
+      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.VOID,
+      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.SOLAR,
+      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.PRISMATIC,
+
+      SUBCLASS_PLUG_SETS.ASPECTS.TITAN.ARC,
+      SUBCLASS_PLUG_SETS.ASPECTS.TITAN.VOID,
+      SUBCLASS_PLUG_SETS.ASPECTS.TITAN.SOLAR,
+
+      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.ARC,
+      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.VOID,
+      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.SOLAR,
+      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.STASIS,
+      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.STRAND,
+      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.PRISMATIC,
+
+      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.ARC,
+      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.VOID,
+      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.SOLAR,
+      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.PRISMATIC,
+
+      SUBCLASS_PLUG_SETS.SUPERS.TITAN.ARC,
+      SUBCLASS_PLUG_SETS.SUPERS.TITAN.VOID,
+      SUBCLASS_PLUG_SETS.SUPERS.TITAN.SOLAR,
+
+      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.ARC,
+      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.VOID,
+      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.SOLAR,
+      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.STASIS,
+      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.STRAND,
+      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.PRISMATIC,
+
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.ARC,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.VOID,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.SOLAR,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.PRISMATIC,
+
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.TITAN.ARC,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.TITAN.VOID,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.TITAN.SOLAR,
+
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.ARC,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.VOID,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.SOLAR,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.STASIS,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.STRAND,
+      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.PRISMATIC,
+    ];
+
+    for (const key of abilityPlugSets) {
+      for (const plug of profilePlugSets[key]) {
+        if (plug.enabled) {
+          await db.manifestSubclassModDef
+            .where('hash')
+            .equals(plug.plugItemHash)
+            .modify({ isOwned: true });
+        }
+      }
+    }
+
+    // iterate character collectibles
+    // use any character's collectibles since it shares
+    const characterCollectibles =
+      response.data.Response.characterCollectibles.data[profile.characters[0].id].collectibles;
+    for (const collectible in characterCollectibles) {
+      const exoticCollectable = await db.manifestExoticArmorCollection
+        .where('hash')
+        .equals(Number(collectible))
+        .first();
+
+      // TODO: use enums here
+      if (
+        (exoticCollectable && characterCollectibles[collectible].state === 80) ||
+        (exoticCollectable && characterCollectibles[collectible].state === 0) ||
+        (exoticCollectable && characterCollectibles[collectible].state === 64) ||
+        (exoticCollectable && characterCollectibles[collectible].state === 16)
+      ) {
+        db.manifestExoticArmorCollection
+          .where('hash')
+          .equals(Number(collectible))
+          .modify({ isOwned: true });
+      }
+    }
   } else {
     console.log('Could not get response');
   }
-
-  const profile: ProfileData = {
-    characters: characters,
-    unlockedArmorModPlugs: [],
-  };
 
   return profile;
 }

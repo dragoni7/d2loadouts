@@ -60,6 +60,107 @@ export enum SOCKET_HASH {
   UNLOCKED_ARTIFICE_ARMOR = 720825311,
 }
 
+export enum PLUG_SET {
+  LEG_PLUGS = 541478408,
+  CLASS_ITEM_PLUGS = 963686427,
+  HELMET_PLUGS = 2037229815,
+  CHEST_PLUGS = 2321486318,
+  ARM_PLUGS = 3899745242,
+}
+
+export module SUBCLASS_PLUG_SETS {
+  export module SUPERS {
+    export enum TITAN {
+      ARC = 1129,
+      SOLAR = 1100,
+      VOID = 1087,
+    }
+
+    export enum HUNTER {
+      PRISMATIC = 1358,
+      ARC = 1124,
+      SOLAR = 1095,
+      VOID = 1082,
+    }
+
+    export enum WARLOCK {
+      PRISMATIC = 1368,
+      SOLAR = 1104,
+      VOID = 1091,
+      ARC = 1133,
+      STASIS = 1368,
+      STRAND = 1196,
+    }
+  }
+
+  export module MELEE_ABILITIES {
+    export enum TITAN {
+      ARC = 1130,
+      SOLAR = 1101,
+      VOID = 1088,
+    }
+
+    export enum HUNTER {
+      PRISMATIC = 1359,
+      ARC = 1125,
+      SOLAR = 1096,
+      VOID = 1083,
+    }
+
+    export enum WARLOCK {
+      PRISMATIC = 1369,
+      ARC = 1134,
+      SOLAR = 1105,
+      VOID = 1092,
+      STASIS = 956,
+      STRAND = 1197,
+    }
+  }
+
+  export module ASPECTS {
+    export enum TITAN {
+      SOLAR = 4030440911,
+      ARC = 3609966783,
+      VOID = 1369926501,
+    }
+
+    export enum HUNTER {
+      ARC = 3432159481,
+      PRISMATIC = 2685327650,
+      VOID = 949441155,
+      SOLAR = 634290851,
+    }
+
+    export enum WARLOCK {
+      SOLAR = 3562933678,
+      ARC = 3085216490,
+      PRISMATIC = 2676106717,
+      STASIS = 2491007355,
+      STRAND = 2260242405,
+      VOID = 2203811618,
+    }
+  }
+
+  export enum GRENADES {
+    PRISMATIC_WARLOCK = 1370,
+    PRISMATIC_HUNTER = 1360,
+    STRAND = 1189,
+    ARC = 1126,
+    SOLAR = 1097,
+    VOID = 1084,
+    STASIS = 950,
+  }
+
+  export enum FRAGMENTS {
+    PRISMATIC = 3916244727,
+    STASIS = 2878515719,
+    ARC = 2179662812,
+    SOLAR = 1319395210,
+    STRAND = 837761865,
+    VOID = 225543744,
+  }
+}
+
 export module PLUG_CATEGORY_HASH {
   export module SUPERS {
     export enum TITAN {
@@ -298,4 +399,5 @@ export enum MANIFEST_CLASS {
   TITAN = 0,
   HUNTER = 1,
   WARLOCK = 2,
+  UNKNOWN = 3,
 }

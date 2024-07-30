@@ -1,3 +1,4 @@
+import { CharacterClass } from '../../types';
 import { MANIFEST_ARMOR, MANIFEST_CLASS } from './Constants';
 
 export function getManifestItemSlot(slotNum: number): string {
@@ -23,7 +24,7 @@ export function getManifestItemSlot(slotNum: number): string {
   }
 }
 
-export function getManifestItemClass(classNum: number): string {
+export function getManifestItemClass(classNum: number): CharacterClass {
   switch (classNum) {
     case MANIFEST_CLASS.HUNTER: {
       return 'hunter';

@@ -59,7 +59,6 @@ export type Loadout = {
 
 export type ProfileData = {
   characters: Character[];
-  unlockedArmorModPlugs: string[];
 };
 
 export type Character = {
@@ -68,14 +67,11 @@ export type Character = {
   emblem?: Emblem;
   armor: ArmorBySlot;
   exotics: ArmorBySlot;
-  subclasses: { [key: number]: Subclass };
 };
 
 export type Subclass = {
   instanceId: string;
   itemHash: string;
-  supers: string[];
-  aspects: string[];
 };
 
 export type Emblem = {
@@ -99,16 +95,25 @@ export interface ManifestEntry {
 export interface ManifestSubclass extends ManifestEntry {
   screenshot: string;
   damageType: number;
+  isOwned: boolean;
+  class: CharacterClass;
 }
 
 export interface ManifestPlug extends ManifestEntry {
   energyCost: number;
   category: number;
+  isOwned: boolean;
 }
 
 export interface ManifestArmor extends ManifestEntry {
   isExotic: boolean;
-  characterClass: string;
+  class: CharacterClass;
+  slot: string;
+}
+
+export interface ManifestExoticArmor extends ManifestEntry {
+  isOwned: boolean;
+  class: CharacterClass;
   slot: string;
 }
 
