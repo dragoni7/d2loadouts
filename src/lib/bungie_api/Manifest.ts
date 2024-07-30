@@ -97,6 +97,7 @@ export async function updateManifest() {
 
       const collectiblesResponse = await getManifestComponentRequest(collectiblesComponent);
 
+      // store exotic armor collectibles def
       if (collectiblesResponse && collectiblesResponse.status === 200) {
         for (const collectionHash in collectiblesResponse.data) {
           const current = collectiblesResponse.data[collectionHash];
@@ -115,6 +116,7 @@ export async function updateManifest() {
               slot: armorDef.slot,
               icon: armorDef.icon,
               isOwned: false,
+              itemHash: current.itemHash,
             });
           }
         }

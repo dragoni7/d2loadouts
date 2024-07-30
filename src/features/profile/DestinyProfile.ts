@@ -395,6 +395,7 @@ export async function getProfileData(): Promise<ProfileData> {
         .first();
 
       // TODO: use enums here
+      // state if collectable is owned or not
       if (
         (exoticCollectable && characterCollectibles[collectible].state === 80) ||
         (exoticCollectable && characterCollectibles[collectible].state === 0) ||

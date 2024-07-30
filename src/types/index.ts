@@ -115,6 +115,7 @@ export interface ManifestExoticArmor extends ManifestEntry {
   isOwned: boolean;
   class: CharacterClass;
   slot: string;
+  itemHash: string;
 }
 
 export interface ManifestEmblem extends Emblem, ManifestEntry {}
