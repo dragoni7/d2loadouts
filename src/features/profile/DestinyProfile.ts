@@ -41,14 +41,6 @@ export async function getProfileData(): Promise<ProfileData> {
           chest: [],
           classItem: [],
         },
-        // TODO: remove this?
-        exotics: {
-          helmet: [],
-          arms: [],
-          legs: [],
-          chest: [],
-          classItem: [],
-        },
         subclasses: {},
       };
 
@@ -242,56 +234,26 @@ export async function getProfileData(): Promise<ProfileData> {
         let target = profile.characters.filter((c) => c.class === destinyArmor.class);
 
         for (const character of target) {
-          if (destinyArmor.exotic) {
-            switch (destinyArmor.type) {
-              case 'helmet': {
-                character.exotics.helmet.push(destinyArmor);
-                character.armor.helmet.push(destinyArmor);
-                continue;
-              }
-              case 'arms': {
-                character.exotics.arms.push(destinyArmor);
-                character.armor.arms.push(destinyArmor);
-                continue;
-              }
-              case 'chest': {
-                character.exotics.chest.push(destinyArmor);
-                character.armor.chest.push(destinyArmor);
-                continue;
-              }
-              case 'legs': {
-                character.exotics.legs.push(destinyArmor);
-                character.armor.legs.push(destinyArmor);
-                continue;
-              }
-              case 'class': {
-                character.exotics.classItem.push(destinyArmor);
-                character.armor.classItem.push(destinyArmor);
-                continue;
-              }
+          switch (destinyArmor.type) {
+            case 'helmet': {
+              character.armor.helmet.push(destinyArmor);
+              continue;
             }
-          } else {
-            switch (destinyArmor.type) {
-              case 'helmet': {
-                character.armor.helmet.push(destinyArmor);
-                continue;
-              }
-              case 'arms': {
-                character.armor.arms.push(destinyArmor);
-                continue;
-              }
-              case 'chest': {
-                character.armor.chest.push(destinyArmor);
-                continue;
-              }
-              case 'legs': {
-                character.armor.legs.push(destinyArmor);
-                continue;
-              }
-              case 'class': {
-                character.armor.classItem.push(destinyArmor);
-                continue;
-              }
+            case 'arms': {
+              character.armor.arms.push(destinyArmor);
+              continue;
+            }
+            case 'chest': {
+              character.armor.chest.push(destinyArmor);
+              continue;
+            }
+            case 'legs': {
+              character.armor.legs.push(destinyArmor);
+              continue;
+            }
+            case 'class': {
+              character.armor.classItem.push(destinyArmor);
+              continue;
             }
           }
         }

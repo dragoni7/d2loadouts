@@ -66,7 +66,6 @@ export type Character = {
   class: CharacterClass;
   emblem?: Emblem;
   armor: ArmorBySlot;
-  exotics: ArmorBySlot;
   subclasses: { [key: number]: string };
 };
 
