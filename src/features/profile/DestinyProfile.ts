@@ -49,6 +49,7 @@ export async function getProfileData(): Promise<ProfileData> {
           chest: [],
           classItem: [],
         },
+        subclasses: {},
       };
 
       // iterate character's equipped items
@@ -73,10 +74,15 @@ export async function getProfileData(): Promise<ProfileData> {
           }
 
           case BUCKET_HASH.SUBCLASS: {
-            await db.manifestSubclass
-              .where('itemHash')
-              .equals(item.itemHash)
-              .modify({ isOwned: true });
+            const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
+
+            await subclassQuery.modify({ isOwned: true });
+
+            const subclass = await subclassQuery.first();
+
+            if (subclass) {
+              character.subclasses[subclass.damageType] = item.itemInstanceId;
+            }
             continue;
           }
 
@@ -121,10 +127,15 @@ export async function getProfileData(): Promise<ProfileData> {
       for (const item of characterInventories[key].items) {
         switch (item.bucketHash) {
           case BUCKET_HASH.SUBCLASS: {
-            await db.manifestSubclass
-              .where('itemHash')
-              .equals(item.itemHash)
-              .modify({ isOwned: true });
+            const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
+
+            await subclassQuery.modify({ isOwned: true });
+
+            const subclass = await subclassQuery.first();
+
+            if (subclass) {
+              character.subclasses[subclass.damageType] = item.itemInstanceId;
+            }
             continue;
           }
 
@@ -166,11 +177,13 @@ export async function getProfileData(): Promise<ProfileData> {
       }
 
       // check character plugs for stasis grenade state
-      for (const plug of plugSets[SUBCLASS_PLUG_SETS.GRENADES.STASIS]) {
-        await db.manifestSubclassModDef
-          .where('itemHash')
-          .equals(plug.plugItemHash)
-          .modify({ isOwned: true });
+      if (plugSets[SUBCLASS_PLUG_SETS.GRENADES.STASIS]) {
+        for (const plug of plugSets[SUBCLASS_PLUG_SETS.GRENADES.STASIS]) {
+          await db.manifestSubclassModDef
+            .where('itemHash')
+            .equals(plug.plugItemHash)
+            .modify({ isOwned: true });
+        }
       }
 
       profile.characters.push(character);

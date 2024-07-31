@@ -67,6 +67,7 @@ export type Character = {
   emblem?: Emblem;
   armor: ArmorBySlot;
   exotics: ArmorBySlot;
+  subclasses: { [key: number]: string };
 };
 
 export type Subclass = {
