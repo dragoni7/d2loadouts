@@ -72,65 +72,7 @@ const ExoticSearch: React.FC = () => {
     setSelectedExotic(null);
   };
 
-  useEffect(() => {
-    const exoticItemInstances = store.getState().profile.profileData.characters[0]?.exotics;
-
-    if (exoticItemInstances) {
-      const obtainedExotics = new Map<string, ExoticViewModel>();
-
-      exoticItemInstances.helmet.forEach((exotic) => {
-        if (!(exotic.itemHash in obtainedExotics)) {
-          obtainedExotics.set(exotic.itemHash, {
-            itemHash: exotic.itemHash,
-            name: exotic.name,
-            icon: exotic.icon,
-          });
-        }
-      });
-
-      exoticItemInstances.arms.forEach((exotic) => {
-        if (!(exotic.itemHash in obtainedExotics)) {
-          obtainedExotics.set(exotic.itemHash, {
-            itemHash: exotic.itemHash,
-            name: exotic.name,
-            icon: exotic.icon,
-          });
-        }
-      });
-
-      exoticItemInstances.chest.forEach((exotic) => {
-        if (!(exotic.itemHash in obtainedExotics)) {
-          obtainedExotics.set(exotic.itemHash, {
-            itemHash: exotic.itemHash,
-            name: exotic.name,
-            icon: exotic.icon,
-          });
-        }
-      });
-
-      exoticItemInstances.legs.forEach((exotic) => {
-        if (!(exotic.itemHash in obtainedExotics)) {
-          obtainedExotics.set(exotic.itemHash, {
-            itemHash: exotic.itemHash,
-            name: exotic.name,
-            icon: exotic.icon,
-          });
-        }
-      });
-
-      exoticItemInstances.classItem.forEach((exotic) => {
-        if (!(exotic.itemHash in obtainedExotics)) {
-          obtainedExotics.set(exotic.itemHash, {
-            itemHash: exotic.itemHash,
-            name: exotic.name,
-            icon: exotic.icon,
-          });
-        }
-      });
-
-      setExotics(obtainedExotics);
-    }
-  });
+  useEffect(() => {});
 
   return (
     <NewComponentContainer>
