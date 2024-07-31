@@ -1,6 +1,6 @@
 import {
   BUCKET_HASH,
-  PLUG_SET,
+  COLLECTIBLE_OWNED,
   PRIMARY_STATS,
   SOCKET_HASH,
   STAT_HASH,
@@ -56,7 +56,7 @@ export async function getProfileData(): Promise<ProfileData> {
         switch (item.bucketHash) {
           case BUCKET_HASH.EMBLEM: {
             const emblemDef = await db.manifestEmblemDef
-              .where('hash')
+              .where('itemHash')
               .equals(item.itemHash)
               .first();
 
@@ -73,7 +73,10 @@ export async function getProfileData(): Promise<ProfileData> {
           }
 
           case BUCKET_HASH.SUBCLASS: {
-            await db.manifestSubclass.where('hash').equals(item.itemHash).modify({ isOwned: true });
+            await db.manifestSubclass
+              .where('itemHash')
+              .equals(item.itemHash)
+              .modify({ isOwned: true });
             continue;
           }
 
@@ -118,7 +121,10 @@ export async function getProfileData(): Promise<ProfileData> {
       for (const item of characterInventories[key].items) {
         switch (item.bucketHash) {
           case BUCKET_HASH.SUBCLASS: {
-            await db.manifestSubclass.where('hash').equals(item.itemHash).modify({ isOwned: true });
+            await db.manifestSubclass
+              .where('itemHash')
+              .equals(item.itemHash)
+              .modify({ isOwned: true });
             continue;
           }
 
@@ -159,38 +165,10 @@ export async function getProfileData(): Promise<ProfileData> {
         }
       }
 
-      // iterate character's armor plug sets
-      for (const plug of plugSets[PLUG_SET.HELMET_PLUGS]) {
-        await db.manifestArmorModDef
-          .where('hash')
-          .equals(plug.plugItemHash)
-          .modify({ isOwned: true });
-      }
-
-      for (const plug of plugSets[PLUG_SET.ARM_PLUGS]) {
-        await db.manifestArmorModDef
-          .where('hash')
-          .equals(plug.plugItemHash)
-          .modify({ isOwned: true });
-      }
-
-      for (const plug of plugSets[PLUG_SET.CHEST_PLUGS]) {
-        await db.manifestArmorModDef
-          .where('hash')
-          .equals(plug.plugItemHash)
-          .modify({ isOwned: true });
-      }
-
-      for (const plug of plugSets[PLUG_SET.LEG_PLUGS]) {
-        await db.manifestArmorModDef
-          .where('hash')
-          .equals(plug.plugItemHash)
-          .modify({ isOwned: true });
-      }
-
-      for (const plug of plugSets[PLUG_SET.CLASS_ITEM_PLUGS]) {
-        await db.manifestArmorModDef
-          .where('hash')
+      // check character plugs for stasis grenade state
+      for (const plug of plugSets[SUBCLASS_PLUG_SETS.GRENADES.STASIS]) {
+        await db.manifestSubclassModDef
+          .where('itemHash')
           .equals(plug.plugItemHash)
           .modify({ isOwned: true });
       }
@@ -231,7 +209,7 @@ export async function getProfileData(): Promise<ProfileData> {
         setArtificeState(sockets, destinyArmor);
 
         const armorDef = await db.manifestArmorDef
-          .where('hash')
+          .where('itemHash')
           .equals(Number(destinyArmor.itemHash))
           .first();
 
@@ -377,10 +355,43 @@ export async function getProfileData(): Promise<ProfileData> {
       for (const plug of profilePlugSets[key]) {
         if (plug.enabled) {
           await db.manifestSubclassModDef
-            .where('hash')
+            .where('itemHash')
             .equals(plug.plugItemHash)
             .modify({ isOwned: true });
         }
+      }
+    }
+
+    // iterate profile collectibles
+    for (const collectible in profileCollectibles) {
+      const exoticCollectable = await db.manifestExoticArmorCollection
+        .where('collectibleHash')
+        .equals(Number(collectible))
+        .first();
+
+      if (
+        exoticCollectable &&
+        COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state))
+      ) {
+        await db.manifestExoticArmorCollection
+          .where('collectibleHash')
+          .equals(Number(collectible))
+          .modify({ isOwned: true });
+      }
+
+      const armorModDef = await db.manifestArmorModDef
+        .where('collectibleHash')
+        .equals(Number(collectible))
+        .first();
+
+      if (
+        armorModDef &&
+        COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state))
+      ) {
+        await db.manifestArmorModDef
+          .where('collectibleHash')
+          .equals(Number(collectible))
+          .modify({ isOwned: true });
       }
     }
 
@@ -388,22 +399,19 @@ export async function getProfileData(): Promise<ProfileData> {
     // use any character's collectibles since it shares
     const characterCollectibles =
       response.data.Response.characterCollectibles.data[profile.characters[0].id].collectibles;
+
     for (const collectible in characterCollectibles) {
       const exoticCollectable = await db.manifestExoticArmorCollection
-        .where('hash')
+        .where('collectibleHash')
         .equals(Number(collectible))
         .first();
 
-      // TODO: use enums here
-      // state if collectable is owned or not
       if (
-        (exoticCollectable && characterCollectibles[collectible].state === 80) ||
-        (exoticCollectable && characterCollectibles[collectible].state === 0) ||
-        (exoticCollectable && characterCollectibles[collectible].state === 64) ||
-        (exoticCollectable && characterCollectibles[collectible].state === 16)
+        exoticCollectable &&
+        COLLECTIBLE_OWNED.includes(Number(characterCollectibles[collectible].state))
       ) {
         db.manifestExoticArmorCollection
-          .where('hash')
+          .where('collectibleHash')
           .equals(Number(collectible))
           .modify({ isOwned: true });
       }
@@ -446,7 +454,7 @@ async function buildDestinyArmor(
   setArtificeState(sockets, destinyArmor);
 
   const armorDef = await db.manifestArmorDef
-    .where('hash')
+    .where('itemHash')
     .equals(Number(destinyArmor.itemHash))
     .first();
 

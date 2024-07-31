@@ -6,6 +6,8 @@ export enum API_CREDENTIALS {
   CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET,
 }
 
+export const COLLECTIBLE_OWNED: number[] = [0, 16, 64, 80];
+
 export enum ERRORS {
   INVALID_EQUIP_LOCATION = 1671,
   CANNOT_FIND_ITEM = 1623,

@@ -87,7 +87,7 @@ export type DestinyMembership = {
 
 export interface ManifestEntry {
   id: number;
-  hash: number;
+  itemHash: number;
   name: string;
   icon: string;
 }
@@ -105,6 +105,10 @@ export interface ManifestPlug extends ManifestEntry {
   isOwned: boolean;
 }
 
+export interface ManifestArmorMod extends ManifestPlug {
+  collectibleHash: number;
+}
+
 export interface ManifestArmor extends ManifestEntry {
   isExotic: boolean;
   class: CharacterClass;
@@ -115,7 +119,7 @@ export interface ManifestExoticArmor extends ManifestEntry {
   isOwned: boolean;
   class: CharacterClass;
   slot: string;
-  itemHash: string;
+  collectibleHash: number;
 }
 
 export interface ManifestEmblem extends Emblem, ManifestEntry {}

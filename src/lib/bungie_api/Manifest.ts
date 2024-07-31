@@ -28,7 +28,7 @@ export async function updateManifest() {
           // store armor defs in indexdb
           if (current.itemType === MANIFEST_TYPES.ARMOR) {
             await db.manifestArmorDef.add({
-              hash: Number(itemHash),
+              itemHash: Number(itemHash),
               name: current.displayProperties.name,
               isExotic: current.inventory.tierTypeHash === EXOTIC,
               class: getManifestItemClass(current.classType),
@@ -40,7 +40,7 @@ export async function updateManifest() {
           // store emblem defs in indexdb
           if (current.itemType === MANIFEST_TYPES.EMBLEM) {
             await db.manifestEmblemDef.add({
-              hash: Number(itemHash),
+              itemHash: Number(itemHash),
               secondaryOverlay: urlPrefix + current.secondaryOverlay,
               secondarySpecial: urlPrefix + current.secondarySpecial,
               name: current.displayProperties.name,
@@ -54,7 +54,7 @@ export async function updateManifest() {
             current.classType !== MANIFEST_CLASS.UNKNOWN
           ) {
             await db.manifestSubclass.add({
-              hash: Number(itemHash),
+              itemHash: Number(itemHash),
               name: current.displayProperties.name,
               icon: urlPrefix + current.displayProperties.icon,
               screenshot: urlPrefix + current.screenshot,
@@ -71,16 +71,17 @@ export async function updateManifest() {
               current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS)
             ) {
               await db.manifestArmorModDef.add({
-                hash: Number(itemHash),
+                itemHash: Number(itemHash),
                 name: current.displayProperties.name,
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                 category: current.plug.plugCategoryHash,
                 isOwned: false,
+                collectibleHash: -1,
               });
             } else if (current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.SUBCLASS_MODS)) {
               await db.manifestSubclassModDef.add({
-                hash: Number(itemHash),
+                itemHash: Number(itemHash),
                 name: current.displayProperties.name,
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
@@ -97,29 +98,37 @@ export async function updateManifest() {
 
       const collectiblesResponse = await getManifestComponentRequest(collectiblesComponent);
 
-      // store exotic armor collectibles def
       if (collectiblesResponse && collectiblesResponse.status === 200) {
         for (const collectionHash in collectiblesResponse.data) {
           const current = collectiblesResponse.data[collectionHash];
 
           const armorDef = await db.manifestArmorDef
-            .where('hash')
+            .where('itemHash')
             .equals(current.itemHash)
             .and((entry) => entry.isExotic === true)
             .first();
 
-          if (armorDef && armorDef.isExotic) {
+          // store exotic armor collectibles def
+          if (armorDef) {
             await db.manifestExoticArmorCollection.add({
-              hash: Number(collectionHash),
+              itemHash: current.itemHash,
               name: armorDef.name,
               class: armorDef.class,
               slot: armorDef.slot,
               icon: armorDef.icon,
               isOwned: false,
-              itemHash: current.itemHash,
+              collectibleHash: Number(collectionHash),
             });
           }
+          // get collection hash for armor mods
+          await db.manifestArmorModDef
+            .where('itemHash')
+            .equals(current.itemHash)
+            .modify({ collectibleHash: current.hash });
         }
+
+        // remove armor mods with no collection hash i.e they are not a collectible mod
+        await db.manifestArmorModDef.where('collectibleHash').below(0).delete();
       }
     }
   } else {
