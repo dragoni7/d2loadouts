@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import { Autocomplete, TextField } from '@mui/material';
-import { RootState, store } from '../store';
-import { DestinyArmor } from '../types';
-import { useSelector } from 'react-redux';
 import { db } from '../store/db';
+import { Character } from '../types';
 
 const NewComponentContainer = styled('div')({
   backgroundColor: 'transparent',
@@ -43,15 +41,6 @@ const ArrowIcon = styled('div')({
   borderBottom: '5px solid transparent',
 });
 
-const SearchInput = styled('input')({
-  padding: '10px',
-  borderRadius: '5px',
-  border: '1px solid white',
-  marginLeft: '10px',
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  color: 'white',
-});
-
 const SelectExotic = styled('span')({
   fontSize: '16px',
   fontWeight: 'bold',
@@ -61,18 +50,42 @@ type ExoticViewModel = {
   itemHash: string;
   name: string;
   icon: string;
+  isOwned: boolean;
 };
 
-const ExoticSearch: React.FC = () => {
-  const [exotics, setExotics] = useState<Map<string, ExoticViewModel>>(new Map());
+interface ExoticSearchProps {
+  selectedCharacter: Character | null;
+}
+
+const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter }) => {
+  const [exotics, setExotics] = useState<ExoticViewModel[]>([]);
   const [selectedExotic, setSelectedExotic] = useState<ExoticViewModel | null>(null);
   const [inputValue, setInputValue] = React.useState('');
+
+  const fetchExoticData = async () => {
+    if (selectedCharacter) {
+      const data = await db.manifestExoticArmorCollection
+        .where('class')
+        .equalsIgnoreCase(selectedCharacter.class)
+        .toArray();
+      setExotics(
+        data.map((item) => ({
+          itemHash: item.itemHash.toString(),
+          name: item.name,
+          icon: item.icon,
+          isOwned: item.isOwned,
+        }))
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchExoticData();
+  }, [selectedCharacter]);
 
   const handleClearSelection = () => {
     setSelectedExotic(null);
   };
-
-  useEffect(() => {});
 
   return (
     <NewComponentContainer>
@@ -90,9 +103,15 @@ const ExoticSearch: React.FC = () => {
               setInputValue(newInputValue);
             }}
             id="exotics"
-            options={Array.from(exotics.values())}
+            options={exotics}
             getOptionLabel={(option: ExoticViewModel) => option.name}
             sx={{ width: 300 }}
+            renderOption={(props, option) => (
+              <li {...props} style={{ color: option.isOwned ? 'inherit' : 'grey' }}>
+                <ExoticIcon src={option.icon} alt="Exotic Icon" />
+                {option.name}
+              </li>
+            )}
             renderInput={(params) => <TextField {...params} label="Exotics" />}
           />
         </div>

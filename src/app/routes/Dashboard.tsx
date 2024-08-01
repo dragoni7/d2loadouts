@@ -14,7 +14,7 @@ import { DestinyArmor, ArmorBySlot, Character } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
-import NewComponent from '../../components/ExoticSearch';
+import ExoticSearch from '../../components/ExoticSearch';
 import greyBackground from '../../assets/grey.png';
 
 const PageContainer = styled('div')({
@@ -167,7 +167,7 @@ export const Dashboard = () => {
       )}
       <Container>
         <NewComponentWrapper>
-          <NewComponent />
+          <ExoticSearch selectedCharacter={selectedCharacter} />
         </NewComponentWrapper>
         <BottomPane>
           <LeftPane>
