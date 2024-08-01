@@ -84,9 +84,10 @@ type ExoticViewModel = {
 
 interface ExoticSearchProps {
   selectedCharacter: Character | null;
+  onExoticSelect: (itemHash: string | null) => void;
 }
 
-const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter }) => {
+const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter, onExoticSelect }) => {
   const [exotics, setExotics] = useState<ExoticViewModel[]>([]);
   const [selectedExotic, setSelectedExotic] = useState<ExoticViewModel | null>(null);
   const [inputValue, setInputValue] = React.useState('');
@@ -111,6 +112,14 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter }) => {
   useEffect(() => {
     fetchExoticData();
   }, [selectedCharacter]);
+
+  useEffect(() => {
+    if (selectedExotic) {
+      onExoticSelect(selectedExotic.itemHash);
+    } else {
+      onExoticSelect(null);
+    }
+  }, [selectedExotic]);
 
   useEffect(() => {
     setSelectedExotic(null);

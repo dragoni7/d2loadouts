@@ -104,6 +104,7 @@ export const Dashboard = () => {
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [selectedExoticItemHash, setSelectedExoticItemHash] = useState<string | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
   const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
@@ -120,13 +121,25 @@ export const Dashboard = () => {
 
       if (profileData.characters.length > 0) {
         setSelectedCharacter(profileData.characters[0]);
-        const initialPermutations = generatePermutations(profileData.characters[0].armor);
+        const initialPermutations = generatePermutations(
+          profileData.characters[0].armor,
+          selectedExoticItemHash
+        );
         setPermutations(initialPermutations);
       }
     };
 
     updateProfile().catch(console.error);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedCharacter) {
+      const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
+      setPermutations(newPermutations);
+      const filtered = filterPermutations(newPermutations, selectedValues);
+      setFilteredPermutations(filtered);
+    }
+  }, [selectedCharacter, selectedExoticItemHash]);
 
   useEffect(() => {
     if (permutations) {
@@ -145,7 +158,7 @@ export const Dashboard = () => {
       setIsTransitioning(true);
       setTimeout(() => {
         setSelectedCharacter(character);
-        const newPermutations = generatePermutations(selectedCharacter.armor);
+        const newPermutations = generatePermutations(character.armor, selectedExoticItemHash);
         setPermutations(newPermutations);
         setFilteredPermutations(newPermutations);
         setIsTransitioning(false);
@@ -167,7 +180,10 @@ export const Dashboard = () => {
       )}
       <Container>
         <NewComponentWrapper>
-          <ExoticSearch selectedCharacter={selectedCharacter} />
+          <ExoticSearch
+            selectedCharacter={selectedCharacter}
+            onExoticSelect={setSelectedExoticItemHash}
+          />
         </NewComponentWrapper>
         <BottomPane>
           <LeftPane>

@@ -1,8 +1,23 @@
 import { DestinyArmor, ArmorBySlot } from '../../types';
 
-export const generatePermutations = (armorClass: ArmorBySlot): DestinyArmor[][] => {
+export const generatePermutations = (
+  armorClass: ArmorBySlot,
+  selectedExoticItemHash: string | null = null
+): DestinyArmor[][] => {
   const { helmet, arms, legs, chest } = armorClass;
-  const armorTypes = [helmet, arms, legs, chest];
+  let filteredHelmet = helmet;
+  let filteredArms = arms;
+  let filteredLegs = legs;
+  let filteredChest = chest;
+
+  if (selectedExoticItemHash) {
+    filteredHelmet = helmet.filter(item => item.itemHash === selectedExoticItemHash || !item.exotic);
+    filteredArms = arms.filter(item => item.itemHash === selectedExoticItemHash || !item.exotic);
+    filteredLegs = legs.filter(item => item.itemHash === selectedExoticItemHash || !item.exotic);
+    filteredChest = chest.filter(item => item.itemHash === selectedExoticItemHash || !item.exotic);
+  }
+
+  const armorTypes = [filteredHelmet, filteredArms, filteredLegs, filteredChest];
   const permutations: DestinyArmor[][] = [];
 
   const generate = (
@@ -15,8 +30,10 @@ export const generatePermutations = (armorClass: ArmorBySlot): DestinyArmor[][] 
       return;
     }
 
-    for (const item of armorTypes[currentTypeIndex]) {
-      if (item.exotic && exoticCount > 0) {
+    const currentSlot = armorTypes[currentTypeIndex];
+
+    for (const item of currentSlot) {
+      if (item.exotic && exoticCount > 0 && item.itemHash !== selectedExoticItemHash) {
         continue;
       }
 
