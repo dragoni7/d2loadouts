@@ -74,6 +74,27 @@ export const generatePermutations = (
   console.log('Filtered chest count:', filteredChest.length);
 
   const armorTypes = [filteredHelmet, filteredArms, filteredLegs, filteredChest];
+
+  // placeholder we can change logic later when we decide on filters
+  const fakeClassItem: DestinyArmor = {
+    intellect: 2,
+    discipline: 2,
+    resilience: 2,
+    mobility: 2,
+    strength: 2,
+    recovery: 2,
+    instanceHash: 'fake_class_item',
+    itemHash: 'fake_class_item',
+    artifice: false,
+    masterwork: false,
+    exotic: false,
+    class: undefined,
+    type: 'classItem',
+    location: -1,
+    icon: '',
+    name: 'Class Item Bonus',
+  };
+
   const permutations: DestinyArmor[][] = [];
 
   const generate = (
@@ -82,15 +103,8 @@ export const generatePermutations = (
     exoticCount: number
   ) => {
     if (currentTypeIndex === armorTypes.length) {
-      const modifiedPermutation = currentPermutation.map(item => ({
-        ...item,
-        intellect: item.intellect + 2,
-        discipline: item.discipline + 2,
-        resilience: item.resilience + 2,
-        mobility: item.mobility + 2,
-        strength: item.strength + 2,
-        recovery: item.recovery + 2
-      }));
+      // Include the fake class item with the bonus stats
+      const modifiedPermutation = [...currentPermutation, fakeClassItem];
       permutations.push(modifiedPermutation);
       return;
     }
