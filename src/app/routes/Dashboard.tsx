@@ -1,3 +1,4 @@
+// Dashboard.tsx
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
@@ -10,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorBySlot, Character } from '../../types';
+import { DestinyArmor, Character, FilteredPermutation } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -32,11 +33,21 @@ const Container = styled('div')({
   padding: '20px',
   width: '100vw',
   boxSizing: 'border-box',
-  overflow: 'hidden',
+  overflowY: 'auto',
   backgroundImage: `url(${greyBackground})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  marginTop: '130px',
+  marginTop: '110px',
+  '::-webkit-scrollbar': {
+    width: '10px',
+  },
+  '::-webkit-scrollbar-track': {
+    background: 'none',
+  },
+  '::-webkit-scrollbar-thumb': {
+    background: 'grey',
+    borderRadius: '0',
+  },
 });
 
 const TopPane = styled('div')({
@@ -57,7 +68,6 @@ const BottomPane = styled('div')({
   boxSizing: 'border-box',
   justifyContent: 'space-between',
   flexWrap: 'wrap',
-  border: '2px solid white',
 });
 
 const LeftPane = styled('div')({
@@ -77,11 +87,10 @@ const RightPane = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  maxWidth: '600px',
-  padding: '10px',
+  maxWidth: '800px',
+  padding: '5px',
   boxSizing: 'border-box',
   margin: '0 auto',
-  border: '2px solid white',
 });
 
 const DiamondButtonWrapper = styled('div')({
@@ -106,7 +115,9 @@ export const Dashboard = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [selectedExoticItemHash, setSelectedExoticItemHash] = useState<string | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
-  const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
+  const [filteredPermutations, setFilteredPermutations] = useState<FilteredPermutation[] | null>(
+    null
+  );
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('left');
@@ -136,7 +147,6 @@ export const Dashboard = () => {
     if (selectedCharacter) {
       const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
       setPermutations(newPermutations);
-      setFilteredPermutations(newPermutations); // Initially, set filtered permutations to be the same as generated
     }
   }, [selectedCharacter, selectedExoticItemHash]);
 
@@ -145,7 +155,7 @@ export const Dashboard = () => {
       const filtered = filterPermutations(permutations, selectedValues);
       setFilteredPermutations(filtered);
     }
-  }, [selectedValues]);
+  }, [selectedValues, permutations]);
 
   const handleThresholdChange = (thresholds: { [key: string]: number }) => {
     setSelectedValues(thresholds);
@@ -159,7 +169,8 @@ export const Dashboard = () => {
         setSelectedCharacter(character);
         const newPermutations = generatePermutations(character.armor, selectedExoticItemHash);
         setPermutations(newPermutations);
-        setFilteredPermutations(newPermutations);
+        const filtered = filterPermutations(newPermutations, selectedValues);
+        setFilteredPermutations(filtered);
         setIsTransitioning(false);
       }, 300);
     }

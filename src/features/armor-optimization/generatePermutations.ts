@@ -66,7 +66,7 @@ export const generatePermutations = (
     class: undefined,
     type: 'classItem',
     location: -1,
-    icon: '',
+    icon: 'https://www.bungie.net/common/destiny2_content/icons/faeea62cd4cfaec3683a0ad84f1fa2ac.jpg',
     name: 'Class Item Bonus',
   };
 

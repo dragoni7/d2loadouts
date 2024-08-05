@@ -122,4 +122,16 @@ export interface ManifestExoticArmor extends ManifestEntry {
   collectibleHash: number;
 }
 
+export interface FilteredPermutation {
+  permutation: DestinyArmor[];
+  modsArray: {
+    mobility: number[];
+    resilience: number[];
+    recovery: number[];
+    discipline: number[];
+    intellect: number[];
+    strength: number[];
+  };
+}
+
 export interface ManifestEmblem extends Emblem, ManifestEntry {}

@@ -1,75 +1,56 @@
-import { DestinyArmor } from '../../types';
+import { DestinyArmor, FilteredPermutation } from '../../types';
 
 interface SelectedThresholds {
   [key: string]: number;
 }
 
-interface CachedPermutation {
-  permutation: DestinyArmor[];
-  totalStats: { [key: string]: number };
-}
-
 export const filterPermutations = (
   permutations: DestinyArmor[][],
   thresholds: SelectedThresholds
-): DestinyArmor[][] => {
-  const thresholdKeys = Object.keys(thresholds);
+): FilteredPermutation[] => {
+  return permutations.map((permutation) => {
+    const modsArray: FilteredPermutation['modsArray'] = {
+      mobility: [],
+      resilience: [],
+      recovery: [],
+      discipline: [],
+      intellect: [],
+      strength: [],
+    };
+    let totalModsUsed = 0;
+    let meetsAllThresholds = true;
 
-  // Precompute and cache the total stats for each permutation
-  const cachedPermutations: CachedPermutation[] = permutations.map(permutation => {
-    const totalStats: { [key: string]: number } = {};
-    thresholdKeys.forEach(stat => {
+    for (const stat of Object.keys(thresholds)) {
       const key = stat.toLowerCase() as keyof DestinyArmor;
-      totalStats[stat] = permutation.reduce((sum, item) => {
+      const totalStat = permutation.reduce((sum, item) => {
         const value = item[key];
         return typeof value === 'number' ? sum + value : sum;
       }, 0);
-    });
-    return { permutation, totalStats };
-  });
-
-  return cachedPermutations.filter((cachedPerm, index) => {
-    const modsArray = Array(5).fill(0);
-    let totalModsUsed = 0;
-
-    console.log('------------------------------');
-    console.log(`Evaluating permutation ${index + 1}:`);
-
-    let meetsAllThresholdsWithoutMods = true;
-    let meetsAllThresholdsWithMods = true;
-
-    for (const stat of thresholdKeys) {
-      const totalStat = cachedPerm.totalStats[stat];
       const threshold = thresholds[stat];
 
       if (totalStat < threshold) {
-        meetsAllThresholdsWithoutMods = false;
-
         const neededBoosts = Math.ceil((threshold - totalStat) / 10);
         totalModsUsed += neededBoosts;
 
         if (totalModsUsed > 5) {
-          console.log(`Permutation ${index + 1} requires more than 5 mods. Discarding.`);
-          meetsAllThresholdsWithMods = false;
+          meetsAllThresholds = false;
           break;
         }
 
-        let boostsAdded = 0;
-        for (let i = 0; i < modsArray.length && boostsAdded < neededBoosts; i++) {
-          if (modsArray[i] === 0) {
-            modsArray[i] = 10; // Populate the mod slot with +10
-            boostsAdded++;
+        for (let i = 0; i < neededBoosts && totalModsUsed <= 5; i++) {
+          if (!modsArray[stat as keyof FilteredPermutation['modsArray']]) {
+            modsArray[stat as keyof FilteredPermutation['modsArray']] = [];
           }
+          modsArray[stat as keyof FilteredPermutation['modsArray']].push(10);
         }
-
-        console.log(`It would take ${neededBoosts} +10 mods to reach the ${stat} threshold`);
-        console.log(`Mods array after adding ${stat} mods:`, modsArray);
-      } else {
-        console.log(`Total ${stat} for permutation: ${totalStat} meets the threshold of ${threshold}`);
+        meetsAllThresholds = false;
       }
     }
 
-    console.log(`Final Mods array for permutation ${index + 1}:`, modsArray);
-    return meetsAllThresholdsWithMods;
-  }).map(cachedPerm => cachedPerm.permutation); // Return the original permutations
+    if (totalModsUsed > 5) {
+      return null;
+    }
+
+    return { permutation, modsArray };
+  }).filter((perm): perm is FilteredPermutation => perm !== null);
 };
