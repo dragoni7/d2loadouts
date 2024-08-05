@@ -12,70 +12,45 @@ export const generatePermutations = (
   let filteredChest = chest;
 
   if (selectedExoticItemHash) {
-    console.log('Selected Exotic Item Hash:', selectedExoticItemHash);
-
     const allItems = [...helmet, ...arms, ...legs, ...chest];
-    console.log('All items:', allItems);
-
-    const itemHashes = allItems.map(item => item.itemHash);
-    console.log('Item Hashes:', itemHashes);
-
-    const selectedExoticItems: DestinyArmor[] = [];
-    for (const item of allItems) {
-      if (Number(item.itemHash) === Number(selectedExoticItemHash)) {
-        selectedExoticItems.push(item);
-      }
-    }
+    const selectedExoticItems: DestinyArmor[] = allItems.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
 
     if (selectedExoticItems.length > 0) {
-      console.log('Selected Exotic Items:', selectedExoticItems);
+      const selectedExoticItem = selectedExoticItems[0];
 
-      for (const selectedExoticItem of selectedExoticItems) {
-        switch (selectedExoticItem.type) {
-          case 'helmet':
-            filteredHelmet = helmet.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
-            filteredArms = arms.filter(item => !item.exotic);
-            filteredLegs = legs.filter(item => !item.exotic);
-            filteredChest = chest.filter(item => !item.exotic);
-            break;
-          case 'arms':
-            filteredHelmet = helmet.filter(item => !item.exotic);
-            filteredArms = arms.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
-            filteredLegs = legs.filter(item => !item.exotic);
-            filteredChest = chest.filter(item => !item.exotic);
-            break;
-          case 'legs':
-            filteredHelmet = helmet.filter(item => !item.exotic);
-            filteredArms = arms.filter(item => !item.exotic);
-            filteredLegs = legs.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
-            filteredChest = chest.filter(item => !item.exotic);
-            break;
-          case 'chest':
-            filteredHelmet = helmet.filter(item => !item.exotic);
-            filteredArms = arms.filter(item => !item.exotic);
-            filteredLegs = legs.filter(item => !item.exotic);
-            filteredChest = chest.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
-            break;
-        }
+      switch (selectedExoticItem.type) {
+        case 'helmet':
+          filteredHelmet = helmet.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
+          filteredArms = arms.filter(item => !item.exotic);
+          filteredLegs = legs.filter(item => !item.exotic);
+          filteredChest = chest.filter(item => !item.exotic);
+          break;
+        case 'arms':
+          filteredHelmet = helmet.filter(item => !item.exotic);
+          filteredArms = arms.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
+          filteredLegs = legs.filter(item => !item.exotic);
+          filteredChest = chest.filter(item => !item.exotic);
+          break;
+        case 'legs':
+          filteredHelmet = helmet.filter(item => !item.exotic);
+          filteredArms = arms.filter(item => !item.exotic);
+          filteredLegs = legs.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
+          filteredChest = chest.filter(item => !item.exotic);
+          break;
+        case 'chest':
+          filteredHelmet = helmet.filter(item => !item.exotic);
+          filteredArms = arms.filter(item => !item.exotic);
+          filteredLegs = legs.filter(item => !item.exotic);
+          filteredChest = chest.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
+          break;
       }
-
-      console.log('Filtered helmet items:', filteredHelmet);
-      console.log('Filtered arms items:', filteredArms);
-      console.log('Filtered legs items:', filteredLegs);
-      console.log('Filtered chest items:', filteredChest);
     } else {
       console.error('Selected exotic items not found!');
     }
   }
 
-  console.log('Filtered helmet count:', filteredHelmet.length);
-  console.log('Filtered arms count:', filteredArms.length);
-  console.log('Filtered legs count:', filteredLegs.length);
-  console.log('Filtered chest count:', filteredChest.length);
-
   const armorTypes = [filteredHelmet, filteredArms, filteredLegs, filteredChest];
 
-  // placeholder we can change logic later when we decide on filters
   const fakeClassItem: DestinyArmor = {
     intellect: 2,
     discipline: 2,
@@ -103,7 +78,6 @@ export const generatePermutations = (
     exoticCount: number
   ) => {
     if (currentTypeIndex === armorTypes.length) {
-      // Include the fake class item with the bonus stats
       const modifiedPermutation = [...currentPermutation, fakeClassItem];
       permutations.push(modifiedPermutation);
       return;
@@ -124,6 +98,5 @@ export const generatePermutations = (
 
   generate([], 0, 0);
 
-  console.log('Total permutations generated:', permutations.length);
   return permutations;
 };

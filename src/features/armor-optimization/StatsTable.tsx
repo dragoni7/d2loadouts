@@ -16,6 +16,11 @@ const columnHelper = createColumnHelper<{
   discipline: number;
   intellect: number;
   strength: number;
+  helmet: string;
+  gauntlets: string;
+  chest: string;
+  legs: string;
+  classItem: string;
 }>();
 
 const columns: any = [
@@ -47,6 +52,26 @@ const columns: any = [
     cell: (info) => info.getValue(),
     header: 'Strength',
   }),
+  columnHelper.accessor('helmet', {
+    cell: (info) => info.getValue(),
+    header: 'Helmet',
+  }),
+  columnHelper.accessor('gauntlets', {
+    cell: (info) => info.getValue(),
+    header: 'Gauntlets',
+  }),
+  columnHelper.accessor('chest', {
+    cell: (info) => info.getValue(),
+    header: 'Chest',
+  }),
+  columnHelper.accessor('legs', {
+    cell: (info) => info.getValue(),
+    header: 'Legs',
+  }),
+  columnHelper.accessor('classItem', {
+    cell: (info) => info.getValue(),
+    header: 'Class Item',
+  }),
 ];
 
 interface StatsTableProps {
@@ -55,13 +80,18 @@ interface StatsTableProps {
 
 const StatsTableContainer = styled('div')({
   width: '100%',
+  height: '400px', // Fixed height for the table
   display: 'flex',
   flexDirection: 'column',
-  overflowX: 'auto',
+  overflowY: 'auto', // Enable vertical scrolling
 });
 
 const TableHeader = styled('div')({
   display: 'flex',
+  position: 'sticky',
+  top: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.8)', // Add background color for sticky header
+  zIndex: 1, // Ensure header is above the table rows
 });
 
 const TableRow = styled('div')({
@@ -70,9 +100,9 @@ const TableRow = styled('div')({
 
 const TableCell = styled('div')({
   flex: 1,
-  padding: '8px',
+  padding: '4px', // Reduced padding
   border: '1px solid white',
-  fontSize: '10px',
+  fontSize: '8px', // Reduced font size
   textAlign: 'center',
 });
 
@@ -122,6 +152,11 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
         discipline: permutation.reduce((sum, item) => sum + item.discipline, 0),
         intellect: permutation.reduce((sum, item) => sum + item.intellect, 0),
         strength: permutation.reduce((sum, item) => sum + item.strength, 0),
+        helmet: permutation.find((item) => item.type === 'helmet')?.name || '',
+        gauntlets: permutation.find((item) => item.type === 'arms')?.name || '',
+        chest: permutation.find((item) => item.type === 'chest')?.name || '',
+        legs: permutation.find((item) => item.type === 'legs')?.name || '',
+        classItem: permutation.find((item) => item.type === 'classItem')?.name || '',
       };
     });
   }, [permutations]);

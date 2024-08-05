@@ -136,8 +136,7 @@ export const Dashboard = () => {
     if (selectedCharacter) {
       const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
       setPermutations(newPermutations);
-      const filtered = filterPermutations(newPermutations, selectedValues);
-      setFilteredPermutations(filtered);
+      setFilteredPermutations(newPermutations); // Initially, set filtered permutations to be the same as generated
     }
   }, [selectedCharacter, selectedExoticItemHash]);
 
@@ -146,7 +145,7 @@ export const Dashboard = () => {
       const filtered = filterPermutations(permutations, selectedValues);
       setFilteredPermutations(filtered);
     }
-  }, [selectedValues, permutations]);
+  }, [selectedValues]);
 
   const handleThresholdChange = (thresholds: { [key: string]: number }) => {
     setSelectedValues(thresholds);
