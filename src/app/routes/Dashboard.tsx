@@ -1,4 +1,3 @@
-// Dashboard.tsx
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
@@ -11,12 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, Character, FilteredPermutation } from '../../types';
+import { DestinyArmor, Character, FilteredPermutation, ManifestSubclass } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
 import greyBackground from '../../assets/grey.png';
+import { db } from '../../store/db';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -121,6 +121,8 @@ export const Dashboard = () => {
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('left');
+  const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
+  const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -147,6 +149,12 @@ export const Dashboard = () => {
     if (selectedCharacter) {
       const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
       setPermutations(newPermutations);
+      fetchSubclasses(selectedCharacter).then((subclassesData) => {
+        setSubclasses(subclassesData);
+        if (subclassesData.length > 0) {
+          setSelectedSubclass(subclassesData[0]);
+        }
+      });
     }
   }, [selectedCharacter, selectedExoticItemHash]);
 
@@ -176,6 +184,21 @@ export const Dashboard = () => {
     }
   };
 
+  const handleSubclassSelect = (subclass: ManifestSubclass) => {
+    setSelectedSubclass(subclass);
+  };
+
+  const fetchSubclasses = async (character: Character): Promise<ManifestSubclass[]> => {
+    const data = await db.manifestSubclass
+      .where('class')
+      .equalsIgnoreCase(character.class)
+      .toArray();
+    return data.map((item) => ({
+      ...item,
+      itemHash: item.itemHash.toString(),
+    }));
+  };
+
   return (
     <PageContainer>
       {selectedCharacter?.emblem?.secondarySpecial && (
@@ -198,7 +221,11 @@ export const Dashboard = () => {
         <BottomPane>
           <LeftPane>
             <DiamondButtonWrapper>
-              <SingleDiamondButton />
+              <SingleDiamondButton
+                subclasses={subclasses}
+                selectedSubclass={selectedSubclass}
+                onSubclassSelect={handleSubclassSelect}
+              />
             </DiamondButtonWrapper>
             <NumberBoxesWrapper>
               <NumberBoxes onThresholdChange={handleThresholdChange} />

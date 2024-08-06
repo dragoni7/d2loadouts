@@ -2,17 +2,19 @@ import React from 'react';
 import './AnimatedButton.css';
 
 interface AnimatedButtonProps {
-  onSelect: any;
+  icon: string;
+  onSelect: () => void;
 }
 
-const AnimatedButton: React.FC<AnimatedButtonProps> = ({ onSelect }) => {
+const AnimatedButton: React.FC<AnimatedButtonProps> = ({ icon, onSelect }) => {
   const handleClick = () => {
-    onSelect('Animated', 'rgba(255, 105, 180, 1)');
+    onSelect();
   };
 
   return (
     <div className="button-container" onClick={handleClick}>
       <div className="animated-button">
+        <img src={icon} alt="Prismatic Icon" className="animated-icon" />
         <div className="shape shape1"></div>
         <div className="shape shape2"></div>
         <div className="shape shape3"></div>
