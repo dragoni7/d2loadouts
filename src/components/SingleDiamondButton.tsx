@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './SingleDiamondButton.css';
-
-interface ManifestSubclass {
-  name: string;
-  icon: string;
-}
+import { ManifestSubclass } from '../types';
 
 interface SingleDiamondButtonProps {
   subclasses: ManifestSubclass[];
