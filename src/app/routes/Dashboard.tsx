@@ -15,6 +15,7 @@ import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
+import CustomizationPanel from '../../components/CustomizationPanel';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 
@@ -108,7 +109,7 @@ const NewComponentWrapper = styled('div')({
   marginBottom: '20px',
 });
 
-export const Dashboard = () => {
+export const Dashboard: React.FC = () => {
   const dispatch = useDispatch();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
@@ -123,6 +124,8 @@ export const Dashboard = () => {
   const [direction, setDirection] = useState<'left' | 'right'>('left');
   const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
   const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
+  const [showCustomizationPanel, setShowCustomizationPanel] = useState(false);
+  const [customizingSubclass, setCustomizingSubclass] = useState<ManifestSubclass | null>(null);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -188,6 +191,15 @@ export const Dashboard = () => {
     setSelectedSubclass(subclass);
   };
 
+  const handleSubclassRightClick = (subclass: ManifestSubclass) => {
+    setCustomizingSubclass(subclass);
+    setShowCustomizationPanel(true);
+  };
+
+  const handleBackClick = () => {
+    setShowCustomizationPanel(false);
+  };
+
   const fetchSubclasses = async (character: Character): Promise<ManifestSubclass[]> => {
     const data = await db.manifestSubclass
       .where('class')
@@ -201,46 +213,56 @@ export const Dashboard = () => {
 
   return (
     <PageContainer>
-      {selectedCharacter?.emblem?.secondarySpecial && (
-        <HeaderComponent
-          emblemUrl={selectedCharacter.emblem.secondarySpecial}
-          overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
-          displayName={membership.bungieGlobalDisplayName}
-          characters={characters}
-          selectedCharacter={selectedCharacter}
-          onCharacterClick={handleCharacterClick}
+      {showCustomizationPanel && customizingSubclass ? (
+        <CustomizationPanel
+          screenshot={customizingSubclass.screenshot}
+          onBackClick={handleBackClick}
         />
-      )}
-      <Container>
-        <NewComponentWrapper>
-          <ExoticSearch
-            selectedCharacter={selectedCharacter}
-            onExoticSelect={setSelectedExoticItemHash}
-          />
-        </NewComponentWrapper>
-        <BottomPane>
-          <LeftPane>
-            <DiamondButtonWrapper>
-              <SingleDiamondButton
-                subclasses={subclasses}
-                selectedSubclass={selectedSubclass}
-                onSubclassSelect={handleSubclassSelect}
+      ) : (
+        <>
+          {selectedCharacter?.emblem?.secondarySpecial && (
+            <HeaderComponent
+              emblemUrl={selectedCharacter.emblem.secondarySpecial}
+              overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
+              displayName={membership.bungieGlobalDisplayName}
+              characters={characters}
+              selectedCharacter={selectedCharacter}
+              onCharacterClick={handleCharacterClick}
+            />
+          )}
+          <Container>
+            <NewComponentWrapper>
+              <ExoticSearch
+                selectedCharacter={selectedCharacter}
+                onExoticSelect={setSelectedExoticItemHash}
               />
-            </DiamondButtonWrapper>
-            <NumberBoxesWrapper>
-              <NumberBoxes onThresholdChange={handleThresholdChange} />
-            </NumberBoxesWrapper>
-          </LeftPane>
-          <RightPane>
-            <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
-            {filteredPermutations ? (
-              <StatsTable permutations={filteredPermutations} />
-            ) : (
-              <p>Loading...</p>
-            )}
-          </RightPane>
-        </BottomPane>
-      </Container>
+            </NewComponentWrapper>
+            <BottomPane>
+              <LeftPane>
+                <DiamondButtonWrapper>
+                  <SingleDiamondButton
+                    subclasses={subclasses}
+                    selectedSubclass={selectedSubclass}
+                    onSubclassSelect={handleSubclassSelect}
+                    onSubclassRightClick={handleSubclassRightClick} // Add this prop to handle right-click
+                  />
+                </DiamondButtonWrapper>
+                <NumberBoxesWrapper>
+                  <NumberBoxes onThresholdChange={handleThresholdChange} />
+                </NumberBoxesWrapper>
+              </LeftPane>
+              <RightPane>
+                <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
+                {filteredPermutations ? (
+                  <StatsTable permutations={filteredPermutations} />
+                ) : (
+                  <p>Loading...</p>
+                )}
+              </RightPane>
+            </BottomPane>
+          </Container>
+        </>
+      )}
     </PageContainer>
   );
 };
