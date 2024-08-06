@@ -126,6 +126,9 @@ export const Dashboard: React.FC = () => {
   const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
   const [showCustomizationPanel, setShowCustomizationPanel] = useState(false);
   const [customizingSubclass, setCustomizingSubclass] = useState<ManifestSubclass | null>(null);
+  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<ManifestSubclass | null>(
+    null
+  );
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -156,6 +159,10 @@ export const Dashboard: React.FC = () => {
         setSubclasses(subclassesData);
         if (subclassesData.length > 0) {
           setSelectedSubclass(subclassesData[0]);
+          const defaultSubclass =
+            subclassesData.find((subclass) => !subclass.name.includes('Prismatic')) ||
+            subclassesData[0];
+          setLastNonPrismaticSubclass(defaultSubclass);
         }
       });
     }
@@ -198,6 +205,9 @@ export const Dashboard: React.FC = () => {
 
   const handleBackClick = () => {
     setShowCustomizationPanel(false);
+    if (selectedSubclass?.name.includes('Prismatic')) {
+      setSelectedSubclass(lastNonPrismaticSubclass);
+    }
   };
 
   const fetchSubclasses = async (character: Character): Promise<ManifestSubclass[]> => {
@@ -244,7 +254,7 @@ export const Dashboard: React.FC = () => {
                     subclasses={subclasses}
                     selectedSubclass={selectedSubclass}
                     onSubclassSelect={handleSubclassSelect}
-                    onSubclassRightClick={handleSubclassRightClick} // Add this prop to handle right-click
+                    onSubclassRightClick={handleSubclassRightClick}
                   />
                 </DiamondButtonWrapper>
                 <NumberBoxesWrapper>

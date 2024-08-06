@@ -92,7 +92,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
         <div
           className="prismatic-button"
           onClick={handleReset}
-          onContextMenu={(event) => handleRightClick(event, prismaticSubclass)}
+          onContextMenu={(event) => handleRightClick(event, lastNonPrismaticSubclass!)}
         >
           {lastNonPrismaticSubclass && (
             <img
