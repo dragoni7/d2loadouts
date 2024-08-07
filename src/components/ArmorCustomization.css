@@ -6,30 +6,32 @@
   width: 100vw;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
 }
 
-.customization-panel {
+.customization-content {
   display: flex;
-  flex-direction: column;
-  padding: 20px;
-  width: 900px; /* Ensure it's centered within the parent container */
-
+  flex-direction: row;
+  width: 900px;
+  height: 800px;
 }
 
 .back-button {
-  align-self: flex-start;
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  background-color: #444;
-  color: white;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.5);
   border: none;
-  cursor: pointer;
+  color: white;
   font-size: 16px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
 }
 
-.back-button:hover {
-  background-color: #555;
+.customization-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .armor-slots {
@@ -63,25 +65,57 @@
   cursor: pointer;
 }
 
+.subclass-mods-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.mod-category {
+  margin-bottom: 20px;
+}
+
+.mod-category-header {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.mod-category-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mod-item {
+  padding: 10px;
+  background-color: #444;
+  border: 1px solid #555;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  position: relative;
+}
+
 .submenu-grid {
   display: none;
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #aaaaaa;
+  background-color: #555;
   padding: 10px;
-  border: 1px solid #acacac;
+  border: 1px solid #666;
   z-index: 1;
   flex-direction: row;
 }
 
-.mod:hover .submenu-grid {
+.mod-item:hover .submenu-grid {
   display: flex;
 }
 
 .submenu-item {
   padding: 5px 10px;
-  background-color: #555;
+  background-color: #666;
   color: white;
   margin: 0 5px;
   cursor: pointer;

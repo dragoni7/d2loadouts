@@ -242,6 +242,7 @@ export const Dashboard: React.FC = () => {
         <ArmorCustomization
           onBackClick={handleArmorCustomizationBackClick}
           screenshot={selectedSubclass?.screenshot || ''}
+          subclass={selectedSubclass!}
         />
       ) : (
         <>

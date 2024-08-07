@@ -7,12 +7,6 @@ interface StatsTableProps {
   onPermutationClick: () => void; // Add this prop
 }
 
-const noiseTexture =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA\
-AAAECAYAAABGM/VAAAAKiElEQVR42mNkYGAw0r7Iz89fAxMWFgZGRlZ+//8\
-DAwMA/FYUFNTT6AK5RUYwMDC4f/8/Hx8fDIBB/zAQIw//8fEGGRkUA/tscO\
-yAgXg4I5j/P379wFhQUC/AADLEQTxllEqywAAAABJRU5ErkJggg==';
-
 const StatsTableContainer = styled('div')({
   width: '100%',
   display: 'flex',
@@ -39,7 +33,6 @@ const Card = styled('div')({
   margin: '5px 0',
   width: '100%',
   backgroundColor: 'rgba(128, 128, 128, 0.5)',
-  backgroundImage: `url(${noiseTexture})`,
   backgroundBlendMode: 'multiply',
   backdropFilter: 'blur(5px)',
   display: 'flex',
