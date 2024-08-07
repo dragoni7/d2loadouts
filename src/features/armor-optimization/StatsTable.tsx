@@ -4,6 +4,7 @@ import { FilteredPermutation } from '../../types';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
+  onPermutationClick: () => void; // Add this prop
 }
 
 const noiseTexture =
@@ -182,7 +183,7 @@ const TableFooter = styled('div')({
   color: 'white',
 });
 
-const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
+const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClick }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
 
@@ -226,7 +227,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations }) => {
       </LeftArrowButton>
       <CardContainer>
         {paginatedData.map((perm, index) => (
-          <Card key={index}>
+          <Card key={index} onClick={onPermutationClick}>
             <CardRow>
               {perm.permutation.map((item, idx) => (
                 <CardCell key={idx}>

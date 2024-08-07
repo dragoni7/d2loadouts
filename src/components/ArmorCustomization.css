@@ -1,7 +1,35 @@
+.armor-customization-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .customization-panel {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  width: 900px; /* Ensure it's centered within the parent container */
+
+}
+
+.back-button {
+  align-self: flex-start;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.back-button:hover {
+  background-color: #555;
 }
 
 .armor-slots {

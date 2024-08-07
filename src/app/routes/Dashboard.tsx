@@ -16,6 +16,7 @@ import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
 import CustomizationPanel from '../../components/CustomizationPanel';
+import ArmorCustomization from '../../components/ArmorCustomization';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 
@@ -129,6 +130,7 @@ export const Dashboard: React.FC = () => {
   const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<ManifestSubclass | null>(
     null
   );
+  const [showArmorCustomization, setShowArmorCustomization] = useState(false);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -196,6 +198,9 @@ export const Dashboard: React.FC = () => {
 
   const handleSubclassSelect = (subclass: ManifestSubclass) => {
     setSelectedSubclass(subclass);
+    if (!subclass.name.includes('Prismatic')) {
+      setLastNonPrismaticSubclass(subclass);
+    }
   };
 
   const handleSubclassRightClick = (subclass: ManifestSubclass) => {
@@ -205,9 +210,14 @@ export const Dashboard: React.FC = () => {
 
   const handleBackClick = () => {
     setShowCustomizationPanel(false);
-    if (selectedSubclass?.name.includes('Prismatic')) {
-      setSelectedSubclass(lastNonPrismaticSubclass);
-    }
+  };
+
+  const handlePermutationClick = () => {
+    setShowArmorCustomization(true);
+  };
+
+  const handleArmorCustomizationBackClick = () => {
+    setShowArmorCustomization(false);
   };
 
   const fetchSubclasses = async (character: Character): Promise<ManifestSubclass[]> => {
@@ -227,6 +237,11 @@ export const Dashboard: React.FC = () => {
         <CustomizationPanel
           screenshot={customizingSubclass.screenshot}
           onBackClick={handleBackClick}
+        />
+      ) : showArmorCustomization ? (
+        <ArmorCustomization
+          onBackClick={handleArmorCustomizationBackClick}
+          screenshot={selectedSubclass?.screenshot || ''}
         />
       ) : (
         <>
@@ -264,7 +279,10 @@ export const Dashboard: React.FC = () => {
               <RightPane>
                 <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
                 {filteredPermutations ? (
-                  <StatsTable permutations={filteredPermutations} />
+                  <StatsTable
+                    permutations={filteredPermutations}
+                    onPermutationClick={handlePermutationClick}
+                  />
                 ) : (
                   <p>Loading...</p>
                 )}
