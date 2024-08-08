@@ -10,12 +10,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, ArmorBySlot, Character } from '../../types';
+import { DestinyArmor, Character, FilteredPermutation, ManifestSubclass } from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
-import NewComponent from '../../components/ExoticSearch';
+import ExoticSearch from '../../components/ExoticSearch';
+import CustomizationPanel from '../../components/CustomizationPanel';
+import ArmorCustomization from '../../components/ArmorCustomization';
 import greyBackground from '../../assets/grey.png';
+import { db } from '../../store/db';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -32,11 +35,21 @@ const Container = styled('div')({
   padding: '20px',
   width: '100vw',
   boxSizing: 'border-box',
-  overflow: 'hidden',
+  overflowY: 'auto',
   backgroundImage: `url(${greyBackground})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  marginTop: '130px',
+  marginTop: '110px',
+  '::-webkit-scrollbar': {
+    width: '10px',
+  },
+  '::-webkit-scrollbar-track': {
+    background: 'none',
+  },
+  '::-webkit-scrollbar-thumb': {
+    background: 'grey',
+    borderRadius: '0',
+  },
 });
 
 const TopPane = styled('div')({
@@ -57,7 +70,6 @@ const BottomPane = styled('div')({
   boxSizing: 'border-box',
   justifyContent: 'space-between',
   flexWrap: 'wrap',
-  border: '2px solid white',
 });
 
 const LeftPane = styled('div')({
@@ -77,11 +89,10 @@ const RightPane = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  maxWidth: '600px',
-  padding: '10px',
+  maxWidth: '800px',
+  padding: '5px',
   boxSizing: 'border-box',
   margin: '0 auto',
-  border: '2px solid white',
 });
 
 const DiamondButtonWrapper = styled('div')({
@@ -99,16 +110,27 @@ const NewComponentWrapper = styled('div')({
   marginBottom: '20px',
 });
 
-export const Dashboard = () => {
+export const Dashboard: React.FC = () => {
   const dispatch = useDispatch();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [selectedExoticItemHash, setSelectedExoticItemHash] = useState<string | null>(null);
   const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
-  const [filteredPermutations, setFilteredPermutations] = useState<DestinyArmor[][] | null>(null);
+  const [filteredPermutations, setFilteredPermutations] = useState<FilteredPermutation[] | null>(
+    null
+  );
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [direction, setDirection] = useState<'left' | 'right'>('left');
+  const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
+  const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
+  const [showCustomizationPanel, setShowCustomizationPanel] = useState(false);
+  const [customizingSubclass, setCustomizingSubclass] = useState<ManifestSubclass | null>(null);
+  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<ManifestSubclass | null>(
+    null
+  );
+  const [showArmorCustomization, setShowArmorCustomization] = useState(false);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -120,13 +142,33 @@ export const Dashboard = () => {
 
       if (profileData.characters.length > 0) {
         setSelectedCharacter(profileData.characters[0]);
-        const initialPermutations = generatePermutations(profileData.characters[0].armor);
+        const initialPermutations = generatePermutations(
+          profileData.characters[0].armor,
+          selectedExoticItemHash
+        );
         setPermutations(initialPermutations);
       }
     };
 
     updateProfile().catch(console.error);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedCharacter) {
+      const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
+      setPermutations(newPermutations);
+      fetchSubclasses(selectedCharacter).then((subclassesData) => {
+        setSubclasses(subclassesData);
+        if (subclassesData.length > 0) {
+          setSelectedSubclass(subclassesData[0]);
+          const defaultSubclass =
+            subclassesData.find((subclass) => !subclass.name.includes('Prismatic')) ||
+            subclassesData[0];
+          setLastNonPrismaticSubclass(defaultSubclass);
+        }
+      });
+    }
+  }, [selectedCharacter, selectedExoticItemHash]);
 
   useEffect(() => {
     if (permutations) {
@@ -145,49 +187,111 @@ export const Dashboard = () => {
       setIsTransitioning(true);
       setTimeout(() => {
         setSelectedCharacter(character);
-        const newPermutations = generatePermutations(selectedCharacter.armor);
+        const newPermutations = generatePermutations(character.armor, selectedExoticItemHash);
         setPermutations(newPermutations);
-        setFilteredPermutations(newPermutations);
+        const filtered = filterPermutations(newPermutations, selectedValues);
+        setFilteredPermutations(filtered);
         setIsTransitioning(false);
       }, 300);
     }
   };
 
+  const handleSubclassSelect = (subclass: ManifestSubclass) => {
+    setSelectedSubclass(subclass);
+    if (!subclass.name.includes('Prismatic')) {
+      setLastNonPrismaticSubclass(subclass);
+    }
+  };
+
+  const handleSubclassRightClick = (subclass: ManifestSubclass) => {
+    setCustomizingSubclass(subclass);
+    setShowCustomizationPanel(true);
+  };
+
+  const handleBackClick = () => {
+    setShowCustomizationPanel(false);
+  };
+
+  const handlePermutationClick = () => {
+    setShowArmorCustomization(true);
+  };
+
+  const handleArmorCustomizationBackClick = () => {
+    setShowArmorCustomization(false);
+  };
+
+  const fetchSubclasses = async (character: Character): Promise<ManifestSubclass[]> => {
+    const data = await db.manifestSubclass
+      .where('class')
+      .equalsIgnoreCase(character.class)
+      .toArray();
+    return data.map((item) => ({
+      ...item,
+      itemHash: item.itemHash.toString(),
+    }));
+  };
+
   return (
     <PageContainer>
-      {selectedCharacter?.emblem?.secondarySpecial && (
-        <HeaderComponent
-          emblemUrl={selectedCharacter.emblem.secondarySpecial}
-          overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
-          displayName={membership.bungieGlobalDisplayName}
-          characters={characters}
-          selectedCharacter={selectedCharacter}
-          onCharacterClick={handleCharacterClick}
+      {showCustomizationPanel && customizingSubclass ? (
+        <CustomizationPanel
+          screenshot={customizingSubclass.screenshot}
+          onBackClick={handleBackClick}
         />
+      ) : showArmorCustomization ? (
+        <ArmorCustomization
+          onBackClick={handleArmorCustomizationBackClick}
+          screenshot={selectedSubclass?.screenshot || ''}
+          subclass={selectedSubclass!}
+        />
+      ) : (
+        <>
+          {selectedCharacter?.emblem?.secondarySpecial && (
+            <HeaderComponent
+              emblemUrl={selectedCharacter.emblem.secondarySpecial}
+              overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
+              displayName={membership.bungieGlobalDisplayName}
+              characters={characters}
+              selectedCharacter={selectedCharacter}
+              onCharacterClick={handleCharacterClick}
+            />
+          )}
+          <Container>
+            <NewComponentWrapper>
+              <ExoticSearch
+                selectedCharacter={selectedCharacter}
+                onExoticSelect={setSelectedExoticItemHash}
+              />
+            </NewComponentWrapper>
+            <BottomPane>
+              <LeftPane>
+                <DiamondButtonWrapper>
+                  <SingleDiamondButton
+                    subclasses={subclasses}
+                    selectedSubclass={selectedSubclass}
+                    onSubclassSelect={handleSubclassSelect}
+                    onSubclassRightClick={handleSubclassRightClick}
+                  />
+                </DiamondButtonWrapper>
+                <NumberBoxesWrapper>
+                  <NumberBoxes onThresholdChange={handleThresholdChange} />
+                </NumberBoxesWrapper>
+              </LeftPane>
+              <RightPane>
+                <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
+                {filteredPermutations ? (
+                  <StatsTable
+                    permutations={filteredPermutations}
+                    onPermutationClick={handlePermutationClick}
+                  />
+                ) : (
+                  <p>Loading...</p>
+                )}
+              </RightPane>
+            </BottomPane>
+          </Container>
+        </>
       )}
-      <Container>
-        <NewComponentWrapper>
-          <NewComponent />
-        </NewComponentWrapper>
-        <BottomPane>
-          <LeftPane>
-            <DiamondButtonWrapper>
-              <SingleDiamondButton />
-            </DiamondButtonWrapper>
-            <NumberBoxesWrapper>
-              <NumberBoxes onThresholdChange={handleThresholdChange} />
-            </NumberBoxesWrapper>
-          </LeftPane>
-          <RightPane>
-            <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
-            {filteredPermutations ? (
-              <StatsTable permutations={filteredPermutations} />
-            ) : (
-              <p>Loading...</p>
-            )}
-          </RightPane>
-        </BottomPane>
-      </Container>
     </PageContainer>
   );
 };

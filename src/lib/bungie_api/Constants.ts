@@ -247,6 +247,7 @@ export module PLUG_CATEGORY_HASH {
     export enum VOID {
       TITAN_VOID_MELEE = 4008726361,
       HUNTER_VOID_MELEE = 1288993259,
+      WARLOCK_VOID_MELEE = 2900030790,
     }
 
     export enum STASIS {

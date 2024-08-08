@@ -87,7 +87,7 @@ export type DestinyMembership = {
 
 export interface ManifestEntry {
   id: number;
-  itemHash: number;
+  itemHash: string;
   name: string;
   icon: string;
 }
@@ -120,6 +120,18 @@ export interface ManifestExoticArmor extends ManifestEntry {
   class: CharacterClass;
   slot: string;
   collectibleHash: number;
+}
+
+export interface FilteredPermutation {
+  permutation: DestinyArmor[];
+  modsArray: {
+    mobility: number[];
+    resilience: number[];
+    recovery: number[];
+    discipline: number[];
+    intellect: number[];
+    strength: number[];
+  };
 }
 
 export interface ManifestEmblem extends Emblem, ManifestEntry {}

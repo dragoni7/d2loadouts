@@ -1,0 +1,39 @@
+
+  .armor-slots {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .armor-slot {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .armor-header {
+    font-weight: bold;
+    margin-right: 20px;
+    width: 120px;
+    text-align: right;
+  }
+  
+  .mod-grid {
+    display: flex;
+  }
+  
+  .mod {
+    position: relative;
+    margin: 5px;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+  }
+  
+  
+  .mod:hover .submenu-grid {
+    display: flex;
+  }
+  
+
+  
