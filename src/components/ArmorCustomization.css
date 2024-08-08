@@ -63,6 +63,11 @@
   background-color: #333;
   color: white;
   cursor: pointer;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 50px;
+  height: 50px;
 }
 
 .subclass-mods-container {
@@ -95,6 +100,9 @@
   color: white;
   cursor: pointer;
   position: relative;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .submenu-grid {

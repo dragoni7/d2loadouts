@@ -336,7 +336,7 @@ export module PLUG_CATEGORY_HASH {
                 WARLOCK_VOID_CLASS = 3202031457,
             }
             export enum MELEE_ABILITIES {
-                WARLOCK_VOID_MELEE = 1288993259,
+                WARLOCK_VOID_MELEE = 2900030790,
             }
             export enum MOVEMENT_ABILITIES {
                 WARLOCK_VOID_MOVEMENT = 3427909241,
