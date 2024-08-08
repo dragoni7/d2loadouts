@@ -4,27 +4,28 @@
   width: 100vw;
   background-size: cover;
   background-position: center;
-  position: relative; /* Ensure it creates a stacking context */
+  position: relative;
   z-index: 1;
 }
 
 .left-panel {
-  flex: 1;
+  width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative; /* Ensure it creates a stacking context */
+  position: relative;
   z-index: 1;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .right-panel {
-  flex: 1;
+  width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  gap: 90px; /* Increase gap between elements */
-  position: relative; /* Ensure it creates a stacking context */
+  gap: 90px;
+  position: relative;
   z-index: 1;
 }
 
@@ -46,9 +47,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px; /* Increase gap within mod categories */
-  position: relative; /* Ensure it creates a stacking context */
-  z-index: 1; /* Base z-index */
+  gap: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .super-container {
@@ -56,8 +57,8 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  margin-bottom: 50px; /* Add more space below super */
-  z-index: 1; /* Base z-index */
+  margin-bottom: 50px;
+  z-index: 1;
 }
 
 .selected-super {
@@ -68,17 +69,29 @@
   background-position: center;
   cursor: pointer;
   position: relative;
-  border: none;
-  opacity: 0.99; /* Increase opacity to 99% */
-  z-index: 10; /* Ensure it has a base z-index */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  opacity: 0.99;
+  z-index: 10;
 }
 
-.super-name {
+.selected-super:hover::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  z-index: -1;
+}
+
+.super-name,
+.super-item-name,
+.slot-name {
   display: none;
   position: absolute;
-  top: 210px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: -30px; 
+  right: 20px;
   background-color: #444;
   color: white;
   padding: 5px;
@@ -87,7 +100,10 @@
   z-index: 100;
 }
 
-.selected-super:hover .super-name {
+.selected-super:hover .super-name,
+.non-selected-super:hover .super-item-name,
+.fragment-slot:hover .slot-name,
+.other-slot:hover .slot-name {
   display: block;
 }
 
@@ -110,35 +126,28 @@
   background-position: center;
   cursor: pointer;
   position: relative;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
   opacity: 0.99;
   z-index: 10;
 }
 
-.super-item-name {
-  display: none;
+.non-selected-super:hover::after {
+  content: '';
   position: absolute;
-  top: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #666;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  white-space: nowrap;
-  z-index: 100;
-}
-
-.non-selected-super:hover .super-item-name {
-  display: block;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  z-index: -1;
 }
 
 .fragment-slots,
 .other-slots {
   display: flex;
-  gap: 20px; /* Increase gap between slots */
-  position: relative; /* Ensure it creates a stacking context */
-  z-index: 1;
+  gap: 20px;
+  position: relative;
+  z-index: -1;
 }
 
 .fragment-slot,
@@ -150,69 +159,73 @@
   background-position: center;
   cursor: pointer;
   position: relative;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
   opacity: 0.99;
-  z-index: 1000;
+  z-index: -1;
 }
 
-.slot-name {
-  display: none;
+.fragment-slot:hover::after,
+.other-slot:hover::after {
+  content: '';
   position: absolute;
-  top: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #444;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  white-space: nowrap;
-  z-index: 100;
-}
-
-.fragment-slot:hover .slot-name,
-.other-slot:hover .slot-name {
-  display: block;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  z-index: -1;
 }
 
 .submenu-grid {
   display: none;
   position: absolute;
-  top: 100%; /* Align below the hovered spot */
-  left: 0; /* Align to the left of the hovered spot */
+  top: 100%;
+  left: 0;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
-  z-index: 1000; /* Ensure it appears on top of all other elements */
+  z-index: 1;
   flex-direction: row;
-  flex-wrap: wrap; /* Allow wrapping */
+  flex-wrap: wrap;
   gap: 5px;
   border-radius: 5px;
-  border: none; /* Remove any border */
-  padding: 0; /* Remove padding */
-  margin: 0; /* Remove margin */
-  width: 480px; /* Ensure wrapping after 6 items */
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 480px;
 }
 
 .fragment-slot:hover .submenu-grid,
 .other-slot:hover .submenu-grid,
 .selected-super:hover .submenu-grid {
   display: flex;
-  z-index: 1000; /* Ensure it appears on top of all other elements */
+  z-index: 1;
 }
 
 .submenu-item {
-  width: 80px; /* Set the same size as other icons */
-  height: 80px; /* Set the same size as other icons */
+  width: 80px;
+  height: 80px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
   position: relative;
-  border: none; /* Remove any border */
-  box-shadow: none; /* Remove any box shadow */
-  padding: 0; /* Remove padding */
-  margin: 0; /* Remove margin */
-  opacity: 0.99; /* Increase opacity to 99% */
-  z-index: 1000; /* Ensure it appears on top of all other elements */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  opacity: 0.99;
+  z-index: 1000;
+}
+
+.submenu-item:hover::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  z-index: -1;
 }
 
 .submenu-item-name {
@@ -226,7 +239,7 @@
   padding: 5px;
   border-radius: 5px;
   white-space: nowrap;
-  z-index: 1000; /* Ensure it appears on top of all other elements */
+  z-index: -1;
 }
 
 .submenu-item:hover .submenu-item-name {

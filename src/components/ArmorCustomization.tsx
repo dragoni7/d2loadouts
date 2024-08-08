@@ -1,4 +1,3 @@
-// src/components/ArmorCustomization.tsx
 import React, { useEffect } from 'react';
 import './ArmorCustomization.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +6,7 @@ import { db } from '../store/db';
 import { ManifestPlug, ManifestSubclass } from '../types';
 import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/SubclassConstants';
 import { setMods } from '../store/ModSlice';
+import ArmorMods from './ArmorMods';
 import ModCategory from './ModCategory';
 
 interface ArmorCustomizationProps {
@@ -14,8 +14,6 @@ interface ArmorCustomizationProps {
   screenshot: string;
   subclass: ManifestSubclass;
 }
-
-type CharacterClass = 'titan' | 'hunter' | 'warlock';
 
 const getCategoryHashes = (subclass: ManifestSubclass): { [key: string]: number[] } => {
   const subclassTypeMap: { [key: number]: string } = {
@@ -111,7 +109,7 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
   return (
     <div className="armor-customization-wrapper" style={{ backgroundImage: `url(${screenshot})` }}>
       <div className="left-panel">
-        <div>Placeholder Component</div>
+        <ArmorMods />
       </div>
       <div className="right-panel">
         <button className="back-button" onClick={onBackClick}>
