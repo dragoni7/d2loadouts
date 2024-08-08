@@ -1,18 +1,31 @@
 .armor-customization-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100vh;
   width: 100vw;
   background-size: cover;
   background-position: center;
+  position: relative; /* Ensure it creates a stacking context */
+  z-index: 1;
 }
 
-.customization-content {
+.left-panel {
+  flex: 1;
   display: flex;
-  flex-direction: row;
-  width: 900px;
-  height: 800px;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Ensure it creates a stacking context */
+  z-index: 1;
+}
+
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 90px; /* Increase gap between elements */
+  position: relative; /* Ensure it creates a stacking context */
+  z-index: 1;
 }
 
 .back-button {
@@ -26,105 +39,196 @@
   cursor: pointer;
   padding: 10px;
   border-radius: 5px;
-}
-
-.customization-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.armor-slots {
-  display: flex;
-  flex-direction: column;
-}
-
-.armor-slot {
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-}
-
-.armor-header {
-  font-weight: bold;
-  margin-right: 20px;
-  width: 120px;
-  text-align: right;
-}
-
-.mod-grid {
-  display: flex;
-}
-
-.mod {
-  position: relative;
-  margin: 5px;
-  padding: 10px;
-  background-color: #333;
-  color: white;
-  cursor: pointer;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 50px;
-  height: 50px;
-}
-
-.subclass-mods-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
+  z-index: 1;
 }
 
 .mod-category {
-  margin-bottom: 20px;
-}
-
-.mod-category-header {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.mod-category-content {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* Increase gap within mod categories */
+  position: relative; /* Ensure it creates a stacking context */
+  z-index: 1; /* Base z-index */
 }
 
-.mod-item {
-  padding: 10px;
-  background-color: #444;
-  border: 1px solid #555;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
+.super-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
+  margin-bottom: 50px; /* Add more space below super */
+  z-index: 1; /* Base z-index */
+}
+
+.selected-super {
+  width: 200px;
+  height: 200px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  opacity: 0.99; /* Increase opacity to 99% */
+  z-index: 10; /* Ensure it has a base z-index */
+}
+
+.super-name {
+  display: none;
+  position: absolute;
+  top: 210px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #444;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.selected-super:hover .super-name {
+  display: block;
+}
+
+.non-selected-supers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  position: absolute;
+  top: -220px;
+  left: -230px;
+  z-index: 10;
+}
+
+.non-selected-super {
+  width: 80px;
+  height: 80px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  opacity: 0.99;
+  z-index: 10;
+}
+
+.super-item-name {
+  display: none;
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #666;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.non-selected-super:hover .super-item-name {
+  display: block;
+}
+
+.fragment-slots,
+.other-slots {
+  display: flex;
+  gap: 20px; /* Increase gap between slots */
+  position: relative; /* Ensure it creates a stacking context */
+  z-index: 1;
+}
+
+.fragment-slot,
+.other-slot {
+  width: 80px;
+  height: 80px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  opacity: 0.99;
+  z-index: 1000;
+}
+
+.slot-name {
+  display: none;
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #444;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.fragment-slot:hover .slot-name,
+.other-slot:hover .slot-name {
+  display: block;
 }
 
 .submenu-grid {
   display: none;
   position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #555;
-  padding: 10px;
-  border: 1px solid #666;
-  z-index: 1;
+  top: 100%; /* Align below the hovered spot */
+  left: 0; /* Align to the left of the hovered spot */
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 1000; /* Ensure it appears on top of all other elements */
   flex-direction: row;
+  flex-wrap: wrap; /* Allow wrapping */
+  gap: 5px;
+  border-radius: 5px;
+  border: none; /* Remove any border */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+  width: 480px; /* Ensure wrapping after 6 items */
 }
 
-.mod-item:hover .submenu-grid {
+.fragment-slot:hover .submenu-grid,
+.other-slot:hover .submenu-grid,
+.selected-super:hover .submenu-grid {
   display: flex;
+  z-index: 1000; /* Ensure it appears on top of all other elements */
 }
 
 .submenu-item {
-  padding: 5px 10px;
+  width: 80px; /* Set the same size as other icons */
+  height: 80px; /* Set the same size as other icons */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  position: relative;
+  border: none; /* Remove any border */
+  box-shadow: none; /* Remove any box shadow */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+  opacity: 0.99; /* Increase opacity to 99% */
+  z-index: 1000; /* Ensure it appears on top of all other elements */
+}
+
+.submenu-item-name {
+  display: none;
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #666;
   color: white;
-  margin: 0 5px;
-  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  z-index: 1000; /* Ensure it appears on top of all other elements */
+}
+
+.submenu-item:hover .submenu-item-name {
+  display: block;
 }
