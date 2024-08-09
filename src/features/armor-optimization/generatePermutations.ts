@@ -13,35 +13,45 @@ export const generatePermutations = (
 
   if (selectedExoticItemHash) {
     const allItems = [...helmet, ...arms, ...legs, ...chest];
-    const selectedExoticItems: DestinyArmor[] = allItems.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
+    const selectedExoticItems: DestinyArmor[] = allItems.filter(
+      (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
+    );
 
     if (selectedExoticItems.length > 0) {
       const selectedExoticItem = selectedExoticItems[0];
 
       switch (selectedExoticItem.type) {
         case 'helmet':
-          filteredHelmet = helmet.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
-          filteredArms = arms.filter(item => !item.exotic);
-          filteredLegs = legs.filter(item => !item.exotic);
-          filteredChest = chest.filter(item => !item.exotic);
+          filteredHelmet = helmet.filter(
+            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
+          );
+          filteredArms = arms.filter((item) => !item.exotic);
+          filteredLegs = legs.filter((item) => !item.exotic);
+          filteredChest = chest.filter((item) => !item.exotic);
           break;
         case 'arms':
-          filteredHelmet = helmet.filter(item => !item.exotic);
-          filteredArms = arms.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
-          filteredLegs = legs.filter(item => !item.exotic);
-          filteredChest = chest.filter(item => !item.exotic);
+          filteredHelmet = helmet.filter((item) => !item.exotic);
+          filteredArms = arms.filter(
+            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
+          );
+          filteredLegs = legs.filter((item) => !item.exotic);
+          filteredChest = chest.filter((item) => !item.exotic);
           break;
         case 'legs':
-          filteredHelmet = helmet.filter(item => !item.exotic);
-          filteredArms = arms.filter(item => !item.exotic);
-          filteredLegs = legs.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
-          filteredChest = chest.filter(item => !item.exotic);
+          filteredHelmet = helmet.filter((item) => !item.exotic);
+          filteredArms = arms.filter((item) => !item.exotic);
+          filteredLegs = legs.filter(
+            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
+          );
+          filteredChest = chest.filter((item) => !item.exotic);
           break;
         case 'chest':
-          filteredHelmet = helmet.filter(item => !item.exotic);
-          filteredArms = arms.filter(item => !item.exotic);
-          filteredLegs = legs.filter(item => !item.exotic);
-          filteredChest = chest.filter(item => Number(item.itemHash) === Number(selectedExoticItemHash));
+          filteredHelmet = helmet.filter((item) => !item.exotic);
+          filteredArms = arms.filter((item) => !item.exotic);
+          filteredLegs = legs.filter((item) => !item.exotic);
+          filteredChest = chest.filter(
+            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
+          );
           break;
       }
     } else {
@@ -86,7 +96,11 @@ export const generatePermutations = (
     const currentSlot = armorTypes[currentTypeIndex];
 
     for (const item of currentSlot) {
-      if (item.exotic && exoticCount > 0 && Number(item.itemHash) !== Number(selectedExoticItemHash)) {
+      if (
+        item.exotic &&
+        exoticCount > 0 &&
+        Number(item.itemHash) !== Number(selectedExoticItemHash)
+      ) {
         continue;
       }
 
@@ -98,5 +112,24 @@ export const generatePermutations = (
 
   generate([], 0, 0);
 
-  return permutations;
+  console.log('began sorting permutations');
+
+  permutations.sort((a, b) => {
+    const sumStats = (armor: DestinyArmor[]) => {
+      let sum: number = 0;
+      armor.forEach((armor) => {
+        sum +=
+          armor.mobility + armor.resilience + armor.recovery + armor.discipline + armor.strength;
+      });
+
+      return sum;
+    };
+
+    const statSumA = sumStats(a);
+    const statSumB = sumStats(b);
+
+    return statSumB - statSumA;
+  });
+
+  return permutations.slice(0, 30000);
 };

@@ -142,11 +142,11 @@ export const Dashboard: React.FC = () => {
 
       if (profileData.characters.length > 0) {
         setSelectedCharacter(profileData.characters[0]);
-        const initialPermutations = generatePermutations(
+        /*const initialPermutations = generatePermutations(
           profileData.characters[0].armor,
           selectedExoticItemHash
         );
-        setPermutations(initialPermutations);
+        setPermutations(initialPermutations);*/
       }
     };
 
@@ -156,6 +156,7 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     if (selectedCharacter) {
       const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
+      console.log(newPermutations.length);
       setPermutations(newPermutations);
       fetchSubclasses(selectedCharacter).then((subclassesData) => {
         setSubclasses(subclassesData);

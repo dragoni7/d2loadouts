@@ -327,12 +327,14 @@ export async function getProfileData(): Promise<ProfileData> {
     ];
 
     for (const key of abilityPlugSets) {
-      for (const plug of profilePlugSets[key]) {
-        if (plug.enabled) {
-          await db.manifestSubclassModDef
-            .where('itemHash')
-            .equals(plug.plugItemHash)
-            .modify({ isOwned: true });
+      if (profilePlugSets[key]) {
+        for (const plug of profilePlugSets[key]) {
+          if (plug.enabled) {
+            await db.manifestSubclassModDef
+              .where('itemHash')
+              .equals(plug.plugItemHash)
+              .modify({ isOwned: true });
+          }
         }
       }
     }
