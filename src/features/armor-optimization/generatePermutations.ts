@@ -83,8 +83,16 @@ export const generatePermutations = (
 
   const heap = new MaxHeap<DestinyArmor[]>((a: DestinyArmor[], b: DestinyArmor[]) => {
     const sumStats = (items: DestinyArmor[]) =>
-      items.reduce((sum: number, item: DestinyArmor) =>
-        sum + item.mobility + item.resilience + item.recovery + item.discipline + item.intellect + item.strength, 0
+      items.reduce(
+        (sum: number, item: DestinyArmor) =>
+          sum +
+          item.mobility +
+          item.resilience +
+          item.recovery +
+          item.discipline +
+          item.intellect +
+          item.strength,
+        0
       );
 
     return sumStats(a) - sumStats(b);
@@ -97,16 +105,37 @@ export const generatePermutations = (
   ) => {
     if (currentTypeIndex === armorTypes.length) {
       const modifiedPermutation = [...currentPermutation, fakeClassItem];
-      const totalStats = modifiedPermutation.reduce((sum: number, item: DestinyArmor) =>
-        sum + item.mobility + item.resilience + item.recovery + item.discipline + item.intellect + item.strength, 0
+      const totalStats = modifiedPermutation.reduce(
+        (sum: number, item: DestinyArmor) =>
+          sum +
+          item.mobility +
+          item.resilience +
+          item.recovery +
+          item.discipline +
+          item.intellect +
+          item.strength,
+        0
       );
 
       if (heap.size() < 30000) {
         heap.push(modifiedPermutation);
       } else {
         const smallest = heap.peek();
-        if (smallest && totalStats > smallest.reduce((sum: number, item: DestinyArmor) =>
-          sum + item.mobility + item.resilience + item.recovery + item.discipline + item.intellect + item.strength, 0)) {
+        if (
+          smallest &&
+          totalStats >
+            smallest.reduce(
+              (sum: number, item: DestinyArmor) =>
+                sum +
+                item.mobility +
+                item.resilience +
+                item.recovery +
+                item.discipline +
+                item.intellect +
+                item.strength,
+              0
+            )
+        ) {
           heap.pop();
           heap.push(modifiedPermutation);
         }
