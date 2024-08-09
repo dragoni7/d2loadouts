@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Loadout } from '../types';
+import { Loadout, ManifestPlug } from '../types';
 
 export interface InitialState {
   loadout: Loadout;
@@ -114,9 +114,28 @@ const initialState: InitialState = {
         socketArrayType: 0,
         socketIndex: 0,
       },
-      abilities: [],
       aspects: [],
       fragments: [],
+      classAbilities: {
+        plugItemHash: '',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+      meleeAbilities: {
+        plugItemHash: '',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+      movementAbilities: {
+        plugItemHash: '',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
+      grenades: {
+        plugItemHash: '',
+        socketArrayType: 0,
+        socketIndex: 0,
+      },
     },
   },
 };
@@ -128,8 +147,80 @@ export const loadoutConfigSlice = createSlice({
     updateLoadoutConfig: (state, action: PayloadAction<Loadout>) => {
       state.loadout = action.payload;
     },
+    updateSubclassMods: (
+      state,
+      action: PayloadAction<{ category: string; mods: ManifestPlug[] }>
+    ) => {
+      const { category, mods } = action.payload;
+      switch (category) {
+        case 'SUPERS':
+          state.loadout.subclass.super = mods[0]
+            ? {
+                plugItemHash: mods[0].itemHash,
+                socketArrayType: 0,
+                socketIndex: 0,
+              }
+            : {
+                plugItemHash: '',
+                socketArrayType: 0,
+                socketIndex: 0,
+              };
+          break;
+        case 'ASPECTS':
+          state.loadout.subclass.aspects = mods.map((mod) => ({
+            plugItemHash: mod.itemHash,
+            socketArrayType: 0,
+            socketIndex: 0,
+          }));
+          break;
+        case 'FRAGMENTS':
+          state.loadout.subclass.fragments = mods.map((mod) => ({
+            plugItemHash: mod.itemHash,
+            socketArrayType: 0,
+            socketIndex: 0,
+          }));
+          break;
+        case 'CLASS_ABILITIES':
+          state.loadout.subclass.classAbilities = mods[0]
+            ? {
+                plugItemHash: mods[0].itemHash,
+                socketArrayType: 0,
+                socketIndex: 0,
+              }
+            : null;
+          break;
+        case 'MELEE_ABILITIES':
+          state.loadout.subclass.meleeAbilities = mods[0]
+            ? {
+                plugItemHash: mods[0].itemHash,
+                socketArrayType: 0,
+                socketIndex: 0,
+              }
+            : null;
+          break;
+        case 'MOVEMENT_ABILITIES':
+          state.loadout.subclass.movementAbilities = mods[0]
+            ? {
+                plugItemHash: mods[0].itemHash,
+                socketArrayType: 0,
+                socketIndex: 0,
+              }
+            : null;
+          break;
+        case 'GRENADES':
+          state.loadout.subclass.grenades = mods[0]
+            ? {
+                plugItemHash: mods[0].itemHash,
+                socketArrayType: 0,
+                socketIndex: 0,
+              }
+            : null;
+          break;
+      }
+    },
   },
 });
 
 export const { updateLoadoutConfig } = loadoutConfigSlice.actions;
+export const { updateSubclassMods } = loadoutConfigSlice.actions;
 export default loadoutConfigSlice.reducer;

@@ -31,9 +31,12 @@ export interface ArmorBySlot {
 export type SubclassConfig = {
   itemId: string;
   super: Plug;
-  abilities: Plug[];
   aspects: Plug[];
   fragments: Plug[];
+  classAbilities: Plug | null;
+  meleeAbilities: Plug | null;
+  movementAbilities: Plug | null;
+  grenades: Plug | null;
 };
 
 export type Plug = {

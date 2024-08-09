@@ -1,25 +1,32 @@
-// src/components/ModCategory.tsx
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
 import { ManifestPlug } from '../types';
+import { updateSubclassMods } from '../store/LoadoutReducer';
+import { useDispatch } from 'react-redux';
 
 interface ModCategoryProps {
+  mods: ManifestPlug[];
   categoryName: string;
   slotCount: number;
 }
 
-const ModCategory: React.FC<ModCategoryProps> = ({ categoryName, slotCount }) => {
-  const mods = useSelector((state: RootState) => state.mods.mods[categoryName]);
+const ModCategory: React.FC<ModCategoryProps> = ({ mods, categoryName, slotCount }) => {
   const [selectedMods, setSelectedMods] = useState<ManifestPlug[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    // Initialize selected mods based on available mods and slot count
     setSelectedMods(mods.slice(0, slotCount));
   }, [mods, slotCount]);
 
+  useEffect(() => {
+    // Update the Redux store when selectedMods change
+    dispatch(updateSubclassMods({ category: categoryName, mods: selectedMods }));
+  }, [selectedMods, categoryName, dispatch]);
+
   const handleModClick = (mod: ManifestPlug, slotIndex: number) => {
+    // Prevent selecting a mod that is already selected
     if (selectedMods.find((selectedMod) => selectedMod?.itemHash === mod.itemHash)) {
-      return; // Do not allow duplicate items
+      return;
     }
     const newSelectedMods = [...selectedMods];
     newSelectedMods[slotIndex] = mod;
@@ -28,6 +35,7 @@ const ModCategory: React.FC<ModCategoryProps> = ({ categoryName, slotCount }) =>
 
   return (
     <div className="mod-category">
+      {/* Handle the SUPERS category */}
       {categoryName === 'SUPERS' && (
         <div className="super-container">
           {selectedMods[0] && (
@@ -55,15 +63,18 @@ const ModCategory: React.FC<ModCategoryProps> = ({ categoryName, slotCount }) =>
         </div>
       )}
 
+      {/* Handle the ASPECTS category below SUPERS */}
       {categoryName === 'ASPECTS' && (
-        <div className="fragment-slots">
+        <div className="aspect-slots">
           {selectedMods.map((selectedMod, index) => (
             <div
               key={index}
-              className="fragment-slot"
+              className="aspect-slot"
               style={{ backgroundImage: `url(${selectedMod?.icon})` }}
             >
-              <div className="slot-name">{selectedMod?.name}</div>
+              <div className="slot-name">
+                Slot {index + 1}: {selectedMod?.name}
+              </div>
               <div className="submenu-grid">
                 {mods
                   .filter((mod) => !selectedMods.includes(mod))
@@ -83,6 +94,7 @@ const ModCategory: React.FC<ModCategoryProps> = ({ categoryName, slotCount }) =>
         </div>
       )}
 
+      {/* Handle the FRAGMENTS category */}
       {categoryName === 'FRAGMENTS' && (
         <div className="fragment-slots">
           {selectedMods.map((selectedMod, index) => (
@@ -91,7 +103,9 @@ const ModCategory: React.FC<ModCategoryProps> = ({ categoryName, slotCount }) =>
               className="fragment-slot"
               style={{ backgroundImage: `url(${selectedMod?.icon})` }}
             >
-              <div className="slot-name">{selectedMod?.name}</div>
+              <div className="slot-name">
+                Slot {index + 1}: {selectedMod?.name}
+              </div>
               <div className="submenu-grid">
                 {mods
                   .filter((mod) => !selectedMods.includes(mod))
@@ -111,6 +125,7 @@ const ModCategory: React.FC<ModCategoryProps> = ({ categoryName, slotCount }) =>
         </div>
       )}
 
+      {/* Handle other categories */}
       {categoryName !== 'SUPERS' && categoryName !== 'ASPECTS' && categoryName !== 'FRAGMENTS' && (
         <div className="other-slots">
           {selectedMods.length === 0 ? (
@@ -135,7 +150,9 @@ const ModCategory: React.FC<ModCategoryProps> = ({ categoryName, slotCount }) =>
                 className="other-slot"
                 style={{ backgroundImage: `url(${selectedMod?.icon})` }}
               >
-                <div className="slot-name">{selectedMod?.name}</div>
+                <div className="slot-name">
+                  Slot {index + 1}: {selectedMod?.name}
+                </div>
                 <div className="submenu-grid">
                   {mods
                     .filter((mod) => !selectedMods.includes(mod))
