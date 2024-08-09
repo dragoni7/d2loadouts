@@ -1,4 +1,5 @@
 import { DestinyArmor, ArmorBySlot } from '../../types';
+import MaxHeap from 'heap-js';
 
 export const generatePermutations = (
   armorClass: ArmorBySlot,
@@ -80,7 +81,14 @@ export const generatePermutations = (
     name: 'Class Item Bonus',
   };
 
-  const permutations: DestinyArmor[][] = [];
+  const heap = new MaxHeap<DestinyArmor[]>((a: DestinyArmor[], b: DestinyArmor[]) => {
+    const sumStats = (items: DestinyArmor[]) =>
+      items.reduce((sum: number, item: DestinyArmor) =>
+        sum + item.mobility + item.resilience + item.recovery + item.discipline + item.intellect + item.strength, 0
+      );
+
+    return sumStats(a) - sumStats(b);
+  });
 
   const generate = (
     currentPermutation: DestinyArmor[],
@@ -89,7 +97,20 @@ export const generatePermutations = (
   ) => {
     if (currentTypeIndex === armorTypes.length) {
       const modifiedPermutation = [...currentPermutation, fakeClassItem];
-      permutations.push(modifiedPermutation);
+      const totalStats = modifiedPermutation.reduce((sum: number, item: DestinyArmor) =>
+        sum + item.mobility + item.resilience + item.recovery + item.discipline + item.intellect + item.strength, 0
+      );
+
+      if (heap.size() < 30000) {
+        heap.push(modifiedPermutation);
+      } else {
+        const smallest = heap.peek();
+        if (smallest && totalStats > smallest.reduce((sum: number, item: DestinyArmor) =>
+          sum + item.mobility + item.resilience + item.recovery + item.discipline + item.intellect + item.strength, 0)) {
+          heap.pop();
+          heap.push(modifiedPermutation);
+        }
+      }
       return;
     }
 
@@ -112,24 +133,5 @@ export const generatePermutations = (
 
   generate([], 0, 0);
 
-  console.log('began sorting permutations');
-
-  permutations.sort((a, b) => {
-    const sumStats = (armor: DestinyArmor[]) => {
-      let sum: number = 0;
-      armor.forEach((armor) => {
-        sum +=
-          armor.mobility + armor.resilience + armor.recovery + armor.discipline + armor.strength;
-      });
-
-      return sum;
-    };
-
-    const statSumA = sumStats(a);
-    const statSumB = sumStats(b);
-
-    return statSumB - statSumA;
-  });
-
-  return permutations.slice(0, 30000);
+  return heap.toArray();
 };
