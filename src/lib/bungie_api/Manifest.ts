@@ -28,7 +28,7 @@ export async function updateManifest() {
           // store armor defs in indexdb
           if (current.itemType === MANIFEST_TYPES.ARMOR) {
             await db.manifestArmorDef.add({
-              itemHash: Number(itemHash),
+              itemHash: itemHash,
               name: current.displayProperties.name,
               isExotic: current.inventory.tierTypeHash === EXOTIC,
               class: getManifestItemClass(current.classType),
@@ -40,7 +40,7 @@ export async function updateManifest() {
           // store emblem defs in indexdb
           if (current.itemType === MANIFEST_TYPES.EMBLEM) {
             await db.manifestEmblemDef.add({
-              itemHash: Number(itemHash),
+              itemHash: itemHash,
               secondaryOverlay: urlPrefix + current.secondaryOverlay,
               secondarySpecial: urlPrefix + current.secondarySpecial,
               name: current.displayProperties.name,
@@ -54,7 +54,7 @@ export async function updateManifest() {
             current.classType !== MANIFEST_CLASS.UNKNOWN
           ) {
             await db.manifestSubclass.add({
-              itemHash: Number(itemHash),
+              itemHash: itemHash,
               name: current.displayProperties.name,
               icon: urlPrefix + current.displayProperties.icon,
               screenshot: urlPrefix + current.screenshot,
@@ -71,7 +71,7 @@ export async function updateManifest() {
               current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS)
             ) {
               await db.manifestArmorModDef.add({
-                itemHash: Number(itemHash),
+                itemHash: itemHash,
                 name: current.displayProperties.name,
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
@@ -81,7 +81,7 @@ export async function updateManifest() {
               });
             } else if (current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.SUBCLASS_MODS)) {
               await db.manifestSubclassModDef.add({
-                itemHash: Number(itemHash),
+                itemHash: itemHash,
                 name: current.displayProperties.name,
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
