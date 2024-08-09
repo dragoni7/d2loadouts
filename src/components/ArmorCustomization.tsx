@@ -10,6 +10,7 @@ interface ArmorCustomizationProps {
   onBackClick: () => void;
   screenshot: string;
   subclass: ManifestSubclass;
+  setSelectedSubclass: (subclass: ManifestSubclass) => void;
 }
 
 const subclassTypeMap: { [key: number]: string } = {
@@ -27,7 +28,6 @@ const getCategoryHashes = (subclass: ManifestSubclass) => {
   ] as keyof typeof PLUG_CATEGORY_HASH.TITAN.ARC;
   const classType = subclass.class.toUpperCase() as 'TITAN' | 'HUNTER' | 'WARLOCK';
 
-  // Assert that we are accessing a specific class type within PLUG_CATEGORY_HASH
   const classAndSubclass =
     (PLUG_CATEGORY_HASH[classType] as Record<string, any>)[subclassType] || {};
 
@@ -41,7 +41,6 @@ const getCategoryHashes = (subclass: ManifestSubclass) => {
     FRAGMENTS: Object.values(classAndSubclass.FRAGMENTS || []),
   };
 
-  console.log('getCategoryHashes:', categoryHashes);
   return categoryHashes;
 };
 
@@ -51,16 +50,15 @@ const fetchMods = async (subclass: ManifestSubclass) => {
 
   await Promise.all(
     Object.entries(categoryHashes).map(async ([key, hashes]) => {
-      const typedHashes = hashes as number[]; // Cast hashes to number[]
-      console.log(`Fetching mods for ${key}:`, typedHashes);
+      const typedHashes = hashes as number[];
       const mods = await db.manifestSubclassModDef.where('category').anyOf(typedHashes).toArray();
+
       modsData[key] = Array.from(new Set(mods.map((mod) => mod.itemHash))).map((itemHash) =>
         mods.find((mod) => mod.itemHash === itemHash)
       ) as ManifestPlug[];
     })
   );
 
-  console.log('fetchMods result:', modsData);
   return modsData;
 };
 
@@ -73,15 +71,11 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
 
   useEffect(() => {
     if (subclass) {
-      console.log('Fetching mods for subclass:', subclass);
       fetchMods(subclass).then((fetchedMods) => {
-        console.log('Fetched mods:', fetchedMods);
         setMods(fetchedMods);
       });
     }
   }, [subclass]);
-
-  console.log('Current mods state:', mods);
 
   return (
     <div className="armor-customization-wrapper" style={{ backgroundImage: `url(${screenshot})` }}>
