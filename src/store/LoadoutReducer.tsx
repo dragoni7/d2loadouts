@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Loadout, ManifestPlug } from '../types';
+import { DamageType, Loadout, ManifestPlug } from '../types';
+import { DAMAGE_TYPE } from '../lib/bungie_api/Constants';
 
 export interface InitialState {
   loadout: Loadout;
@@ -109,6 +110,7 @@ const initialState: InitialState = {
     characterId: 0,
     subclass: {
       itemId: '',
+      damageType: 1,
       super: {
         plugItemHash: '',
         socketArrayType: 0,
@@ -116,26 +118,10 @@ const initialState: InitialState = {
       },
       aspects: [],
       fragments: [],
-      classAbilities: {
-        plugItemHash: '',
-        socketArrayType: 0,
-        socketIndex: 0,
-      },
-      meleeAbilities: {
-        plugItemHash: '',
-        socketArrayType: 0,
-        socketIndex: 0,
-      },
-      movementAbilities: {
-        plugItemHash: '',
-        socketArrayType: 0,
-        socketIndex: 0,
-      },
-      grenades: {
-        plugItemHash: '',
-        socketArrayType: 0,
-        socketIndex: 0,
-      },
+      classAbility: null,
+      meleeAbility: null,
+      movementAbility: null,
+      grenade: null,
     },
   },
 };
@@ -146,6 +132,26 @@ export const loadoutConfigSlice = createSlice({
   reducers: {
     updateLoadoutConfig: (state, action: PayloadAction<Loadout>) => {
       state.loadout = action.payload;
+    },
+    updateSubclassId: (
+      state,
+      action: PayloadAction<{ damageType: DamageType; itemId: string }>
+    ) => {
+      state.loadout.subclass = {
+        itemId: action.payload.itemId,
+        damageType: action.payload.damageType,
+        super: {
+          plugItemHash: '',
+          socketArrayType: 0,
+          socketIndex: 0,
+        },
+        aspects: [],
+        fragments: [],
+        classAbility: null,
+        meleeAbility: null,
+        movementAbility: null,
+        grenade: null,
+      };
     },
     updateSubclassMods: (
       state,
@@ -170,49 +176,57 @@ export const loadoutConfigSlice = createSlice({
           state.loadout.subclass.aspects = mods.map((mod) => ({
             plugItemHash: mod.itemHash,
             socketArrayType: 0,
-            socketIndex: 0,
+            socketIndex:
+              state.loadout.subclass.aspects.length + state.loadout.subclass.damageType ===
+              DAMAGE_TYPE.KINETIC
+                ? 7
+                : 5,
           }));
           break;
         case 'FRAGMENTS':
           state.loadout.subclass.fragments = mods.map((mod) => ({
             plugItemHash: mod.itemHash,
             socketArrayType: 0,
-            socketIndex: 0,
+            socketIndex:
+              state.loadout.subclass.fragments.length + state.loadout.subclass.damageType ===
+              DAMAGE_TYPE.KINETIC
+                ? 9
+                : 7,
           }));
           break;
         case 'CLASS_ABILITIES':
-          state.loadout.subclass.classAbilities = mods[0]
+          state.loadout.subclass.classAbility = mods[0]
             ? {
                 plugItemHash: mods[0].itemHash,
                 socketArrayType: 0,
-                socketIndex: 0,
+                socketIndex: 1,
               }
             : null;
           break;
         case 'MELEE_ABILITIES':
-          state.loadout.subclass.meleeAbilities = mods[0]
+          state.loadout.subclass.meleeAbility = mods[0]
             ? {
                 plugItemHash: mods[0].itemHash,
                 socketArrayType: 0,
-                socketIndex: 0,
+                socketIndex: 3,
               }
             : null;
           break;
         case 'MOVEMENT_ABILITIES':
-          state.loadout.subclass.movementAbilities = mods[0]
+          state.loadout.subclass.movementAbility = mods[0]
             ? {
                 plugItemHash: mods[0].itemHash,
                 socketArrayType: 0,
-                socketIndex: 0,
+                socketIndex: 2,
               }
             : null;
           break;
         case 'GRENADES':
-          state.loadout.subclass.grenades = mods[0]
+          state.loadout.subclass.grenade = mods[0]
             ? {
                 plugItemHash: mods[0].itemHash,
                 socketArrayType: 0,
-                socketIndex: 0,
+                socketIndex: 4,
               }
             : null;
           break;

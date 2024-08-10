@@ -1,6 +1,7 @@
 import {
   BUCKET_HASH,
   COLLECTIBLE_OWNED,
+  DAMAGE_TYPE,
   PRIMARY_STATS,
   SOCKET_HASH,
   STAT_HASH,
@@ -8,7 +9,15 @@ import {
 } from '../../lib/bungie_api/Constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/Requests';
 import { db } from '../../store/db';
-import { Character, CharacterClass, DestinyArmor, Emblem, ProfileData } from '../../types';
+import {
+  Character,
+  CharacterClass,
+  DamageType,
+  DestinyArmor,
+  Emblem,
+  Plug,
+  ProfileData,
+} from '../../types';
 import { getCharacterClass, modReverseDict } from './util';
 
 export async function getProfileData(): Promise<ProfileData> {
@@ -42,6 +51,124 @@ export async function getProfileData(): Promise<ProfileData> {
           classItem: [],
         },
         subclasses: {},
+        equippedLoadout: {
+          helmet: {
+            intellect: 0,
+            discipline: 0,
+            resilience: 0,
+            mobility: 0,
+            strength: 0,
+            recovery: 0,
+            instanceHash: '',
+            itemHash: '',
+            artifice: undefined,
+            masterwork: false,
+            exotic: undefined,
+            class: undefined,
+            type: '',
+            socket: undefined,
+            location: 0,
+            icon: '',
+            name: '',
+          },
+          gauntlets: {
+            intellect: 0,
+            discipline: 0,
+            resilience: 0,
+            mobility: 0,
+            strength: 0,
+            recovery: 0,
+            instanceHash: '',
+            itemHash: '',
+            artifice: undefined,
+            masterwork: false,
+            exotic: undefined,
+            class: undefined,
+            type: '',
+            socket: undefined,
+            location: 0,
+            icon: '',
+            name: '',
+          },
+          chestArmor: {
+            intellect: 0,
+            discipline: 0,
+            resilience: 0,
+            mobility: 0,
+            strength: 0,
+            recovery: 0,
+            instanceHash: '',
+            itemHash: '',
+            artifice: undefined,
+            masterwork: false,
+            exotic: undefined,
+            class: undefined,
+            type: '',
+            socket: undefined,
+            location: 0,
+            icon: '',
+            name: '',
+          },
+          legArmor: {
+            intellect: 0,
+            discipline: 0,
+            resilience: 0,
+            mobility: 0,
+            strength: 0,
+            recovery: 0,
+            instanceHash: '',
+            itemHash: '',
+            artifice: undefined,
+            masterwork: false,
+            exotic: undefined,
+            class: undefined,
+            type: '',
+            socket: undefined,
+            location: 0,
+            icon: '',
+            name: '',
+          },
+          classArmor: {
+            intellect: 0,
+            discipline: 0,
+            resilience: 0,
+            mobility: 0,
+            strength: 0,
+            recovery: 0,
+            instanceHash: '',
+            itemHash: '',
+            artifice: undefined,
+            masterwork: false,
+            exotic: undefined,
+            class: undefined,
+            type: '',
+            socket: undefined,
+            location: 0,
+            icon: '',
+            name: '',
+          },
+          helmetMods: [],
+          gauntletMods: [],
+          chestArmorMods: [],
+          legArmorMods: [],
+          classArmorMods: [],
+          characterId: characterData[key].characterId,
+          subclass: {
+            itemId: '',
+            damageType: 1,
+            super: {
+              plugItemHash: '',
+              socketArrayType: 0,
+              socketIndex: 0,
+            },
+            aspects: [],
+            fragments: [],
+            classAbility: null,
+            meleeAbility: null,
+            movementAbility: null,
+            grenade: null,
+          },
+        },
       };
 
       // iterate character's equipped items
@@ -74,42 +201,128 @@ export async function getProfileData(): Promise<ProfileData> {
 
             if (subclass) {
               character.subclasses[subclass.damageType] = item.itemInstanceId;
+
+              // set equipped loadout subclass config
+              character.equippedLoadout.subclass.itemId = item.itemInstanceId;
+              character.equippedLoadout.subclass.damageType = subclass.damageType as DamageType;
+              const subclassSockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
+
+              if (subclassSockets) {
+                character.equippedLoadout.subclass.classAbility = {
+                  plugItemHash: subclassSockets[0].plugHash,
+                  socketArrayType: 0,
+                  socketIndex: 1,
+                };
+                character.equippedLoadout.subclass.movementAbility = {
+                  plugItemHash: subclassSockets[1].plugHash,
+                  socketArrayType: 0,
+                  socketIndex: 2,
+                };
+                character.equippedLoadout.subclass.super = {
+                  plugItemHash: subclassSockets[2].plugHash,
+                  socketArrayType: 0,
+                  socketIndex: 0,
+                };
+                character.equippedLoadout.subclass.meleeAbility = {
+                  plugItemHash: subclassSockets[3].plugHash,
+                  socketArrayType: 0,
+                  socketIndex: 3,
+                };
+                character.equippedLoadout.subclass.grenade = {
+                  plugItemHash: subclassSockets[4].plugHash,
+                  socketArrayType: 0,
+                  socketIndex: 4,
+                };
+
+                if (character.equippedLoadout.subclass.damageType === DAMAGE_TYPE.KINETIC) {
+                  character.equippedLoadout.subclass.aspects = [
+                    {
+                      plugItemHash: subclassSockets[7].plugHash,
+                      socketArrayType: 0,
+                      socketIndex: 7,
+                    },
+                    {
+                      plugItemHash: subclassSockets[8].plugHash,
+                      socketArrayType: 0,
+                      socketIndex: 8,
+                    },
+                  ];
+
+                  character.equippedLoadout.subclass.fragments = subclassSockets
+                    .slice(9, subclassSockets.length)
+                    .map((p: any, index: number): Plug => {
+                      return {
+                        plugItemHash: p.plugHash,
+                        socketArrayType: 0,
+                        socketIndex: 9 + index,
+                      };
+                    });
+                } else {
+                  character.equippedLoadout.subclass.aspects = [
+                    {
+                      plugItemHash: subclassSockets[5].plugHash,
+                      socketArrayType: 0,
+                      socketIndex: 5,
+                    },
+                    {
+                      plugItemHash: subclassSockets[6].plugHash,
+                      socketArrayType: 0,
+                      socketIndex: 6,
+                    },
+                  ];
+
+                  character.equippedLoadout.subclass.fragments = subclassSockets
+                    .slice(7, subclassSockets.length)
+                    .map((p: any, index: number): Plug => {
+                      return {
+                        plugItemHash: p.plugHash,
+                        socketArrayType: 7 + 0,
+                        socketIndex: index,
+                      };
+                    });
+                }
+              }
             }
             continue;
           }
 
           case BUCKET_HASH.HELMET: {
-            character.armor.helmet.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'helmet')
-            );
+            const helmet = await buildDestinyArmor(itemComponents, item, character.class, 'helmet');
+            character.armor.helmet.push(helmet);
+            character.equippedLoadout.helmet = helmet;
             continue;
           }
 
           case BUCKET_HASH.GAUNTLETS: {
-            character.armor.arms.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'arms')
-            );
+            const arms = await buildDestinyArmor(itemComponents, item, character.class, 'arms');
+            character.armor.arms.push(arms);
+            character.equippedLoadout.gauntlets = arms;
             continue;
           }
 
           case BUCKET_HASH.CHEST_ARMOR: {
-            character.armor.chest.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'chest')
-            );
+            const chest = await buildDestinyArmor(itemComponents, item, character.class, 'chest');
+            character.armor.chest.push(chest);
+            character.equippedLoadout.chestArmor = chest;
             continue;
           }
 
           case BUCKET_HASH.LEG_ARMOR: {
-            character.armor.legs.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'legs')
-            );
+            const legs = await buildDestinyArmor(itemComponents, item, character.class, 'legs');
+            character.armor.legs.push(legs);
+            character.equippedLoadout.legArmor = legs;
             continue;
           }
 
           case BUCKET_HASH.CLASS_ARMOR: {
-            character.armor.classItem.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'class')
+            const classItem = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              'class'
             );
+            character.armor.classItem.push(classItem);
+            character.equippedLoadout.classArmor = classItem;
             continue;
           }
         }

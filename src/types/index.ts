@@ -1,5 +1,7 @@
 export type CharacterClass = 'warlock' | 'hunter' | 'titan' | '';
 
+export type DamageType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
 export type DestinyArmor = {
   intellect: number;
   discipline: number;
@@ -30,13 +32,14 @@ export interface ArmorBySlot {
 
 export type SubclassConfig = {
   itemId: string;
+  damageType: DamageType;
   super: Plug;
   aspects: Plug[];
   fragments: Plug[];
-  classAbilities: Plug | null;
-  meleeAbilities: Plug | null;
-  movementAbilities: Plug | null;
-  grenades: Plug | null;
+  classAbility: Plug | null;
+  meleeAbility: Plug | null;
+  movementAbility: Plug | null;
+  grenade: Plug | null;
 };
 
 export type Plug = {
@@ -70,6 +73,7 @@ export type Character = {
   emblem?: Emblem;
   armor: ArmorBySlot;
   subclasses: { [key: number]: string };
+  equippedLoadout: Loadout;
 };
 
 export type Subclass = {

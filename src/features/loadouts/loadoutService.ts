@@ -14,33 +14,32 @@ export async function loadoutTest() {
     characterId: store.getState().profile.profileData.characters[0].id,
     subclass: {
       itemId: '6917530019218633578',
+      damageType: 1,
       super: {
         plugItemHash: '1869939005', // song of flame
         socketArrayType: 0,
         socketIndex: 0,
       },
-      abilities: [
-        {
-          plugItemHash: '1444664836', // phoenix dive
-          socketArrayType: 0,
-          socketIndex: 1,
-        },
-        {
-          plugItemHash: '5333292', // strafe glide
-          socketArrayType: 0,
-          socketIndex: 2,
-        },
-        {
-          plugItemHash: '3644045871', // arcane needle
-          socketArrayType: 0,
-          socketIndex: 3,
-        },
-        {
-          plugItemHash: '4241856103', // storm grenade
-          socketArrayType: 0,
-          socketIndex: 4,
-        },
-      ],
+      classAbility: {
+        plugItemHash: '1444664836', // phoenix dive
+        socketArrayType: 0,
+        socketIndex: 1,
+      },
+      movementAbility: {
+        plugItemHash: '5333292', // strafe glide
+        socketArrayType: 0,
+        socketIndex: 2,
+      },
+      meleeAbility: {
+        plugItemHash: '3644045871', // arcane needle
+        socketArrayType: 0,
+        socketIndex: 3,
+      },
+      grenade: {
+        plugItemHash: '4241856103', // storm grenade
+        socketArrayType: 0,
+        socketIndex: 4,
+      },
       aspects: [
         {
           plugItemHash: '790664814', // hellion
@@ -246,9 +245,10 @@ async function handleSubclass(loadout: Loadout) {
   await insertSocketPlugFreeRequest(subclassId, loadout.subclass.super, characterId);
 
   // insert abilities
-  loadout.subclass.abilities.forEach(async (ability) => {
-    await insertSocketPlugFreeRequest(subclassId, ability, characterId);
-  });
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.classAbility, characterId);
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.movementAbility, characterId);
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.meleeAbility, characterId);
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.grenade, characterId);
 
   // insert fragments & aspects
   await insertSocketPlugFreeRequest(subclassId, loadout.subclass.aspects[0], characterId);
