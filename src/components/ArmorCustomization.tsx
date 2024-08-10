@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './ArmorCustomization.css';
 import { db } from '../store/db';
-import { ManifestPlug, ManifestSubclass } from '../types';
+import { ManifestPlug, ManifestSubclass, Plug } from '../types';
 import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/SubclassConstants';
 import ArmorMods from './ArmorMods';
 import ModCategory from './ModCategory';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 interface ArmorCustomizationProps {
   onBackClick: () => void;
@@ -68,6 +70,24 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
   subclass,
 }) => {
   const [mods, setMods] = useState<{ [key: string]: ManifestPlug[] }>({});
+  const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclass);
+
+  console.log('Logging all plugItemHashes from the loadout:');
+
+  if (loadout) {
+    const hashDictionary: { [key: string]: string[] } = {
+      SUPERS: [loadout.super.plugItemHash],
+      CLASS_ABILITIES: loadout.classAbilities ? [loadout.classAbilities.plugItemHash] : [],
+      MELEE_ABILITIES: loadout.meleeAbilities ? [loadout.meleeAbilities.plugItemHash] : [],
+      MOVEMENT_ABILITIES: loadout.movementAbilities ? [loadout.movementAbilities.plugItemHash] : [],
+      ASPECTS: loadout.aspects.map((aspect: Plug) => aspect.plugItemHash),
+      GRENADES: loadout.grenades ? [loadout.grenades.plugItemHash] : [],
+      FRAGMENTS: loadout.fragments.map((fragment: Plug) => fragment.plugItemHash),
+    };
+    console.log(hashDictionary);
+  } else {
+    console.log('Loadout is not defined.');
+  }
 
   useEffect(() => {
     if (subclass) {
