@@ -169,7 +169,7 @@ export const loadoutConfigSlice = createSlice({
         case 'SUPERS':
           state.loadout.subclass.super = mods[0]
             ? {
-                plugItemHash: mods[0].itemHash,
+                plugItemHash: String(mods[0].itemHash),
                 socketArrayType: 0,
                 socketIndex: 0,
               }
@@ -181,7 +181,7 @@ export const loadoutConfigSlice = createSlice({
           break;
         case 'ASPECTS':
           state.loadout.subclass.aspects = mods.map((mod) => ({
-            plugItemHash: mod.itemHash,
+            plugItemHash: String(mods[0].itemHash),
             socketArrayType: 0,
             socketIndex:
               state.loadout.subclass.aspects.length + state.loadout.subclass.damageType ===
@@ -192,7 +192,7 @@ export const loadoutConfigSlice = createSlice({
           break;
         case 'FRAGMENTS':
           state.loadout.subclass.fragments = mods.map((mod) => ({
-            plugItemHash: mod.itemHash,
+            plugItemHash: String(mods[0].itemHash),
             socketArrayType: 0,
             socketIndex:
               state.loadout.subclass.fragments.length + state.loadout.subclass.damageType ===
@@ -204,7 +204,7 @@ export const loadoutConfigSlice = createSlice({
         case 'CLASS_ABILITIES':
           state.loadout.subclass.classAbility = mods[0]
             ? {
-                plugItemHash: mods[0].itemHash,
+                plugItemHash: String(mods[0].itemHash),
                 socketArrayType: 0,
                 socketIndex: 1,
               }
@@ -213,7 +213,7 @@ export const loadoutConfigSlice = createSlice({
         case 'MELEE_ABILITIES':
           state.loadout.subclass.meleeAbility = mods[0]
             ? {
-                plugItemHash: mods[0].itemHash,
+                plugItemHash: String(mods[0].itemHash),
                 socketArrayType: 0,
                 socketIndex: 3,
               }
@@ -222,7 +222,7 @@ export const loadoutConfigSlice = createSlice({
         case 'MOVEMENT_ABILITIES':
           state.loadout.subclass.movementAbility = mods[0]
             ? {
-                plugItemHash: mods[0].itemHash,
+                plugItemHash: String(mods[0].itemHash),
                 socketArrayType: 0,
                 socketIndex: 2,
               }
@@ -231,7 +231,7 @@ export const loadoutConfigSlice = createSlice({
         case 'GRENADES':
           state.loadout.subclass.grenade = mods[0]
             ? {
-                plugItemHash: mods[0].itemHash,
+                plugItemHash: String(mods[0].itemHash),
                 socketArrayType: 0,
                 socketIndex: 4,
               }
