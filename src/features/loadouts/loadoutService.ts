@@ -7,7 +7,7 @@ import {
   transferItemRequest,
 } from '../../lib/bungie_api/Requests';
 import { store } from '../../store';
-import { DestinyArmor, Loadout } from '../../types';
+import { DestinyArmor, Loadout, Plug } from '../../types';
 
 export async function loadoutTest() {
   let loadout: Loadout = {
@@ -85,41 +85,42 @@ export async function loadoutTest() {
       .profile.profileData.characters[0].armor.classItem.find(
         (a) => a.instanceHash === '6917529546691296363'
       ) as DestinyArmor,
-    helmetMods: [
-      {
+    helmetMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    gauntletMods: [
-      {
+    },
+    gauntletMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    chestArmorMods: [
-      {
+    },
+    chestArmorMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    legArmorMods: [
-      {
+    },
+    legArmorMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    classArmorMods: [
-      {
+    },
+    classArmorMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
+    },
+    requiredStatMods: [],
   };
   await equipLoadout(loadout);
 }
@@ -186,24 +187,44 @@ async function handleArmor(loadout: Loadout) {
   }
 
   // insert mods in armor
-  loadout.helmetMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.helmet.instanceHash, mod, characterId);
+  Object.keys(loadout.helmetMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.helmet.instanceHash,
+      loadout.helmetMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.gauntletMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.gauntlets.instanceHash, mod, characterId);
+  Object.keys(loadout.gauntletMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.gauntlets.instanceHash,
+      loadout.gauntletMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.chestArmorMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.chestArmor.instanceHash, mod, characterId);
+  Object.keys(loadout.chestArmorMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.chestArmor.instanceHash,
+      loadout.chestArmorMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.legArmorMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.legArmor.instanceHash, mod, characterId);
+  Object.keys(loadout.legArmorMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.legArmor.instanceHash,
+      loadout.legArmorMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.classArmorMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.legArmor.instanceHash, mod, characterId);
+  Object.keys(loadout.classArmorMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.classArmor.instanceHash,
+      loadout.classArmorMods[Number(key)],
+      characterId
+    );
   });
 
   // armor

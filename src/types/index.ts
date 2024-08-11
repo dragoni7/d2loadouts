@@ -54,11 +54,12 @@ export type Loadout = {
   chestArmor: DestinyArmor;
   legArmor: DestinyArmor;
   classArmor: DestinyArmor;
-  helmetMods: Plug[];
-  gauntletMods: Plug[];
-  chestArmorMods: Plug[];
-  legArmorMods: Plug[];
-  classArmorMods: Plug[];
+  requiredStatMods: Plug[];
+  helmetMods: { [key: number]: Plug };
+  gauntletMods: { [key: number]: Plug };
+  chestArmorMods: { [key: number]: Plug };
+  legArmorMods: { [key: number]: Plug };
+  classArmorMods: { [key: number]: Plug };
   characterId: number;
   subclass: SubclassConfig;
 };

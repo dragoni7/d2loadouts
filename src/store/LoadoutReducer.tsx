@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DamageType, DestinyArmor, Loadout, ManifestPlug } from '../types';
+import { DamageType, DestinyArmor, Loadout, ManifestPlug, Plug } from '../types';
 import { DAMAGE_TYPE } from '../lib/bungie_api/Constants';
 
 export interface InitialState {
@@ -102,11 +102,42 @@ const initialState: InitialState = {
       icon: '',
       name: '',
     },
-    helmetMods: [],
-    gauntletMods: [],
-    chestArmorMods: [],
-    legArmorMods: [],
-    classArmorMods: [],
+    requiredStatMods: [],
+    helmetMods: {
+      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
+      1: { plugItemHash: '1078080765', socketArrayType: 0, socketIndex: 1 },
+      2: { plugItemHash: '1078080765', socketArrayType: 0, socketIndex: 2 },
+      3: { plugItemHash: '1078080765', socketArrayType: 0, socketIndex: 3 },
+      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+    },
+    gauntletMods: {
+      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
+      1: { plugItemHash: '3820147479', socketArrayType: 0, socketIndex: 1 },
+      2: { plugItemHash: '3820147479', socketArrayType: 0, socketIndex: 2 },
+      3: { plugItemHash: '3820147479', socketArrayType: 0, socketIndex: 3 },
+      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+    },
+    chestArmorMods: {
+      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
+      1: { plugItemHash: '1803434835', socketArrayType: 0, socketIndex: 1 },
+      2: { plugItemHash: '1803434835', socketArrayType: 0, socketIndex: 2 },
+      3: { plugItemHash: '1803434835', socketArrayType: 0, socketIndex: 3 },
+      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+    },
+    legArmorMods: {
+      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
+      1: { plugItemHash: '2269836811', socketArrayType: 0, socketIndex: 1 },
+      2: { plugItemHash: '2269836811', socketArrayType: 0, socketIndex: 2 },
+      3: { plugItemHash: '2269836811', socketArrayType: 0, socketIndex: 3 },
+      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+    },
+    classArmorMods: {
+      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
+      1: { plugItemHash: '3200810407', socketArrayType: 0, socketIndex: 1 },
+      2: { plugItemHash: '3200810407', socketArrayType: 0, socketIndex: 2 },
+      3: { plugItemHash: '3200810407', socketArrayType: 0, socketIndex: 3 },
+      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+    },
     characterId: 0,
     subclass: {
       itemId: '',
@@ -139,6 +170,40 @@ export const loadoutConfigSlice = createSlice({
       state.loadout.legArmor = action.payload[2];
       state.loadout.chestArmor = action.payload[3];
       state.loadout.classArmor = action.payload[4];
+    },
+    updateLoadoutArmorMods: (
+      state,
+      action: PayloadAction<{ armorType: string; slot: number; plug: Plug }>
+    ) => {
+      switch (action.payload.armorType) {
+        case 'helmet': {
+          state.loadout.helmetMods[action.payload.slot] = action.payload.plug;
+          break;
+        }
+        case 'arms': {
+          state.loadout.gauntletMods[action.payload.slot] = action.payload.plug;
+          break;
+        }
+        case 'chest': {
+          state.loadout.chestArmorMods[action.payload.slot] = action.payload.plug;
+          break;
+        }
+        case 'legs': {
+          state.loadout.legArmorMods[action.payload.slot] = action.payload.plug;
+          break;
+        }
+        case 'classItem': {
+          state.loadout.classArmorMods[action.payload.slot] = action.payload.plug;
+          break;
+        }
+      }
+    },
+    resetLoadoutArmorMods: (state) => {
+      state.loadout.helmetMods = initialState.loadout.helmetMods;
+      state.loadout.gauntletMods = initialState.loadout.gauntletMods;
+      state.loadout.chestArmorMods = initialState.loadout.chestArmorMods;
+      state.loadout.legArmorMods = initialState.loadout.legArmorMods;
+      state.loadout.classArmorMods = initialState.loadout.classArmorMods;
     },
     updateSubclassId: (
       state,
@@ -242,9 +307,13 @@ export const loadoutConfigSlice = createSlice({
   },
 });
 
-export const { updateLoadoutConfig } = loadoutConfigSlice.actions;
-export const { updateSubclassMods } = loadoutConfigSlice.actions;
-export const { updateSubclassId } = loadoutConfigSlice.actions;
-export const { updateLoadoutArmor } = loadoutConfigSlice.actions;
+export const {
+  updateLoadoutConfig,
+  updateLoadoutArmorMods,
+  resetLoadoutArmorMods,
+  updateSubclassMods,
+  updateSubclassId,
+  updateLoadoutArmor,
+} = loadoutConfigSlice.actions;
 
 export default loadoutConfigSlice.reducer;

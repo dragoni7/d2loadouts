@@ -24,7 +24,7 @@ export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
   return slotMods;
 }
 
-export function getSelectedModsBySlot(slot: string): Plug[] {
+export function getSelectedModsBySlot(slot: string): { [key: number]: Plug } {
   switch (slot) {
     case 'helmet': {
       return store.getState().loadoutConfig.loadout.helmetMods;
@@ -42,7 +42,7 @@ export function getSelectedModsBySlot(slot: string): Plug[] {
       return store.getState().loadoutConfig.loadout.classArmorMods;
     }
     default: {
-      return [];
+      return {};
     }
   }
 }

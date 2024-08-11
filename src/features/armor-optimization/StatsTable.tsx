@@ -2,7 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/system';
 import { FilteredPermutation } from '../../types';
 import { useDispatch } from 'react-redux';
-import { updateLoadoutArmor, updateLoadoutConfig } from '../../store/LoadoutReducer';
+import {
+  resetLoadoutArmorMods,
+  updateLoadoutArmor,
+  updateLoadoutConfig,
+} from '../../store/LoadoutReducer';
 import ArmorIcon from '../../components/ArmorIcon';
 
 interface StatsTableProps {
@@ -228,7 +232,9 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
             key={index}
             onClick={() => {
               onPermutationClick();
+              dispatch(resetLoadoutArmorMods());
               dispatch(updateLoadoutArmor(perm.permutation));
+              // mods
             }}
           >
             <CardRow>
