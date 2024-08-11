@@ -94,7 +94,7 @@ export type DestinyMembership = {
 
 export interface ManifestEntry {
   id: number;
-  itemHash: string;
+  itemHash: number;
   name: string;
   icon: string;
 }

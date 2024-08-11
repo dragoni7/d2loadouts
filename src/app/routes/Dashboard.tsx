@@ -228,7 +228,7 @@ export const Dashboard: React.FC = () => {
       .toArray();
     return data.map((item) => ({
       ...item,
-      itemHash: item.itemHash.toString(),
+      itemHash: item.itemHash,
     }));
   };
 

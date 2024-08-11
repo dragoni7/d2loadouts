@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/system';
 import { FilteredPermutation } from '../../types';
+import { useDispatch } from 'react-redux';
+import { updateLoadoutArmor, updateLoadoutConfig } from '../../store/LoadoutReducer';
+import ArmorIcon from '../../components/ArmorIcon';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
@@ -177,6 +180,7 @@ const TableFooter = styled('div')({
 });
 
 const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClick }) => {
+  const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
 
@@ -220,20 +224,18 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
       </LeftArrowButton>
       <CardContainer>
         {paginatedData.map((perm, index) => (
-          <Card key={index} onClick={onPermutationClick}>
+          <Card
+            key={index}
+            onClick={() => {
+              onPermutationClick();
+              dispatch(updateLoadoutArmor(perm.permutation));
+            }}
+          >
             <CardRow>
               {perm.permutation.map((item, idx) => (
                 <CardCell key={idx}>
                   <HoverContainer>
-                    {item.masterwork ? (
-                      <MasterworkedIconContainer>
-                        <Icon src={item.icon} alt={item.name} />
-                      </MasterworkedIconContainer>
-                    ) : (
-                      <DefaultIconContainer>
-                        <Icon src={item.icon} alt={item.name} />
-                      </DefaultIconContainer>
-                    )}
+                    <ArmorIcon armor={item} size={48} />
                     <ItemName>{item.name}</ItemName>
                   </HoverContainer>
                 </CardCell>

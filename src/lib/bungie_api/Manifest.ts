@@ -28,7 +28,7 @@ export async function updateManifest() {
           // store armor defs in indexdb
           if (current.itemType === MANIFEST_TYPES.ARMOR) {
             await db.manifestArmorDef.add({
-              itemHash: itemHash,
+              itemHash: Number(itemHash),
               name: current.displayProperties.name,
               isExotic: current.inventory.tierTypeHash === EXOTIC,
               class: getManifestItemClass(current.classType),
@@ -40,7 +40,7 @@ export async function updateManifest() {
           // store emblem defs in indexdb
           if (current.itemType === MANIFEST_TYPES.EMBLEM) {
             await db.manifestEmblemDef.add({
-              itemHash: itemHash,
+              itemHash: Number(itemHash),
               secondaryOverlay: urlPrefix + current.secondaryOverlay,
               secondarySpecial: urlPrefix + current.secondarySpecial,
               name: current.displayProperties.name,
@@ -54,7 +54,7 @@ export async function updateManifest() {
             current.classType !== MANIFEST_CLASS.UNKNOWN
           ) {
             await db.manifestSubclass.add({
-              itemHash: itemHash,
+              itemHash: Number(itemHash),
               name: current.displayProperties.name,
               icon: urlPrefix + current.displayProperties.icon,
               screenshot: urlPrefix + current.screenshot,
@@ -68,10 +68,17 @@ export async function updateManifest() {
           if (current.itemType === MANIFEST_TYPES.PLUG && current.plug) {
             if (
               current.itemSubType !== MANIFEST_TYPES.ORNAMENTS &&
-              current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS)
+              current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS) &&
+              current.displayProperties.name !== 'Locked Armor Mod' &&
+              !current.itemTypeDisplayName.includes('Legacy') &&
+              !current.itemTypeDisplayName.includes('Deprecated') &&
+              !current.itemTypeDisplayName.includes('Artifact Mod') &&
+              !current.plug.enabledRules.some((rule: any) => {
+                return rule.failureMessage.includes('Artifact');
+              })
             ) {
               await db.manifestArmorModDef.add({
-                itemHash: itemHash,
+                itemHash: Number(itemHash),
                 name: current.displayProperties.name,
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
@@ -81,7 +88,7 @@ export async function updateManifest() {
               });
             } else if (current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.SUBCLASS_MODS)) {
               await db.manifestSubclassModDef.add({
-                itemHash: itemHash,
+                itemHash: Number(itemHash),
                 name: current.displayProperties.name,
                 icon: urlPrefix + current.displayProperties.icon,
                 energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
@@ -98,7 +105,7 @@ export async function updateManifest() {
 
       const collectiblesResponse = await getManifestComponentRequest(collectiblesComponent);
 
-      if (collectiblesResponse && collectiblesResponse.status === 200) {
+      if (collectiblesResponse) {
         for (const collectionHash in collectiblesResponse.data) {
           const current = collectiblesResponse.data[collectionHash];
 
@@ -119,16 +126,14 @@ export async function updateManifest() {
               isOwned: false,
               collectibleHash: Number(collectionHash),
             });
+          } else {
+            // get collection hash for armor mods
+            await db.manifestArmorModDef
+              .where('itemHash')
+              .equals(current.itemHash)
+              .modify({ collectibleHash: current.hash });
           }
-          // get collection hash for armor mods
-          await db.manifestArmorModDef
-            .where('itemHash')
-            .equals(current.itemHash)
-            .modify({ collectibleHash: current.hash });
         }
-
-        // remove armor mods with no collection hash i.e they are not a collectible mod
-        await db.manifestArmorModDef.where('collectibleHash').below(0).delete();
       }
     }
   } else {
