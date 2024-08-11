@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
@@ -15,10 +15,11 @@ import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
-import CustomizationPanel from '../../components/CustomizationPanel';
 import ArmorCustomization from '../../components/ArmorCustomization';
+import AbilitiesModification from '../../components/AbilitiesModification';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
+import SubclassCustomizationWrapper from '../../components/SubclassCustomizationWrapper';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -131,6 +132,7 @@ export const Dashboard: React.FC = () => {
     null
   );
   const [showArmorCustomization, setShowArmorCustomization] = useState(false);
+  const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -142,11 +144,6 @@ export const Dashboard: React.FC = () => {
 
       if (profileData.characters.length > 0) {
         setSelectedCharacter(profileData.characters[0]);
-        /*const initialPermutations = generatePermutations(
-          profileData.characters[0].armor,
-          selectedExoticItemHash
-        );
-        setPermutations(initialPermutations);*/
       }
     };
 
@@ -206,11 +203,11 @@ export const Dashboard: React.FC = () => {
 
   const handleSubclassRightClick = (subclass: ManifestSubclass) => {
     setCustomizingSubclass(subclass);
-    setShowCustomizationPanel(true);
+    setShowAbilitiesModification(true);
   };
 
   const handleBackClick = () => {
-    setShowCustomizationPanel(false);
+    setShowAbilitiesModification(false);
   };
 
   const handlePermutationClick = () => {
@@ -234,12 +231,11 @@ export const Dashboard: React.FC = () => {
 
   return (
     <PageContainer>
-      {showCustomizationPanel && customizingSubclass ? (
-        <CustomizationPanel
-          screenshot={customizingSubclass.screenshot}
+      {showAbilitiesModification && customizingSubclass ? (
+        <SubclassCustomizationWrapper
           onBackClick={handleBackClick}
-          selectedSubclass={selectedSubclass}
-          setSelectedSubclass={setSelectedSubclass}
+          subclass={customizingSubclass}
+          screenshot={customizingSubclass.screenshot}
         />
       ) : showArmorCustomization ? (
         <ArmorCustomization
