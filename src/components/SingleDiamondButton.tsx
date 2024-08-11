@@ -88,16 +88,20 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
         </div>
       )}
       <div
-        className="single-diamond-button"
+        className={`single-diamond-button ${isPrismaticActive ? 'prismatic-selected' : ''}`}
         onContextMenu={(event) => handleRightClick(event, currentSubclass!)}
       >
         {currentSubclass && (
-          <img src={currentSubclass.icon} alt={currentSubclass.name} className="diamond-icon" />
+          <img
+            src={currentSubclass.icon}
+            alt={currentSubclass.name}
+            className={isPrismaticActive ? 'circular-icon' : 'diamond-icon'}
+          />
         )}
       </div>
       {prismaticSubclass && (
         <div
-          className="prismatic-button"
+          className={`prismatic-button ${isPrismaticActive ? 'diamond-shape' : ''}`}
           onClick={isPrismaticActive ? handleReset : () => handleSelect(prismaticSubclass)}
           onContextMenu={(event) =>
             handleRightClick(
