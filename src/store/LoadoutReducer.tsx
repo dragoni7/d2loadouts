@@ -198,6 +198,9 @@ export const loadoutConfigSlice = createSlice({
         }
       }
     },
+    updateRequiredStatMods: (state, action: PayloadAction<Plug[]>) => {
+      state.loadout.requiredStatMods = action.payload;
+    },
     resetLoadoutArmorMods: (state) => {
       state.loadout.helmetMods = initialState.loadout.helmetMods;
       state.loadout.gauntletMods = initialState.loadout.gauntletMods;
@@ -311,6 +314,7 @@ export const {
   updateLoadoutConfig,
   updateLoadoutArmorMods,
   resetLoadoutArmorMods,
+  updateRequiredStatMods,
   updateSubclassMods,
   updateSubclassId,
   updateLoadoutArmor,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/system';
 import Typography from '@mui/material/Typography';
+import { STATS } from '../../lib/bungie_api/Constants';
 
 const ContainerWithBorder = styled('div')({
   border: '1px solid white',
@@ -42,8 +43,6 @@ const NumberBox = styled('div')<NumberBoxProps>(({ isSelected }) => ({
   fontSize: '14px',
 }));
 
-const stats = ['Mobility', 'Resilience', 'Recovery', 'Discipline', 'Intellect', 'Strength'];
-
 interface SelectedNumbers {
   [key: string]: number;
 }
@@ -67,7 +66,7 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ onThresholdChange }) => {
   return (
     <ContainerWithBorder>
       <Root>
-        {stats.map((stat) => (
+        {STATS.map((stat) => (
           <StatRow key={stat}>
             <Typography
               id={`${stat}-boxes`}

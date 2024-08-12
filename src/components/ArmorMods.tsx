@@ -8,21 +8,30 @@ import { db } from '../store/db';
 import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/Constants';
 import { useDispatch } from 'react-redux';
 import { updateLoadoutArmorMods } from '../store/LoadoutReducer';
+import Stack from '@mui/material/Stack';
+import { Box, Container } from '@mui/system';
+import { Grid } from '@mui/material';
 
 const ArmorMods: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
   const [statMods, setStatMods] = useState<ManifestArmorMod[]>([]);
   const [artificeMods, setArtificeMods] = useState<ManifestArmorMod[]>([]);
+  const [requiredMods, setRequiredMods] = useState<ManifestArmorMod[]>([]);
 
   useEffect(() => {
     const gatherMods = async () => {
+      const dbStatMods = await db.manifestArmorModDef
+        .where('category')
+        .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.STAT_ARMOR_MODS)
+        .toArray();
+
+      const dbArtificeMods = await db.manifestArmorModDef
+        .where('category')
+        .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.ARTIFICE_ARMOR_MODS)
+        .toArray();
+
       setStatMods(
-        (
-          await db.manifestArmorModDef
-            .where('category')
-            .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.STAT_ARMOR_MODS)
-            .toArray()
-        ).sort((a, b) =>
+        dbStatMods.sort((a, b) =>
           a.name.localeCompare('Empty Mod Socket') === 0
             ? -1
             : b.name.localeCompare('Empty Mod Socket') === 0
@@ -31,12 +40,7 @@ const ArmorMods: React.FC = () => {
         )
       );
       setArtificeMods(
-        (
-          await db.manifestArmorModDef
-            .where('category')
-            .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.ARTIFICE_ARMOR_MODS)
-            .toArray()
-        ).sort((a, b) =>
+        dbArtificeMods.sort((a, b) =>
           a.name.localeCompare('Empty Mod Socket') === 0
             ? -1
             : b.name.localeCompare('Empty Mod Socket') === 0
@@ -44,6 +48,17 @@ const ArmorMods: React.FC = () => {
             : a.name.localeCompare(b.name)
         )
       );
+
+      const requiredStatMods = store.getState().loadoutConfig.loadout.requiredStatMods;
+      const allStatMods = dbStatMods.concat(dbArtificeMods);
+      let matches: ManifestArmorMod[] = [];
+
+      for (const mod of requiredStatMods) {
+        const found = allStatMods.find((statMod) => String(statMod.itemHash) === mod.plugItemHash);
+        if (found) matches.push(found);
+      }
+
+      setRequiredMods(matches);
     };
 
     gatherMods().catch(console.error);
@@ -51,34 +66,55 @@ const ArmorMods: React.FC = () => {
 
   return (
     <div className="customization-panel">
-      <div className="armor-slots">
-        {/* Helmet */}
-        <ArmorConfig armor={currentConfig.helmet} statMods={statMods} artificeMods={artificeMods} />
-        {/* Gauntlets */}
-        <ArmorConfig
-          armor={currentConfig.gauntlets}
-          statMods={statMods}
-          artificeMods={artificeMods}
-        />
-        {/* Chest Armor */}
-        <ArmorConfig
-          armor={currentConfig.chestArmor}
-          statMods={statMods}
-          artificeMods={artificeMods}
-        />
-        {/* Leg Armor */}
-        <ArmorConfig
-          armor={currentConfig.legArmor}
-          statMods={statMods}
-          artificeMods={artificeMods}
-        />
-        {/* Class Armor */}
-        <ArmorConfig
-          armor={currentConfig.classArmor}
-          statMods={statMods}
-          artificeMods={artificeMods}
-        />
-      </div>
+      <Container maxWidth="md">
+        <Box marginBottom={4} marginLeft={1.5}>
+          <Stack direction="row" spacing={3}>
+            <Box width={81} height={81}>
+              Required Mods:
+            </Box>
+            {requiredMods.map((mod) => (
+              <Box
+                className="mod-slot"
+                style={{
+                  backgroundImage: `url(${mod.icon})`,
+                }}
+              />
+            ))}
+          </Stack>
+        </Box>
+        <Stack spacing={2} className="armor-slots">
+          {/* Helmet */}
+          <ArmorConfig
+            armor={currentConfig.helmet}
+            statMods={statMods}
+            artificeMods={artificeMods}
+          />
+          {/* Gauntlets */}
+          <ArmorConfig
+            armor={currentConfig.gauntlets}
+            statMods={statMods}
+            artificeMods={artificeMods}
+          />
+          {/* Chest Armor */}
+          <ArmorConfig
+            armor={currentConfig.chestArmor}
+            statMods={statMods}
+            artificeMods={artificeMods}
+          />
+          {/* Leg Armor */}
+          <ArmorConfig
+            armor={currentConfig.legArmor}
+            statMods={statMods}
+            artificeMods={artificeMods}
+          />
+          {/* Class Armor */}
+          <ArmorConfig
+            armor={currentConfig.classArmor}
+            statMods={statMods}
+            artificeMods={artificeMods}
+          />
+        </Stack>
+      </Container>
     </div>
   );
 };
@@ -123,7 +159,9 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         totalCost += statEnergyCost ? statEnergyCost : armorEnergyCost ? armorEnergyCost : 0;
       }
 
-      if (totalCost > 10) return;
+      if (totalCost > 10) {
+        return;
+      }
     }
 
     dispatch(
@@ -146,8 +184,8 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
 
   return (
     <div key={armor.name} className="armor-slot">
-      <ArmorIcon armor={armor} size={81} />
-      <div className="mod-grid">
+      <Stack direction="row" spacing={3}>
+        <ArmorIcon armor={armor} size={81} />
         <ModSelector
           selected={selectedMods[0]}
           mods={statMods}
@@ -187,7 +225,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         ) : (
           false
         )}
-      </div>
+      </Stack>
     </div>
   );
 };
@@ -200,7 +238,7 @@ interface ModSelectorProps {
 
 const ModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelectMod }) => {
   return (
-    <div
+    <Box
       className="mod-slot"
       style={{
         backgroundImage: `url(${
@@ -226,7 +264,7 @@ const ModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelectMod }
           </div>
         ))}
       </div>
-    </div>
+    </Box>
   );
 };
 
