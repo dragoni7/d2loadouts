@@ -1,6 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/system';
-import { FilteredPermutation } from '../../types';
+import { FilteredPermutation, Plug } from '../../types';
+import { useDispatch } from 'react-redux';
+import {
+  resetLoadoutArmorMods,
+  updateLoadoutArmor,
+  updateLoadoutConfig,
+  updateRequiredStatMods,
+} from '../../store/LoadoutReducer';
+import ArmorIcon from '../../components/ArmorIcon';
+import { STAT_HASH, STATS } from '../../lib/bungie_api/Constants';
+import { getStatModByCost } from '../../lib/bungie_api/utils';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
@@ -177,6 +187,7 @@ const TableFooter = styled('div')({
 });
 
 const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClick }) => {
+  const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
 
@@ -220,36 +231,76 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
       </LeftArrowButton>
       <CardContainer>
         {paginatedData.map((perm, index) => (
-          <Card key={index} onClick={onPermutationClick}>
+          <Card
+            key={index}
+            onClick={() => {
+              dispatch(resetLoadoutArmorMods());
+              dispatch(updateLoadoutArmor(perm.permutation));
+              let requiredMods: Plug[] = [];
+              perm.modsArray.mobility.forEach((cost: number) => {
+                requiredMods.push({
+                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.MOBILITY)),
+                  socketArrayType: 0,
+                  socketIndex: 0,
+                });
+              });
+
+              perm.modsArray.resilience.forEach((cost: number) => {
+                requiredMods.push({
+                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.RESILIENCE)),
+                  socketArrayType: 0,
+                  socketIndex: 0,
+                });
+              });
+
+              perm.modsArray.recovery.forEach((cost: number) => {
+                requiredMods.push({
+                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.RECOVERY)),
+                  socketArrayType: 0,
+                  socketIndex: 0,
+                });
+              });
+
+              perm.modsArray.discipline.forEach((cost: number) => {
+                requiredMods.push({
+                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.DISCIPLINE)),
+                  socketArrayType: 0,
+                  socketIndex: 0,
+                });
+              });
+
+              perm.modsArray.intellect.forEach((cost: number) => {
+                requiredMods.push({
+                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.INTELLECT)),
+                  socketArrayType: 0,
+                  socketIndex: 0,
+                });
+              });
+
+              perm.modsArray.strength.forEach((cost: number) => {
+                requiredMods.push({
+                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.STRENGTH)),
+                  socketArrayType: 0,
+                  socketIndex: 0,
+                });
+              });
+
+              dispatch(updateRequiredStatMods(requiredMods));
+              onPermutationClick();
+            }}
+          >
             <CardRow>
               {perm.permutation.map((item, idx) => (
                 <CardCell key={idx}>
                   <HoverContainer>
-                    {item.masterwork ? (
-                      <MasterworkedIconContainer>
-                        <Icon src={item.icon} alt={item.name} />
-                      </MasterworkedIconContainer>
-                    ) : (
-                      <DefaultIconContainer>
-                        <Icon src={item.icon} alt={item.name} />
-                      </DefaultIconContainer>
-                    )}
+                    <ArmorIcon armor={item} size={48} />
                     <ItemName>{item.name}</ItemName>
                   </HoverContainer>
                 </CardCell>
               ))}
             </CardRow>
             <HorizontalStatsRow>
-              {(
-                [
-                  'mobility',
-                  'resilience',
-                  'recovery',
-                  'discipline',
-                  'intellect',
-                  'strength',
-                ] as (keyof FilteredPermutation['modsArray'])[]
-              ).map((stat) => (
+              {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) => (
                 <StatContainer key={stat}>
                   <StatIcon src={statIcons[stat]} alt={stat} />
                   <StatValue>

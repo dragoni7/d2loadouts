@@ -1,25 +1,40 @@
-import { CLASS_HASH } from '../../lib/bungie_api/Constants';
+import { CLASS_HASH, STAT_MOD_HASHES } from '../../lib/bungie_api/Constants';
 import { DestinyArmor } from '../../types';
 
 export const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
-  2724608735: (armor: DestinyArmor) => (armor.intellect = armor.intellect - 10),
-  3897511453: (armor: DestinyArmor) => (armor.intellect = armor.intellect - 5),
-  3160845295: (armor: DestinyArmor) => (armor.intellect = armor.intellect - 3),
-  1180408010: (armor: DestinyArmor) => (armor.resilience = armor.resilience - 10),
-  2532323436: (armor: DestinyArmor) => (armor.resilience = armor.resilience - 5),
-  199176566: (armor: DestinyArmor) => (armor.resilience = armor.resilience - 3),
-  1435557120: (armor: DestinyArmor) => (armor.discipline = armor.discipline - 10),
-  4021790309: (armor: DestinyArmor) => (armor.discipline = armor.discipline - 5),
-  617569843: (armor: DestinyArmor) => (armor.discipline = armor.discipline - 3),
-  204488676: (armor: DestinyArmor) => (armor.recovery = armor.recovery - 10),
-  1237786518: (armor: DestinyArmor) => (armor.recovery = armor.recovery - 5),
-  539459624: (armor: DestinyArmor) => (armor.recovery = armor.recovery - 3),
-  183296050: (armor: DestinyArmor) => (armor.mobility = armor.mobility - 10),
-  1703647492: (armor: DestinyArmor) => (armor.mobility = armor.mobility - 5),
-  2322202118: (armor: DestinyArmor) => (armor.mobility = armor.mobility - 3),
-  287799666: (armor: DestinyArmor) => (armor.strength = armor.strength - 10),
-  2639422088: (armor: DestinyArmor) => (armor.strength = armor.strength - 5),
-  2507624050: (armor: DestinyArmor) => (armor.strength = armor.strength - 3),
+  [STAT_MOD_HASHES.INTELLECT_MOD]: (armor: DestinyArmor) =>
+    (armor.intellect = armor.intellect - 10),
+  [STAT_MOD_HASHES.MINOR_INTELLECT_MOD]: (armor: DestinyArmor) =>
+    (armor.intellect = armor.intellect - 5),
+  [STAT_MOD_HASHES.ARTIFICE_INTELLECT_MOD]: (armor: DestinyArmor) =>
+    (armor.intellect = armor.intellect - 3),
+  [STAT_MOD_HASHES.RESILIENCE_MOD]: (armor: DestinyArmor) =>
+    (armor.resilience = armor.resilience - 10),
+  [STAT_MOD_HASHES.MINOR_RESILIENCE_MOD]: (armor: DestinyArmor) =>
+    (armor.resilience = armor.resilience - 5),
+  [STAT_MOD_HASHES.ARTIFICE_RESILIENCE_MOD]: (armor: DestinyArmor) =>
+    (armor.resilience = armor.resilience - 3),
+  [STAT_MOD_HASHES.DISCIPLINE_MOD]: (armor: DestinyArmor) =>
+    (armor.discipline = armor.discipline - 10),
+  [STAT_MOD_HASHES.MINOR_DISCIPLINE_MOD]: (armor: DestinyArmor) =>
+    (armor.discipline = armor.discipline - 5),
+  [STAT_MOD_HASHES.ARTIFICE_DISCIPLINE_MOD]: (armor: DestinyArmor) =>
+    (armor.discipline = armor.discipline - 3),
+  [STAT_MOD_HASHES.RECOVERY_MOD]: (armor: DestinyArmor) => (armor.recovery = armor.recovery - 10),
+  [STAT_MOD_HASHES.MINOR_RECOVERY_MOD]: (armor: DestinyArmor) =>
+    (armor.recovery = armor.recovery - 5),
+  [STAT_MOD_HASHES.ARTIFICE_RECOVERY_MOD]: (armor: DestinyArmor) =>
+    (armor.recovery = armor.recovery - 3),
+  [STAT_MOD_HASHES.MOBILITY_MOD]: (armor: DestinyArmor) => (armor.mobility = armor.mobility - 10),
+  [STAT_MOD_HASHES.MINOR_MOBILITY_MOD]: (armor: DestinyArmor) =>
+    (armor.mobility = armor.mobility - 5),
+  [STAT_MOD_HASHES.ARTIFICE_MOBILITY_MOD]: (armor: DestinyArmor) =>
+    (armor.mobility = armor.mobility - 3),
+  [STAT_MOD_HASHES.STRENGTH_MOD]: (armor: DestinyArmor) => (armor.strength = armor.strength - 10),
+  [STAT_MOD_HASHES.MINOR_STRENGTH_MOD]: (armor: DestinyArmor) =>
+    (armor.strength = armor.strength - 5),
+  [STAT_MOD_HASHES.ARTIFICE_STRENGTH_MOD]: (armor: DestinyArmor) =>
+    (armor.strength = armor.strength - 3),
 };
 
 export function getCharacterClass(classHash: number) {

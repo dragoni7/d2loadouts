@@ -7,40 +7,39 @@ import {
   transferItemRequest,
 } from '../../lib/bungie_api/Requests';
 import { store } from '../../store';
-import { DestinyArmor, Loadout } from '../../types';
+import { DestinyArmor, Loadout, Plug } from '../../types';
 
 export async function loadoutTest() {
   let loadout: Loadout = {
     characterId: store.getState().profile.profileData.characters[0].id,
     subclass: {
       itemId: '6917530019218633578',
+      damageType: 1,
       super: {
         plugItemHash: '1869939005', // song of flame
         socketArrayType: 0,
         socketIndex: 0,
       },
-      abilities: [
-        {
-          plugItemHash: '1444664836', // phoenix dive
-          socketArrayType: 0,
-          socketIndex: 1,
-        },
-        {
-          plugItemHash: '5333292', // strafe glide
-          socketArrayType: 0,
-          socketIndex: 2,
-        },
-        {
-          plugItemHash: '3644045871', // arcane needle
-          socketArrayType: 0,
-          socketIndex: 3,
-        },
-        {
-          plugItemHash: '4241856103', // storm grenade
-          socketArrayType: 0,
-          socketIndex: 4,
-        },
-      ],
+      classAbility: {
+        plugItemHash: '1444664836', // phoenix dive
+        socketArrayType: 0,
+        socketIndex: 1,
+      },
+      movementAbility: {
+        plugItemHash: '5333292', // strafe glide
+        socketArrayType: 0,
+        socketIndex: 2,
+      },
+      meleeAbility: {
+        plugItemHash: '3644045871', // arcane needle
+        socketArrayType: 0,
+        socketIndex: 3,
+      },
+      grenade: {
+        plugItemHash: '4241856103', // storm grenade
+        socketArrayType: 0,
+        socketIndex: 4,
+      },
       aspects: [
         {
           plugItemHash: '790664814', // hellion
@@ -86,41 +85,42 @@ export async function loadoutTest() {
       .profile.profileData.characters[0].armor.classItem.find(
         (a) => a.instanceHash === '6917529546691296363'
       ) as DestinyArmor,
-    helmetMods: [
-      {
+    helmetMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    gauntletMods: [
-      {
+    },
+    gauntletMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    chestArmorMods: [
-      {
+    },
+    chestArmorMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    legArmorMods: [
-      {
+    },
+    legArmorMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
-    classArmorMods: [
-      {
+    },
+    classArmorMods: {
+      0: {
         plugItemHash: '1435557120',
         socketArrayType: 0,
         socketIndex: 0,
       },
-    ],
+    },
+    requiredStatMods: [],
   };
   await equipLoadout(loadout);
 }
@@ -187,24 +187,44 @@ async function handleArmor(loadout: Loadout) {
   }
 
   // insert mods in armor
-  loadout.helmetMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.helmet.instanceHash, mod, characterId);
+  Object.keys(loadout.helmetMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.helmet.instanceHash,
+      loadout.helmetMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.gauntletMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.gauntlets.instanceHash, mod, characterId);
+  Object.keys(loadout.gauntletMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.gauntlets.instanceHash,
+      loadout.gauntletMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.chestArmorMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.chestArmor.instanceHash, mod, characterId);
+  Object.keys(loadout.chestArmorMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.chestArmor.instanceHash,
+      loadout.chestArmorMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.legArmorMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.legArmor.instanceHash, mod, characterId);
+  Object.keys(loadout.legArmorMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.legArmor.instanceHash,
+      loadout.legArmorMods[Number(key)],
+      characterId
+    );
   });
 
-  loadout.classArmorMods.forEach(async (mod) => {
-    await insertSocketPlugFreeRequest(loadout.legArmor.instanceHash, mod, characterId);
+  Object.keys(loadout.classArmorMods).forEach(async (key) => {
+    await insertSocketPlugFreeRequest(
+      loadout.classArmor.instanceHash,
+      loadout.classArmorMods[Number(key)],
+      characterId
+    );
   });
 
   // armor
@@ -246,9 +266,10 @@ async function handleSubclass(loadout: Loadout) {
   await insertSocketPlugFreeRequest(subclassId, loadout.subclass.super, characterId);
 
   // insert abilities
-  loadout.subclass.abilities.forEach(async (ability) => {
-    await insertSocketPlugFreeRequest(subclassId, ability, characterId);
-  });
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.classAbility, characterId);
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.movementAbility, characterId);
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.meleeAbility, characterId);
+  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.grenade, characterId);
 
   // insert fragments & aspects
   await insertSocketPlugFreeRequest(subclassId, loadout.subclass.aspects[0], characterId);

@@ -140,7 +140,7 @@ export function snapShotLoadoutRequest(
 
 export function insertSocketPlugFreeRequest(
   itemId: string,
-  plug: Plug,
+  plug: Plug | null,
   characterId: number
 ): Promise<AxiosResponse<any, any>> {
   const accessToken = getTokens()?.accessToken.value;
