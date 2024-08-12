@@ -3,82 +3,158 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 50px;
 }
 
 .diamond-grid {
   position: relative;
-  width: 162px;
-  height: 162px;
+  width: 210px;
+  height: 210px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .diamond-button {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: rotate(45deg);
   cursor: pointer;
 }
 
+.diamond-button::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: transparent;
+  transform: rotate(45deg);
+  transition: all 0.3s ease;
+}
+
+.diamond-button:hover::before {
+  border: 1px solid white;
+}
+
 .diamond-button img {
-  transform: rotate(-45deg);
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.diamond-button:hover img {
   width: 100%;
   height: 100%;
 }
 
-.button-1 {
-  top: 0;
-  left: 41px;
-}
-
-.button-2 {
-  top: 41px;
-  left: 0;
-}
-
-.button-3 {
-  top: 41px;
-  left: 81px;
-}
-
-.button-4 {
-  top: 81px;
-  left: 41px;
-}
+.button-1 { top: 0; left: 60px; }
+.button-2 { top: 60px; left: 0; }
+.button-3 { top: 60px; left: 120px; }
+.button-4 { top: 120px; left: 60px; }
 
 .single-diamond-button {
-  width: 120px;
-  height: 120px;
+  width: 160px;
+  height: 160px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: rotate(45deg);
   cursor: pointer;
+  position: relative;
+}
+
+.single-diamond-button::before {
+  content: '';
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.single-diamond-button:not(.prismatic-selected)::before {
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  transform: rotate(45deg);
+}
+
+.single-diamond-button.prismatic-selected::before {
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border-radius: 50%;
+}
+
+.single-diamond-button:hover::before {
+  border: 1px solid white;
 }
 
 .single-diamond-button img {
-  transform: rotate(-45deg);
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.single-diamond-button:hover img {
   width: 100%;
   height: 100%;
 }
 
 .prismatic-button {
-  width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%;
   cursor: pointer;
+  position: relative;
+}
+
+.prismatic-button::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.prismatic-button:not(.diamond-shape)::before {
+  border-radius: 50%;
+}
+
+.prismatic-button.diamond-shape::before {
+  transform: rotate(45deg);
+}
+
+.prismatic-button:hover::before {
+  border: 1px solid white;
 }
 
 .prismatic-button img {
+  width: 95%;
+  height: 95%;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.prismatic-button:not(.diamond-shape) img {
+  border-radius: 50%;
+}
+
+.prismatic-button:hover img {
   width: 100%;
   height: 100%;
+}
+
+.circular-icon {
+  border-radius: 50%;
 }
