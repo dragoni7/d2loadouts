@@ -79,55 +79,61 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ onBackCli
             switch (category) {
               case 'SUPERS':
                 initialSelectedMods[category] = [
-                  fetchedMods[category].find((mod) => mod.itemHash === loadout.super.plugItemHash),
+                  fetchedMods[category].find(
+                    (mod) => String(mod.itemHash) === loadout.super.plugItemHash
+                  ),
                 ].filter(Boolean) as ManifestPlug[];
                 break;
               case 'ASPECTS':
                 initialSelectedMods[category] = loadout.aspects
                   .map((aspect) =>
-                    fetchedMods[category].find((mod) => mod.itemHash === aspect.plugItemHash)
+                    fetchedMods[category].find(
+                      (mod) => String(mod.itemHash) === aspect.plugItemHash
+                    )
                   )
                   .filter(Boolean) as ManifestPlug[];
                 break;
               case 'FRAGMENTS':
                 initialSelectedMods[category] = loadout.fragments
                   .map((fragment) =>
-                    fetchedMods[category].find((mod) => mod.itemHash === fragment.plugItemHash)
+                    fetchedMods[category].find(
+                      (mod) => String(mod.itemHash) === fragment.plugItemHash
+                    )
                   )
                   .filter(Boolean) as ManifestPlug[];
                 break;
               case 'CLASS_ABILITIES':
-                if (loadout.classAbilities) {
+                if (loadout.classAbility) {
                   initialSelectedMods[category] = [
                     fetchedMods[category].find(
-                      (mod) => mod.itemHash === loadout.classAbilities?.plugItemHash
+                      (mod) => String(mod.itemHash) === loadout.classAbility?.plugItemHash
                     ),
                   ].filter(Boolean) as ManifestPlug[];
                 }
                 break;
               case 'MOVEMENT_ABILITIES':
-                if (loadout.movementAbilities) {
+                if (loadout.movementAbility) {
                   initialSelectedMods[category] = [
                     fetchedMods[category].find(
-                      (mod) => mod.itemHash === loadout.movementAbilities?.plugItemHash
+                      (mod) => String(mod.itemHash) === loadout.movementAbility?.plugItemHash
                     ),
                   ].filter(Boolean) as ManifestPlug[];
                 }
                 break;
               case 'MELEE_ABILITIES':
-                if (loadout.meleeAbilities) {
+                if (loadout.meleeAbility) {
                   initialSelectedMods[category] = [
                     fetchedMods[category].find(
-                      (mod) => mod.itemHash === loadout.meleeAbilities?.plugItemHash
+                      (mod) => String(mod.itemHash) === loadout.meleeAbility?.plugItemHash
                     ),
                   ].filter(Boolean) as ManifestPlug[];
                 }
                 break;
               case 'GRENADES':
-                if (loadout.grenades) {
+                if (loadout.grenade) {
                   initialSelectedMods[category] = [
                     fetchedMods[category].find(
-                      (mod) => mod.itemHash === loadout.grenades?.plugItemHash
+                      (mod) => String(mod.itemHash) === loadout.grenade?.plugItemHash
                     ),
                   ].filter(Boolean) as ManifestPlug[];
                 }

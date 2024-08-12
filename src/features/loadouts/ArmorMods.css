@@ -16,11 +16,7 @@
   text-align: right;
 }
 
-.mod-grid {
-  display: flex;
-}
-
-.mod-slot {
+.armor-mod-slot {
   position: relative;
   width: 62px;
   height: 62px;
@@ -34,6 +30,6 @@
   cursor: pointer;
 }
 
-.mod-slot:hover .submenu-grid {
+.armor-mod-slot:hover .submenu-grid {
   display: flex;
 }

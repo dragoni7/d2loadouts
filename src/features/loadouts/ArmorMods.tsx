@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './ArmorMods.css';
-import { store } from '../store';
-import ArmorIcon from './ArmorIcon';
-import { DestinyArmor, ManifestArmorMod, Plug } from '../types';
-import { getModsBySlot, getSelectedModsBySlot } from '../features/loadouts/util';
-import { db } from '../store/db';
-import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/Constants';
+import { store } from '../../store';
+import ArmorIcon from '../../components/ArmorIcon';
+import { DestinyArmor, ManifestArmorMod, Plug } from '../../types';
+import { getModsBySlot, getSelectedModsBySlot } from './util';
+import { db } from '../../store/db';
+import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/Constants';
 import { useDispatch } from 'react-redux';
-import { updateLoadoutArmorMods } from '../store/LoadoutReducer';
+import { updateLoadoutArmorMods } from '../../store/LoadoutReducer';
 import Stack from '@mui/material/Stack';
 import { Box, Container } from '@mui/system';
-import { Grid } from '@mui/material';
 
 const ArmorMods: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
@@ -239,7 +238,7 @@ interface ModSelectorProps {
 const ModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelectMod }) => {
   return (
     <Box
-      className="mod-slot"
+      className="armor-mod-slot"
       style={{
         backgroundImage: `url(${
           mods.find((mod) => {
