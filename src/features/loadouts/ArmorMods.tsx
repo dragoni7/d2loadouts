@@ -73,7 +73,7 @@ const ArmorMods: React.FC = () => {
             </Box>
             {requiredMods.map((mod) => (
               <Box
-                className="mod-slot"
+                className="armor-mod-slot"
                 style={{
                   backgroundImage: `url(${mod.icon})`,
                 }}
