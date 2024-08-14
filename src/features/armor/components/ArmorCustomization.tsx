@@ -1,8 +1,8 @@
 import React from 'react';
 import './ArmorCustomization.css';
-import { ManifestSubclass } from '../../types';
-import ArmorMods from './ArmorMods';
-import AbilitiesModification from '../../components/AbilitiesModification';
+import { ManifestSubclass } from '../../../types';
+import LoadoutArmor from './loadout-armor';
+import AbilitiesModification from '../../../components/AbilitiesModification';
 
 interface ArmorCustomizationProps {
   onBackClick: () => void;
@@ -19,7 +19,7 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
   return (
     <div className="armor-customization-wrapper" style={{ backgroundImage: `url(${screenshot})` }}>
       <div className="left-panel">
-        <ArmorMods />
+        <LoadoutArmor />
       </div>
       <AbilitiesModification onBackClick={onBackClick} subclass={subclass} />
     </div>
