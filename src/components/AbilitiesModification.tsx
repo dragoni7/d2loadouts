@@ -1,16 +1,22 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ManifestPlug, ManifestSubclass, Plug } from '../types';
 import { RootState } from '../store';
 import { db } from '../store/db';
 import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/SubclassConstants';
 import { updateSubclassMods } from '../store/LoadoutReducer';
-import './AbilitiesModification.css';
+import { Container, Box, Stack, Typography, Paper, Button, Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 interface AbilitiesModificationProps {
   onBackClick: () => void;
   subclass: ManifestSubclass;
 }
+const EMPTY_PLUG: Plug = {
+  plugItemHash: '',
+  socketArrayType: 0,
+  socketIndex: -1,
+};
 
 const subclassTypeMap: { [key: number]: string } = {
   1: 'PRISMATIC',
@@ -21,7 +27,28 @@ const subclassTypeMap: { [key: number]: string } = {
   7: 'STRAND',
 };
 
+const ModSlot = styled(Paper)(({ theme }) => ({
+  width: 54,
+  height: 54,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: theme.palette.background.default,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+}));
+
+const OptionButton = styled(Button)(({ theme }) => ({
+  width: 54,
+  height: 54,
+  padding: 0,
+  minWidth: 'unset',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+}));
+
 const getCategoryHashes = (subclass: ManifestSubclass) => {
+  console.log('getCategoryHashes called with subclass:', subclass);
   const subclassType = subclassTypeMap[
     subclass.damageType
   ] as keyof typeof PLUG_CATEGORY_HASH.TITAN.ARC;
@@ -40,17 +67,21 @@ const getCategoryHashes = (subclass: ManifestSubclass) => {
     FRAGMENTS: Object.values(classAndSubclass.FRAGMENTS || []),
   };
 
+  console.log('Generated categoryHashes:', categoryHashes);
   return categoryHashes;
 };
 
 const fetchMods = async (subclass: ManifestSubclass) => {
+  console.log('fetchMods called with subclass:', subclass);
   const categoryHashes = getCategoryHashes(subclass);
   const modsData: { [key: string]: ManifestPlug[] } = {};
 
   await Promise.all(
     Object.entries(categoryHashes).map(async ([key, hashes]) => {
       const typedHashes = hashes as number[];
+      console.log(`Fetching mods for ${key} with hashes:`, typedHashes);
       const mods = await db.manifestSubclassModDef.where('category').anyOf(typedHashes).toArray();
+      console.log(`Fetched mods for ${key}:`, mods);
 
       modsData[key] = Array.from(new Set(mods.map((mod) => mod.itemHash))).map((itemHash) =>
         mods.find((mod) => mod.itemHash === itemHash)
@@ -58,24 +89,33 @@ const fetchMods = async (subclass: ManifestSubclass) => {
     })
   );
 
+  console.log('Final modsData:', modsData);
   return modsData;
 };
 
 const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ onBackClick, subclass }) => {
   const [mods, setMods] = useState<{ [key: string]: ManifestPlug[] }>({});
   const [selectedMods, setSelectedMods] = useState<{ [key: string]: ManifestPlug[] }>({});
+  const [modIcons, setModIcons] = useState<{ [key: string]: string }>({});
   const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclass);
   const dispatch = useDispatch();
 
+  console.log('Component rendered with subclass:', subclass);
+  console.log('Current loadout:', loadout);
+
   useEffect(() => {
+    console.log('useEffect triggered');
     if (subclass) {
+      console.log('Fetching mods for subclass:', subclass);
       fetchMods(subclass).then((fetchedMods) => {
+        console.log('Mods fetched:', fetchedMods);
         setMods(fetchedMods);
         // Initialize selected mods based on loadout
         const initialSelectedMods: { [key: string]: ManifestPlug[] } = {};
         Object.keys(fetchedMods).forEach((category) => {
           initialSelectedMods[category] = [];
           if (loadout) {
+            console.log(`Processing category: ${category}`);
             switch (category) {
               case 'SUPERS':
                 initialSelectedMods[category] = [
@@ -139,165 +179,155 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ onBackCli
                 }
                 break;
             }
+            console.log(`Selected mods for ${category}:`, initialSelectedMods[category]);
           }
         });
+        console.log('Initial selected mods:', initialSelectedMods);
         setSelectedMods(initialSelectedMods);
       });
     }
   }, [subclass, loadout]);
 
-  const handleModClick = useCallback(
-    (mod: ManifestPlug, category: string, slotIndex: number) => {
-      setSelectedMods((prevSelected) => {
-        const newSelected = { ...prevSelected };
-        if (!newSelected[category]) {
-          newSelected[category] = [];
-        }
-        const categoryMods = [...newSelected[category]];
-        const slotCount = getSlotCount(category);
+  const fetchModIcon = useCallback(
+    async (plugItemHash: string): Promise<string> => {
+      if (modIcons[plugItemHash]) return modIcons[plugItemHash];
 
-        // Find if the mod is already in the array
-        const existingIndex = categoryMods.findIndex((m) => m?.itemHash === mod.itemHash);
-
-        if (existingIndex !== -1) {
-          // If the mod exists elsewhere, move it to the new position
-          categoryMods.splice(existingIndex, 1); // Remove from old position
-          categoryMods.splice(slotIndex, 0, mod); // Insert at new position
-        } else {
-          // If it's a new mod, insert it at the clicked position
-          categoryMods.splice(slotIndex, 0, mod);
-        }
-
-        // Trim the array to the slot count, keeping the most recently added/moved mods
-        newSelected[category] = categoryMods.slice(0, slotCount);
-
-        // Dispatch the update to Redux store
-        dispatch(updateSubclassMods({ category, mods: newSelected[category] }));
-
-        return newSelected;
-      });
+      const mod = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(Number(plugItemHash))
+        .first();
+      if (mod && mod.icon) {
+        setModIcons((prev) => ({ ...prev, [plugItemHash]: mod.icon }));
+        return mod.icon;
+      }
+      return '';
     },
-    [dispatch]
+    [modIcons]
   );
 
-  const getSlotCount = (category: string): number => {
-    switch (category) {
-      case 'SUPERS':
-      case 'CLASS_ABILITIES':
-      case 'MOVEMENT_ABILITIES':
-      case 'MELEE_ABILITIES':
-      case 'GRENADES':
-        return 1;
-      case 'ASPECTS':
-        return 2;
-      case 'FRAGMENTS':
-        return 5;
-      default:
-        return 1;
+  const handleModSelect = (category: string, mod: ManifestPlug, index?: number) => {
+    let payload;
+
+    if (category === 'ASPECTS') {
+      const newMods = [...loadout.aspects];
+      if (index !== undefined && index < 2) {
+        // Check if the mod is already selected in another slot
+        const existingIndex = newMods.findIndex((m) => m.plugItemHash === String(mod.itemHash));
+        if (existingIndex !== -1 && existingIndex !== index) {
+          // If it exists in another slot, clear that slot
+          newMods[existingIndex] = EMPTY_PLUG;
+        }
+        // Set the new mod in the current slot
+        newMods[index] = { plugItemHash: String(mod.itemHash) };
+      }
+      payload = { category, mods: newMods };
+    } else if (category === 'FRAGMENTS') {
+      const newMods = [...loadout.fragments];
+      if (index !== undefined && index < 5) {
+        // Check if the mod is already selected in another slot
+        const existingIndex = newMods.findIndex((m) => m.plugItemHash === String(mod.itemHash));
+        if (existingIndex !== -1 && existingIndex !== index) {
+          // If it exists in another slot, clear that slot
+          newMods[existingIndex] = EMPTY_PLUG;
+        }
+        // Set the new mod in the current slot
+        newMods[index] = { plugItemHash: String(mod.itemHash) };
+      }
+      payload = { category, mods: newMods };
+    } else {
+      payload = { category, mods: [{ plugItemHash: String(mod.itemHash) }] };
     }
+
+    dispatch(updateSubclassMods(payload));
   };
 
-  const [hoveredMods, setHoveredMods] = useState<{ [key: string]: string | null }>({
-    SUPERS: null,
-    ASPECTS: null,
-    FRAGMENTS: null,
-    ABILITIES: null,
-  });
+  const renderModCategory = useCallback(
+    (category: string, currentMod: Plug | null, index?: number) => {
+      const [currentModIcon, setCurrentModIcon] = useState<string | null>(null);
 
-  const handleModHover = (category: string, modName: string | null) => {
-    setHoveredMods((prev) => ({
-      ...prev,
-      [category]: modName,
-    }));
-  };
+      useEffect(() => {
+        if (currentMod) {
+          fetchModIcon(currentMod.plugItemHash).then(setCurrentModIcon);
+        } else {
+          setCurrentModIcon(null);
+        }
+      }, [currentMod]);
 
-  const renderCategory = (category: string) => {
-    const categoryMods = mods[category] || [];
-    const selectedCategoryMods = selectedMods[category] || [];
-    const slotCount = getSlotCount(category);
-    const displayCategory = [
-      'CLASS_ABILITIES',
-      'MOVEMENT_ABILITIES',
-      'MELEE_ABILITIES',
-      'GRENADES',
-    ].includes(category)
-      ? 'ABILITIES'
-      : category;
-
-    return (
-      <div className={`category ${category.toLowerCase()}`} key={category}>
-        {!['CLASS_ABILITIES', 'MOVEMENT_ABILITIES', 'MELEE_ABILITIES', 'GRENADES'].includes(
-          category
-        ) && (
-          <div className="category-header">
-            <h3>{displayCategory.replace('_', ' ')}</h3>
-            {hoveredMods[displayCategory] && (
-              <span className="hovered-mod-name">- {hoveredMods[displayCategory]}</span>
-            )}
-          </div>
-        )}
-        <div className="selected-mods">
-          {Array.from({ length: slotCount }).map((_, index) => (
-            <div key={index} className="mod-slot">
-              <div
-                className={`mod-display ${
-                  selectedCategoryMods[index] ? 'selected-mod' : 'empty-slot'
-                }`}
-                style={
-                  selectedCategoryMods[index]
-                    ? { backgroundImage: `url(${selectedCategoryMods[index].icon})` }
-                    : {}
-                }
-                onMouseEnter={() =>
-                  handleModHover(displayCategory, selectedCategoryMods[index]?.name || 'Empty Slot')
-                }
-                onMouseLeave={() => handleModHover(displayCategory, null)}
-              />
-              <div className="unselected-options">
-                {categoryMods.map((mod) => (
-                  <div
-                    key={mod.itemHash}
-                    className={`unselected-mod ${
-                      selectedCategoryMods[index]?.itemHash === mod.itemHash ? 'selected' : ''
-                    }`}
+      const isEmptyMod = !currentMod || currentMod.plugItemHash === '';
+      return (
+        <Grid container spacing={1} alignItems="center">
+          <Grid item>
+            <ModSlot
+              elevation={3}
+              style={{
+                backgroundImage: currentModIcon ? `url(${currentModIcon})` : 'none',
+              }}
+            >
+              {isEmptyMod && <Typography variant="caption">Empty</Typography>}
+            </ModSlot>
+          </Grid>
+          <Grid item xs>
+            <Grid container spacing={1}>
+              {mods[category]?.map((mod) => (
+                <Grid item key={mod.itemHash}>
+                  <OptionButton
+                    onClick={() => handleModSelect(category, mod, index)}
                     style={{ backgroundImage: `url(${mod.icon})` }}
-                    onClick={() => handleModClick(mod, category, index)}
-                    onMouseEnter={() => handleModHover(displayCategory, mod.name)}
-                    onMouseLeave={() => handleModHover(displayCategory, null)}
+                    title={mod.name}
                   />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </Grid>
+      );
+    },
+    [mods, handleModSelect, fetchModIcon]
+  );
 
   return (
     <div className="abilities-modification">
-      <button className="back-button" onClick={onBackClick}>
-        ← Back
-      </button>
-      <div className="abilities-grid">
-        <div className="super-section">{renderCategory('SUPERS')}</div>
-        <div className="aspects-section">{renderCategory('ASPECTS')}</div>
-        <div className="fragments-section">{renderCategory('FRAGMENTS')}</div>
-        <div className="other-abilities-section">
-          <div className="category-header">
-            <h3>ABILITIES</h3>
-            {hoveredMods['ABILITIES'] && (
-              <span className="hovered-mod-name">- {hoveredMods['ABILITIES']}</span>
-            )}
-          </div>
-          <div className="abilities-container">
-            {renderCategory('CLASS_ABILITIES')}
-            {renderCategory('MOVEMENT_ABILITIES')}
-            {renderCategory('MELEE_ABILITIES')}
-            {renderCategory('GRENADES')}
-          </div>
-        </div>
-      </div>
+      <Container maxWidth="md">
+        <Box marginBottom={4}>
+          <Typography variant="h4">{subclass.name}</Typography>
+          <Button onClick={onBackClick}>Back</Button>
+        </Box>
+
+        <Box marginBottom={2}>
+          <Typography variant="h6">Super</Typography>
+          {renderModCategory('SUPERS', loadout.super)}
+        </Box>
+
+        <Box marginBottom={2}>
+          <Typography variant="h6">Abilities</Typography>
+          {renderModCategory('CLASS_ABILITIES', loadout.classAbility)}
+          {renderModCategory('MOVEMENT_ABILITIES', loadout.movementAbility)}
+          {renderModCategory('MELEE_ABILITIES', loadout.meleeAbility)}
+          {renderModCategory('GRENADES', loadout.grenade)}
+        </Box>
+
+        <Box marginBottom={2}>
+          <Typography variant="h6">Aspects</Typography>
+          <Grid container spacing={1}>
+            {[0, 1].map((index) => (
+              <Grid item key={index} xs={12} sm={6}>
+                {renderModCategory('ASPECTS', loadout.aspects[index] || EMPTY_PLUG, index)}
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+
+        <Box marginBottom={2}>
+          <Typography variant="h6">Fragments</Typography>
+          <Grid container spacing={1}>
+            {[0, 1, 2, 3, 4].map((index) => (
+              <Grid item key={index} xs={12} sm={6} md={4}>
+                {renderModCategory('FRAGMENTS', loadout.fragments[index] || EMPTY_PLUG, index)}
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Container>
     </div>
   );
 };

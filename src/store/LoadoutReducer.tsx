@@ -2,6 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Character, DamageType, DestinyArmor, Loadout, ManifestPlug, Plug } from '../types';
 import { DAMAGE_TYPE } from '../lib/bungie_api/Constants';
 
+const EMPTY_PLUG: Plug = {
+  plugItemHash: '',
+  socketArrayType: 0,
+  socketIndex: -1,
+};
+
 export interface InitialState {
   loadout: Loadout;
 }
@@ -147,8 +153,8 @@ const initialState: InitialState = {
         socketArrayType: 0,
         socketIndex: 0,
       },
-      aspects: [],
-      fragments: [],
+      aspects: Array(2).fill(EMPTY_PLUG),
+      fragments: Array(5).fill(EMPTY_PLUG),
       classAbility: null,
       meleeAbility: null,
       movementAbility: null,
@@ -230,14 +236,14 @@ export const loadoutConfigSlice = createSlice({
     },
     updateSubclassMods: (
       state,
-      action: PayloadAction<{ category: string; mods: ManifestPlug[] }>
+      action: PayloadAction<{ category: string; mods: { plugItemHash: string }[] }>
     ) => {
       const { category, mods } = action.payload;
       switch (category) {
         case 'SUPERS':
           state.loadout.subclass.super = mods[0]
             ? {
-                plugItemHash: String(mods[0].itemHash),
+                plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
                 socketIndex: 0,
               }
@@ -249,7 +255,7 @@ export const loadoutConfigSlice = createSlice({
           break;
         case 'ASPECTS':
           state.loadout.subclass.aspects = mods.map((mod, index) => ({
-            plugItemHash: String(mod.itemHash),
+            plugItemHash: mod.plugItemHash,
             socketArrayType: 0,
             socketIndex:
               index + (state.loadout.subclass.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5),
@@ -257,7 +263,7 @@ export const loadoutConfigSlice = createSlice({
           break;
         case 'FRAGMENTS':
           state.loadout.subclass.fragments = mods.map((mod, index) => ({
-            plugItemHash: String(mod.itemHash),
+            plugItemHash: mod.plugItemHash,
             socketArrayType: 0,
             socketIndex:
               index + (state.loadout.subclass.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7),
@@ -266,7 +272,7 @@ export const loadoutConfigSlice = createSlice({
         case 'CLASS_ABILITIES':
           state.loadout.subclass.classAbility = mods[0]
             ? {
-                plugItemHash: String(mods[0].itemHash),
+                plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
                 socketIndex: 1,
               }
@@ -275,7 +281,7 @@ export const loadoutConfigSlice = createSlice({
         case 'MELEE_ABILITIES':
           state.loadout.subclass.meleeAbility = mods[0]
             ? {
-                plugItemHash: String(mods[0].itemHash),
+                plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
                 socketIndex: 3,
               }
@@ -284,7 +290,7 @@ export const loadoutConfigSlice = createSlice({
         case 'MOVEMENT_ABILITIES':
           state.loadout.subclass.movementAbility = mods[0]
             ? {
-                plugItemHash: String(mods[0].itemHash),
+                plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
                 socketIndex: 2,
               }
@@ -293,7 +299,7 @@ export const loadoutConfigSlice = createSlice({
         case 'GRENADES':
           state.loadout.subclass.grenade = mods[0]
             ? {
-                plugItemHash: String(mods[0].itemHash),
+                plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
                 socketIndex: 4,
               }

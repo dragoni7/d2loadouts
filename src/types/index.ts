@@ -44,8 +44,8 @@ export type SubclassConfig = {
 
 export type Plug = {
   plugItemHash: string;
-  socketArrayType: number;
-  socketIndex: number;
+  socketArrayType?: number;
+  socketIndex?: number;
 };
 
 export type Loadout = {
