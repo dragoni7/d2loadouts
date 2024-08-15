@@ -126,7 +126,7 @@ export async function loadoutTest() {
 }
 
 export async function equipLoadout(loadout: Loadout) {
-  await handleArmor(loadout);
+  //await handleArmor(loadout);
   await handleSubclass(loadout);
 }
 
@@ -187,52 +187,49 @@ async function handleArmor(loadout: Loadout) {
   }
 
   // insert mods in armor
-  Object.keys(loadout.helmetMods).forEach(async (key) => {
+
+  for (let i = 0; i < 5; i++) {
+    if (i === 4) {
+      if (loadout.helmet.artifice === false) continue;
+
+      if (loadout.gauntlets.artifice === false) continue;
+
+      if (loadout.chestArmor.artifice === false) continue;
+
+      if (loadout.legArmor.artifice === false) continue;
+    }
+
     await insertSocketPlugFreeRequest(
       loadout.helmet.instanceHash,
-      loadout.helmetMods[Number(key)],
+      loadout.helmetMods[i],
       characterId
     );
-  });
 
-  Object.keys(loadout.gauntletMods).forEach(async (key) => {
     await insertSocketPlugFreeRequest(
       loadout.gauntlets.instanceHash,
-      loadout.gauntletMods[Number(key)],
+      loadout.gauntletMods[i],
       characterId
     );
-  });
 
-  Object.keys(loadout.chestArmorMods).forEach(async (key) => {
     await insertSocketPlugFreeRequest(
       loadout.chestArmor.instanceHash,
-      loadout.chestArmorMods[Number(key)],
+      loadout.chestArmorMods[i],
       characterId
     );
-  });
 
-  Object.keys(loadout.legArmorMods).forEach(async (key) => {
     await insertSocketPlugFreeRequest(
       loadout.legArmor.instanceHash,
-      loadout.legArmorMods[Number(key)],
+      loadout.legArmorMods[i],
       characterId
     );
-  });
-
-  Object.keys(loadout.classArmorMods).forEach(async (key) => {
-    await insertSocketPlugFreeRequest(
-      loadout.classArmor.instanceHash,
-      loadout.classArmorMods[Number(key)],
-      characterId
-    );
-  });
+  }
 
   // armor
   await equipArmor(loadout.helmet, characterId, inventorySlots);
   await equipArmor(loadout.gauntlets, characterId, inventorySlots);
   await equipArmor(loadout.chestArmor, characterId, inventorySlots);
   await equipArmor(loadout.legArmor, characterId, inventorySlots);
-  await equipArmor(loadout.classArmor, characterId, inventorySlots);
+  //await equipArmor(loadout.classArmor, characterId, inventorySlots);
 }
 
 async function equipArmor(armor: DestinyArmor, characterId: number, inventorySlots: any) {
@@ -262,12 +259,15 @@ async function handleSubclass(loadout: Loadout) {
   var subclassId = loadout.subclass.itemId;
   var characterId = loadout.characterId;
 
+  // equip subclass
+  await equipItemRequest(subclassId, characterId);
+
   // insert super
-  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.super, characterId);
+  //await insertSocketPlugFreeRequest(subclassId, loadout.subclass.super, characterId);
 
   // insert abilities
-  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.classAbility, characterId);
-  await insertSocketPlugFreeRequest(subclassId, loadout.subclass.movementAbility, characterId);
+  //await insertSocketPlugFreeRequest(subclassId, loadout.subclass.classAbility, characterId);
+  //await insertSocketPlugFreeRequest(subclassId, loadout.subclass.movementAbility, characterId);
   await insertSocketPlugFreeRequest(subclassId, loadout.subclass.meleeAbility, characterId);
   await insertSocketPlugFreeRequest(subclassId, loadout.subclass.grenade, characterId);
 
@@ -278,7 +278,4 @@ async function handleSubclass(loadout: Loadout) {
   loadout.subclass.fragments.forEach(async (fragment) => {
     await insertSocketPlugFreeRequest(subclassId, fragment, characterId);
   });
-
-  // equip subclass
-  await equipItemRequest(subclassId, characterId);
 }

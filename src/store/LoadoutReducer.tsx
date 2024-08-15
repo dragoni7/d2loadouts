@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DamageType, DestinyArmor, Loadout, ManifestPlug, Plug } from '../types';
+import { Character, DamageType, DestinyArmor, Loadout, ManifestPlug, Plug } from '../types';
 import { DAMAGE_TYPE } from '../lib/bungie_api/Constants';
 
 export interface InitialState {
@@ -301,6 +301,11 @@ export const loadoutConfigSlice = createSlice({
           break;
       }
     },
+    updateLoadoutCharacter: (state, action: PayloadAction<Character>) => {
+      state.loadout.characterId = action.payload.id;
+      state.loadout.subclass = action.payload.equippedLoadout.subclass;
+    },
+    resetLoadout: () => initialState,
   },
 });
 
@@ -312,6 +317,8 @@ export const {
   updateSubclassMods,
   updateSubclassId,
   updateLoadoutArmor,
+  updateLoadoutCharacter,
+  resetLoadout,
 } = loadoutConfigSlice.actions;
 
 export default loadoutConfigSlice.reducer;

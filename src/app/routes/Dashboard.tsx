@@ -10,7 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateManifest } from '../../lib/bungie_api/Manifest';
 import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
 import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import { DestinyArmor, Character, FilteredPermutation, ManifestSubclass } from '../../types';
+import {
+  DestinyArmor,
+  Character,
+  FilteredPermutation,
+  ManifestSubclass,
+  DamageType,
+} from '../../types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -20,6 +26,7 @@ import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 import SubclassCustomizationWrapper from '../../components/SubclassCustomizationWrapper';
 import ArmorCustomization from '../../features/armor/components/ArmorCustomization';
+import { resetLoadout, updateLoadoutCharacter, updateSubclassId } from '../../store/LoadoutReducer';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -152,6 +159,8 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (selectedCharacter) {
+      dispatch(resetLoadout());
+      dispatch(updateLoadoutCharacter(selectedCharacter));
       const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
       console.log(newPermutations.length);
       setPermutations(newPermutations);
@@ -196,6 +205,14 @@ export const Dashboard: React.FC = () => {
 
   const handleSubclassSelect = (subclass: ManifestSubclass) => {
     setSelectedSubclass(subclass);
+    if (selectedCharacter) {
+      dispatch(
+        updateSubclassId({
+          damageType: subclass.damageType as DamageType,
+          itemId: selectedCharacter.subclasses[subclass.damageType],
+        })
+      );
+    }
     if (!subclass.name.includes('Prismatic')) {
       setLastNonPrismaticSubclass(subclass);
     }
