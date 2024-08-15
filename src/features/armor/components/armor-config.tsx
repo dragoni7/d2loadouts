@@ -5,7 +5,7 @@ import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods } from '../../../store/LoadoutReducer';
 import { DestinyArmor, ManifestArmorMod, Plug } from '../../../types';
 import ArmorModSelector from './armor-mod-selector';
-import { getSelectedModsBySlot, getModsBySlot } from '../../loadouts/util';
+import { getSelectedModsBySlot, getModsBySlot } from '../util';
 
 interface ArmorConfigProps {
   armor: DestinyArmor;

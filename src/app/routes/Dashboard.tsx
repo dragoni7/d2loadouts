@@ -15,11 +15,11 @@ import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
-import ArmorCustomization from '../../features/loadouts/components/ArmorCustomization';
 import AbilitiesModification from '../../components/AbilitiesModification';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 import SubclassCustomizationWrapper from '../../components/SubclassCustomizationWrapper';
+import ArmorCustomization from '../../features/armor/components/ArmorCustomization';
 
 const PageContainer = styled('div')({
   display: 'flex',

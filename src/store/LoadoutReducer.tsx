@@ -248,25 +248,19 @@ export const loadoutConfigSlice = createSlice({
               };
           break;
         case 'ASPECTS':
-          state.loadout.subclass.aspects = mods.map((mod) => ({
-            plugItemHash: String(mods[0].itemHash),
+          state.loadout.subclass.aspects = mods.map((mod, index) => ({
+            plugItemHash: String(mod.itemHash),
             socketArrayType: 0,
             socketIndex:
-              state.loadout.subclass.aspects.length + state.loadout.subclass.damageType ===
-              DAMAGE_TYPE.KINETIC
-                ? 7
-                : 5,
+              index + (state.loadout.subclass.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5),
           }));
           break;
         case 'FRAGMENTS':
-          state.loadout.subclass.fragments = mods.map((mod) => ({
-            plugItemHash: String(mods[0].itemHash),
+          state.loadout.subclass.fragments = mods.map((mod, index) => ({
+            plugItemHash: String(mod.itemHash),
             socketArrayType: 0,
             socketIndex:
-              state.loadout.subclass.fragments.length + state.loadout.subclass.damageType ===
-              DAMAGE_TYPE.KINETIC
-                ? 9
-                : 7,
+              index + (state.loadout.subclass.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7),
           }));
           break;
         case 'CLASS_ABILITIES':
