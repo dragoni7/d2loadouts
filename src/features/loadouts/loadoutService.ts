@@ -126,7 +126,7 @@ export async function loadoutTest() {
 }
 
 export async function equipLoadout(loadout: Loadout) {
-  //await handleArmor(loadout);
+  await handleArmor(loadout);
   await handleSubclass(loadout);
 }
 
