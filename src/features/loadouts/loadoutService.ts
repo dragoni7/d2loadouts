@@ -7,7 +7,9 @@ import {
   transferItemRequest,
 } from '../../lib/bungie_api/Requests';
 import { store } from '../../store';
-import { DestinyArmor, Loadout, Plug } from '../../types';
+import { DestinyArmor, Loadout } from '../../types';
+import { STATUS } from './constants';
+import { EquipResult } from './types';
 
 export async function loadoutTest() {
   let loadout: Loadout = {
@@ -125,9 +127,11 @@ export async function loadoutTest() {
   await equipLoadout(loadout);
 }
 
-export async function equipLoadout(loadout: Loadout) {
-  await handleArmor(loadout);
-  await handleSubclass(loadout);
+export async function equipLoadout(loadout: Loadout): Promise<EquipResult[]> {
+  const result = await handleArmor(loadout);
+  //await handleSubclass(loadout);
+
+  return result;
 }
 
 export async function createInGameLoadout(
@@ -140,7 +144,33 @@ export async function createInGameLoadout(
   await snapShotLoadoutRequest(characterId, colorHash, iconHash, loadoutIndex, nameHash);
 }
 
-async function handleArmor(loadout: Loadout) {
+async function handleArmor(loadout: Loadout): Promise<EquipResult[]> {
+  const results: EquipResult[] = [
+    {
+      status: STATUS.SUCCESS,
+      errors: ['', '', '', '', 'NA'],
+      subject: loadout.helmet,
+      icon: loadout.helmet.icon,
+    },
+    {
+      status: STATUS.SUCCESS,
+      errors: ['', '', '', '', 'NA'],
+      subject: loadout.gauntlets,
+      icon: loadout.gauntlets.icon,
+    },
+    {
+      status: STATUS.SUCCESS,
+      errors: ['', '', '', '', 'NA'],
+      subject: loadout.chestArmor,
+      icon: loadout.chestArmor.icon,
+    },
+    {
+      status: STATUS.SUCCESS,
+      errors: ['', '', '', '', 'NA'],
+      subject: loadout.legArmor,
+      icon: loadout.legArmor.icon,
+    },
+  ];
   // determine armor inventory space
   const characterId = loadout.characterId;
   const response = await getCharacterInventoryRequest(characterId);
@@ -203,33 +233,55 @@ async function handleArmor(loadout: Loadout) {
       loadout.helmet.instanceHash,
       loadout.helmetMods[i],
       characterId
-    );
+    ).catch((error) => {
+      if (error.response) {
+        results[0].status = STATUS.FAIL;
+        results[0].errors[i] = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+      }
+    });
 
     await insertSocketPlugFreeRequest(
       loadout.gauntlets.instanceHash,
       loadout.gauntletMods[i],
       characterId
-    );
+    ).catch((error) => {
+      if (error.response) {
+        results[1].status = STATUS.FAIL;
+        results[1].errors[i] = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+      }
+    });
 
     await insertSocketPlugFreeRequest(
       loadout.chestArmor.instanceHash,
       loadout.chestArmorMods[i],
       characterId
-    );
+    ).catch((error) => {
+      if (error.response) {
+        results[2].status = STATUS.FAIL;
+        results[2].errors[i] = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+      }
+    });
 
     await insertSocketPlugFreeRequest(
       loadout.legArmor.instanceHash,
       loadout.legArmorMods[i],
       characterId
-    );
+    ).catch((error) => {
+      if (error.response) {
+        results[3].status = STATUS.FAIL;
+        results[3].errors[i] = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+      }
+    });
   }
 
   // armor
-  await equipArmor(loadout.helmet, characterId, inventorySlots);
-  await equipArmor(loadout.gauntlets, characterId, inventorySlots);
-  await equipArmor(loadout.chestArmor, characterId, inventorySlots);
-  await equipArmor(loadout.legArmor, characterId, inventorySlots);
+  //await equipArmor(loadout.helmet, characterId, inventorySlots);
+  //await equipArmor(loadout.gauntlets, characterId, inventorySlots);
+  //await equipArmor(loadout.chestArmor, characterId, inventorySlots);
+  //await equipArmor(loadout.legArmor, characterId, inventorySlots);
   //await equipArmor(loadout.classArmor, characterId, inventorySlots);
+
+  return results;
 }
 
 async function equipArmor(armor: DestinyArmor, characterId: number, inventorySlots: any) {
