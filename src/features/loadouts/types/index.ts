@@ -5,7 +5,6 @@ export type EquipStatus = STATUS.SUCCESS | STATUS.FAIL;
 
 export type EquipResult = {
   status: EquipStatus;
-  errors: string[];
-  subject: DestinyArmor;
-  icon: string;
+  operationsStatus: string[];
+  subject: DestinyArmor | undefined;
 };
