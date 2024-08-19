@@ -8,6 +8,8 @@ import { STATUS } from '../constants';
 import { ArmorEquipper } from '../util/armorEquipper';
 import { DestinyArmor, Plug } from '../../../types';
 import React from 'react';
+import { SubclassEquipper } from '../util/subclassEquipper';
+import { Equipper } from '../util/equipper';
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<DestinyArmor[]>([]);
@@ -26,37 +28,48 @@ const EquipLoadout: React.FC = () => {
       loadout.chestArmor.instanceHash !== '' &&
       loadout.legArmor.instanceHash !== '' &&
       loadout.classArmor.instanceHash !== '' &&
-      loadout.subclass.itemId
+      loadout.subclassConfig.subclass
     ) {
       setOpen(true);
-      const equipper = new ArmorEquipper();
+      const armorEquipper = new ArmorEquipper();
       const tempEquipped: DestinyArmor[] = [];
       const tempResults: EquipResult[] = [];
 
-      await equipper.setCharacter(loadout.characterId);
+      await armorEquipper.setCharacter(loadout.characterId);
 
-      await processArmor(tempEquipped, equipper, tempResults, loadout.helmet, loadout.helmetMods);
       await processArmor(
         tempEquipped,
-        equipper,
+        armorEquipper,
+        tempResults,
+        loadout.helmet,
+        loadout.helmetMods
+      );
+      await processArmor(
+        tempEquipped,
+        armorEquipper,
         tempResults,
         loadout.gauntlets,
         loadout.gauntletMods
       );
       await processArmor(
         tempEquipped,
-        equipper,
+        armorEquipper,
         tempResults,
         loadout.chestArmor,
         loadout.chestArmorMods
       );
       await processArmor(
         tempEquipped,
-        equipper,
+        armorEquipper,
         tempResults,
         loadout.legArmor,
         loadout.legArmorMods
       );
+
+      const subclassEquipper = new SubclassEquipper();
+
+      setEquipStep('Equipping Subclass');
+      subclassEquipper.equipSubclass(loadout.subclassConfig.subclass.instanceId);
 
       setEquipStep('Finished');
     } else {

@@ -23,7 +23,7 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
         <LoadoutArmor />
         <EquipLoadout />
       </div>
-      <AbilitiesModification onBackClick={onBackClick} subclass={subclass} />
+      <AbilitiesModification subclass={subclass} />
     </div>
   );
 };

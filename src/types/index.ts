@@ -31,7 +31,7 @@ export interface ArmorBySlot {
 }
 
 export type SubclassConfig = {
-  itemId: string;
+  subclass: Subclass;
   damageType: DamageType;
   super: Plug;
   aspects: Plug[];
@@ -61,7 +61,7 @@ export type Loadout = {
   legArmorMods: { [key: number]: Plug };
   classArmorMods: { [key: number]: Plug };
   characterId: number;
-  subclass: SubclassConfig;
+  subclassConfig: SubclassConfig;
 };
 
 export type ProfileData = {
@@ -73,13 +73,8 @@ export type Character = {
   class: CharacterClass;
   emblem?: Emblem;
   armor: ArmorBySlot;
-  subclasses: { [key: number]: string };
+  subclasses: { [key: number]: Subclass };
   equippedLoadout: Loadout;
-};
-
-export type Subclass = {
-  instanceId: string;
-  itemHash: string;
 };
 
 export type Emblem = {
@@ -104,6 +99,10 @@ export interface ManifestSubclass extends ManifestEntry {
   damageType: number;
   isOwned: boolean;
   class: CharacterClass;
+}
+
+export interface Subclass extends ManifestSubclass {
+  instanceId: string;
 }
 
 export interface ManifestStatPlug extends ManifestEntry {

@@ -17,6 +17,7 @@ import {
   Emblem,
   Plug,
   ProfileData,
+  Subclass,
 } from '../../types';
 import { getCharacterClass, modReverseDict } from './util';
 
@@ -183,8 +184,17 @@ export async function getProfileData(): Promise<ProfileData> {
             4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
           },
           characterId: characterData[key].characterId,
-          subclass: {
-            itemId: '',
+          subclassConfig: {
+            subclass: {
+              instanceId: '',
+              screenshot: '',
+              damageType: 0,
+              isOwned: false,
+              class: '',
+              itemHash: 0,
+              name: '',
+              icon: '',
+            },
             damageType: 1,
             super: {
               plugItemHash: '',
@@ -231,42 +241,53 @@ export async function getProfileData(): Promise<ProfileData> {
             const subclass = await subclassQuery.first();
 
             if (subclass) {
-              character.subclasses[subclass.damageType] = item.itemInstanceId;
+              const s: Subclass = {
+                instanceId: item.itemInstanceId,
+                itemHash: subclass.itemHash,
+                damageType: subclass.damageType,
+                name: subclass.name,
+                class: subclass.class,
+                icon: subclass.icon,
+                screenshot: subclass.icon,
+                isOwned: subclass.isOwned,
+              };
+              character.subclasses[subclass.damageType] = s;
 
               // set equipped loadout subclass config
-              character.equippedLoadout.subclass.itemId = item.itemInstanceId;
-              character.equippedLoadout.subclass.damageType = subclass.damageType as DamageType;
+              character.equippedLoadout.subclassConfig.subclass = s;
+              character.equippedLoadout.subclassConfig.damageType =
+                subclass.damageType as DamageType;
               const subclassSockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
 
               if (subclassSockets) {
-                character.equippedLoadout.subclass.classAbility = {
+                character.equippedLoadout.subclassConfig.classAbility = {
                   plugItemHash: subclassSockets[0].plugHash,
                   socketArrayType: 0,
                   socketIndex: 1,
                 };
-                character.equippedLoadout.subclass.movementAbility = {
+                character.equippedLoadout.subclassConfig.movementAbility = {
                   plugItemHash: subclassSockets[1].plugHash,
                   socketArrayType: 0,
                   socketIndex: 2,
                 };
-                character.equippedLoadout.subclass.super = {
+                character.equippedLoadout.subclassConfig.super = {
                   plugItemHash: subclassSockets[2].plugHash,
                   socketArrayType: 0,
                   socketIndex: 0,
                 };
-                character.equippedLoadout.subclass.meleeAbility = {
+                character.equippedLoadout.subclassConfig.meleeAbility = {
                   plugItemHash: subclassSockets[3].plugHash,
                   socketArrayType: 0,
                   socketIndex: 3,
                 };
-                character.equippedLoadout.subclass.grenade = {
+                character.equippedLoadout.subclassConfig.grenade = {
                   plugItemHash: subclassSockets[4].plugHash,
                   socketArrayType: 0,
                   socketIndex: 4,
                 };
 
-                if (character.equippedLoadout.subclass.damageType === DAMAGE_TYPE.KINETIC) {
-                  character.equippedLoadout.subclass.aspects = [
+                if (character.equippedLoadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC) {
+                  character.equippedLoadout.subclassConfig.aspects = [
                     {
                       plugItemHash: subclassSockets[7].plugHash,
                       socketArrayType: 0,
@@ -279,7 +300,7 @@ export async function getProfileData(): Promise<ProfileData> {
                     },
                   ];
 
-                  character.equippedLoadout.subclass.fragments = subclassSockets
+                  character.equippedLoadout.subclassConfig.fragments = subclassSockets
                     .slice(9, subclassSockets.length)
                     .map((p: any, index: number): Plug => {
                       return {
@@ -289,7 +310,7 @@ export async function getProfileData(): Promise<ProfileData> {
                       };
                     });
                 } else {
-                  character.equippedLoadout.subclass.aspects = [
+                  character.equippedLoadout.subclassConfig.aspects = [
                     {
                       plugItemHash: subclassSockets[5].plugHash,
                       socketArrayType: 0,
@@ -302,7 +323,7 @@ export async function getProfileData(): Promise<ProfileData> {
                     },
                   ];
 
-                  character.equippedLoadout.subclass.fragments = subclassSockets
+                  character.equippedLoadout.subclassConfig.fragments = subclassSockets
                     .slice(7, subclassSockets.length)
                     .map((p: any, index: number): Plug => {
                       return {
@@ -370,7 +391,16 @@ export async function getProfileData(): Promise<ProfileData> {
             const subclass = await subclassQuery.first();
 
             if (subclass) {
-              character.subclasses[subclass.damageType] = item.itemInstanceId;
+              character.subclasses[subclass.damageType] = {
+                instanceId: item.itemInstanceId,
+                itemHash: subclass.itemHash,
+                damageType: subclass.damageType,
+                name: subclass.name,
+                class: subclass.class,
+                icon: subclass.icon,
+                screenshot: subclass.icon,
+                isOwned: subclass.isOwned,
+              };
             }
             continue;
           }

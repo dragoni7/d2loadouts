@@ -147,7 +147,7 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
   const [mods, setMods] = useState<{ [key: string]: ManifestPlug[] }>({});
   const [selectedMods, setSelectedMods] = useState<{ [key: string]: ManifestPlug[] }>({});
   const [modIcons, setModIcons] = useState<{ [key: string]: string }>({});
-  const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclass);
+  const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclassConfig);
   const dispatch = useDispatch();
 
   useEffect(() => {
