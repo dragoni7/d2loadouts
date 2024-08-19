@@ -1,21 +1,21 @@
-import { Backdrop, Badge, Box, Button, LinearProgress, Paper, Stack, Tooltip } from '@mui/material';
+import { Backdrop, Badge, Box, Button, Grid, LinearProgress, Paper, Tooltip } from '@mui/material';
 import { store } from '../../../store';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { EquipResult } from '../types';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { CheckRounded, Close } from '@mui/icons-material';
 import { STATUS } from '../constants';
 import { ArmorEquipper } from '../util/armorEquipper';
-import { DestinyArmor, Plug } from '../../../types';
+import { DestinyArmor, Plug, SubclassConfig } from '../../../types';
 import React from 'react';
 import { SubclassEquipper } from '../util/subclassEquipper';
-import { Equipper } from '../util/equipper';
 
 const EquipLoadout: React.FC = () => {
-  const [processing, setProcessing] = useState<DestinyArmor[]>([]);
+  const [processing, setProcessing] = useState<any[]>([]);
   const [equipStep, setEquipStep] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [results, setResults] = useState<EquipResult[]>([]);
+  const [equipping, setEquipping] = useState<boolean>(false);
 
   const onEquipLoadout = async () => {
     const loadout = store.getState().loadoutConfig.loadout;
@@ -31,8 +31,9 @@ const EquipLoadout: React.FC = () => {
       loadout.subclassConfig.subclass
     ) {
       setOpen(true);
+      setEquipping(true);
       const armorEquipper = new ArmorEquipper();
-      const tempEquipped: DestinyArmor[] = [];
+      const tempEquipped: any[] = [];
       const tempResults: EquipResult[] = [];
 
       await armorEquipper.setCharacter(loadout.characterId);
@@ -67,11 +68,12 @@ const EquipLoadout: React.FC = () => {
       );
 
       const subclassEquipper = new SubclassEquipper();
+      subclassEquipper.setCharacter(loadout.characterId);
 
-      setEquipStep('Equipping Subclass');
-      subclassEquipper.equipSubclass(loadout.subclassConfig.subclass.instanceId);
+      await processSubclass(tempEquipped, subclassEquipper, tempResults, loadout.subclassConfig);
 
       setEquipStep('Finished');
+      setEquipping(false);
     } else {
       alert('Loadout Incomplete');
     }
@@ -94,79 +96,159 @@ const EquipLoadout: React.FC = () => {
     setResults(tempResults);
   };
 
+  const processSubclass = async (
+    tempEquipped: any[],
+    equipper: SubclassEquipper,
+    tempResults: EquipResult[],
+    subclassConfig: SubclassConfig
+  ) => {
+    tempEquipped.push(subclassConfig.subclass);
+    setProcessing(tempEquipped);
+
+    setEquipStep('Equipping ' + subclassConfig.subclass.name + ' ...');
+    await equipper.equipSubclass(subclassConfig.subclass);
+
+    setEquipStep('Equipping Super ...');
+    await equipper.equipSubclassAbility(subclassConfig.super);
+
+    if (subclassConfig.classAbility) {
+      setEquipStep('Equipping Class Ability...');
+      await equipper.equipSubclassAbility(subclassConfig.classAbility);
+    }
+
+    if (subclassConfig.movementAbility) {
+      setEquipStep('Equipping Movement Ability...');
+      await equipper.equipSubclassAbility(subclassConfig.movementAbility);
+    }
+
+    if (subclassConfig.meleeAbility) {
+      setEquipStep('Equipping Melee Ability...');
+      await equipper.equipSubclassAbility(subclassConfig.meleeAbility);
+    }
+
+    if (subclassConfig.grenade) {
+      setEquipStep('Equipping Grenade Ability...');
+      await equipper.equipSubclassAbility(subclassConfig.grenade);
+    }
+
+    setEquipStep('Equipping Aspects ...');
+    await equipper.equipSubclassAspect(subclassConfig.aspects[0]);
+    await equipper.equipSubclassAspect(subclassConfig.aspects[1]);
+
+    setEquipStep('Equipping Fragments ...');
+    await equipper.equipSubclassFragments(subclassConfig.fragments);
+
+    tempResults.push(equipper.getResult());
+    setResults(tempResults);
+  };
+
   return (
     <Box>
       <Button variant="contained" onClick={onEquipLoadout}>
         Equip Loadout
       </Button>
-      <Backdrop
-        open={open}
-        onClick={() => {
-          setOpen(false);
-          setResults([]);
-          setProcessing([]);
-          setEquipStep('');
-        }}
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
+      <Backdrop open={open} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Paper
           elevation={1}
           sx={{
             display: 'flex',
             position: 'absolute',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
             width: '25vw',
             height: '95vh',
             backgroundColor: '#1c1c21',
             color: 'white',
           }}
         >
-          <Stack spacing={1} width={'90%'} alignItems={'center'}>
-            {processing.map((item, index) => (
-              <Box>
-                {results[index] !== undefined ? (
-                  <Badge
-                    badgeContent={
-                      results[index].operationsStatus[0] === 'Success' ? (
-                        <CheckRounded sx={{ fontSize: 50, color: 'green' }} />
-                      ) : (
-                        <Close sx={{ fontSize: 50, color: 'red' }} />
-                      )
-                    }
-                    anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                  >
-                    <ArmorIcon armor={item} size={64}></ArmorIcon>
-                  </Badge>
-                ) : (
-                  <ArmorIcon armor={item} size={64} />
-                )}
-                <p>
+          <Grid
+            container
+            spacing={2}
+            justifyContent="space-between"
+            alignItems="flex-end"
+            paddingTop={1}
+            paddingLeft={1}
+            paddingBottom={4}
+          >
+            <Fragment>
+              {processing.map((item, index) => (
+                <Fragment>
                   {results[index] !== undefined ? (
-                    results[index].status === STATUS.SUCCESS ? (
-                      'Success'
-                    ) : (
-                      <Stack direction={'row'} width={'100%'}>
-                        {results[index]?.operationsStatus.slice(1).map((error) => (
-                          <Tooltip title={error}>
-                            {error === 'Success' ? (
-                              <CheckRounded sx={{ fontSize: 50, color: 'green' }} />
-                            ) : (
-                              <Close sx={{ fontSize: 50, color: 'red' }} />
-                            )}
-                          </Tooltip>
-                        ))}
-                      </Stack>
-                    )
+                    <Fragment>
+                      <Grid item md={2}>
+                        <Tooltip title={'Equipped'}>
+                          <Badge
+                            badgeContent={
+                              results[index].operationsStatus[0] === 'Success' ? (
+                                <CheckRounded sx={{ fontSize: 50, color: 'green' }} />
+                              ) : (
+                                <Close sx={{ fontSize: 50, color: 'red' }} />
+                              )
+                            }
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                          >
+                            <ArmorIcon armor={item} size={64}></ArmorIcon>
+                          </Badge>
+                        </Tooltip>
+                      </Grid>
+                      <Grid item md={9}>
+                        {results[index].status === STATUS.SUCCESS
+                          ? 'Success'
+                          : results[index]?.operationsStatus
+                              .slice(1)
+                              .map((error) => (
+                                <Tooltip title={error}>
+                                  {error === 'Success' ? (
+                                    <CheckRounded sx={{ fontSize: 56, color: 'green' }} />
+                                  ) : (
+                                    <Close sx={{ fontSize: 56, color: 'red' }} />
+                                  )}
+                                </Tooltip>
+                              ))}
+                      </Grid>
+                    </Fragment>
                   ) : (
-                    <LinearProgress color="inherit" sx={{ width: '100%' }} />
+                    <Grid container item justifyContent="center" spacing={3}>
+                      <Grid item md={12} textAlign="center">
+                        <ArmorIcon armor={item} size={64} />
+                      </Grid>
+                      <Grid item md={4}>
+                        <LinearProgress color="inherit" />
+                      </Grid>
+                      <Grid item md={12} textAlign="center">
+                        {equipStep}
+                      </Grid>
+                    </Grid>
                   )}
-                </p>
-              </Box>
-            ))}
-            <p> {equipStep} </p>
-          </Stack>
+                </Fragment>
+              ))}
+              {equipping ? (
+                false
+              ) : (
+                <Fragment>
+                  <Grid item md={12} textAlign="center">
+                    {equipStep}
+                  </Grid>
+                  <Grid item md={3} textAlign="center">
+                    <Button
+                      onClick={() => {
+                        setOpen(false);
+                        setResults([]);
+                        setProcessing([]);
+                        setEquipStep('');
+                      }}
+                    >
+                      Back
+                    </Button>
+                  </Grid>
+                  <Grid item md={3} textAlign="center">
+                    <Button>Share</Button>
+                  </Grid>
+                  <Grid item md={3} textAlign="center">
+                    <Button>Save in-game</Button>
+                  </Grid>
+                </Fragment>
+              )}
+            </Fragment>
+          </Grid>
         </Paper>
       </Backdrop>
     </Box>
