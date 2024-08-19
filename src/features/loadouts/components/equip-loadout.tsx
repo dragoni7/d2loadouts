@@ -5,7 +5,7 @@ import { EquipResult } from '../types';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { CheckRounded, Close } from '@mui/icons-material';
 import { STATUS } from '../constants';
-import { ArmorEquipper } from '../util/ArmorEquipper';
+import { ArmorEquipper } from '../util/armorEquipper';
 import { DestinyArmor, Plug } from '../../../types';
 import React from 'react';
 
