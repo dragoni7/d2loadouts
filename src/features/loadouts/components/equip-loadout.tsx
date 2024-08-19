@@ -5,7 +5,7 @@ import { EquipResult } from '../types';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { CheckRounded, Close } from '@mui/icons-material';
 import { STATUS } from '../constants';
-import { LoadoutEquipper } from '../loadoutEquipper';
+import { ArmorEquipper } from '../util/ArmorEquipper';
 import { DestinyArmor, Plug } from '../../../types';
 import React from 'react';
 
@@ -29,7 +29,7 @@ const EquipLoadout: React.FC = () => {
       loadout.subclass.itemId
     ) {
       setOpen(true);
-      const equipper = new LoadoutEquipper();
+      const equipper = new ArmorEquipper();
       const tempEquipped: DestinyArmor[] = [];
       const tempResults: EquipResult[] = [];
 
@@ -66,17 +66,17 @@ const EquipLoadout: React.FC = () => {
 
   const processArmor = async (
     tempEquipped: DestinyArmor[],
-    equipper: LoadoutEquipper,
+    equipper: ArmorEquipper,
     tempResults: EquipResult[],
     armor: DestinyArmor,
     armorMods: { [key: number]: Plug }
   ) => {
     tempEquipped.push(armor);
     setProcessing(tempEquipped);
-    setEquipStep('Inserting Mods in ' + armor.name + '...');
-    await equipper.equipArmorMods(armor, armorMods);
     setEquipStep('Equipping ' + armor.name + ' ...');
     await equipper.equipArmor(armor);
+    setEquipStep('Inserting Mods in ' + armor.name + '...');
+    await equipper.equipArmorMods(armorMods);
     tempResults.push(equipper.getResult());
     setResults(tempResults);
   };
