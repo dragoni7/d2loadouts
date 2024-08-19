@@ -106,6 +106,12 @@ export interface ManifestSubclass extends ManifestEntry {
   class: CharacterClass;
 }
 
+export interface ManifestStatPlug extends ManifestEntry {
+  energyCost: number;
+  stat: string;
+  boost: number;
+}
+
 export interface ManifestPlug extends ManifestEntry {
   energyCost: number;
   category: number;
