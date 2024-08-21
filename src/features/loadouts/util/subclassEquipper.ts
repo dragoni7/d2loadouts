@@ -71,15 +71,15 @@ export class SubclassEquipper extends Equipper {
   }
 
   public async equipSubclassFragments(fragments: Plug[]) {
-    fragments.forEach(async (fragment, index) => {
+    for (let i = 0; i < fragments.length; i++) {
       const response = await insertSocketPlugFreeRequest(
         this.result.subject.instanceId,
-        fragment,
+        fragments[i],
         this.characterId
       ).catch((error) => {
         if (error.response) {
           this.result.status = STATUS.FAIL;
-          this.result.operationsStatus[3 + index] = error.response.data.ErrorStatus.replace(
+          this.result.operationsStatus[i + 3] = error.response.data.ErrorStatus.replace(
             /([a-z])([A-Z])/g,
             '$1 $2'
           );
@@ -87,10 +87,10 @@ export class SubclassEquipper extends Equipper {
       });
 
       if (response)
-        this.result.operationsStatus[3 + index] = response.data.ErrorStatus.replace(
+        this.result.operationsStatus[i + 3] = response.data.ErrorStatus.replace(
           /([a-z])([A-Z])/g,
           '$1 $2'
         );
-    });
+    }
   }
 }

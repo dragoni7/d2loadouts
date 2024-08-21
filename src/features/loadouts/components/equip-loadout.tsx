@@ -138,7 +138,8 @@ const EquipLoadout: React.FC = () => {
     setEquipStep('Equipping Fragments ...');
     await equipper.equipSubclassFragments(subclassConfig.fragments);
 
-    tempResults.push(equipper.getResult());
+    const result = equipper.getResult();
+    tempResults.push(result);
     setResults(tempResults);
   };
 
