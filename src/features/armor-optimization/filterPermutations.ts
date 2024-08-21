@@ -1,4 +1,5 @@
 import { DestinyArmor, FilteredPermutation } from '../../types';
+import { precalculatedModCombinations } from './precalculatedModCombinations';
 
 interface SelectedThresholds {
   [key: string]: number;
@@ -8,7 +9,13 @@ export const filterPermutations = (
   permutations: DestinyArmor[][],
   thresholds: SelectedThresholds
 ): FilteredPermutation[] => {
-  return permutations.map((permutation) => {
+
+  let acceptedCount = 0;
+  let discardedCount = 0;
+
+  const results: FilteredPermutation[] = [];
+
+  for (const permutation of permutations) {
     const modsArray: FilteredPermutation['modsArray'] = {
       mobility: [],
       resilience: [],
@@ -17,40 +24,57 @@ export const filterPermutations = (
       intellect: [],
       strength: [],
     };
-    let totalModsUsed = 0;
-    let meetsAllThresholds = true;
+    
+    const artificeCount = permutation.filter(armor => armor.artifice).length;
 
-    for (const stat of Object.keys(thresholds)) {
+    // Calculate initial stat totals and deficits
+    const statDeficits: Record<string, number> = {};
+    for (const stat in thresholds) {
       const key = stat.toLowerCase() as keyof DestinyArmor;
-      const totalStat = permutation.reduce((sum, item) => {
-        const value = item[key];
-        return typeof value === 'number' ? sum + value : sum;
-      }, 0);
-      const threshold = thresholds[stat];
+      const totalStat = permutation.reduce((sum, item) => sum + (item[key] as number || 0), 0);
+      statDeficits[stat] = Math.max(0, thresholds[stat] - totalStat);
+    }
 
-      if (totalStat < threshold) {
-        const neededBoosts = Math.ceil((threshold - totalStat) / 10);
-        totalModsUsed += neededBoosts;
-
-        if (totalModsUsed > 5) {
-          meetsAllThresholds = false;
-          break;
-        }
-
-        for (let i = 0; i < neededBoosts && totalModsUsed <= 5; i++) {
-          if (!modsArray[stat as keyof FilteredPermutation['modsArray']]) {
-            modsArray[stat as keyof FilteredPermutation['modsArray']] = [];
-          }
-          modsArray[stat as keyof FilteredPermutation['modsArray']].push(10);
-        }
-        meetsAllThresholds = false;
+    // Try to find a valid mod combination
+    const tryModCombination = (statIndex: number, artificeUsed: number, regularModsUsed: number): boolean => {
+      if (statIndex === Object.keys(statDeficits).length) {
+        return true; // All stats processed successfully
       }
-    }
 
-    if (totalModsUsed > 5) {
-      return null;
-    }
+      const stat = Object.keys(statDeficits)[statIndex];
+      const deficit = statDeficits[stat];
 
-    return { permutation, modsArray };
-  }).filter((perm): perm is FilteredPermutation => perm !== null);
+      if (deficit === 0) {
+        return tryModCombination(statIndex + 1, artificeUsed, regularModsUsed);
+      }
+
+      const combinations = precalculatedModCombinations[deficit] || [];
+      for (const [artifice, minor, major, total] of combinations) {
+        if (artifice <= artificeCount - artificeUsed && 
+            minor + major <= 5 - regularModsUsed) {
+          // Try this combination
+          modsArray[stat.toLowerCase() as keyof FilteredPermutation['modsArray']] = 
+            [...Array(artifice).fill(3), ...Array(minor).fill(5), ...Array(major).fill(10)];
+          
+          if (tryModCombination(statIndex + 1, artificeUsed + artifice, regularModsUsed + minor + major)) {
+            return true;
+          }
+
+          // If it doesn't work, reset this stat's mods
+          modsArray[stat.toLowerCase() as keyof FilteredPermutation['modsArray']] = [];
+        }
+      }
+
+      return false;
+    };
+
+    if (tryModCombination(0, 0, 0)) {
+      acceptedCount++;
+      results.push({ permutation, modsArray });
+    } else {
+      discardedCount++;
+    }
+  }
+
+  return results;
 };

@@ -71,7 +71,7 @@ export const generatePermutations = (
     recovery: 2,
     instanceHash: 'fake_class_item',
     itemHash: 'fake_class_item',
-    artifice: false,
+    artifice: true,
     masterwork: false,
     exotic: false,
     class: undefined,

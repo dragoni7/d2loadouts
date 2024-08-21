@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/system';
-import { FilteredPermutation, Plug } from '../../types';
+import { FilteredPermutation, Plug, DestinyArmor } from '../../types';
 import { useDispatch } from 'react-redux';
 import {
   resetLoadoutArmorMods,
   updateLoadoutArmor,
-  updateLoadoutConfig,
   updateRequiredStatMods,
 } from '../../store/LoadoutReducer';
 import ArmorIcon from '../../components/ArmorIcon';
@@ -14,7 +13,7 @@ import { getStatModByCost } from '../../lib/bungie_api/utils';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
-  onPermutationClick: () => void; // Add this prop
+  onPermutationClick: () => void;
 }
 
 const StatsTableContainer = styled('div')({
@@ -46,51 +45,71 @@ const Card = styled('div')({
   backgroundBlendMode: 'multiply',
   backdropFilter: 'blur(5px)',
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
 });
 
-const CardRow = styled('div')({
+const StatsColumn = styled('div')({
   display: 'flex',
-  justifyContent: 'space-between',
-  marginBottom: '5px',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  marginRight: '20px',
+  flex: '0 0 auto',
+});
+
+const ContentColumn = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+});
+
+const IconsRow = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  marginBottom: '10px',
 });
 
 const CardCell = styled('div')({
-  flex: 1,
+  flex: 0,
   textAlign: 'center',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   position: 'relative',
-});
-
-const HorizontalStatsRow = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
+  margin: '0 5px',
 });
 
 const StatContainer = styled('div')({
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   alignItems: 'center',
-  margin: '0 10px',
+  margin: '5px 0',
 });
 
 const StatIcon = styled('img')({
-  width: '24px',
-  height: '24px',
-  marginBottom: '5px',
+  width: '20px',
+  height: '20px',
+  marginRight: '5px',
 });
 
 const StatValue = styled('div')({
   color: 'white',
   fontSize: '14px',
+  width: '30px',
+  textAlign: 'right',
 });
 
-const StatCell = styled(CardCell)({
+const ModsRow = styled('div')({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginBottom: '5px',
+});
+
+const ModLabel = styled('span')({
   fontWeight: 'bold',
+  marginRight: '5px',
+  color: 'white',
 });
 
 const ArrowButton = styled('button')({
@@ -130,51 +149,22 @@ const RightArrowButton = styled(ArrowButton)({
   marginRight: '5px',
 });
 
-const Icon = styled('img')({
-  width: '48px',
-  height: '48px',
-});
-
-const MasterworkedIconContainer = styled('div')({
-  border: '2px solid',
-  borderImage: 'linear-gradient(to right, #FFD700, #FFFACD, #FFD700) 1',
-  borderRadius: '0',
-  padding: '2px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginRight: '5px',
-});
-
-const DefaultIconContainer = styled('div')({
-  border: '2px solid white',
-  borderRadius: '0',
-  padding: '2px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginRight: '5px',
-});
-
-const ItemName = styled('div')({
-  display: 'none',
-  position: 'absolute',
-  top: '100%',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+const ItemInfo = styled('div')({
+  position: 'fixed',
+  backgroundColor: 'rgba(0, 0, 0, 0.9)',
   color: 'white',
-  padding: '5px',
-  borderRadius: '3px',
-  whiteSpace: 'nowrap',
-  zIndex: 1,
+  padding: '10px',
+  borderRadius: '5px',
+  whiteSpace: 'pre-wrap',
+  zIndex: 1000,
+  textAlign: 'left',
+  fontSize: '12px',
+  maxWidth: '200px',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
 });
 
 const HoverContainer = styled('div')({
   position: 'relative',
-  '&:hover div': {
-    display: 'block',
-  },
 });
 
 const TableFooter = styled('div')({
@@ -189,6 +179,9 @@ const TableFooter = styled('div')({
 const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClick }) => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(0);
+  const [hoverInfo, setHoverInfo] = useState<{ content: string; x: number; y: number } | null>(
+    null
+  );
   const itemsPerPage = 4;
 
   const paginatedData = useMemo(() => {
@@ -221,6 +214,26 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
       'https://www.bungie.net/common/destiny2_content/icons/ea5af04ccd6a3470a44fd7bb0f66e2f7.png',
   };
 
+  const formatArmorStats = (armor: DestinyArmor) => {
+    return STATS.map((stat) => {
+      const statKey = stat as keyof DestinyArmor;
+      return `${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${armor[statKey] || 0}`;
+    }).join('\n');
+  };
+
+  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>, item: DestinyArmor) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setHoverInfo({
+      content: `${item.name}\n${formatArmorStats(item)}`,
+      x: rect.left + window.scrollX,
+      y: rect.bottom + window.scrollY,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setHoverInfo(null);
+  };
+
   return (
     <StatsTableContainer>
       <LeftArrowButton
@@ -237,69 +250,25 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
               dispatch(resetLoadoutArmorMods());
               dispatch(updateLoadoutArmor(perm.permutation));
               let requiredMods: Plug[] = [];
-              perm.modsArray.mobility.forEach((cost: number) => {
-                requiredMods.push({
-                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.MOBILITY)),
-                  socketArrayType: 0,
-                  socketIndex: 0,
+              Object.entries(perm.modsArray).forEach(([stat, costs]) => {
+                costs.forEach((cost: number) => {
+                  requiredMods.push({
+                    plugItemHash: String(
+                      getStatModByCost(
+                        cost,
+                        STAT_HASH[stat.toUpperCase() as keyof typeof STAT_HASH]
+                      )
+                    ),
+                    socketArrayType: 0,
+                    socketIndex: 0,
+                  });
                 });
               });
-
-              perm.modsArray.resilience.forEach((cost: number) => {
-                requiredMods.push({
-                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.RESILIENCE)),
-                  socketArrayType: 0,
-                  socketIndex: 0,
-                });
-              });
-
-              perm.modsArray.recovery.forEach((cost: number) => {
-                requiredMods.push({
-                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.RECOVERY)),
-                  socketArrayType: 0,
-                  socketIndex: 0,
-                });
-              });
-
-              perm.modsArray.discipline.forEach((cost: number) => {
-                requiredMods.push({
-                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.DISCIPLINE)),
-                  socketArrayType: 0,
-                  socketIndex: 0,
-                });
-              });
-
-              perm.modsArray.intellect.forEach((cost: number) => {
-                requiredMods.push({
-                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.INTELLECT)),
-                  socketArrayType: 0,
-                  socketIndex: 0,
-                });
-              });
-
-              perm.modsArray.strength.forEach((cost: number) => {
-                requiredMods.push({
-                  plugItemHash: String(getStatModByCost(cost, STAT_HASH.STRENGTH)),
-                  socketArrayType: 0,
-                  socketIndex: 0,
-                });
-              });
-
               dispatch(updateRequiredStatMods(requiredMods));
               onPermutationClick();
             }}
           >
-            <CardRow>
-              {perm.permutation.map((item, idx) => (
-                <CardCell key={idx}>
-                  <HoverContainer>
-                    <ArmorIcon armor={item} size={48} />
-                    <ItemName>{item.name}</ItemName>
-                  </HoverContainer>
-                </CardCell>
-              ))}
-            </CardRow>
-            <HorizontalStatsRow>
+            <StatsColumn>
               {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) => (
                 <StatContainer key={stat}>
                   <StatIcon src={statIcons[stat]} alt={stat} />
@@ -308,16 +277,29 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
                   </StatValue>
                 </StatContainer>
               ))}
-            </HorizontalStatsRow>
-            {Object.keys(perm.modsArray).map((stat, idx) => {
-              const mods = perm.modsArray[stat as keyof FilteredPermutation['modsArray']];
-              return mods.length > 0 ? (
-                <CardRow key={idx}>
-                  <StatCell>{stat.charAt(0).toUpperCase() + stat.slice(1)} Mods</StatCell>
-                  <CardCell>{mods.join(', ')}</CardCell>
-                </CardRow>
-              ) : null;
-            })}
+            </StatsColumn>
+            <ContentColumn>
+              <IconsRow>
+                {perm.permutation.map((item, idx) => (
+                  <CardCell key={idx}>
+                    <HoverContainer
+                      onMouseEnter={(e) => handleMouseEnter(e, item)}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      <ArmorIcon armor={item} size={64} />
+                    </HoverContainer>
+                  </CardCell>
+                ))}
+              </IconsRow>
+              {Object.entries(perm.modsArray).map(([stat, mods]) =>
+                mods.length > 0 ? (
+                  <ModsRow key={stat}>
+                    <ModLabel>{stat.charAt(0).toUpperCase() + stat.slice(1)} Mods:</ModLabel>
+                    <span>{mods.join(', ')}</span>
+                  </ModsRow>
+                ) : null
+              )}
+            </ContentColumn>
           </Card>
         ))}
         <TableFooter>
@@ -334,6 +316,9 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
       >
         &#9654;
       </RightArrowButton>
+      {hoverInfo && (
+        <ItemInfo style={{ left: hoverInfo.x, top: hoverInfo.y }}>{hoverInfo.content}</ItemInfo>
+      )}
     </StatsTableContainer>
   );
 };
