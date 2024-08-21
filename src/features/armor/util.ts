@@ -1,6 +1,6 @@
 import { db } from '../../store/db';
-import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/Constants';
-import { ManifestArmorMod, Plug } from '../../types';
+import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/constants';
+import { ManifestArmorMod, Plug } from '../../types/d2l-types';
 import { store } from '../../store';
 
 export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {

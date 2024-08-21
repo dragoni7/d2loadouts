@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods } from '../../../store/LoadoutReducer';
-import { DestinyArmor, ManifestArmorMod, Plug } from '../../../types';
+import { DestinyArmor, Plug } from '../../../types/d2l-types';
 import ArmorModSelector from './armor-mod-selector';
 import { getSelectedModsBySlot, getModsBySlot } from '../util';
+import { ManifestArmorMod } from '../../../types/manifest-types';
 
 interface ArmorConfigProps {
   armor: DestinyArmor;

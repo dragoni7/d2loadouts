@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DestinyMembership } from '../types';
+import { DestinyMembership } from '../types/d2l-types';
 
 export interface InitialState {
   membership: DestinyMembership;

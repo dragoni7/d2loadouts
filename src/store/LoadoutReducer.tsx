@@ -1,14 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Character, DamageType, DestinyArmor, Loadout, Plug, Subclass } from '../types/d2l-types';
 import {
-  Character,
-  DamageType,
-  DestinyArmor,
-  Loadout,
-  ManifestPlug,
-  Plug,
-  Subclass,
-} from '../types';
-import { DAMAGE_TYPE } from '../lib/bungie_api/Constants';
+  DAMAGE_TYPE,
+  EMPTY_ASPECT,
+  EMPTY_FRAGMENT,
+  EMPTY_MANIFEST_PLUG,
+} from '../lib/bungie_api/constants';
+import { ManifestArmorStatMod, ManifestPlug } from '../types/manifest-types';
 
 const EMPTY_PLUG: Plug = {
   plugItemHash: '',
@@ -118,39 +116,264 @@ const initialState: InitialState = {
     },
     requiredStatMods: [],
     helmetMods: {
-      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
-      1: { plugItemHash: '1078080765', socketArrayType: 0, socketIndex: 1 },
-      2: { plugItemHash: '1078080765', socketArrayType: 0, socketIndex: 2 },
-      3: { plugItemHash: '1078080765', socketArrayType: 0, socketIndex: 3 },
-      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+      0: {
+        itemHash: 1980618587,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      1: {
+        itemHash: 1078080765,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      2: {
+        itemHash: 1078080765,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      3: {
+        itemHash: 1078080765,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      11: {
+        itemHash: 4173924323,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
     },
     gauntletMods: {
-      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
-      1: { plugItemHash: '3820147479', socketArrayType: 0, socketIndex: 1 },
-      2: { plugItemHash: '3820147479', socketArrayType: 0, socketIndex: 2 },
-      3: { plugItemHash: '3820147479', socketArrayType: 0, socketIndex: 3 },
-      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+      0: {
+        itemHash: 1980618587,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      1: {
+        itemHash: 3820147479,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      2: {
+        itemHash: 3820147479,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      3: {
+        itemHash: 3820147479,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      11: {
+        itemHash: 4173924323,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
     },
     chestArmorMods: {
-      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
-      1: { plugItemHash: '1803434835', socketArrayType: 0, socketIndex: 1 },
-      2: { plugItemHash: '1803434835', socketArrayType: 0, socketIndex: 2 },
-      3: { plugItemHash: '1803434835', socketArrayType: 0, socketIndex: 3 },
-      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+      0: {
+        itemHash: 1980618587,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      1: {
+        itemHash: 1803434835,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      2: {
+        itemHash: 1803434835,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      3: {
+        itemHash: 1803434835,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      11: {
+        itemHash: 4173924323,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
     },
     legArmorMods: {
-      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
-      1: { plugItemHash: '2269836811', socketArrayType: 0, socketIndex: 1 },
-      2: { plugItemHash: '2269836811', socketArrayType: 0, socketIndex: 2 },
-      3: { plugItemHash: '2269836811', socketArrayType: 0, socketIndex: 3 },
-      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+      0: {
+        itemHash: 1980618587,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      1: {
+        itemHash: 2269836811,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      2: {
+        itemHash: 2269836811,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      3: {
+        itemHash: 2269836811,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      11: {
+        itemHash: 4173924323,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
     },
     classArmorMods: {
-      0: { plugItemHash: '1980618587', socketArrayType: 0, socketIndex: 0 },
-      1: { plugItemHash: '3200810407', socketArrayType: 0, socketIndex: 1 },
-      2: { plugItemHash: '3200810407', socketArrayType: 0, socketIndex: 2 },
-      3: { plugItemHash: '3200810407', socketArrayType: 0, socketIndex: 3 },
-      4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
+      0: {
+        itemHash: 1980618587,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      1: {
+        itemHash: 3200810407,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      2: {
+        itemHash: 3200810407,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      3: {
+        itemHash: 3200810407,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
+      11: {
+        itemHash: 4173924323,
+        perkName: '',
+        perkDescription: '',
+        perkIcon: '',
+        category: 0,
+        isOwned: false,
+        name: '',
+        icon: '',
+      },
     },
     characterId: 0,
     subclassConfig: {
@@ -165,17 +388,19 @@ const initialState: InitialState = {
         icon: '',
       },
       damageType: 1,
-      super: {
-        plugItemHash: '',
-        socketArrayType: undefined,
-        socketIndex: undefined,
+      super: { 0: EMPTY_MANIFEST_PLUG },
+      aspects: { 5: EMPTY_ASPECT, 6: EMPTY_ASPECT },
+      fragments: {
+        7: EMPTY_FRAGMENT,
+        8: EMPTY_FRAGMENT,
+        9: EMPTY_FRAGMENT,
+        10: EMPTY_FRAGMENT,
+        11: EMPTY_FRAGMENT,
       },
-      aspects: Array(2).fill(EMPTY_PLUG),
-      fragments: Array(5).fill(EMPTY_PLUG),
-      classAbility: null,
-      meleeAbility: null,
-      movementAbility: null,
-      grenade: null,
+      classAbility: { 1: null },
+      meleeAbility: { 3: null },
+      movementAbility: { 2: null },
+      grenade: { 4: null },
     },
   },
 };
@@ -196,7 +421,11 @@ export const loadoutConfigSlice = createSlice({
     },
     updateLoadoutArmorMods: (
       state,
-      action: PayloadAction<{ armorType: string; slot: number; plug: Plug }>
+      action: PayloadAction<{
+        armorType: string;
+        slot: number;
+        plug: ManifestPlug | ManifestArmorStatMod;
+      }>
     ) => {
       switch (action.payload.armorType) {
         case 'helmet': {
@@ -221,7 +450,7 @@ export const loadoutConfigSlice = createSlice({
         }
       }
     },
-    updateRequiredStatMods: (state, action: PayloadAction<Plug[]>) => {
+    updateRequiredStatMods: (state, action: PayloadAction<ManifestArmorStatMod[]>) => {
       state.loadout.requiredStatMods = action.payload;
     },
     resetLoadoutArmorMods: (state) => {
@@ -238,89 +467,53 @@ export const loadoutConfigSlice = createSlice({
       state.loadout.subclassConfig = {
         subclass: action.payload.subclass,
         damageType: action.payload.damageType,
-        super: {
-          plugItemHash: '',
-          socketArrayType: 0,
-          socketIndex: 0,
+        super: { 0: EMPTY_MANIFEST_PLUG },
+        aspects: { 5: EMPTY_ASPECT, 6: EMPTY_ASPECT },
+        fragments: {
+          7: EMPTY_FRAGMENT,
+          8: EMPTY_FRAGMENT,
+          9: EMPTY_FRAGMENT,
+          10: EMPTY_FRAGMENT,
+          11: EMPTY_FRAGMENT,
         },
-        aspects: [],
-        fragments: [],
-        classAbility: null,
-        meleeAbility: null,
-        movementAbility: null,
-        grenade: null,
+        classAbility: { 1: null },
+        meleeAbility: { 3: null },
+        movementAbility: { 2: null },
+        grenade: { 4: null },
       };
     },
-    updateSubclassMods: (
-      state,
-      action: PayloadAction<{ category: string; mods: { plugItemHash: string }[] }>
-    ) => {
+    updateSubclassMods: (state, action: PayloadAction<{ category: string; mods: any[] }>) => {
       const { category, mods } = action.payload;
       switch (category) {
         case 'SUPERS':
-          state.loadout.subclassConfig.super = mods[0]
-            ? {
-                plugItemHash: mods[0].plugItemHash,
-                socketArrayType: 0,
-                socketIndex: 0,
-              }
-            : {
-                plugItemHash: '',
-                socketArrayType: 0,
-                socketIndex: 0,
-              };
+          state.loadout.subclassConfig.super = [0, mods[0] ? mods[0] : EMPTY_MANIFEST_PLUG];
           break;
         case 'ASPECTS':
-          state.loadout.subclassConfig.aspects = mods.map((mod, index) => ({
-            plugItemHash: mod.plugItemHash,
-            socketArrayType: 0,
-            socketIndex:
-              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5),
-          }));
+          mods.forEach((mod, index) => {
+            state.loadout.subclassConfig.aspects[
+              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5)
+            ] = mod ? mod : EMPTY_ASPECT;
+          });
+
           break;
         case 'FRAGMENTS':
-          state.loadout.subclassConfig.fragments = mods.map((mod, index) => ({
-            plugItemHash: mod.plugItemHash,
-            socketArrayType: 0,
-            socketIndex:
-              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7),
-          }));
+          mods.forEach((mod, index) => {
+            state.loadout.subclassConfig.fragments[
+              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7)
+            ] = mod ? mod : EMPTY_FRAGMENT;
+          });
           break;
         case 'CLASS_ABILITIES':
-          state.loadout.subclassConfig.classAbility = mods[0]
-            ? {
-                plugItemHash: mods[0].plugItemHash,
-                socketArrayType: 0,
-                socketIndex: 1,
-              }
-            : null;
+          state.loadout.subclassConfig.classAbility = [1, mods[0] ? mods[0] : null];
           break;
         case 'MELEE_ABILITIES':
-          state.loadout.subclassConfig.meleeAbility = mods[0]
-            ? {
-                plugItemHash: mods[0].plugItemHash,
-                socketArrayType: 0,
-                socketIndex: 3,
-              }
-            : null;
+          state.loadout.subclassConfig.meleeAbility = [3, mods[0] ? mods[0] : null];
           break;
         case 'MOVEMENT_ABILITIES':
-          state.loadout.subclassConfig.movementAbility = mods[0]
-            ? {
-                plugItemHash: mods[0].plugItemHash,
-                socketArrayType: 0,
-                socketIndex: 2,
-              }
-            : null;
+          state.loadout.subclassConfig.movementAbility = [2, mods[0] ? mods[0] : null];
           break;
         case 'GRENADES':
-          state.loadout.subclassConfig.grenade = mods[0]
-            ? {
-                plugItemHash: mods[0].plugItemHash,
-                socketArrayType: 0,
-                socketIndex: 4,
-              }
-            : null;
+          state.loadout.subclassConfig.grenade = [4, mods[0] ? mods[0] : null];
           break;
       }
     },

@@ -1,4 +1,4 @@
-import { DestinyArmor, ArmorBySlot } from '../../types';
+import { DestinyArmor, ArmorBySlot } from '../../types/d2l-types';
 import MaxHeap from 'heap-js';
 
 export const generatePermutations = (

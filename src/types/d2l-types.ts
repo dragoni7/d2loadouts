@@ -1,3 +1,11 @@
+import {
+  ManifestArmorStatMod,
+  ManifestAspect,
+  ManifestPlug,
+  ManifestStatPlug,
+  ManifestSubclass,
+} from './manifest-types';
+
 export type CharacterClass = 'warlock' | 'hunter' | 'titan' | '';
 
 export type DamageType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -33,13 +41,13 @@ export interface ArmorBySlot {
 export type SubclassConfig = {
   subclass: Subclass;
   damageType: DamageType;
-  super: Plug;
-  aspects: Plug[];
-  fragments: Plug[];
-  classAbility: Plug | null;
-  meleeAbility: Plug | null;
-  movementAbility: Plug | null;
-  grenade: Plug | null;
+  super: { [key: number]: ManifestPlug };
+  aspects: { [key: number]: ManifestAspect };
+  fragments: { [key: number]: ManifestStatPlug };
+  classAbility: { [key: number]: ManifestPlug | null };
+  meleeAbility: { [key: number]: ManifestPlug | null };
+  movementAbility: { [key: number]: ManifestPlug | null };
+  grenade: { [key: number]: ManifestPlug | null };
 };
 
 export type Plug = {
@@ -54,12 +62,12 @@ export type Loadout = {
   chestArmor: DestinyArmor;
   legArmor: DestinyArmor;
   classArmor: DestinyArmor;
-  requiredStatMods: Plug[];
-  helmetMods: { [key: number]: Plug };
-  gauntletMods: { [key: number]: Plug };
-  chestArmorMods: { [key: number]: Plug };
-  legArmorMods: { [key: number]: Plug };
-  classArmorMods: { [key: number]: Plug };
+  requiredStatMods: ManifestArmorStatMod[];
+  helmetMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
+  gauntletMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
+  chestArmorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
+  legArmorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
+  classArmorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
   characterId: number;
   subclassConfig: SubclassConfig;
 };
@@ -88,63 +96,8 @@ export type DestinyMembership = {
   bungieGlobalDisplayName: string;
 };
 
-export interface ManifestEntry {
-  itemHash: number;
-  name: string;
-  icon: string;
-}
-
-export interface ManifestSubclass extends ManifestEntry {
-  screenshot: string;
-  damageType: number;
-  isOwned: boolean;
-  class: CharacterClass;
-}
-
 export interface Subclass extends ManifestSubclass {
   instanceId: string;
-}
-
-export interface ManifestStatPlug extends ManifestEntry {
-  energyCost: number;
-  stat: string;
-  boost: number;
-}
-
-export interface ManifestPlug extends ManifestEntry {
-  energyCost: number;
-  category: number;
-  isOwned: boolean;
-}
-
-export interface ManifestAspect extends ManifestPlug {
-  energyCapacity: number;
-}
-
-export interface ManifestFragment extends ManifestPlug {
-  mobilityMod: number;
-  resilienceMod: number;
-  recoveryMod: number;
-  discipline: number;
-  intellect: number;
-  strength: number;
-}
-
-export interface ManifestArmorMod extends ManifestPlug {
-  collectibleHash: number;
-}
-
-export interface ManifestArmor extends ManifestEntry {
-  isExotic: boolean;
-  class: CharacterClass;
-  slot: string;
-}
-
-export interface ManifestExoticArmor extends ManifestEntry {
-  isOwned: boolean;
-  class: CharacterClass;
-  slot: string;
-  collectibleHash: number;
 }
 
 export interface FilteredPermutation {
@@ -158,5 +111,3 @@ export interface FilteredPermutation {
     strength: number[];
   };
 }
-
-export interface ManifestEmblem extends Emblem, ManifestEntry {}

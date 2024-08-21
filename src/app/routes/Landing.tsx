@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 
 import { useEffect, useState } from 'react';
 import BungieLogin from '../../features/auth/BungieLogin';
-import { regenerateTokens } from '../../lib/bungie_api/TokenService';
+import { regenerateTokens } from '../../lib/bungie_api/token-services';
 import { isAuthenticated } from '../../lib/bungie_api/Authorization';
 import { Container, Grid, Paper } from '@mui/material';
 

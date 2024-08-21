@@ -1,5 +1,5 @@
-import { equipItemRequest, insertSocketPlugFreeRequest } from '../../../lib/bungie_api/Requests';
-import { Plug, Subclass } from '../../../types';
+import { equipItemRequest, insertSocketPlugFreeRequest } from '../../../lib/bungie_api/requests';
+import { Plug, Subclass } from '../../../types/d2l-types';
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
 

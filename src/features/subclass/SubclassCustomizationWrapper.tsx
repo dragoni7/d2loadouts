@@ -1,9 +1,9 @@
 import React from 'react';
-import { ManifestSubclass } from '../types';
 import AbilitiesModification from './AbilitiesModification';
 import './SubclassCustomizationWrapper.css';
 import { Button, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { ManifestSubclass } from '../types/manifest-types';
 
 interface SubclassCustomizationWrapperProps {
   onBackClick: () => void;

@@ -1,11 +1,11 @@
-import { getDestinyMembershipsRequest } from '../../lib/bungie_api/Requests';
-import { DestinyMembership } from '../../types';
+import { getDestinyMembershipsRequest } from '../../lib/bungie_api/requests';
+import { DestinyMembership } from '../../types/d2l-types';
 
 export async function getDestinyMembershipId(): Promise<DestinyMembership> {
   const membership: DestinyMembership = {
     membershipId: '',
     membershipType: 0,
-    bungieGlobalDisplayName:''
+    bungieGlobalDisplayName: '',
   };
 
   const response = await getDestinyMembershipsRequest();

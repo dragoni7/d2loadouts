@@ -6,7 +6,7 @@ import ArmorIcon from '../../../components/ArmorIcon';
 import { CheckRounded, Close } from '@mui/icons-material';
 import { STATUS } from '../constants';
 import { ArmorEquipper } from '../util/armorEquipper';
-import { DestinyArmor, Plug, SubclassConfig } from '../../../types';
+import { DestinyArmor, Plug, SubclassConfig } from '../../../types/d2l-types';
 import React from 'react';
 import { SubclassEquipper } from '../util/subclassEquipper';
 

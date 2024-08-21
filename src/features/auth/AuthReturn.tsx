@@ -1,4 +1,4 @@
-import { generateToken } from '../../lib/bungie_api/TokenService';
+import { generateToken } from '../../lib/bungie_api/token-services';
 
 function getAuthCodeFromURL(): string | null {
   return window.location.href.includes('code=') ? window.location.href.split('code=')[1] : null;

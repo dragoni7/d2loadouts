@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ManifestPlug, ManifestSubclass, Plug } from '../types';
+import { Plug } from '../types/d2l-types';
 import { RootState } from '../store';
 import { db } from '../store/db';
-import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/SubclassConstants';
+import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/subclass-constants';
 import { updateSubclassMods } from '../store/LoadoutReducer';
 import { Container, Box, Typography, Paper, Button, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { ManifestSubclass, ManifestPlug } from '../types/manifest-types';
 
 interface AbilitiesModificationProps {
   subclass: ManifestSubclass;

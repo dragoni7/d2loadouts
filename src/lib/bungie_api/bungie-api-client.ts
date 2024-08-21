@@ -1,12 +1,12 @@
-import axios from "axios";
-import { API_CREDENTIALS } from "./Constants";
+import axios from 'axios';
+import { API_CREDENTIALS } from './constants';
 
-const BASE_URL = "https://www.bungie.net";
+const BASE_URL = 'https://www.bungie.net';
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
-    "X-API-Key": API_CREDENTIALS.API_KEY,
+    'X-API-Key': API_CREDENTIALS.API_KEY,
   },
 });
 

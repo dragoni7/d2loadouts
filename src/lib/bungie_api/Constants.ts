@@ -1,4 +1,5 @@
 import { Stats } from 'fs';
+import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../types/manifest-types';
 
 export enum API_CREDENTIALS {
   API_KEY = import.meta.env.VITE_API_KEY,
@@ -7,6 +8,46 @@ export enum API_CREDENTIALS {
 
   CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET,
 }
+
+export const EMPTY_MANIFEST_PLUG: ManifestPlug = {
+  perkName: '',
+  perkDescription: '',
+  perkIcon: '',
+  category: 0,
+  isOwned: false,
+  itemHash: 0,
+  name: '',
+  icon: '',
+};
+
+export const EMPTY_ASPECT: ManifestAspect = {
+  energyCapacity: 0,
+  perkName: '',
+  perkDescription: '',
+  perkIcon: '',
+  category: 0,
+  isOwned: false,
+  itemHash: 0,
+  name: '',
+  icon: '',
+};
+
+export const EMPTY_FRAGMENT: ManifestStatPlug = {
+  mobilityMod: 0,
+  resilienceMod: 0,
+  recoveryMod: 0,
+  disciplineMod: 0,
+  intellectMod: 0,
+  strengthMod: 0,
+  perkName: '',
+  perkDescription: '',
+  perkIcon: '',
+  category: 0,
+  isOwned: false,
+  itemHash: 0,
+  name: '',
+  icon: '',
+};
 
 export const COLLECTIBLE_OWNED: number[] = [0, 16, 64, 80];
 

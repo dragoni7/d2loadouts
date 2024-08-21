@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from 'axios';
 import { getBungieMembershipId, getTokens } from '../../store/TokensStore';
-import { _get, _post } from './BungieApiClient';
-import { API_CREDENTIALS } from './Constants';
+import { _get, _post } from './bungie-api-client';
+import { API_CREDENTIALS } from './constants';
 import { store } from '../../store';
-import { Plug } from '../../types';
+import { Plug } from '../../types/d2l-types';
 
 export function getDestinyMembershipsRequest(): Promise<AxiosResponse<any, any>> {
   const bungieMembershipId = getBungieMembershipId();

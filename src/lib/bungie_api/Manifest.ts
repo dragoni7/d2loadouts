@@ -1,7 +1,13 @@
 import { db } from '../../store/db';
 import { getManifestItemClass, getManifestItemSlot } from './utils';
-import { getManifestComponentRequest, getManifestRequest } from './Requests';
-import { ITEM_CATEGORY_HASHES, MANIFEST_CLASS, MANIFEST_TYPES } from './Constants';
+import { getManifestComponentRequest, getManifestRequest } from './requests';
+import {
+  ITEM_CATEGORY_HASHES,
+  MANIFEST_CLASS,
+  MANIFEST_TYPES,
+  PLUG_CATEGORY_HASH,
+  STAT_HASH,
+} from './constants';
 
 const EXOTIC = 2759499571;
 const urlPrefix = 'https://bungie.net';
@@ -82,24 +88,132 @@ export async function updateManifest() {
                 return rule.failureMessage.includes('Artifact');
               })
             ) {
-              await db.manifestArmorModDef.add({
-                itemHash: Number(itemHash),
-                name: current.displayProperties.name,
-                icon: urlPrefix + current.displayProperties.icon,
-                energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
-                category: current.plug.plugCategoryHash,
-                isOwned: false,
-                collectibleHash: -1,
-              });
+              if (
+                current.plug.plugCategoryHash === PLUG_CATEGORY_HASH.ARMOR_MODS.STAT_ARMOR_MODS ||
+                current.plug.plugCategoryHash === PLUG_CATEGORY_HASH.ARMOR_MODS.ARTIFICE_ARMOR_MODS
+              ) {
+                await db.manifestArmorStatModDef.add({
+                  itemHash: Number(itemHash),
+                  name: current.displayProperties.name,
+                  icon: urlPrefix + current.displayProperties.icon,
+                  energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
+                  category: current.plug.plugCategoryHash,
+                  isOwned: false,
+                  collectibleHash: -1,
+                  perkName: '',
+                  perkDescription: '',
+                  perkIcon: '',
+                  mobilityMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.MOBILITY
+                    )?.value,
+                  resilienceMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.RESILIENCE
+                    )?.value,
+                  recoveryMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.RECOVERY
+                    )?.value,
+                  disciplineMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.DISCIPLINE
+                    )?.value,
+                  intellectMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.INTELLECT
+                    )?.value,
+                  strengthMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.STRENGTH
+                    )?.value,
+                });
+              } else {
+                await db.manifestArmorModDef.add({
+                  itemHash: Number(itemHash),
+                  name: current.displayProperties.name,
+                  icon: urlPrefix + current.displayProperties.icon,
+                  energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
+                  category: current.plug.plugCategoryHash,
+                  isOwned: false,
+                  collectibleHash: -1,
+                  perkName: '',
+                  perkDescription: '',
+                  perkIcon: '',
+                });
+              }
             } else if (current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.SUBCLASS_MODS)) {
-              await db.manifestSubclassModDef.add({
-                itemHash: Number(itemHash),
-                name: current.displayProperties.name,
-                icon: urlPrefix + current.displayProperties.icon,
-                energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
-                category: current.plug.plugCategoryHash,
-                isOwned: false,
-              });
+              if (current.itemTypeDisplayName.includes('Aspect')) {
+                await db.manifestSubclassAspectsDef.add({
+                  itemHash: Number(itemHash),
+                  name: current.displayProperties.name,
+                  icon: urlPrefix + current.displayProperties.icon,
+                  category: current.plug.plugCategoryHash,
+                  isOwned: false,
+                  perkName: '',
+                  perkDescription: '',
+                  perkIcon: '',
+                  energyCapacity: current.investmentStats[0].value,
+                });
+              } else if (current.itemTypeDisplayName.includes('Fragment')) {
+                await db.manifestSubclassFragmentsDef.add({
+                  itemHash: Number(itemHash),
+                  name: current.displayProperties.name,
+                  icon: urlPrefix + current.displayProperties.icon,
+                  category: current.plug.plugCategoryHash,
+                  isOwned: false,
+                  perkName: '',
+                  perkDescription: '',
+                  perkIcon: '',
+                  mobilityMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.MOBILITY
+                    )?.value,
+                  resilienceMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.RESILIENCE
+                    )?.value,
+                  recoveryMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.RECOVERY
+                    )?.value,
+                  disciplineMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.DISCIPLINE
+                    )?.value,
+                  intellectMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.INTELLECT
+                    )?.value,
+                  strengthMod:
+                    0 |
+                    current.investmentStats.find(
+                      (stat: any) => stat.statTypeHash === STAT_HASH.STRENGTH
+                    )?.value,
+                });
+              } else {
+                await db.manifestSubclassModDef.add({
+                  itemHash: Number(itemHash),
+                  name: current.displayProperties.name,
+                  icon: urlPrefix + current.displayProperties.icon,
+                  category: current.plug.plugCategoryHash,
+                  isOwned: false,
+                  perkName: '',
+                  perkDescription: '',
+                  perkIcon: '',
+                });
+              }
             }
           }
         }

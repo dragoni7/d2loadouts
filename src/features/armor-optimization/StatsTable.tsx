@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/system';
-import { FilteredPermutation, Plug, DestinyArmor } from '../../types';
+import { FilteredPermutation, Plug, DestinyArmor } from '../../types/d2l-types';
 import { useDispatch } from 'react-redux';
 import {
   resetLoadoutArmorMods,
@@ -8,7 +8,7 @@ import {
   updateRequiredStatMods,
 } from '../../store/LoadoutReducer';
 import ArmorIcon from '../../components/ArmorIcon';
-import { STAT_HASH, STATS } from '../../lib/bungie_api/Constants';
+import { STAT_HASH, STATS } from '../../lib/bungie_api/constants';
 import { getStatModByCost } from '../../lib/bungie_api/utils';
 
 interface StatsTableProps {

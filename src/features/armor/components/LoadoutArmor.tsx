@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './ArmorMods.css';
 import { store } from '../../../store';
-import { ManifestArmorMod } from '../../../types';
 import { db } from '../../../store/db';
-import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/Constants';
+import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 import Stack from '@mui/material/Stack';
 import { Box, Container } from '@mui/system';
-import ArmorConfig from './armor-config';
+import ArmorConfig from './ArmorConfig';
+import { ManifestArmorMod } from '../../../types/manifest-types';
 
 const LoadoutArmor: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;

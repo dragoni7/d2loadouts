@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import { Autocomplete, TextField, Popper } from '@mui/material';
 import { db } from '../store/db';
-import { Character } from '../types';
+import { Character } from '../types/d2l-types';
 
 const NewComponentContainer = styled('div')({
   backgroundColor: 'transparent',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/system';
 import Typography from '@mui/material/Typography';
-import { STATS } from '../../lib/bungie_api/Constants';
+import { STATS } from '../../lib/bungie_api/constants';
 
 const ContainerWithBorder = styled('div')({
   border: '1px solid white',

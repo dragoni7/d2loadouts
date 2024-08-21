@@ -1,7 +1,7 @@
-import { Token, Tokens, getTokens, setTokens } from "../../store/TokensStore";
-import { _post } from "./BungieApiClient";
-import { AxiosResponse } from "axios";
-import { getOAuthTokensRequest } from "./Requests";
+import { Token, Tokens, getTokens, setTokens } from '../../store/TokensStore';
+import { _post } from './bungie-api-client';
+import { AxiosResponse } from 'axios';
+import { getOAuthTokensRequest } from './requests';
 
 export function canTokensRefresh() {
   const tokens = getTokens();
@@ -42,10 +42,7 @@ export async function regenerateTokens(): Promise<boolean> {
   return false;
 }
 
-export async function generateToken(
-  refresh: boolean,
-  authCode = ""
-): Promise<Tokens | null> {
+export async function generateToken(refresh: boolean, authCode = ''): Promise<Tokens | null> {
   var returnToken = null;
 
   const response = await getOAuthTokensRequest(refresh, authCode);
@@ -60,7 +57,7 @@ export async function generateToken(
 }
 
 function getTokenExpiration(token?: Token): number {
-  return token && "acquired" in token && "expires" in token
+  return token && 'acquired' in token && 'expires' in token
     ? token.acquired + token.expires * 1000
     : 0;
 }
@@ -72,14 +69,14 @@ function handleTokenResponse(response: AxiosResponse): Tokens {
     const accessToken: Token = {
       value: response.data.access_token,
       expires: response.data.expires_in,
-      name: "access",
+      name: 'access',
       acquired: aquired,
     };
 
     const refreshToken: Token = {
       value: response.data.refresh_token,
       expires: response.data.refresh_expires_in,
-      name: "refresh",
+      name: 'refresh',
       acquired: aquired,
     };
 

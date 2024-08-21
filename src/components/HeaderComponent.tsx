@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/system';
-import { Character } from '../types';
+import { Character } from '../types/d2l-types';
 
 interface HeaderComponentProps {
   emblemUrl: string;

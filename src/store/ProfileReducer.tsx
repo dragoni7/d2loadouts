@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProfileData } from '../types';
+import { ProfileData } from '../types/d2l-types';
 
 export interface ProfileInitialState {
   profileData: ProfileData;

@@ -1,7 +1,7 @@
-import { Navigate } from "react-router-dom";
-import { isTokenExpired } from "./TokenService";
-import { getTokens } from "../../store/TokensStore";
-import { API_CREDENTIALS } from "./Constants";
+import { Navigate } from 'react-router-dom';
+import { isTokenExpired } from './token-services';
+import { getTokens } from '../../store/TokensStore';
+import { API_CREDENTIALS } from './constants';
 
 /**
  * Navigates to the Bungie OAuth url
@@ -32,7 +32,7 @@ export function isAuthenticated(): boolean {
  */
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (!isAuthenticated()) {
-    return <Navigate to={"/"} replace />;
+    return <Navigate to={'/'} replace />;
   }
 
   return children;

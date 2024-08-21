@@ -1,4 +1,4 @@
-import { snapShotLoadoutRequest } from '../../../lib/bungie_api/Requests';
+import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
 
 export async function createInGameLoadout(
   characterId: string,

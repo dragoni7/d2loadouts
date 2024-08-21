@@ -2,31 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
-import { getDestinyMembershipId } from '../../features/membership/BungieAccount';
+import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
-import { getProfileData } from '../../features/profile/DestinyProfile';
+import { getProfileData } from '../../features/profile/destiny-profile';
 import { updateProfileData } from '../../store/ProfileReducer';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateManifest } from '../../lib/bungie_api/Manifest';
-import { generatePermutations } from '../../features/armor-optimization/generatePermutations';
-import { filterPermutations } from '../../features/armor-optimization/filterPermutations';
-import {
-  DestinyArmor,
-  Character,
-  FilteredPermutation,
-  ManifestSubclass,
-  DamageType,
-} from '../../types';
+import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
+import { filterPermutations } from '../../features/armor-optimization/filter-permutations';
+import { DestinyArmor, Character, FilteredPermutation, DamageType } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
-import AbilitiesModification from '../../components/AbilitiesModification';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
-import SubclassCustomizationWrapper from '../../components/SubclassCustomizationWrapper';
 import ArmorCustomization from '../../features/armor/components/ArmorCustomization';
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
+import { ManifestSubclass } from '../../types/manifest-types';
+import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
+import { updateManifest } from '../../lib/bungie_api/manifest';
 
 const PageContainer = styled('div')({
   display: 'flex',

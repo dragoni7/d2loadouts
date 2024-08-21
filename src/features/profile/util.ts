@@ -1,5 +1,5 @@
-import { CLASS_HASH, STAT_MOD_HASHES } from '../../lib/bungie_api/Constants';
-import { DestinyArmor } from '../../types';
+import { CLASS_HASH, STAT_MOD_HASHES } from '../../lib/bungie_api/constants';
+import { DestinyArmor } from '../../types/d2l-types';
 
 export const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
   [STAT_MOD_HASHES.INTELLECT_MOD]: (armor: DestinyArmor) =>

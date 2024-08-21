@@ -1,11 +1,11 @@
-import { BUCKET_HASH, ITEM_LOCATIONS } from '../../../lib/bungie_api/Constants';
+import { BUCKET_HASH, ITEM_LOCATIONS } from '../../../lib/bungie_api/constants';
 import {
   equipItemRequest,
   getCharacterInventoryRequest,
   insertSocketPlugFreeRequest,
   transferItemRequest,
-} from '../../../lib/bungie_api/Requests';
-import { DestinyArmor, Plug } from '../../../types';
+} from '../../../lib/bungie_api/requests';
+import { DestinyArmor, Plug } from '../../../types/d2l-types';
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
 

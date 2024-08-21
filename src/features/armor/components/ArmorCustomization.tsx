@@ -1,9 +1,9 @@
 import React from 'react';
 import './ArmorCustomization.css';
-import { ManifestSubclass } from '../../../types';
-import LoadoutArmor from './loadout-armor';
-import AbilitiesModification from '../../../components/AbilitiesModification';
-import EquipLoadout from '../../loadouts/components/equip-loadout';
+import LoadoutArmor from './LoadoutArmor';
+import EquipLoadout from '../../loadouts/components/EquipLoadout';
+import { ManifestSubclass } from '../../../types/manifest-types';
+import AbilitiesModification from '../../subclass/AbilitiesModification';
 
 interface ArmorCustomizationProps {
   onBackClick: () => void;
