@@ -1,5 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Character, DamageType, DestinyArmor, Loadout, ManifestPlug, Plug } from '../types';
+import {
+  Character,
+  DamageType,
+  DestinyArmor,
+  Loadout,
+  ManifestPlug,
+  Plug,
+  Subclass,
+} from '../types';
 import { DAMAGE_TYPE } from '../lib/bungie_api/Constants';
 
 const EMPTY_PLUG: Plug = {
@@ -145,13 +153,22 @@ const initialState: InitialState = {
       4: { plugItemHash: '4173924323', socketArrayType: 0, socketIndex: 11 },
     },
     characterId: 0,
-    subclass: {
-      itemId: '',
+    subclassConfig: {
+      subclass: {
+        instanceId: '',
+        screenshot: '',
+        damageType: 0,
+        isOwned: false,
+        class: '',
+        itemHash: 0,
+        name: '',
+        icon: '',
+      },
       damageType: 1,
       super: {
         plugItemHash: '',
-        socketArrayType: 0,
-        socketIndex: 0,
+        socketArrayType: undefined,
+        socketIndex: undefined,
       },
       aspects: Array(2).fill(EMPTY_PLUG),
       fragments: Array(5).fill(EMPTY_PLUG),
@@ -214,12 +231,12 @@ export const loadoutConfigSlice = createSlice({
       state.loadout.legArmorMods = initialState.loadout.legArmorMods;
       state.loadout.classArmorMods = initialState.loadout.classArmorMods;
     },
-    updateSubclassId: (
+    updateSubclass: (
       state,
-      action: PayloadAction<{ damageType: DamageType; itemId: string }>
+      action: PayloadAction<{ damageType: DamageType; subclass: Subclass }>
     ) => {
-      state.loadout.subclass = {
-        itemId: action.payload.itemId,
+      state.loadout.subclassConfig = {
+        subclass: action.payload.subclass,
         damageType: action.payload.damageType,
         super: {
           plugItemHash: '',
@@ -241,7 +258,7 @@ export const loadoutConfigSlice = createSlice({
       const { category, mods } = action.payload;
       switch (category) {
         case 'SUPERS':
-          state.loadout.subclass.super = mods[0]
+          state.loadout.subclassConfig.super = mods[0]
             ? {
                 plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
@@ -254,23 +271,23 @@ export const loadoutConfigSlice = createSlice({
               };
           break;
         case 'ASPECTS':
-          state.loadout.subclass.aspects = mods.map((mod, index) => ({
+          state.loadout.subclassConfig.aspects = mods.map((mod, index) => ({
             plugItemHash: mod.plugItemHash,
             socketArrayType: 0,
             socketIndex:
-              index + (state.loadout.subclass.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5),
+              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5),
           }));
           break;
         case 'FRAGMENTS':
-          state.loadout.subclass.fragments = mods.map((mod, index) => ({
+          state.loadout.subclassConfig.fragments = mods.map((mod, index) => ({
             plugItemHash: mod.plugItemHash,
             socketArrayType: 0,
             socketIndex:
-              index + (state.loadout.subclass.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7),
+              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7),
           }));
           break;
         case 'CLASS_ABILITIES':
-          state.loadout.subclass.classAbility = mods[0]
+          state.loadout.subclassConfig.classAbility = mods[0]
             ? {
                 plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
@@ -279,7 +296,7 @@ export const loadoutConfigSlice = createSlice({
             : null;
           break;
         case 'MELEE_ABILITIES':
-          state.loadout.subclass.meleeAbility = mods[0]
+          state.loadout.subclassConfig.meleeAbility = mods[0]
             ? {
                 plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
@@ -288,7 +305,7 @@ export const loadoutConfigSlice = createSlice({
             : null;
           break;
         case 'MOVEMENT_ABILITIES':
-          state.loadout.subclass.movementAbility = mods[0]
+          state.loadout.subclassConfig.movementAbility = mods[0]
             ? {
                 plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
@@ -297,7 +314,7 @@ export const loadoutConfigSlice = createSlice({
             : null;
           break;
         case 'GRENADES':
-          state.loadout.subclass.grenade = mods[0]
+          state.loadout.subclassConfig.grenade = mods[0]
             ? {
                 plugItemHash: mods[0].plugItemHash,
                 socketArrayType: 0,
@@ -309,7 +326,7 @@ export const loadoutConfigSlice = createSlice({
     },
     updateLoadoutCharacter: (state, action: PayloadAction<Character>) => {
       state.loadout.characterId = action.payload.id;
-      state.loadout.subclass = action.payload.equippedLoadout.subclass;
+      state.loadout.subclassConfig = action.payload.equippedLoadout.subclassConfig;
     },
     resetLoadout: () => initialState,
   },
@@ -321,7 +338,7 @@ export const {
   resetLoadoutArmorMods,
   updateRequiredStatMods,
   updateSubclassMods,
-  updateSubclassId,
+  updateSubclass,
   updateLoadoutArmor,
   updateLoadoutCharacter,
   resetLoadout,

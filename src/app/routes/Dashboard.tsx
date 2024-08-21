@@ -26,7 +26,7 @@ import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 import SubclassCustomizationWrapper from '../../components/SubclassCustomizationWrapper';
 import ArmorCustomization from '../../features/armor/components/ArmorCustomization';
-import { resetLoadout, updateLoadoutCharacter, updateSubclassId } from '../../store/LoadoutReducer';
+import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -207,9 +207,9 @@ export const Dashboard: React.FC = () => {
     setSelectedSubclass(subclass);
     if (selectedCharacter) {
       dispatch(
-        updateSubclassId({
+        updateSubclass({
           damageType: subclass.damageType as DamageType,
-          itemId: selectedCharacter.subclasses[subclass.damageType],
+          subclass: selectedCharacter.subclasses[subclass.damageType],
         })
       );
     }
