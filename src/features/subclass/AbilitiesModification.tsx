@@ -1,13 +1,14 @@
+import styled from '@emotion/styled';
+import { Paper, Button, Typography } from '@mui/material';
+import { Box, Container } from '@mui/system';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Plug } from '../types/d2l-types';
-import { RootState } from '../store';
-import { db } from '../store/db';
-import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/subclass-constants';
-import { updateSubclassMods } from '../store/LoadoutReducer';
-import { Container, Box, Typography, Paper, Button, Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { ManifestSubclass, ManifestPlug } from '../types/manifest-types';
+import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/constants';
+import { RootState } from '../../store';
+import { db } from '../../store/db';
+import { updateSubclassMods } from '../../store/LoadoutReducer';
+import { Plug } from '../../types/d2l-types';
+import { ManifestSubclass, ManifestPlug } from '../../types/manifest-types';
 
 interface AbilitiesModificationProps {
   subclass: ManifestSubclass;
