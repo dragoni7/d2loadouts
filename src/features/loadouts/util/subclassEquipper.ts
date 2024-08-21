@@ -1,5 +1,6 @@
 import { equipItemRequest, insertSocketPlugFreeRequest } from '../../../lib/bungie_api/requests';
 import { Plug, Subclass } from '../../../types/d2l-types';
+import { ManifestAspect, ManifestPlug, ManifestStatPlug } from '../../../types/manifest-types';
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
 
@@ -26,71 +27,75 @@ export class SubclassEquipper extends Equipper {
       );
   }
 
-  public async equipSubclassAbility(ability: Plug) {
+  public async equipSubclassAbility(ability: ManifestPlug, socketArrayIndex: number) {
     const response = await insertSocketPlugFreeRequest(
       this.result.subject.instanceId,
-      ability,
+      {
+        plugItemHash: String(ability.itemHash),
+        socketArrayType: 0,
+        socketIndex: socketArrayIndex,
+      },
       this.characterId
     ).catch((error) => {
       if (error.response) {
         this.result.status = STATUS.FAIL;
-        this.result.operationsStatus[1] = error.response.data.ErrorStatus.replace(
-          /([a-z])([A-Z])/g,
-          '$1 $2'
+        this.result.operationsStatus.push(
+          error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
         );
       }
     });
 
     if (response)
-      this.result.operationsStatus[1] = response.data.ErrorStatus.replace(
-        /([a-z])([A-Z])/g,
-        '$1 $2'
+      this.result.operationsStatus.push(
+        response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
       );
   }
 
-  public async equipSubclassAspect(aspect: Plug) {
+  public async equipSubclassAspect(aspect: ManifestAspect, socketArrayIndex: number) {
     const response = await insertSocketPlugFreeRequest(
       this.result.subject.instanceId,
-      aspect,
+      {
+        plugItemHash: String(aspect.itemHash),
+        socketArrayType: 0,
+        socketIndex: socketArrayIndex,
+      },
       this.characterId
     ).catch((error) => {
       if (error.response) {
         this.result.status = STATUS.FAIL;
-        this.result.operationsStatus[2] = error.response.data.ErrorStatus.replace(
-          /([a-z])([A-Z])/g,
-          '$1 $2'
+        this.result.operationsStatus.push(
+          error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
         );
       }
     });
 
     if (response)
-      this.result.operationsStatus[2] = response.data.ErrorStatus.replace(
-        /([a-z])([A-Z])/g,
-        '$1 $2'
+      this.result.operationsStatus.push(
+        response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
       );
   }
 
-  public async equipSubclassFragments(fragments: Plug[]) {
-    for (let i = 0; i < fragments.length; i++) {
-      const response = await insertSocketPlugFreeRequest(
-        this.result.subject.instanceId,
-        fragments[i],
-        this.characterId
-      ).catch((error) => {
-        if (error.response) {
-          this.result.status = STATUS.FAIL;
-          this.result.operationsStatus[i + 3] = error.response.data.ErrorStatus.replace(
-            /([a-z])([A-Z])/g,
-            '$1 $2'
-          );
-        }
-      });
-
-      if (response)
-        this.result.operationsStatus[i + 3] = response.data.ErrorStatus.replace(
-          /([a-z])([A-Z])/g,
-          '$1 $2'
+  public async equipSubclassFragments(fragment: ManifestStatPlug, socketArrayIndex: number) {
+    const response = await insertSocketPlugFreeRequest(
+      this.result.subject.instanceId,
+      {
+        plugItemHash: String(fragment.itemHash),
+        socketArrayType: 0,
+        socketIndex: socketArrayIndex,
+      },
+      this.characterId
+    ).catch((error) => {
+      if (error.response) {
+        this.result.status = STATUS.FAIL;
+        this.result.operationsStatus.push(
+          error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
         );
-    }
+      }
+    });
+
+    if (response)
+      this.result.operationsStatus.push(
+        response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
+      );
   }
 }

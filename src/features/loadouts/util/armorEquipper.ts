@@ -6,6 +6,7 @@ import {
   transferItemRequest,
 } from '../../../lib/bungie_api/requests';
 import { DestinyArmor, Plug } from '../../../types/d2l-types';
+import { ManifestPlug, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
 
@@ -124,14 +125,20 @@ export class ArmorEquipper extends Equipper {
       );
   }
 
-  public async equipArmorMods(mods: { [key: number]: Plug }): Promise<void> {
+  public async equipArmorMods(mods: {
+    [key: number]: ManifestPlug | ManifestArmorStatMod;
+  }): Promise<void> {
     if (this.result.subject) {
       for (let i = 0; i < 5; i++) {
         if (i === 4 && this.result.subject.artifice === false) continue;
 
         const response = await insertSocketPlugFreeRequest(
           this.result.subject.instanceHash,
-          mods[i],
+          {
+            plugItemHash: String(mods[i].itemHash),
+            socketArrayType: 0,
+            socketIndex: i === 4 && this.result.subject.artifice === true ? 11 : i,
+          },
           this.characterId
         ).catch((error) => {
           if (error.response) {

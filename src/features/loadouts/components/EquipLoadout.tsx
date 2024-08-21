@@ -9,6 +9,7 @@ import { ArmorEquipper } from '../util/armorEquipper';
 import { DestinyArmor, Plug, SubclassConfig } from '../../../types/d2l-types';
 import React from 'react';
 import { SubclassEquipper } from '../util/subclassEquipper';
+import { ManifestArmorStatMod, ManifestPlug } from '../../../types/manifest-types';
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
@@ -84,7 +85,7 @@ const EquipLoadout: React.FC = () => {
     equipper: ArmorEquipper,
     tempResults: EquipResult[],
     armor: DestinyArmor,
-    armorMods: { [key: number]: Plug }
+    armorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod }
   ) => {
     tempEquipped.push(armor);
     setProcessing(tempEquipped);
@@ -109,34 +110,34 @@ const EquipLoadout: React.FC = () => {
     await equipper.equipSubclass(subclassConfig.subclass);
 
     setEquipStep('Equipping Super ...');
-    await equipper.equipSubclassAbility(subclassConfig.super);
+    await equipper.equipSubclassAbility(subclassConfig.super[0], 0);
 
-    if (subclassConfig.classAbility) {
+    if (subclassConfig.classAbility[1]) {
       setEquipStep('Equipping Class Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.classAbility);
+      await equipper.equipSubclassAbility(subclassConfig.classAbility[1], 1);
     }
 
-    if (subclassConfig.movementAbility) {
+    if (subclassConfig.movementAbility[2]) {
       setEquipStep('Equipping Movement Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.movementAbility);
+      await equipper.equipSubclassAbility(subclassConfig.movementAbility[2], 2);
     }
 
-    if (subclassConfig.meleeAbility) {
+    if (subclassConfig.meleeAbility[3]) {
       setEquipStep('Equipping Melee Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.meleeAbility);
+      await equipper.equipSubclassAbility(subclassConfig.meleeAbility[3], 3);
     }
 
-    if (subclassConfig.grenade) {
+    if (subclassConfig.grenade[4]) {
       setEquipStep('Equipping Grenade Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.grenade);
+      await equipper.equipSubclassAbility(subclassConfig.grenade[4], 4);
     }
 
     setEquipStep('Equipping Aspects ...');
-    await equipper.equipSubclassAspect(subclassConfig.aspects[0]);
-    await equipper.equipSubclassAspect(subclassConfig.aspects[1]);
+    await equipper.equipSubclassAspect(subclassConfig.aspects[5], 5);
+    await equipper.equipSubclassAspect(subclassConfig.aspects[6], 6);
 
     setEquipStep('Equipping Fragments ...');
-    await equipper.equipSubclassFragments(subclassConfig.fragments);
+    //await equipper.equipSubclassFragments(subclassConfig.fragments);
 
     const result = equipper.getResult();
     tempResults.push(result);
