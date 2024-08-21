@@ -150,8 +150,8 @@ export async function getProfileData(): Promise<ProfileData> {
             icon: '',
             name: '',
           },
-          helmetMods: {
-            0: {
+          helmetMods: [
+            {
               itemHash: 1980618587,
               perkName: '',
               perkDescription: '',
@@ -161,7 +161,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            1: {
+            {
               itemHash: 1078080765,
               perkName: '',
               perkDescription: '',
@@ -171,7 +171,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            2: {
+            {
               itemHash: 1078080765,
               perkName: '',
               perkDescription: '',
@@ -181,7 +181,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            3: {
+            {
               itemHash: 1078080765,
               perkName: '',
               perkDescription: '',
@@ -191,7 +191,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            11: {
+            {
               itemHash: 4173924323,
               perkName: '',
               perkDescription: '',
@@ -201,9 +201,9 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-          },
-          gauntletMods: {
-            0: {
+          ],
+          gauntletMods: [
+            {
               itemHash: 1980618587,
               perkName: '',
               perkDescription: '',
@@ -213,7 +213,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            1: {
+            {
               itemHash: 3820147479,
               perkName: '',
               perkDescription: '',
@@ -223,7 +223,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            2: {
+            {
               itemHash: 3820147479,
               perkName: '',
               perkDescription: '',
@@ -233,7 +233,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            3: {
+            {
               itemHash: 3820147479,
               perkName: '',
               perkDescription: '',
@@ -243,7 +243,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            11: {
+            {
               itemHash: 4173924323,
               perkName: '',
               perkDescription: '',
@@ -253,9 +253,9 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-          },
-          chestArmorMods: {
-            0: {
+          ],
+          chestArmorMods: [
+            {
               itemHash: 1980618587,
               perkName: '',
               perkDescription: '',
@@ -265,7 +265,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            1: {
+            {
               itemHash: 1803434835,
               perkName: '',
               perkDescription: '',
@@ -275,7 +275,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            2: {
+            {
               itemHash: 1803434835,
               perkName: '',
               perkDescription: '',
@@ -285,7 +285,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            3: {
+            {
               itemHash: 1803434835,
               perkName: '',
               perkDescription: '',
@@ -295,7 +295,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            11: {
+            {
               itemHash: 4173924323,
               perkName: '',
               perkDescription: '',
@@ -305,9 +305,9 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-          },
-          legArmorMods: {
-            0: {
+          ],
+          legArmorMods: [
+            {
               itemHash: 1980618587,
               perkName: '',
               perkDescription: '',
@@ -317,7 +317,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            1: {
+            {
               itemHash: 2269836811,
               perkName: '',
               perkDescription: '',
@@ -327,7 +327,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            2: {
+            {
               itemHash: 2269836811,
               perkName: '',
               perkDescription: '',
@@ -337,7 +337,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            3: {
+            {
               itemHash: 2269836811,
               perkName: '',
               perkDescription: '',
@@ -347,7 +347,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            11: {
+            {
               itemHash: 4173924323,
               perkName: '',
               perkDescription: '',
@@ -357,9 +357,9 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-          },
-          classArmorMods: {
-            0: {
+          ],
+          classArmorMods: [
+            {
               itemHash: 1980618587,
               perkName: '',
               perkDescription: '',
@@ -369,7 +369,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            1: {
+            {
               itemHash: 3200810407,
               perkName: '',
               perkDescription: '',
@@ -379,7 +379,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            2: {
+            {
               itemHash: 3200810407,
               perkName: '',
               perkDescription: '',
@@ -389,7 +389,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            3: {
+            {
               itemHash: 3200810407,
               perkName: '',
               perkDescription: '',
@@ -399,7 +399,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-            11: {
+            {
               itemHash: 4173924323,
               perkName: '',
               perkDescription: '',
@@ -409,7 +409,7 @@ export async function getProfileData(): Promise<ProfileData> {
               name: '',
               icon: '',
             },
-          },
+          ],
           characterId: characterData[key].characterId,
           subclassConfig: {
             subclass: {
@@ -423,19 +423,19 @@ export async function getProfileData(): Promise<ProfileData> {
               icon: '',
             },
             damageType: 1,
-            super: { 0: EMPTY_MANIFEST_PLUG },
-            aspects: { 5: EMPTY_ASPECT, 6: EMPTY_ASPECT },
-            fragments: {
-              7: EMPTY_FRAGMENT,
-              8: EMPTY_FRAGMENT,
-              9: EMPTY_FRAGMENT,
-              10: EMPTY_FRAGMENT,
-              11: EMPTY_FRAGMENT,
-            },
-            classAbility: { 1: null },
-            meleeAbility: { 3: null },
-            movementAbility: { 2: null },
-            grenade: { 4: null },
+            super: EMPTY_MANIFEST_PLUG,
+            aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+            fragments: [
+              EMPTY_FRAGMENT,
+              EMPTY_FRAGMENT,
+              EMPTY_FRAGMENT,
+              EMPTY_FRAGMENT,
+              EMPTY_FRAGMENT,
+            ],
+            classAbility: null,
+            meleeAbility: null,
+            movementAbility: null,
+            grenade: null,
           },
           requiredStatMods: [],
         },

@@ -41,13 +41,13 @@ export interface ArmorBySlot {
 export type SubclassConfig = {
   subclass: Subclass;
   damageType: DamageType;
-  super: { [key: number]: ManifestPlug };
-  aspects: { [key: number]: ManifestAspect };
-  fragments: { [key: number]: ManifestStatPlug };
-  classAbility: { [key: number]: ManifestPlug | null };
-  meleeAbility: { [key: number]: ManifestPlug | null };
-  movementAbility: { [key: number]: ManifestPlug | null };
-  grenade: { [key: number]: ManifestPlug | null };
+  super: ManifestPlug;
+  aspects: [ManifestAspect, ManifestAspect];
+  fragments: ManifestStatPlug[];
+  classAbility: ManifestPlug | null;
+  meleeAbility: ManifestPlug | null;
+  movementAbility: ManifestPlug | null;
+  grenade: ManifestPlug | null;
 };
 
 export type Plug = {
@@ -63,11 +63,11 @@ export type Loadout = {
   legArmor: DestinyArmor;
   classArmor: DestinyArmor;
   requiredStatMods: ManifestArmorStatMod[];
-  helmetMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
-  gauntletMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
-  chestArmorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
-  legArmorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
-  classArmorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod };
+  helmetMods: ManifestPlug[] | ManifestArmorStatMod[];
+  gauntletMods: ManifestPlug[] | ManifestArmorStatMod[];
+  chestArmorMods: ManifestPlug[] | ManifestArmorStatMod[];
+  legArmorMods: ManifestPlug[] | ManifestArmorStatMod[];
+  classArmorMods: ManifestPlug[] | ManifestArmorStatMod[];
   characterId: number;
   subclassConfig: SubclassConfig;
 };

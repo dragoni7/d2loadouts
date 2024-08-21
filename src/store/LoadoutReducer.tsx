@@ -115,8 +115,8 @@ const initialState: InitialState = {
       name: '',
     },
     requiredStatMods: [],
-    helmetMods: {
-      0: {
+    helmetMods: [
+      {
         itemHash: 1980618587,
         perkName: '',
         perkDescription: '',
@@ -126,7 +126,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      1: {
+      {
         itemHash: 1078080765,
         perkName: '',
         perkDescription: '',
@@ -136,7 +136,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      2: {
+      {
         itemHash: 1078080765,
         perkName: '',
         perkDescription: '',
@@ -146,7 +146,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      3: {
+      {
         itemHash: 1078080765,
         perkName: '',
         perkDescription: '',
@@ -156,7 +156,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      11: {
+      {
         itemHash: 4173924323,
         perkName: '',
         perkDescription: '',
@@ -166,9 +166,9 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-    },
-    gauntletMods: {
-      0: {
+    ],
+    gauntletMods: [
+      {
         itemHash: 1980618587,
         perkName: '',
         perkDescription: '',
@@ -178,7 +178,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      1: {
+      {
         itemHash: 3820147479,
         perkName: '',
         perkDescription: '',
@@ -188,7 +188,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      2: {
+      {
         itemHash: 3820147479,
         perkName: '',
         perkDescription: '',
@@ -198,7 +198,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      3: {
+      {
         itemHash: 3820147479,
         perkName: '',
         perkDescription: '',
@@ -208,7 +208,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      11: {
+      {
         itemHash: 4173924323,
         perkName: '',
         perkDescription: '',
@@ -218,9 +218,9 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-    },
-    chestArmorMods: {
-      0: {
+    ],
+    chestArmorMods: [
+      {
         itemHash: 1980618587,
         perkName: '',
         perkDescription: '',
@@ -230,7 +230,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      1: {
+      {
         itemHash: 1803434835,
         perkName: '',
         perkDescription: '',
@@ -240,7 +240,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      2: {
+      {
         itemHash: 1803434835,
         perkName: '',
         perkDescription: '',
@@ -250,7 +250,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      3: {
+      {
         itemHash: 1803434835,
         perkName: '',
         perkDescription: '',
@@ -260,7 +260,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      11: {
+      {
         itemHash: 4173924323,
         perkName: '',
         perkDescription: '',
@@ -270,9 +270,9 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-    },
-    legArmorMods: {
-      0: {
+    ],
+    legArmorMods: [
+      {
         itemHash: 1980618587,
         perkName: '',
         perkDescription: '',
@@ -282,7 +282,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      1: {
+      {
         itemHash: 2269836811,
         perkName: '',
         perkDescription: '',
@@ -292,7 +292,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      2: {
+      {
         itemHash: 2269836811,
         perkName: '',
         perkDescription: '',
@@ -302,7 +302,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      3: {
+      {
         itemHash: 2269836811,
         perkName: '',
         perkDescription: '',
@@ -312,7 +312,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      11: {
+      {
         itemHash: 4173924323,
         perkName: '',
         perkDescription: '',
@@ -322,9 +322,9 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-    },
-    classArmorMods: {
-      0: {
+    ],
+    classArmorMods: [
+      {
         itemHash: 1980618587,
         perkName: '',
         perkDescription: '',
@@ -334,7 +334,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      1: {
+      {
         itemHash: 3200810407,
         perkName: '',
         perkDescription: '',
@@ -344,7 +344,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      2: {
+      {
         itemHash: 3200810407,
         perkName: '',
         perkDescription: '',
@@ -354,7 +354,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      3: {
+      {
         itemHash: 3200810407,
         perkName: '',
         perkDescription: '',
@@ -364,7 +364,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-      11: {
+      {
         itemHash: 4173924323,
         perkName: '',
         perkDescription: '',
@@ -374,7 +374,7 @@ const initialState: InitialState = {
         name: '',
         icon: '',
       },
-    },
+    ],
     characterId: 0,
     subclassConfig: {
       subclass: {
@@ -388,19 +388,13 @@ const initialState: InitialState = {
         icon: '',
       },
       damageType: 1,
-      super: { 0: EMPTY_MANIFEST_PLUG },
-      aspects: { 5: EMPTY_ASPECT, 6: EMPTY_ASPECT },
-      fragments: {
-        7: EMPTY_FRAGMENT,
-        8: EMPTY_FRAGMENT,
-        9: EMPTY_FRAGMENT,
-        10: EMPTY_FRAGMENT,
-        11: EMPTY_FRAGMENT,
-      },
-      classAbility: { 1: null },
-      meleeAbility: { 3: null },
-      movementAbility: { 2: null },
-      grenade: { 4: null },
+      super: EMPTY_MANIFEST_PLUG,
+      aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+      fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
+      classAbility: null,
+      meleeAbility: null,
+      movementAbility: null,
+      grenade: null,
     },
   },
 };
@@ -467,26 +461,20 @@ export const loadoutConfigSlice = createSlice({
       state.loadout.subclassConfig = {
         subclass: action.payload.subclass,
         damageType: action.payload.damageType,
-        super: { 0: EMPTY_MANIFEST_PLUG },
-        aspects: { 5: EMPTY_ASPECT, 6: EMPTY_ASPECT },
-        fragments: {
-          7: EMPTY_FRAGMENT,
-          8: EMPTY_FRAGMENT,
-          9: EMPTY_FRAGMENT,
-          10: EMPTY_FRAGMENT,
-          11: EMPTY_FRAGMENT,
-        },
-        classAbility: { 1: null },
-        meleeAbility: { 3: null },
-        movementAbility: { 2: null },
-        grenade: { 4: null },
+        super: EMPTY_MANIFEST_PLUG,
+        aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+        fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
+        classAbility: null,
+        meleeAbility: null,
+        movementAbility: null,
+        grenade: null,
       };
     },
     updateSubclassMods: (state, action: PayloadAction<{ category: string; mods: any[] }>) => {
       const { category, mods } = action.payload;
       switch (category) {
         case 'SUPERS':
-          state.loadout.subclassConfig.super = [0, mods[0] ? mods[0] : EMPTY_MANIFEST_PLUG];
+          state.loadout.subclassConfig.super = mods[0] ? mods[0] : EMPTY_MANIFEST_PLUG;
           break;
         case 'ASPECTS':
           mods.forEach((mod, index) => {
@@ -504,16 +492,16 @@ export const loadoutConfigSlice = createSlice({
           });
           break;
         case 'CLASS_ABILITIES':
-          state.loadout.subclassConfig.classAbility = [1, mods[0] ? mods[0] : null];
+          state.loadout.subclassConfig.classAbility = mods[0] ? mods[0] : null;
           break;
         case 'MELEE_ABILITIES':
-          state.loadout.subclassConfig.meleeAbility = [3, mods[0] ? mods[0] : null];
+          state.loadout.subclassConfig.meleeAbility = mods[0] ? mods[0] : null;
           break;
         case 'MOVEMENT_ABILITIES':
-          state.loadout.subclassConfig.movementAbility = [2, mods[0] ? mods[0] : null];
+          state.loadout.subclassConfig.movementAbility = mods[0] ? mods[0] : null;
           break;
         case 'GRENADES':
-          state.loadout.subclassConfig.grenade = [4, mods[0] ? mods[0] : null];
+          state.loadout.subclassConfig.grenade = mods[0] ? mods[0] : null;
           break;
       }
     },

@@ -10,6 +10,7 @@ import { DestinyArmor, Plug, SubclassConfig } from '../../../types/d2l-types';
 import React from 'react';
 import { SubclassEquipper } from '../util/subclassEquipper';
 import { ManifestArmorStatMod, ManifestPlug } from '../../../types/manifest-types';
+import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
@@ -110,34 +111,42 @@ const EquipLoadout: React.FC = () => {
     await equipper.equipSubclass(subclassConfig.subclass);
 
     setEquipStep('Equipping Super ...');
-    await equipper.equipSubclassAbility(subclassConfig.super[0], 0);
+    await equipper.equipSubclassAbility(subclassConfig.super, 0);
 
-    if (subclassConfig.classAbility[1]) {
+    if (subclassConfig.classAbility) {
       setEquipStep('Equipping Class Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.classAbility[1], 1);
+      await equipper.equipSubclassAbility(subclassConfig.classAbility, 1);
     }
 
-    if (subclassConfig.movementAbility[2]) {
+    if (subclassConfig.movementAbility) {
       setEquipStep('Equipping Movement Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.movementAbility[2], 2);
+      await equipper.equipSubclassAbility(subclassConfig.movementAbility, 2);
     }
 
-    if (subclassConfig.meleeAbility[3]) {
+    if (subclassConfig.meleeAbility) {
       setEquipStep('Equipping Melee Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.meleeAbility[3], 3);
+      await equipper.equipSubclassAbility(subclassConfig.meleeAbility, 3);
     }
 
-    if (subclassConfig.grenade[4]) {
+    if (subclassConfig.grenade) {
       setEquipStep('Equipping Grenade Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.grenade[4], 4);
+      await equipper.equipSubclassAbility(subclassConfig.grenade, 4);
     }
 
     setEquipStep('Equipping Aspects ...');
-    await equipper.equipSubclassAspect(subclassConfig.aspects[5], 5);
-    await equipper.equipSubclassAspect(subclassConfig.aspects[6], 6);
+
+    let aspectIndex = subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5;
+
+    await equipper.equipSubclassAspect(subclassConfig.aspects[0], aspectIndex);
+    await equipper.equipSubclassAspect(subclassConfig.aspects[1], aspectIndex + 1);
 
     setEquipStep('Equipping Fragments ...');
-    //await equipper.equipSubclassFragments(subclassConfig.fragments);
+
+    let fragmentIndex = subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7;
+
+    for (let i = 0; i < subclassConfig.fragments.length; i++) {
+      await equipper.equipSubclassFragments(subclassConfig.fragments[i], fragmentIndex + i);
+    }
 
     const result = equipper.getResult();
     tempResults.push(result);
