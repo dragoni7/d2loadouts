@@ -117,6 +117,19 @@ export interface ManifestPlug extends ManifestEntry {
   isOwned: boolean;
 }
 
+export interface ManifestAspect extends ManifestPlug {
+  energyCapacity: number;
+}
+
+export interface ManifestFragment extends ManifestPlug {
+  mobilityMod: number;
+  resilienceMod: number;
+  recoveryMod: number;
+  discipline: number;
+  intellect: number;
+  strength: number;
+}
+
 export interface ManifestArmorMod extends ManifestPlug {
   collectibleHash: number;
 }
