@@ -1,5 +1,6 @@
 import { Box } from '@mui/system';
-import { Plug, ManifestArmorMod } from '../../../types/d2l-types';
+import { Plug } from '../../../types/d2l-types';
+import { ManifestArmorMod } from '../../../types/manifest-types';
 
 interface ModSelectorProps {
   selected: Plug;

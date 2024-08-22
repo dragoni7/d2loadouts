@@ -16,12 +16,12 @@ const LoadoutArmor: React.FC = () => {
 
   useEffect(() => {
     const gatherMods = async () => {
-      const dbStatMods = await db.manifestArmorModDef
+      const dbStatMods = await db.manifestArmorStatModDef
         .where('category')
         .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.STAT_ARMOR_MODS)
         .toArray();
 
-      const dbArtificeMods = await db.manifestArmorModDef
+      const dbArtificeMods = await db.manifestArmorStatModDef
         .where('category')
         .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.ARTIFICE_ARMOR_MODS)
         .toArray();
@@ -50,7 +50,7 @@ const LoadoutArmor: React.FC = () => {
       let matches: ManifestArmorMod[] = [];
 
       for (const mod of requiredStatMods) {
-        const found = allStatMods.find((statMod) => String(statMod.itemHash) === mod.plugItemHash);
+        const found = allStatMods.find((statMod) => String(statMod.itemHash) === mod.itemHash);
         if (found) matches.push(found);
       }
 

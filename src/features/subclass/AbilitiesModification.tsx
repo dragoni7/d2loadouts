@@ -1,5 +1,4 @@
-import styled from '@emotion/styled';
-import { Paper, Button, Typography } from '@mui/material';
+import { Paper, Button, Typography, styled } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';

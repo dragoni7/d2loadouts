@@ -4,9 +4,9 @@ import { useDispatch } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods } from '../../../store/LoadoutReducer';
 import { DestinyArmor, Plug } from '../../../types/d2l-types';
-import ArmorModSelector from './armor-mod-selector';
+import ArmorModSelector from './ArmorModSelector';
 import { getSelectedModsBySlot, getModsBySlot } from '../util';
-import { ManifestArmorMod } from '../../../types/manifest-types';
+import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 
 interface ArmorConfigProps {
   armor: DestinyArmor;
@@ -33,7 +33,11 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
     );
   };
 
-  const onSelectMod = async (mod: ManifestArmorMod, slot: number, socketIndex: number) => {
+  const onSelectMod = async (
+    mod: ManifestArmorMod | ManifestArmorStatMod,
+    slot: number,
+    socketIndex: number
+  ) => {
     let totalCost = mod.energyCost;
 
     for (const key in selectedMods) {
@@ -57,11 +61,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
       updateLoadoutArmorMods({
         armorType: armor.type,
         slot: slot,
-        plug: {
-          plugItemHash: String(mod.itemHash),
-          socketArrayType: 0,
-          socketIndex: socketIndex,
-        },
+        plug: mod,
       })
     );
     setSelectedMods(getSelectedModsBySlot(armor.type));

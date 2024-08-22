@@ -10,6 +10,8 @@ import {
 import ArmorIcon from '../../components/ArmorIcon';
 import { STAT_HASH, STATS } from '../../lib/bungie_api/constants';
 import { getStatModByCost } from '../../lib/bungie_api/utils';
+import { ManifestArmorStatMod } from '../../types/manifest-types';
+import { db } from '../../store/db';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
@@ -249,19 +251,15 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
             onClick={() => {
               dispatch(resetLoadoutArmorMods());
               dispatch(updateLoadoutArmor(perm.permutation));
-              let requiredMods: Plug[] = [];
+              let requiredMods: ManifestArmorStatMod[] = [];
+
               Object.entries(perm.modsArray).forEach(([stat, costs]) => {
-                costs.forEach((cost: number) => {
-                  requiredMods.push({
-                    plugItemHash: String(
-                      getStatModByCost(
-                        cost,
-                        STAT_HASH[stat.toUpperCase() as keyof typeof STAT_HASH]
-                      )
-                    ),
-                    socketArrayType: 0,
-                    socketIndex: 0,
-                  });
+                costs.forEach(async (cost: number) => {
+                  const mod = await db.manifestArmorStatModDef
+                    .where(stat + 'Mod')
+                    .equals(cost)
+                    .first();
+                  if (mod !== undefined) requiredMods.push(mod);
                 });
               });
               dispatch(updateRequiredStatMods(requiredMods));
