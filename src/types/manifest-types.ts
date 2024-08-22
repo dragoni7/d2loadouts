@@ -36,16 +36,16 @@ export interface ManifestPlug extends ManifestEntry {
 }
 
 export interface ManifestStatPlug extends ManifestPlug {
-  mobilityMod: number;
-  resilienceMod: number;
-  recoveryMod: number;
-  disciplineMod: number;
-  intellectMod: number;
-  strengthMod: number;
+  mobilityMod?: number;
+  resilienceMod?: number;
+  recoveryMod?: number;
+  disciplineMod?: number;
+  intellectMod?: number;
+  strengthMod?: number;
 }
 
 export interface ManifestAspect extends ManifestPlug {
-  energyCapacity: number;
+  energyCapacity?: number;
 }
 
 export interface ManifestArmorMod extends ManifestPlug {

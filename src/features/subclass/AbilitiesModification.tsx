@@ -1,31 +1,71 @@
-import { Paper, Button, Typography, styled } from '@mui/material';
-import { Box, Container } from '@mui/system';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/constants';
+import { Paper, Button, Typography, styled, CircularProgress } from '@mui/material';
+import { Box, Container } from '@mui/system';
+import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/subclass-constants';
 import { RootState } from '../../store';
 import { db } from '../../store/db';
 import { updateSubclassMods } from '../../store/LoadoutReducer';
-import { Plug } from '../../types/d2l-types';
-import { ManifestSubclass, ManifestPlug } from '../../types/manifest-types';
+import {
+  ManifestSubclass,
+  ManifestPlug,
+  ManifestAspect,
+  ManifestStatPlug,
+} from '../../types/manifest-types';
+import { DamageType } from '../../types/d2l-types';
 
 interface AbilitiesModificationProps {
   subclass: ManifestSubclass;
 }
 
-const EMPTY_PLUG: Plug = {
-  plugItemHash: '',
-  socketArrayType: 0,
-  socketIndex: -1,
+export const EMPTY_MANIFEST_PLUG: ManifestPlug = {
+  perkName: '',
+  perkDescription: '',
+  perkIcon: '',
+  category: 0,
+  isOwned: false,
+  itemHash: 0,
+  name: '',
+  icon: '',
 };
 
-const subclassTypeMap: { [key: number]: string } = {
+export const EMPTY_ASPECT: ManifestAspect = {
+  energyCapacity: 0,
+  perkName: '',
+  perkDescription: '',
+  perkIcon: '',
+  category: 0,
+  isOwned: false,
+  itemHash: 0,
+  name: '',
+  icon: '',
+};
+
+export const EMPTY_FRAGMENT: ManifestStatPlug = {
+  mobilityMod: 0,
+  resilienceMod: 0,
+  recoveryMod: 0,
+  disciplineMod: 0,
+  intellectMod: 0,
+  strengthMod: 0,
+  perkName: '',
+  perkDescription: '',
+  perkIcon: '',
+  category: 0,
+  isOwned: false,
+  itemHash: 0,
+  name: '',
+  icon: '',
+};
+
+const subclassTypeMap: { [key in DamageType]: string } = {
   1: 'PRISMATIC',
   2: 'ARC',
   3: 'SOLAR',
   4: 'VOID',
   6: 'STASIS',
   7: 'STRAND',
+  5: '',
 };
 
 const ModSlot = styled(Paper)(({ theme }) => ({
@@ -105,215 +145,179 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   width: '40%',
 }));
 
-const getCategoryHashes = (subclass: ManifestSubclass) => {
-  const subclassType = subclassTypeMap[
-    subclass.damageType
-  ] as keyof typeof PLUG_CATEGORY_HASH.TITAN.ARC;
-  const classType = subclass.class.toUpperCase() as 'TITAN' | 'HUNTER' | 'WARLOCK';
-
-  const classAndSubclass =
-    (PLUG_CATEGORY_HASH[classType] as Record<string, any>)[subclassType] || {};
-
-  const categoryHashes = {
-    SUPERS: Object.values(classAndSubclass.SUPERS || []),
-    CLASS_ABILITIES: Object.values(classAndSubclass.CLASS_ABILITIES || []),
-    MOVEMENT_ABILITIES: Object.values(classAndSubclass.MOVEMENT_ABILITIES || []),
-    MELEE_ABILITIES: Object.values(classAndSubclass.MELEE_ABILITIES || []),
-    GRENADES: Object.values(classAndSubclass.GRENADES || []),
-    ASPECTS: Object.values(classAndSubclass.ASPECTS || []),
-    FRAGMENTS: Object.values(classAndSubclass.FRAGMENTS || []),
+const fetchMods = async (subclass: ManifestSubclass) => {
+  const modsData: { [key: string]: (ManifestPlug | ManifestAspect | ManifestStatPlug)[] } = {
+    SUPERS: [],
+    CLASS_ABILITIES: [],
+    MOVEMENT_ABILITIES: [],
+    MELEE_ABILITIES: [],
+    GRENADES: [],
+    ASPECTS: [],
+    FRAGMENTS: [],
   };
 
-  return categoryHashes;
-};
+  const classType = subclass.class.toUpperCase() as keyof typeof PLUG_CATEGORY_HASH;
+  const damageType = subclassTypeMap[
+    subclass.damageType as DamageType
+  ] as keyof (typeof PLUG_CATEGORY_HASH)[typeof classType];
 
-const fetchMods = async (subclass: ManifestSubclass) => {
-  const categoryHashes = getCategoryHashes(subclass);
-  const modsData: { [key: string]: ManifestPlug[] } = {};
+  if (!PLUG_CATEGORY_HASH[classType] || !PLUG_CATEGORY_HASH[classType][damageType]) {
+    console.error(`Invalid class type ${classType} or damage type ${damageType}`);
+    return modsData;
+  }
 
-  await Promise.all(
-    Object.entries(categoryHashes).map(async ([key, hashes]) => {
-      const typedHashes = hashes as number[];
-      const mods = await db.manifestSubclassModDef.where('category').anyOf(typedHashes).toArray();
-      modsData[key] = Array.from(new Set(mods.map((mod) => mod.itemHash))).map((itemHash) =>
-        mods.find((mod) => mod.itemHash === itemHash)
-      ) as ManifestPlug[];
-    })
-  );
+  const categoryHashes = PLUG_CATEGORY_HASH[classType][damageType];
 
-  return modsData;
+  try {
+    const queries = [
+      { category: 'SUPERS', table: db.manifestSubclassModDef, hash: categoryHashes.SUPERS },
+      {
+        category: 'CLASS_ABILITIES',
+        table: db.manifestSubclassModDef,
+        hash: categoryHashes.CLASS_ABILITIES,
+      },
+      {
+        category: 'MOVEMENT_ABILITIES',
+        table: db.manifestSubclassModDef,
+        hash: categoryHashes.MOVEMENT_ABILITIES,
+      },
+      {
+        category: 'MELEE_ABILITIES',
+        table: db.manifestSubclassModDef,
+        hash: categoryHashes.MELEE_ABILITIES,
+      },
+      { category: 'GRENADES', table: db.manifestSubclassModDef, hash: categoryHashes.GRENADES },
+      { category: 'ASPECTS', table: db.manifestSubclassAspectsDef, hash: categoryHashes.ASPECTS },
+      {
+        category: 'FRAGMENTS',
+        table: db.manifestSubclassFragmentsDef,
+        hash: categoryHashes.FRAGMENTS,
+      },
+    ];
+
+    await Promise.all(
+      queries.map(async ({ category, table, hash }) => {
+        const hashValues = Object.values(hash);
+        const results = await table.where('category').anyOf(hashValues).toArray();
+        modsData[category] = results;
+      })
+    );
+
+    return modsData;
+  } catch (error) {
+    console.error('Error fetching mods:', error);
+    return modsData;
+  }
 };
 
 const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass }) => {
-  const [mods, setMods] = useState<{ [key: string]: ManifestPlug[] }>({});
-  const [selectedMods, setSelectedMods] = useState<{ [key: string]: ManifestPlug[] }>({});
-  const [modIcons, setModIcons] = useState<{ [key: string]: string }>({});
-  const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclassConfig);
+  const [mods, setMods] = useState<{
+    [key: string]: (ManifestPlug | ManifestAspect | ManifestStatPlug)[];
+  }>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
+  const [submenuPosition, setSubmenuPosition] = useState({ top: 0, left: 0 });
   const dispatch = useDispatch();
+  const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclassConfig);
 
   useEffect(() => {
     if (subclass) {
-      fetchMods(subclass).then((fetchedMods) => {
-        setMods(fetchedMods);
-
-        const initialSelectedMods: { [key: string]: ManifestPlug[] } = {};
-        Object.keys(fetchedMods).forEach((category) => {
-          initialSelectedMods[category] = [];
-          if (loadout) {
-            switch (category) {
-              case 'SUPERS':
-                initialSelectedMods[category] = [
-                  fetchedMods[category].find(
-                    (mod) => String(mod.itemHash) === loadout.super.plugItemHash
-                  ),
-                ].filter(Boolean) as ManifestPlug[];
-                break;
-              case 'ASPECTS':
-                initialSelectedMods[category] = loadout.aspects
-                  .map((aspect) =>
-                    fetchedMods[category].find(
-                      (mod) => String(mod.itemHash) === aspect.plugItemHash
-                    )
-                  )
-                  .filter(Boolean) as ManifestPlug[];
-                break;
-              case 'FRAGMENTS':
-                initialSelectedMods[category] = loadout.fragments
-                  .map((fragment) =>
-                    fetchedMods[category].find(
-                      (mod) => String(mod.itemHash) === fragment.plugItemHash
-                    )
-                  )
-                  .filter(Boolean) as ManifestPlug[];
-                break;
-              case 'CLASS_ABILITIES':
-                if (loadout.classAbility) {
-                  initialSelectedMods[category] = [
-                    fetchedMods[category].find(
-                      (mod) => String(mod.itemHash) === loadout.classAbility?.plugItemHash
-                    ),
-                  ].filter(Boolean) as ManifestPlug[];
-                }
-                break;
-              case 'MOVEMENT_ABILITIES':
-                if (loadout.movementAbility) {
-                  initialSelectedMods[category] = [
-                    fetchedMods[category].find(
-                      (mod) => String(mod.itemHash) === loadout.movementAbility?.plugItemHash
-                    ),
-                  ].filter(Boolean) as ManifestPlug[];
-                }
-                break;
-              case 'MELEE_ABILITIES':
-                if (loadout.meleeAbility) {
-                  initialSelectedMods[category] = [
-                    fetchedMods[category].find(
-                      (mod) => String(mod.itemHash) === loadout.meleeAbility?.plugItemHash
-                    ),
-                  ].filter(Boolean) as ManifestPlug[];
-                }
-                break;
-              case 'GRENADES':
-                if (loadout.grenade) {
-                  initialSelectedMods[category] = [
-                    fetchedMods[category].find(
-                      (mod) => String(mod.itemHash) === loadout.grenade?.plugItemHash
-                    ),
-                  ].filter(Boolean) as ManifestPlug[];
-                }
-                break;
-            }
-          }
+      setLoading(true);
+      setError(null);
+      fetchMods(subclass)
+        .then((modsData) => {
+          setMods(modsData);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError('Failed to fetch mods. Please try again.');
+          setLoading(false);
         });
-        setSelectedMods(initialSelectedMods);
-      });
     }
-  }, [subclass, loadout]);
+  }, [subclass]);
 
-  const fetchModIcon = useCallback(
-    async (plugItemHash: string): Promise<string> => {
-      if (modIcons[plugItemHash]) return modIcons[plugItemHash];
+  const handleModSelect = (
+    category: string,
+    mod: ManifestPlug | ManifestAspect | ManifestStatPlug,
+    index?: number
+  ) => {
+    let updatedMods;
 
-      const mod = await db.manifestSubclassModDef
-        .where('itemHash')
-        .equals(Number(plugItemHash))
-        .first();
-      if (mod && mod.icon) {
-        setModIcons((prev) => ({ ...prev, [plugItemHash]: mod.icon }));
-        return mod.icon;
+    switch (category) {
+      case 'ASPECTS':
+        updatedMods = [...loadout.aspects];
+        break;
+      case 'FRAGMENTS':
+        updatedMods = [...loadout.fragments];
+        break;
+      case 'SUPERS':
+      case 'CLASS_ABILITIES':
+      case 'MOVEMENT_ABILITIES':
+      case 'MELEE_ABILITIES':
+      case 'GRENADES':
+        updatedMods = [mod];
+        break;
+      default:
+        return;
+    }
+
+    // Check if the mod already exists in another slot and replace it with an empty mod
+    if (category === 'ASPECTS' || category === 'FRAGMENTS') {
+      const modIndex = updatedMods.findIndex(
+        (existingMod) => existingMod.itemHash === mod.itemHash
+      );
+
+      if (modIndex !== -1 && modIndex !== index) {
+        updatedMods[modIndex] = category === 'ASPECTS' ? EMPTY_ASPECT : EMPTY_FRAGMENT;
       }
-      return '';
-    },
-    [modIcons]
-  );
 
-  const handleModSelect = (category: string, mod: ManifestPlug, index?: number) => {
-    let payload;
-
-    if (category === 'ASPECTS') {
-      const newMods = [...loadout.aspects];
-      if (index !== undefined && index < 2) {
-        // Remove the mod from its previous position if it exists elsewhere
-        const existingIndex = newMods.findIndex((m) => m?.plugItemHash === String(mod.itemHash));
-        if (existingIndex !== -1) {
-          newMods[existingIndex] = EMPTY_PLUG;
-        }
-        newMods[index] = { plugItemHash: String(mod.itemHash) };
-      }
-      payload = { category, mods: newMods };
-    } else if (category === 'FRAGMENTS') {
-      const newMods = Array(5)
-        .fill(EMPTY_PLUG)
-        .map((plug, i) => loadout.fragments[i] || plug);
-      if (index !== undefined && index < 5) {
-        // Remove the mod from its previous position if it exists elsewhere
-        const existingIndex = newMods.findIndex((m) => m?.plugItemHash === String(mod.itemHash));
-        if (existingIndex !== -1) {
-          newMods[existingIndex] = EMPTY_PLUG;
-        }
-        newMods[index] = { plugItemHash: String(mod.itemHash) };
-      }
-      payload = { category, mods: newMods };
+      // Assign the mod to the selected slot
+      updatedMods[index!] = mod;
     } else {
-      payload = { category, mods: [{ plugItemHash: String(mod.itemHash) }] };
+      // Directly assign the mod for SUPERS and abilities
+      updatedMods[0] = mod;
     }
 
-    dispatch(updateSubclassMods(payload));
+    dispatch(
+      updateSubclassMods({
+        category,
+        mods: updatedMods,
+      })
+    );
+  };
+
+  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>, slotId: string) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setSubmenuPosition({
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX,
+    });
+    setHoveredSlot(slotId);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredSlot(null);
   };
 
   const renderModCategory = useCallback(
-    (category: string, currentMod: Plug | null, index?: number) => {
-      const [currentModIcon, setCurrentModIcon] = useState<string | null>(null);
-      const [isHovered, setIsHovered] = useState<boolean>(false);
-      const [submenuPosition, setSubmenuPosition] = useState({ top: 0, left: 0 });
-
-      useEffect(() => {
-        if (currentMod) {
-          fetchModIcon(currentMod.plugItemHash).then(setCurrentModIcon);
-        } else {
-          setCurrentModIcon(null);
-        }
-      }, [currentMod]);
-
-      const isEmptyMod = !currentMod || currentMod.plugItemHash === '';
-
-      const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        setSubmenuPosition({
-          top: rect.bottom + window.scrollY,
-          left: rect.left + window.scrollX,
-        });
-        setIsHovered(true);
-      };
+    (
+      category: string,
+      currentMod: ManifestPlug | ManifestAspect | ManifestStatPlug | null,
+      index?: number
+    ) => {
+      const isEmptyMod = !currentMod || currentMod.itemHash === 0;
+      const slotId = `${category}-${index ?? 0}`;
+      const isHovered = hoveredSlot === slotId;
 
       const SlotComponent = category === 'SUPERS' ? SuperModSlot : ModSlot;
 
       return (
-        <Box position="relative" display="inline-block">
-          <div onMouseEnter={handleMouseEnter} onMouseLeave={() => setIsHovered(false)}>
+        <Box key={slotId} position="relative" display="inline-block">
+          <div onMouseEnter={(e) => handleMouseEnter(e, slotId)} onMouseLeave={handleMouseLeave}>
             <SlotComponent
               style={{
-                backgroundImage: currentModIcon ? `url(${currentModIcon})` : 'none',
+                backgroundImage: currentMod ? `url(${currentMod.icon})` : 'none',
               }}
             >
               {isEmptyMod && (
@@ -343,8 +347,29 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
         </Box>
       );
     },
-    [mods, handleModSelect, fetchModIcon]
+    [mods, handleModSelect, hoveredSlot, submenuPosition]
   );
+
+  if (loading) {
+    return (
+      <Container maxWidth="md">
+        <Box display="flex" justifyContent="center" alignItems="center" height="400px">
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="md">
+        <Box display="flex" justifyContent="center" alignItems="center" height="400px">
+          <Typography color="error">{error}</Typography>
+        </Box>
+      </Container>
+    );
+  }
+
   return (
     <div className="abilities-modification">
       <Container maxWidth="md">
@@ -377,9 +402,9 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             <Box marginBottom={2}>
               <StyledTitle variant="h6">ASPECTS</StyledTitle>
               <Box display="flex" flexWrap="wrap" gap={2}>
-                {[0, 1].map((index) => (
+                {loadout.aspects.map((aspect, index) => (
                   <React.Fragment key={index}>
-                    {renderModCategory('ASPECTS', loadout.aspects[index] || EMPTY_PLUG, index)}
+                    {renderModCategory('ASPECTS', aspect, index)}
                   </React.Fragment>
                 ))}
               </Box>
@@ -388,9 +413,9 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             <Box marginBottom={2}>
               <StyledTitle variant="h6">FRAGMENTS</StyledTitle>
               <Box display="flex" flexWrap="wrap" gap={2}>
-                {[0, 1, 2, 3, 4].map((index) => (
+                {loadout.fragments.map((fragment, index) => (
                   <React.Fragment key={index}>
-                    {renderModCategory('FRAGMENTS', loadout.fragments[index] || EMPTY_PLUG, index)}
+                    {renderModCategory('FRAGMENTS', fragment, index)}
                   </React.Fragment>
                 ))}
               </Box>

@@ -472,36 +472,34 @@ export const loadoutConfigSlice = createSlice({
     },
     updateSubclassMods: (state, action: PayloadAction<{ category: string; mods: any[] }>) => {
       const { category, mods } = action.payload;
+
       switch (category) {
         case 'SUPERS':
-          state.loadout.subclassConfig.super = mods[0] ? mods[0] : EMPTY_MANIFEST_PLUG;
+          state.loadout.subclassConfig.super = mods[0] || EMPTY_MANIFEST_PLUG;
           break;
         case 'ASPECTS':
           mods.forEach((mod, index) => {
-            state.loadout.subclassConfig.aspects[
-              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5)
-            ] = mod ? mod : EMPTY_ASPECT;
+            state.loadout.subclassConfig.aspects[index] = mod || EMPTY_ASPECT;
           });
-
           break;
         case 'FRAGMENTS':
           mods.forEach((mod, index) => {
-            state.loadout.subclassConfig.fragments[
-              index + (state.loadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7)
-            ] = mod ? mod : EMPTY_FRAGMENT;
+            state.loadout.subclassConfig.fragments[index] = mod || EMPTY_FRAGMENT;
           });
           break;
         case 'CLASS_ABILITIES':
-          state.loadout.subclassConfig.classAbility = mods[0] ? mods[0] : null;
+          state.loadout.subclassConfig.classAbility = mods[0] || null;
           break;
         case 'MELEE_ABILITIES':
-          state.loadout.subclassConfig.meleeAbility = mods[0] ? mods[0] : null;
+          state.loadout.subclassConfig.meleeAbility = mods[0] || null;
           break;
         case 'MOVEMENT_ABILITIES':
-          state.loadout.subclassConfig.movementAbility = mods[0] ? mods[0] : null;
+          state.loadout.subclassConfig.movementAbility = mods[0] || null;
           break;
         case 'GRENADES':
-          state.loadout.subclassConfig.grenade = mods[0] ? mods[0] : null;
+          state.loadout.subclassConfig.grenade = mods[0] || null;
+          break;
+        default:
           break;
       }
     },
