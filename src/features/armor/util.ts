@@ -1,7 +1,7 @@
 import { db } from '../../store/db';
 import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/constants';
-import { ManifestArmorMod, Plug } from '../../types/d2l-types';
 import { store } from '../../store';
+import { ManifestArmorMod, ManifestArmorStatMod } from '../../types/manifest-types';
 
 export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
   const slotMods = await db.manifestArmorModDef
@@ -24,7 +24,7 @@ export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
   return slotMods;
 }
 
-export function getSelectedModsBySlot(slot: string): { [key: number]: Plug } {
+export function getSelectedModsBySlot(slot: string): (ManifestArmorMod | ManifestArmorStatMod)[] {
   switch (slot) {
     case 'helmet': {
       return store.getState().loadoutConfig.loadout.helmetMods;
@@ -42,7 +42,7 @@ export function getSelectedModsBySlot(slot: string): { [key: number]: Plug } {
       return store.getState().loadoutConfig.loadout.classArmorMods;
     }
     default: {
-      return {};
+      return [];
     }
   }
 }

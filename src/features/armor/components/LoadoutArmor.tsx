@@ -50,7 +50,7 @@ const LoadoutArmor: React.FC = () => {
       let matches: ManifestArmorMod[] = [];
 
       for (const mod of requiredStatMods) {
-        const found = allStatMods.find((statMod) => String(statMod.itemHash) === mod.itemHash);
+        const found = allStatMods.find((statMod) => statMod.itemHash === mod.itemHash);
         if (found) matches.push(found);
       }
 

@@ -248,20 +248,21 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
         {paginatedData.map((perm, index) => (
           <Card
             key={index}
-            onClick={() => {
+            onClick={async () => {
               dispatch(resetLoadoutArmorMods());
               dispatch(updateLoadoutArmor(perm.permutation));
               let requiredMods: ManifestArmorStatMod[] = [];
 
-              Object.entries(perm.modsArray).forEach(([stat, costs]) => {
-                costs.forEach(async (cost: number) => {
+              for (const [stat, costs] of Object.entries(perm.modsArray)) {
+                for (const cost of costs) {
                   const mod = await db.manifestArmorStatModDef
                     .where(stat + 'Mod')
                     .equals(cost)
                     .first();
                   if (mod !== undefined) requiredMods.push(mod);
-                });
-              });
+                }
+              }
+
               dispatch(updateRequiredStatMods(requiredMods));
               onPermutationClick();
             }}

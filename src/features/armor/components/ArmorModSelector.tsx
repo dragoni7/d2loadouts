@@ -1,9 +1,9 @@
 import { Box } from '@mui/system';
 import { Plug } from '../../../types/d2l-types';
-import { ManifestArmorMod } from '../../../types/manifest-types';
+import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 
 interface ModSelectorProps {
-  selected: Plug;
+  selected: ManifestArmorMod | ManifestArmorStatMod;
   mods: ManifestArmorMod[];
   onSelectMod: (mod: ManifestArmorMod) => void;
 }
@@ -15,7 +15,7 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
       style={{
         backgroundImage: `url(${
           mods.find((mod) => {
-            return mod.itemHash === Number(selected.plugItemHash);
+            return mod.itemHash === selected.itemHash;
           })?.icon
         })`,
       }}
@@ -27,7 +27,7 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
             className="submenu-item"
             style={{ backgroundImage: `url(${mod.icon})` }}
             onClick={() => {
-              if (selected.plugItemHash !== String(mod.itemHash)) {
+              if (selected.itemHash !== mod.itemHash) {
                 onSelectMod(mod);
               }
             }}

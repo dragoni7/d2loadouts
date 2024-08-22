@@ -1,4 +1,5 @@
 import {
+  ManifestArmorMod,
   ManifestArmorStatMod,
   ManifestAspect,
   ManifestPlug,
@@ -63,11 +64,11 @@ export type Loadout = {
   legArmor: DestinyArmor;
   classArmor: DestinyArmor;
   requiredStatMods: ManifestArmorStatMod[];
-  helmetMods: ManifestPlug[] | ManifestArmorStatMod[];
-  gauntletMods: ManifestPlug[] | ManifestArmorStatMod[];
-  chestArmorMods: ManifestPlug[] | ManifestArmorStatMod[];
-  legArmorMods: ManifestPlug[] | ManifestArmorStatMod[];
-  classArmorMods: ManifestPlug[] | ManifestArmorStatMod[];
+  helmetMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  gauntletMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  chestArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  legArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  classArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   characterId: number;
   subclassConfig: SubclassConfig;
 };

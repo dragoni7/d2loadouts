@@ -15,8 +15,8 @@ interface ArmorConfigProps {
 }
 
 const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods }) => {
-  const [armorMods, setArmorMods] = useState<ManifestArmorMod[]>([]);
-  const [selectedMods, setSelectedMods] = useState<{ [key: number]: Plug }>(
+  const [armorMods, setArmorMods] = useState<(ManifestArmorMod | ManifestArmorStatMod)[]>([]);
+  const [selectedMods, setSelectedMods] = useState<(ManifestArmorMod | ManifestArmorStatMod)[]>(
     getSelectedModsBySlot(armor.type)
   );
   const dispatch = useDispatch();
@@ -43,10 +43,10 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
     for (const key in selectedMods) {
       if (Number(key) !== slot) {
         let statEnergyCost = armorMods.find(
-          (mod) => String(mod.itemHash) === selectedMods[key].plugItemHash
+          (mod) => mod.itemHash === selectedMods[key].itemHash
         )?.energyCost;
         let armorEnergyCost = statMods.find(
-          (mod) => String(mod.itemHash) === selectedMods[key].plugItemHash
+          (mod) => mod.itemHash === selectedMods[key].itemHash
         )?.energyCost;
 
         totalCost += statEnergyCost ? statEnergyCost : armorEnergyCost ? armorEnergyCost : 0;
