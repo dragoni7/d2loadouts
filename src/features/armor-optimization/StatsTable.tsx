@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { styled } from '@mui/system';
-import { FilteredPermutation, Plug, DestinyArmor } from '../../types/d2l-types';
+import { FilteredPermutation, DestinyArmor } from '../../types/d2l-types';
 import { useDispatch } from 'react-redux';
 import {
   resetLoadoutArmorMods,
@@ -8,10 +8,9 @@ import {
   updateRequiredStatMods,
 } from '../../store/LoadoutReducer';
 import ArmorIcon from '../../components/ArmorIcon';
-import { STAT_HASH, STATS } from '../../lib/bungie_api/constants';
-import { getStatModByCost } from '../../lib/bungie_api/utils';
-import { ManifestArmorStatMod } from '../../types/manifest-types';
+import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/Constants';
 import { db } from '../../store/db';
+import { ManifestArmorStatMod } from '../../types/manifest-types';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
@@ -47,28 +46,15 @@ const Card = styled('div')({
   backgroundBlendMode: 'multiply',
   backdropFilter: 'blur(5px)',
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
+  alignItems: 'center',
 });
 
-const StatsColumn = styled('div')({
+const ArmorRow = styled('div')({
   display: 'flex',
-  flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'flex-start',
-  marginRight: '20px',
-  flex: '0 0 auto',
-});
-
-const ContentColumn = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  flex: 1,
-});
-
-const IconsRow = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-start',
   marginBottom: '10px',
+  width: '100%',
 });
 
 const CardCell = styled('div')({
@@ -81,37 +67,45 @@ const CardCell = styled('div')({
   margin: '0 5px',
 });
 
-const StatContainer = styled('div')({
+const StatsRow = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  margin: '5px 0',
-});
-
-const StatIcon = styled('img')({
-  width: '20px',
-  height: '20px',
-  marginRight: '5px',
-});
-
-const StatValue = styled('div')({
-  color: 'white',
-  fontSize: '14px',
-  width: '30px',
-  textAlign: 'right',
+  justifyContent: 'center',
+  width: '100%',
+  marginBottom: '10px',
 });
 
 const ModsRow = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  marginBottom: '5px',
+  justifyContent: 'center',
+  width: '100%',
 });
 
-const ModLabel = styled('span')({
-  fontWeight: 'bold',
-  marginRight: '5px',
+const StatContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  margin: '0 5px',
+});
+
+const StatIcon = styled('img')({
+  width: '24px',
+  height: '24px',
+});
+
+const StatValue = styled('div')({
   color: 'white',
+  fontSize: '14px',
+  textAlign: 'center',
+});
+
+const ModIcon = styled('img')({
+  width: '32px',
+  height: '32px',
+  margin: '0 2px',
 });
 
 const ArrowButton = styled('button')({
@@ -201,6 +195,25 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     return baseSum + modSum;
   };
 
+  const [modIcons, setModIcons] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const fetchModIcons = async () => {
+      const iconMap: Record<string, string> = {};
+
+      for (const [stat, hash] of Object.entries(STAT_MOD_HASHES)) {
+        const mod = await db.manifestArmorStatModDef.where('itemHash').equals(hash).first();
+        if (mod) {
+          iconMap[stat.toLowerCase()] = mod.icon;
+        }
+      }
+
+      setModIcons(iconMap);
+    };
+
+    fetchModIcons();
+  }, []);
+
   const statIcons: Record<keyof FilteredPermutation['modsArray'], string> = {
     mobility:
       'https://www.bungie.net/common/destiny2_content/icons/e26e0e93a9daf4fdd21bf64eb9246340.png',
@@ -267,7 +280,19 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
               onPermutationClick();
             }}
           >
-            <StatsColumn>
+            <ArmorRow>
+              {perm.permutation.map((item, idx) => (
+                <CardCell key={idx}>
+                  <HoverContainer
+                    onMouseEnter={(e) => handleMouseEnter(e, item)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <ArmorIcon armor={item} size={64} />
+                  </HoverContainer>
+                </CardCell>
+              ))}
+            </ArmorRow>
+            <StatsRow>
               {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) => (
                 <StatContainer key={stat}>
                   <StatIcon src={statIcons[stat]} alt={stat} />
@@ -276,29 +301,18 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
                   </StatValue>
                 </StatContainer>
               ))}
-            </StatsColumn>
-            <ContentColumn>
-              <IconsRow>
-                {perm.permutation.map((item, idx) => (
-                  <CardCell key={idx}>
-                    <HoverContainer
-                      onMouseEnter={(e) => handleMouseEnter(e, item)}
-                      onMouseLeave={handleMouseLeave}
-                    >
-                      <ArmorIcon armor={item} size={64} />
-                    </HoverContainer>
-                  </CardCell>
-                ))}
-              </IconsRow>
-              {Object.entries(perm.modsArray).map(([stat, mods]) =>
-                mods.length > 0 ? (
-                  <ModsRow key={stat}>
-                    <ModLabel>{stat.charAt(0).toUpperCase() + stat.slice(1)} Mods:</ModLabel>
-                    <span>{mods.join(', ')}</span>
-                  </ModsRow>
-                ) : null
+            </StatsRow>
+            <ModsRow>
+              {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) =>
+                perm.modsArray[stat].map((mod, idx) => (
+                  <ModIcon
+                    key={`${stat}-${idx}`}
+                    src={modIcons[stat.toLowerCase() + '_mod'] || ''}
+                    alt={mod.toString()}
+                  />
+                ))
               )}
-            </ContentColumn>
+            </ModsRow>
           </Card>
         ))}
         <TableFooter>
