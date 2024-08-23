@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
+import { Box, Paper, Grid, ButtonBase } from '@mui/material';
 import { STATS } from '../../lib/bungie_api/Constants';
 
-const ContainerWithBorder = styled('div')({
-  border: '1px solid white',
-  padding: '10px',
+const ContainerWithBorder = styled(Paper)(({ theme }) => ({
+  border: `1px solid ${theme.palette.divider}`,
+  padding: theme.spacing(2),
   width: 'fit-content',
-  margin: '10px 0',
-});
+  margin: theme.spacing(1, 0),
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backdropFilter: 'blur(10px)',
+}));
 
-const Root = styled('div')({
-  width: 'fit-content',
-});
+const StatRow = styled(Grid)(({ theme }) => ({
+  marginBottom: theme.spacing(1),
+}));
 
-const StatRow = styled('div')({
-  marginBottom: '10px',
-  display: 'flex',
-  alignItems: 'center',
-});
-
-const NumberBoxContainer = styled('div')({
+const NumberBoxContainer = styled(Box)({
   display: 'flex',
   alignItems: 'center',
 });
@@ -28,24 +25,28 @@ interface NumberBoxProps {
   isSelected: boolean;
 }
 
-const NumberBox = styled('div')<NumberBoxProps>(({ isSelected }) => ({
-  display: 'inline-block',
-  width: '30px',
-  height: '30px',
-  lineHeight: '30px',
+const NumberBox = styled(ButtonBase, {
+  shouldForwardProp: (prop) => prop !== 'isSelected',
+})<NumberBoxProps>(({ isSelected }) => ({
+  width: 40,
+  height: 40,
+  lineHeight: '40px',
   textAlign: 'center',
-  border: isSelected ? '1px solid lightblue' : '1px solid white',
-  marginRight: '2px',
+  border: `1px solid ${isSelected ? '#bdab6d' : 'white'}`,
+  marginRight: 2,
   backgroundColor: 'transparent',
-  color: isSelected ? 'lightblue' : 'white',
+  color: isSelected ? '#bdab6d' : 'white',
   cursor: 'pointer',
-  fontSize: '14px',
+  fontSize: 16,
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
 }));
 
 const StatIcon = styled('img')({
-  width: '24px',
-  height: '24px',
-  marginRight: '10px',
+  width: 24,
+  height: 24,
+  marginRight: 10,
 });
 
 interface SelectedNumbers {
@@ -84,27 +85,31 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ onThresholdChange }) => {
   };
 
   return (
-    <ContainerWithBorder>
-      <Root>
+    <ContainerWithBorder elevation={3}>
+      <Box>
         {STATS.map((stat) => (
-          <StatRow key={stat}>
-            <StatIcon src={statIcons[stat.toLowerCase()]} alt={stat} />
-            <NumberBoxContainer>
-              {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => (
-                <NumberBox
-                  key={number}
-                  isSelected={
-                    selectedNumbers[stat] !== undefined && number <= selectedNumbers[stat]
-                  }
-                  onClick={() => handleSelect(stat, number)}
-                >
-                  {number}
-                </NumberBox>
-              ))}
-            </NumberBoxContainer>
+          <StatRow key={stat} container alignItems="center" spacing={1}>
+            <Grid item>
+              <StatIcon src={statIcons[stat.toLowerCase()]} alt={stat} />
+            </Grid>
+            <Grid item xs>
+              <NumberBoxContainer>
+                {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => (
+                  <NumberBox
+                    key={number}
+                    isSelected={
+                      selectedNumbers[stat] !== undefined && number <= selectedNumbers[stat]
+                    }
+                    onClick={() => handleSelect(stat, number)}
+                  >
+                    {number}
+                  </NumberBox>
+                ))}
+              </NumberBoxContainer>
+            </Grid>
           </StatRow>
         ))}
-      </Root>
+      </Box>
     </ContainerWithBorder>
   );
 };

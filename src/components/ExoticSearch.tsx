@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from '@mui/system';
+import { styled } from '@mui/material/styles';
 import { Autocomplete, TextField, Popper } from '@mui/material';
 import { db } from '../store/db';
 import { Character } from '../types/d2l-types';
@@ -21,8 +21,11 @@ const ExoticIcon = styled('img')<{ isOwned: boolean; isSelected: boolean }>(
     height: isSelected ? '100px' : '50px',
     marginRight: '10px',
     filter: isOwned ? 'none' : 'grayscale(100%)',
-    border: isSelected ? '5px solid gold' : 'none',
-    boxShadow: isSelected ? '0 0 10px 2px gold' : 'none',
+    border: isSelected ? '5px solid transparent' : 'none',
+    borderImage: isSelected
+      ? 'linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C) 1'
+      : 'none',
+    boxShadow: isSelected ? '0 0 10px 2px rgba(251, 245, 183, 0.5)' : 'none',
   })
 );
 
@@ -58,19 +61,28 @@ const SelectExotic = styled('span')({
 
 const StyledPopper = styled(Popper)({
   '& .MuiAutocomplete-paper': {
-    backgroundColor: 'rgba(128, 128, 128, 0.9)',
+    backgroundColor: 'transparent',
     color: 'white',
     '&::-webkit-scrollbar': {
-      display: 'none',
+      width: '8px',
     },
-    '&': {
-      scrollbarWidth: 'none',
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'white',
+      borderRadius: '4px',
     },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: 'transparent',
+    },
+  },
+  '& .MuiAutocomplete-listbox': {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   '& .MuiAutocomplete-option': {
     '&:hover': {
-      backgroundColor: 'rgba(128, 128, 128, 0.7)',
-      border: '1px solid white',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
+    '&[aria-selected="true"]': {
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
     },
   },
 });
@@ -119,7 +131,7 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter, onExotic
     } else {
       onExoticSelect(null);
     }
-  }, [selectedExotic]);
+  }, [selectedExotic, onExoticSelect]);
 
   useEffect(() => {
     setSelectedExotic(null);
