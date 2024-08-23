@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useSpring, animated, config } from 'react-spring';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSpring, animated, config, to } from 'react-spring';
 import './SingleDiamondButton.css';
 import { ManifestSubclass } from '../types/manifest-types';
 
@@ -22,13 +22,16 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
   );
   const [isPrismaticActive, setIsPrismaticActive] = useState(false);
   const [isAccelerating, setIsAccelerating] = useState(false);
+  const [isOblong, setIsOblong] = useState(false);
 
+  // Animation configuration
   const normalSpeed = 15000;
   const fastSpeed = 700;
   const cycleLength = 10000;
   const speedUpDuration = 1000;
+  const morphDuration = 50;
 
-  const [{ rotation }, api] = useSpring(() => ({
+  const [{ rotation }, rotationApi] = useSpring(() => ({
     from: { rotation: 0 },
     to: { rotation: 360 },
     loop: true,
@@ -40,29 +43,41 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     config: config.wobbly,
   }));
 
-  useEffect(() => {
-    const accelerate = () => {
-      setIsAccelerating(true);
-      api.start({
+  const [{ shape }, shapeApi] = useSpring(() => ({
+    shape: 0,
+    config: { duration: morphDuration },
+  }));
+
+  const morph = useCallback(() => {
+    setIsOblong(!isOblong);
+    shapeApi.start({
+      to: { shape: isOblong ? 0 : 1 },
+    });
+  }, [isOblong, shapeApi]);
+
+  const accelerate = useCallback(() => {
+    setIsAccelerating(true);
+    morph();
+    setTimeout(() => {
+      rotationApi.start({
         to: { rotation: rotation.get() + 360 },
         config: { duration: fastSpeed },
         onRest: () => {
           setIsAccelerating(false);
-          api.start({
+          rotationApi.start({
             to: { rotation: rotation.get() + 360 },
             config: { duration: normalSpeed },
           });
         },
       });
       scaleApi.start({ to: { scale: 1.2 }, config: { duration: speedUpDuration } });
-    };
+    }, morphDuration);
+  }, [rotationApi, scaleApi, rotation, normalSpeed, fastSpeed, speedUpDuration, morph]);
 
-    const interval = setInterval(() => {
-      accelerate();
-    }, cycleLength);
-
+  useEffect(() => {
+    const interval = setInterval(accelerate, cycleLength);
     return () => clearInterval(interval);
-  }, [api, scaleApi, rotation, normalSpeed, fastSpeed, speedUpDuration]);
+  }, [accelerate, cycleLength]);
 
   useEffect(() => {
     if (!isAccelerating) {
@@ -89,7 +104,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
       setLastNonPrismaticSubclass(defaultSubclass);
       onSubclassSelect(defaultSubclass);
     }
-  }, [selectedSubclass, subclasses, onSubclassSelect]);
+  }, [selectedSubclass, subclasses, onSubclassSelect, lastNonPrismaticSubclass]);
 
   const handleSelect = (subclass: ManifestSubclass) => {
     if (subclass.name.includes('Prismatic')) {
@@ -120,15 +135,20 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     .filter((subclass) => !subclass.name.includes('Prismatic') && subclass !== currentSubclass)
     .slice(0, 4);
 
-  const RotatingSquare = ({ rotationOffset = 0 }: { rotationOffset?: number }) => (
+  const RotatingShape = ({ rotationOffset = 0 }: { rotationOffset?: number }) => (
     <animated.div
-      className="rotating-square"
+      className="rotating-shape"
       style={{
-        transform: rotation.to((r) => `rotate(${r + rotationOffset}deg)`),
+        transform: to(
+          [rotation, shape],
+          (r, s) => `rotate(${r + rotationOffset}deg) scale(${1 + s * 0.5}, ${1 - s * 0.3})`
+        ),
         scale: scale,
+        borderRadius: shape.to((s) => `${s * 50}%`),
       }}
     />
   );
+
   return (
     <div className="single-diamond-wrapper">
       {!isPrismaticActive && (
@@ -152,10 +172,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
             onClick={handleReset}
             onContextMenu={(event) => handleRightClick(event, currentSubclass!)}
           >
-            <RotatingSquare />
-            <RotatingSquare rotationOffset={120} />
-            <RotatingSquare rotationOffset={240} />
             <div className="prismatic-glow diamond-shape"></div>
+            <RotatingShape />
+            <RotatingShape rotationOffset={120} />
+            <RotatingShape rotationOffset={240} />
             <img src={currentSubclass!.icon} alt={currentSubclass!.name} className="diamond-icon" />
           </div>
           <div
@@ -186,10 +206,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
               onClick={() => handleSelect(prismaticSubclass)}
               onContextMenu={(event) => handleRightClick(event, prismaticSubclass)}
             >
-              <RotatingSquare />
-              <RotatingSquare rotationOffset={120} />
-              <RotatingSquare rotationOffset={240} />
               <div className="prismatic-glow"></div>
+              <RotatingShape />
+              <RotatingShape rotationOffset={120} />
+              <RotatingShape rotationOffset={240} />
               <img
                 src={prismaticSubclass.icon}
                 alt={prismaticSubclass.name}
