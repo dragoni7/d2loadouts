@@ -6,7 +6,7 @@ import ArmorIcon from '../../../components/ArmorIcon';
 import { CheckRounded, Close } from '@mui/icons-material';
 import { STATUS } from '../constants';
 import { ArmorEquipper } from '../util/armorEquipper';
-import { DestinyArmor, Plug, SubclassConfig } from '../../../types/d2l-types';
+import { DestinyArmor, SubclassConfig } from '../../../types/d2l-types';
 import React from 'react';
 import { SubclassEquipper } from '../util/subclassEquipper';
 import { ManifestArmorStatMod, ManifestPlug } from '../../../types/manifest-types';
@@ -16,7 +16,7 @@ const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
   const [equipStep, setEquipStep] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
-  const [results, setResults] = useState<EquipResult[]>([]);
+  const [results, setResults] = useState<EquipResult[][]>([]);
   const [equipping, setEquipping] = useState<boolean>(false);
 
   const onEquipLoadout = async () => {
@@ -36,7 +36,7 @@ const EquipLoadout: React.FC = () => {
       setEquipping(true);
       const armorEquipper = new ArmorEquipper();
       const tempEquipped: any[] = [];
-      const tempResults: EquipResult[] = [];
+      const tempResults: EquipResult[][] = [];
 
       await armorEquipper.setCharacter(loadout.characterId);
 
@@ -84,7 +84,7 @@ const EquipLoadout: React.FC = () => {
   const processArmor = async (
     tempEquipped: DestinyArmor[],
     equipper: ArmorEquipper,
-    tempResults: EquipResult[],
+    tempResults: EquipResult[][],
     armor: DestinyArmor,
     armorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod }
   ) => {
@@ -101,7 +101,7 @@ const EquipLoadout: React.FC = () => {
   const processSubclass = async (
     tempEquipped: any[],
     equipper: SubclassEquipper,
-    tempResults: EquipResult[],
+    tempResults: EquipResult[][],
     subclassConfig: SubclassConfig
   ) => {
     tempEquipped.push(subclassConfig.subclass);
@@ -188,7 +188,7 @@ const EquipLoadout: React.FC = () => {
                         <Tooltip title={'Equipped'}>
                           <Badge
                             badgeContent={
-                              results[index].operationsStatus[0] === 'Success' ? (
+                              results[index][0].operationsStatus === 'Success' ? (
                                 <CheckRounded sx={{ fontSize: 50, color: 'green' }} />
                               ) : (
                                 <Close sx={{ fontSize: 50, color: 'red' }} />
@@ -201,19 +201,25 @@ const EquipLoadout: React.FC = () => {
                         </Tooltip>
                       </Grid>
                       <Grid item md={9}>
-                        {results[index].status === STATUS.SUCCESS
-                          ? 'Success'
-                          : results[index]?.operationsStatus
-                              .slice(1)
-                              .map((error) => (
-                                <Tooltip title={error}>
-                                  {error === 'Success' ? (
-                                    <CheckRounded sx={{ fontSize: 56, color: 'green' }} />
-                                  ) : (
-                                    <Close sx={{ fontSize: 56, color: 'red' }} />
-                                  )}
-                                </Tooltip>
-                              ))}
+                        {results[index][0].status === STATUS.SUCCESS ? (
+                          <h3 style={{ color: 'green' }}>Mods Successfully Inserted</h3>
+                        ) : (
+                          results[index].slice(1).map((result) => (
+                            <Tooltip title={result.operationsStatus}>
+                              {result.status === STATUS.SUCCESS ? (
+                                <>
+                                  <CheckRounded sx={{ fontSize: 56, color: 'green' }} />
+                                  {result.subject.name}
+                                </>
+                              ) : (
+                                <>
+                                  <Close sx={{ fontSize: 56, color: 'red' }} />
+                                  {result.subject.name}
+                                </>
+                              )}
+                            </Tooltip>
+                          ))
+                        )}
                       </Grid>
                     </Fragment>
                   ) : (
@@ -236,7 +242,7 @@ const EquipLoadout: React.FC = () => {
               ) : (
                 <Fragment>
                   <Grid item md={12} textAlign="center">
-                    {equipStep}
+                    <h3>{equipStep}</h3>
                   </Grid>
                   <Grid item md={3} textAlign="center">
                     <Button

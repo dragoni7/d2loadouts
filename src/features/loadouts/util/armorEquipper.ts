@@ -5,7 +5,7 @@ import {
   insertSocketPlugFreeRequest,
   transferItemRequest,
 } from '../../../lib/bungie_api/requests';
-import { DestinyArmor, Plug } from '../../../types/d2l-types';
+import { DestinyArmor } from '../../../types/d2l-types';
 import { ManifestPlug, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
@@ -65,7 +65,11 @@ export class ArmorEquipper extends Equipper {
   }
 
   public async equipArmor(armor: DestinyArmor): Promise<void> {
-    this.result.subject = armor;
+    const result = {
+      status: STATUS.SUCCESS,
+      operationsStatus: '',
+      subject: armor,
+    };
 
     // if armor not in character inventory, transfer first
     if (armor.location !== ITEM_LOCATIONS.CHARACTER_INVENTORY) {
@@ -80,8 +84,8 @@ export class ArmorEquipper extends Equipper {
           this.characterId
         ).catch((error) => {
           if (error.response) {
-            this.result.status = STATUS.FAIL;
-            this.result.operationsStatus[0] = error.response.data.ErrorStatus.replace(
+            result.status = STATUS.FAIL;
+            result.operationsStatus = error.response.data.ErrorStatus.replace(
               /([a-z])([A-Z])/g,
               '$1 $2'
             );
@@ -98,8 +102,8 @@ export class ArmorEquipper extends Equipper {
         this.characterId
       ).catch((error) => {
         if (error.response) {
-          this.result.status = STATUS.FAIL;
-          this.result.operationsStatus[0] = error.response.data.ErrorStatus.replace(
+          result.status = STATUS.FAIL;
+          result.operationsStatus = error.response.data.ErrorStatus.replace(
             /([a-z])([A-Z])/g,
             '$1 $2'
           );
@@ -110,8 +114,8 @@ export class ArmorEquipper extends Equipper {
     // equip
     const response = await equipItemRequest(armor.instanceHash, this.characterId).catch((error) => {
       if (error.response) {
-        this.result.status = STATUS.FAIL;
-        this.result.operationsStatus[0] = error.response.data.ErrorStatus.replace(
+        result.status = STATUS.FAIL;
+        result.operationsStatus = error.response.data.ErrorStatus.replace(
           /([a-z])([A-Z])/g,
           '$1 $2'
         );
@@ -119,31 +123,39 @@ export class ArmorEquipper extends Equipper {
     });
 
     if (response)
-      this.result.operationsStatus[0] = response.data.ErrorStatus.replace(
-        /([a-z])([A-Z])/g,
-        '$1 $2'
-      );
+      result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+    this.result.push(result);
   }
 
   public async equipArmorMods(mods: {
     [key: number]: ManifestPlug | ManifestArmorStatMod;
   }): Promise<void> {
-    if (this.result.subject) {
+    const armor = this.result[0].subject;
+
+    if (armor) {
       for (let i = 0; i < 5; i++) {
-        if (i === 4 && this.result.subject.artifice === false) continue;
+        const result = {
+          status: STATUS.SUCCESS,
+          operationsStatus: '',
+          subject: mods[i],
+        };
+
+        if (i === 4 && armor.artifice === false) continue;
 
         const response = await insertSocketPlugFreeRequest(
-          this.result.subject.instanceHash,
+          armor.instanceHash,
           {
             plugItemHash: String(mods[i].itemHash),
             socketArrayType: 0,
-            socketIndex: i === 4 && this.result.subject.artifice === true ? 11 : i,
+            socketIndex: i === 4 && armor.artifice === true ? 11 : i,
           },
           this.characterId
         ).catch((error) => {
           if (error.response) {
-            this.result.status = STATUS.FAIL;
-            this.result.operationsStatus[i + 1] = error.response.data.ErrorStatus.replace(
+            result.status = error.response.data.ErrorCode === 1679 ? STATUS.SUCCESS : STATUS.FAIL;
+            this.result[0].status = result.status;
+            result.operationsStatus = error.response.data.ErrorStatus.replace(
               /([a-z])([A-Z])/g,
               '$1 $2'
             );
@@ -151,10 +163,9 @@ export class ArmorEquipper extends Equipper {
         });
 
         if (response)
-          this.result.operationsStatus[i + 1] = response?.data.ErrorStatus.replace(
-            /([a-z])([A-Z])/g,
-            '$1 $2'
-          );
+          result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+        this.result.push(result);
       }
     }
   }
