@@ -1,4 +1,3 @@
-import { Stats } from 'fs';
 import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../types/manifest-types';
 
 export enum API_CREDENTIALS {
