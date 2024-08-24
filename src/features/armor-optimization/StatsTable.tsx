@@ -1,6 +1,9 @@
-import React, { useMemo, useState } from 'react';
-import { styled } from '@mui/system';
-import { FilteredPermutation, Plug, DestinyArmor } from '../../types/d2l-types';
+import React, { useMemo, useState, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
+import { Box, Card, Grid, Typography, IconButton, Tooltip } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { FilteredPermutation, DestinyArmor } from '../../types/d2l-types';
 import { useDispatch } from 'react-redux';
 import {
   resetLoadoutArmorMods,
@@ -8,182 +11,114 @@ import {
   updateRequiredStatMods,
 } from '../../store/LoadoutReducer';
 import ArmorIcon from '../../components/ArmorIcon';
-import { STAT_HASH, STATS } from '../../lib/bungie_api/constants';
-import { getStatModByCost } from '../../lib/bungie_api/utils';
-import { ManifestArmorStatMod } from '../../types/manifest-types';
+import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/Constants';
 import { db } from '../../store/db';
+import { ManifestArmorStatMod } from '../../types/manifest-types';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
   onPermutationClick: () => void;
 }
 
-const StatsTableContainer = styled('div')({
+const StatsTableContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
+  alignItems: 'stretch',
   justifyContent: 'center',
   position: 'relative',
-  marginTop: '-10px',
-});
+  marginTop: theme.spacing(-1),
+  gap: theme.spacing(1), // Add gap between children
+}));
 
-const CardContainer = styled('div')({
+const CardContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
-  width: '80%',
-});
+  width: '440px',
+  padding: theme.spacing(0, 1), // Add horizontal padding
+}));
 
-const Card = styled('div')({
-  borderTop: '5px solid #bdab6d',
-  borderRadius: '0',
-  padding: '10px',
-  margin: '5px 0',
+const StyledCard = styled(Card)(({ theme }) => ({
+  borderTop: '5px solid',
+  borderImageSource: 'linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C)',
+  borderImageSlice: 1,
+  borderRadius: 0,
+  padding: theme.spacing(1),
+  margin: theme.spacing(0.5, 0),
   width: '100%',
-  backgroundColor: 'rgba(128, 128, 128, 0.5)',
-  backgroundBlendMode: 'multiply',
-  backdropFilter: 'blur(5px)',
-  display: 'flex',
-  flexDirection: 'row',
-});
-
-const StatsColumn = styled('div')({
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backdropFilter: 'blur(10px)',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
-  marginRight: '20px',
-  flex: '0 0 auto',
-});
+  alignItems: 'center',
+}));
 
-const ContentColumn = styled('div')({
+const ArmorRow = styled(Grid)(({ theme }) => ({
+  justifyContent: 'center',
+  marginBottom: theme.spacing(1),
+  width: '100%',
+}));
+
+const StatsRow = styled(Grid)(({ theme }) => ({
+  justifyContent: 'center',
+  width: '100%',
+  marginBottom: theme.spacing(1),
+}));
+
+const ModsRow = styled(Grid)(({ theme }) => ({
+  justifyContent: 'center',
+  width: '100%',
+}));
+const StatValue = styled(Typography)({
+  color: 'white',
+});
+const StatContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  flex: 1,
-});
-
-const IconsRow = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-start',
-  marginBottom: '10px',
-});
-
-const CardCell = styled('div')({
-  flex: 0,
-  textAlign: 'center',
-  display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
-  position: 'relative',
-  margin: '0 5px',
-});
-
-const StatContainer = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  margin: '5px 0',
-});
+  margin: theme.spacing(0, 0.5),
+}));
 
 const StatIcon = styled('img')({
-  width: '20px',
-  height: '20px',
-  marginRight: '5px',
+  width: 24,
+  height: 24,
 });
 
-const StatValue = styled('div')({
-  color: 'white',
-  fontSize: '14px',
+const ModIcon = styled('img')({
+  width: 32,
+  height: 32,
+  margin: '0 2px',
+});
+
+const ArrowButton = styled(IconButton)(({ theme }) => ({
+  height: 'auto',
   width: '30px',
-  textAlign: 'right',
-});
-
-const ModsRow = styled('div')({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginBottom: '5px',
-});
-
-const ModLabel = styled('span')({
-  fontWeight: 'bold',
-  marginRight: '5px',
-  color: 'white',
-});
-
-const ArrowButton = styled('button')({
-  cursor: 'pointer',
-  fontSize: '24px',
-  color: 'white',
-  userSelect: 'none',
-  background: 'rgba(0, 0, 0, 0.1)',
-  border: 'none',
-  outline: 'none',
-  height: '100%',
-  width: '5%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '0',
-  transition: 'border 0.2s',
+  color: theme.palette.common.white,
+  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  borderRadius: 0,
   '&:hover': {
-    opacity: 0.5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     border: '1px solid white',
   },
   '&:disabled': {
     opacity: 0.5,
     cursor: 'not-allowed',
   },
-});
+}));
 
-const LeftArrowButton = styled(ArrowButton)({
-  position: 'absolute',
-  left: '0',
-  marginLeft: '5px',
-});
-
-const RightArrowButton = styled(ArrowButton)({
-  position: 'absolute',
-  right: '0',
-  marginRight: '5px',
-});
-
-const ItemInfo = styled('div')({
-  position: 'fixed',
-  backgroundColor: 'rgba(0, 0, 0, 0.9)',
-  color: 'white',
-  padding: '10px',
-  borderRadius: '5px',
-  whiteSpace: 'pre-wrap',
-  zIndex: 1000,
-  textAlign: 'left',
-  fontSize: '12px',
-  maxWidth: '200px',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-});
-
-const HoverContainer = styled('div')({
-  position: 'relative',
-});
-
-const TableFooter = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-start',
-  alignItems: 'center',
-  padding: '10px',
+const TableFooter = styled(Typography)(({ theme }) => ({
+  padding: theme.spacing(1),
   width: '100%',
-  color: 'white',
-});
+  color: theme.palette.common.white,
+  textAlign: 'center',
+}));
 
 const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClick }) => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(0);
-  const [hoverInfo, setHoverInfo] = useState<{ content: string; x: number; y: number } | null>(
-    null
-  );
   const itemsPerPage = 4;
 
   const paginatedData = useMemo(() => {
@@ -200,6 +135,25 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     const modSum = perm.modsArray[stat]?.reduce((sum, mod) => sum + mod, 0) || 0;
     return baseSum + modSum;
   };
+
+  const [modIcons, setModIcons] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const fetchModIcons = async () => {
+      const iconMap: Record<string, string> = {};
+
+      for (const [stat, hash] of Object.entries(STAT_MOD_HASHES)) {
+        const mod = await db.manifestArmorStatModDef.where('itemHash').equals(hash).first();
+        if (mod) {
+          iconMap[stat.toLowerCase()] = mod.icon;
+        }
+      }
+
+      setModIcons(iconMap);
+    };
+
+    fetchModIcons();
+  }, []);
 
   const statIcons: Record<keyof FilteredPermutation['modsArray'], string> = {
     mobility:
@@ -223,30 +177,17 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     }).join('\n');
   };
 
-  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>, item: DestinyArmor) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    setHoverInfo({
-      content: `${item.name}\n${formatArmorStats(item)}`,
-      x: rect.left + window.scrollX,
-      y: rect.bottom + window.scrollY,
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setHoverInfo(null);
-  };
-
   return (
     <StatsTableContainer>
-      <LeftArrowButton
+      <ArrowButton
         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
         disabled={currentPage === 0}
       >
-        &#9664;
-      </LeftArrowButton>
+        <ChevronLeftIcon />
+      </ArrowButton>
       <CardContainer>
         {paginatedData.map((perm, index) => (
-          <Card
+          <StyledCard
             key={index}
             onClick={async () => {
               dispatch(resetLoadoutArmorMods());
@@ -267,45 +208,48 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
               onPermutationClick();
             }}
           >
-            <StatsColumn>
-              {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) => (
-                <StatContainer key={stat}>
-                  <StatIcon src={statIcons[stat]} alt={stat} />
-                  <StatValue>
-                    {calculateTotal(perm, stat as keyof FilteredPermutation['modsArray'])}
-                  </StatValue>
-                </StatContainer>
-              ))}
-            </StatsColumn>
-            <ContentColumn>
-              <IconsRow>
-                {perm.permutation.map((item, idx) => (
-                  <CardCell key={idx}>
-                    <HoverContainer
-                      onMouseEnter={(e) => handleMouseEnter(e, item)}
-                      onMouseLeave={handleMouseLeave}
-                    >
+            <ArmorRow container spacing={1}>
+              {perm.permutation.map((item, idx) => (
+                <Grid item key={idx}>
+                  <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
+                    <Box>
                       <ArmorIcon armor={item} size={64} />
-                    </HoverContainer>
-                  </CardCell>
-                ))}
-              </IconsRow>
-              {Object.entries(perm.modsArray).map(([stat, mods]) =>
-                mods.length > 0 ? (
-                  <ModsRow key={stat}>
-                    <ModLabel>{stat.charAt(0).toUpperCase() + stat.slice(1)} Mods:</ModLabel>
-                    <span>{mods.join(', ')}</span>
-                  </ModsRow>
-                ) : null
+                    </Box>
+                  </Tooltip>
+                </Grid>
+              ))}
+            </ArmorRow>
+            <StatsRow container spacing={1}>
+              {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) => (
+                <Grid item key={stat}>
+                  <StatContainer>
+                    <StatIcon src={statIcons[stat]} alt={stat} />
+                    <StatValue variant="body2">
+                      {calculateTotal(perm, stat as keyof FilteredPermutation['modsArray'])}
+                    </StatValue>
+                  </StatContainer>
+                </Grid>
+              ))}
+            </StatsRow>
+            <ModsRow container spacing={1}>
+              {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) =>
+                perm.modsArray[stat].map((mod, idx) => (
+                  <Grid item key={`${stat}-${idx}`}>
+                    <ModIcon
+                      src={modIcons[stat.toLowerCase() + '_mod'] || ''}
+                      alt={mod.toString()}
+                    />
+                  </Grid>
+                ))
               )}
-            </ContentColumn>
-          </Card>
+            </ModsRow>
+          </StyledCard>
         ))}
         <TableFooter>
           Page {currentPage + 1} of {Math.ceil(permutations.length / itemsPerPage)}
         </TableFooter>
       </CardContainer>
-      <RightArrowButton
+      <ArrowButton
         onClick={() =>
           setCurrentPage((prev) =>
             Math.min(prev + 1, Math.ceil(permutations.length / itemsPerPage) - 1)
@@ -313,11 +257,8 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
         }
         disabled={currentPage === Math.ceil(permutations.length / itemsPerPage) - 1}
       >
-        &#9654;
-      </RightArrowButton>
-      {hoverInfo && (
-        <ItemInfo style={{ left: hoverInfo.x, top: hoverInfo.y }}>{hoverInfo.content}</ItemInfo>
-      )}
+        <ChevronRightIcon />
+      </ArrowButton>
     </StatsTableContainer>
   );
 };
