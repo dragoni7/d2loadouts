@@ -141,7 +141,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
       style={{
         transform: to(
           [rotation, shape],
-          (r, s) => `rotate(${r + rotationOffset}deg) scale(${1 + s * 0.5}, ${1 - s * 0.3})`
+          (r, s) => `rotate(${r + rotationOffset}deg) scale(${1 + s * 0.5}, ${1 - s * 0.1})`
         ),
         scale: scale,
         borderRadius: shape.to((s) => `${s * 50}%`),
