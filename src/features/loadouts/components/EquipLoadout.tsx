@@ -174,7 +174,13 @@ const EquipLoadout: React.FC = () => {
             {equipping ? (
               false
             ) : (
-              <Grid item md={12} lg={12} textAlign="center">
+              <Grid
+                item
+                md={12}
+                lg={12}
+                textAlign="center"
+                sx={{ backgroundColor: 'rgba(48,48,48,0.8)' }}
+              >
                 <FadeIn>
                   <h2>{equipStep}</h2>
                 </FadeIn>
