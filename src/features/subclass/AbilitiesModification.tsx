@@ -108,6 +108,14 @@ const OptionButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(0.25),
 }));
 
+const BlurredBackground = styled('div')({
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  backdropFilter: 'blur(4px)',
+  borderRadius: '4px',
+  padding: '8px',
+  marginBottom: '16px',
+});
+
 const SuperModSlot = styled('div')(({ theme }) => ({
   width: 250,
   height: 250,
@@ -313,10 +321,24 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
 
   const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>, slotId: string) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    setSubmenuPosition({
-      top: rect.bottom + window.scrollY,
-      left: rect.left + window.scrollX,
-    });
+    const category = slotId.split('-')[0];
+
+    if (category === 'FRAGMENTS') {
+      // Find the first fragment slot's position
+      const firstFragmentSlot = document.querySelector('[data-slot-id^="FRAGMENTS-"]');
+      if (firstFragmentSlot) {
+        const firstRect = firstFragmentSlot.getBoundingClientRect();
+        setSubmenuPosition({
+          top: firstRect.bottom + window.scrollY,
+          left: firstRect.left + window.scrollX,
+        });
+      }
+    } else {
+      setSubmenuPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+    }
     setHoveredSlot(slotId);
   };
 
@@ -341,7 +363,11 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
 
       return (
         <Box key={slotId} position="relative" display="inline-block">
-          <div onMouseEnter={(e) => handleMouseEnter(e, slotId)} onMouseLeave={handleMouseLeave}>
+          <div
+            data-slot-id={slotId}
+            onMouseEnter={(e) => handleMouseEnter(e, slotId)}
+            onMouseLeave={handleMouseLeave}
+          >
             <SlotComponent
               style={{
                 backgroundImage: currentMod ? `url(${currentMod.icon})` : 'none',
@@ -459,5 +485,4 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
     </div>
   );
 };
-
 export default AbilitiesModification;
