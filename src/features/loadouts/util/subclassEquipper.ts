@@ -1,3 +1,4 @@
+import { ERRORS } from '../../../lib/bungie_api/constants';
 import { equipItemRequest, insertSocketPlugFreeRequest } from '../../../lib/bungie_api/requests';
 import { Subclass } from '../../../types/d2l-types';
 import { ManifestAspect, ManifestPlug, ManifestStatPlug } from '../../../types/manifest-types';
@@ -51,7 +52,9 @@ export class SubclassEquipper extends Equipper {
       this.characterId
     ).catch((error) => {
       if (error.response) {
-        result.status = STATUS.FAIL;
+        error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
+          ? STATUS.SUCCESS
+          : STATUS.FAIL;
         this.result[0].status = result.status;
         result.operationsStatus = error.response.data.ErrorStatus.replace(
           /([a-z])([A-Z])/g,
@@ -87,7 +90,9 @@ export class SubclassEquipper extends Equipper {
       this.characterId
     ).catch((error) => {
       if (error.response) {
-        result.status = STATUS.FAIL;
+        error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
+          ? STATUS.SUCCESS
+          : STATUS.FAIL;
         this.result[0].status = result.status;
         result.operationsStatus = error.response.data.ErrorStatus?.replace(
           /([a-z])([A-Z])/g,
@@ -123,7 +128,9 @@ export class SubclassEquipper extends Equipper {
       this.characterId
     ).catch((error) => {
       if (error.response) {
-        result.status = STATUS.FAIL;
+        error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
+          ? STATUS.SUCCESS
+          : STATUS.FAIL;
         this.result[0].status = result.status;
         result.operationsStatus = error.response.data.ErrorStatus?.replace(
           /([a-z])([A-Z])/g,

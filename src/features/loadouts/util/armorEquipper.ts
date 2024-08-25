@@ -1,4 +1,4 @@
-import { BUCKET_HASH, ITEM_LOCATIONS } from '../../../lib/bungie_api/constants';
+import { BUCKET_HASH, ERRORS, ITEM_LOCATIONS } from '../../../lib/bungie_api/constants';
 import {
   equipItemRequest,
   getCharacterInventoryRequest,
@@ -153,7 +153,10 @@ export class ArmorEquipper extends Equipper {
           this.characterId
         ).catch((error) => {
           if (error.response) {
-            result.status = error.response.data.ErrorCode === 1679 ? STATUS.SUCCESS : STATUS.FAIL;
+            result.status =
+              error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
+                ? STATUS.SUCCESS
+                : STATUS.FAIL;
             this.result[0].status = result.status;
             result.operationsStatus = error.response.data.ErrorStatus.replace(
               /([a-z])([A-Z])/g,

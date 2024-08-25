@@ -160,6 +160,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 1078080765,
@@ -170,6 +172,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 1078080765,
@@ -180,6 +184,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 1078080765,
@@ -190,6 +196,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 4173924323,
@@ -200,6 +208,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
           ],
           gauntletMods: [
@@ -212,6 +222,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 3820147479,
@@ -222,6 +234,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 3820147479,
@@ -232,6 +246,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 3820147479,
@@ -242,6 +258,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 4173924323,
@@ -252,6 +270,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
           ],
           chestArmorMods: [
@@ -264,6 +284,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 1803434835,
@@ -274,6 +296,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 1803434835,
@@ -284,6 +308,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 1803434835,
@@ -294,6 +320,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 4173924323,
@@ -304,6 +332,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
           ],
           legArmorMods: [
@@ -316,6 +346,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 2269836811,
@@ -326,6 +358,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 2269836811,
@@ -336,6 +370,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 2269836811,
@@ -346,6 +382,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 4173924323,
@@ -356,6 +394,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
           ],
           classArmorMods: [
@@ -368,6 +408,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 3200810407,
@@ -378,6 +420,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 3200810407,
@@ -388,6 +432,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 3200810407,
@@ -398,6 +444,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
             {
               itemHash: 4173924323,
@@ -408,6 +456,8 @@ export async function getProfileData(): Promise<ProfileData> {
               isOwned: false,
               name: '',
               icon: '',
+              energyCost: 0,
+              collectibleHash: 0,
             },
           ],
           characterId: characterData[key].characterId,

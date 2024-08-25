@@ -201,25 +201,22 @@ const EquipLoadout: React.FC = () => {
                         </Tooltip>
                       </Grid>
                       <Grid item md={9}>
-                        {results[index][0].status === STATUS.SUCCESS ? (
-                          <h3 style={{ color: 'green' }}>Mods Successfully Inserted</h3>
-                        ) : (
-                          results[index].slice(1).map((result) => (
-                            <Tooltip title={result.operationsStatus}>
-                              {result.status === STATUS.SUCCESS ? (
-                                <>
-                                  <CheckRounded sx={{ fontSize: 56, color: 'green' }} />
-                                  {result.subject.name}
-                                </>
-                              ) : (
-                                <>
-                                  <Close sx={{ fontSize: 56, color: 'red' }} />
-                                  {result.subject.name}
-                                </>
-                              )}
-                            </Tooltip>
-                          ))
-                        )}
+                        {results[index].slice(1).map((result) => (
+                          <Tooltip title={result.operationsStatus}>
+                            <Badge
+                              badgeContent={
+                                results[index][0].status === STATUS.SUCCESS ? (
+                                  <CheckRounded sx={{ fontSize: 50, color: 'green' }} />
+                                ) : (
+                                  <Close sx={{ fontSize: 50, color: 'red' }} />
+                                )
+                              }
+                              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            >
+                              <img src={result.subject.icon} />
+                            </Badge>
+                          </Tooltip>
+                        ))}
                       </Grid>
                     </Fragment>
                   ) : (

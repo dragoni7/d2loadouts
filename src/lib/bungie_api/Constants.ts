@@ -62,6 +62,7 @@ export const STATS: string[] = [
 export enum ERRORS {
   INVALID_EQUIP_LOCATION = 1671,
   CANNOT_FIND_ITEM = 1623,
+  SOCKET_ALREADY_CONTAINS_PLUG = 1679,
 }
 
 export enum STAT_MOD_HASHES {

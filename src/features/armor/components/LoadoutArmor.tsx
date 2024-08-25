@@ -68,9 +68,10 @@ const LoadoutArmor: React.FC = () => {
             <Box width={81} height={81}>
               Required Mods:
             </Box>
-            {requiredMods.map((mod) => (
+            {requiredMods.map((mod, index) => (
               <Box
                 className="armor-mod-slot"
+                key={index}
                 style={{
                   backgroundImage: `url(${mod.icon})`,
                 }}

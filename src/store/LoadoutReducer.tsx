@@ -1,18 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Character, DamageType, DestinyArmor, Loadout, Plug, Subclass } from '../types/d2l-types';
-import {
-  DAMAGE_TYPE,
-  EMPTY_ASPECT,
-  EMPTY_FRAGMENT,
-  EMPTY_MANIFEST_PLUG,
-} from '../lib/bungie_api/constants';
-import { ManifestArmorStatMod, ManifestPlug } from '../types/manifest-types';
-
-const EMPTY_PLUG: Plug = {
-  plugItemHash: '',
-  socketArrayType: 0,
-  socketIndex: -1,
-};
+import { Character, DamageType, DestinyArmor, Loadout, Subclass } from '../types/d2l-types';
+import { EMPTY_ASPECT, EMPTY_FRAGMENT, EMPTY_MANIFEST_PLUG } from '../lib/bungie_api/constants';
+import { ManifestArmorMod, ManifestArmorStatMod } from '../types/manifest-types';
 
 export interface InitialState {
   loadout: Loadout;
@@ -125,6 +114,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 1078080765,
@@ -135,6 +126,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 1078080765,
@@ -145,6 +138,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 1078080765,
@@ -155,6 +150,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 4173924323,
@@ -165,6 +162,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
     ],
     gauntletMods: [
@@ -177,6 +176,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 3820147479,
@@ -187,6 +188,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 3820147479,
@@ -197,6 +200,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 3820147479,
@@ -207,6 +212,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 4173924323,
@@ -217,6 +224,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
     ],
     chestArmorMods: [
@@ -229,6 +238,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 1803434835,
@@ -239,6 +250,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 1803434835,
@@ -249,6 +262,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 1803434835,
@@ -259,6 +274,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 4173924323,
@@ -269,6 +286,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
     ],
     legArmorMods: [
@@ -281,6 +300,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 2269836811,
@@ -291,6 +312,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 2269836811,
@@ -301,6 +324,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 2269836811,
@@ -311,6 +336,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 4173924323,
@@ -321,6 +348,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
     ],
     classArmorMods: [
@@ -333,6 +362,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 3200810407,
@@ -343,6 +374,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 3200810407,
@@ -353,6 +386,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 3200810407,
@@ -363,6 +398,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
       {
         itemHash: 4173924323,
@@ -373,6 +410,8 @@ const initialState: InitialState = {
         isOwned: false,
         name: '',
         icon: '',
+        energyCost: 0,
+        collectibleHash: 0,
       },
     ],
     characterId: 0,
@@ -418,7 +457,7 @@ export const loadoutConfigSlice = createSlice({
       action: PayloadAction<{
         armorType: string;
         slot: number;
-        plug: ManifestPlug | ManifestArmorStatMod;
+        plug: ManifestArmorMod | ManifestArmorStatMod;
       }>
     ) => {
       switch (action.payload.armorType) {
