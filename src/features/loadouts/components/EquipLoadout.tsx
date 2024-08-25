@@ -186,13 +186,13 @@ const EquipLoadout: React.FC = () => {
                 </FadeIn>
               </Grid>
             )}
-            <Grid container item md={12} lg={12} spacing={2} py={4}>
+            <Grid container item md={12} lg={12} spacing={3} py={4}>
               {processing.map((item, index) => (
                 <>
                   {results[index] !== undefined ? (
                     <>
                       <Grid item md={2} lg={2} />
-                      <Grid item md={2}>
+                      <Grid item md={1}>
                         <FadeIn duration={1000}>
                           <Tooltip
                             title={
@@ -215,7 +215,7 @@ const EquipLoadout: React.FC = () => {
                           </Tooltip>
                         </FadeIn>
                       </Grid>
-                      <Grid item container md={8} gap={2}>
+                      <Grid item container md={9} gap={2}>
                         {results[index].slice(1).map((result, index) => (
                           <Grid item md="auto">
                             <FadeIn delay={100 * index} duration={1000}>
