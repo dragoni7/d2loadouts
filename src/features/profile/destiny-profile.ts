@@ -479,6 +479,16 @@ export async function getProfileData(): Promise<ProfileData> {
               .where('itemHash')
               .equals(plug.plugItemHash)
               .modify({ isOwned: true });
+
+            await db.manifestSubclassAspectsDef
+              .where('itemHash')
+              .equals(plug.plugItemHash)
+              .modify({ isOwned: true });
+
+            await db.manifestSubclassFragmentsDef
+              .where('itemHash')
+              .equals(plug.plugItemHash)
+              .modify({ isOwned: true });
           }
         }
       }
