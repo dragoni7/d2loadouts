@@ -4,7 +4,6 @@ import { styled } from '@mui/system';
 import { DestinyArmor } from '../../../types/d2l-types';
 
 const DefaultIconContainer = styled(animated.img)({
-  borderRadius: '5px',
   padding: '2px',
   alignItems: 'center',
   justifyContent: 'center',

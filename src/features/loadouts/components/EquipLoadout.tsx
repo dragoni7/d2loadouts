@@ -209,7 +209,6 @@ const EquipLoadout: React.FC = () => {
                                 border: `4px solid ${
                                   results[index][0].status === STATUS.SUCCESS ? 'green' : 'red'
                                 }`,
-                                borderRadius: '5px',
                               }}
                             />
                           </Tooltip>
@@ -228,7 +227,6 @@ const EquipLoadout: React.FC = () => {
                                     border: `4px solid ${
                                       result.status === STATUS.SUCCESS ? 'green' : 'red'
                                     }`,
-                                    borderRadius: '5px',
                                   }}
                                 />
                               </Tooltip>
@@ -253,42 +251,40 @@ const EquipLoadout: React.FC = () => {
             {equipping ? (
               false
             ) : (
-              <>
-                <Grid
-                  item
-                  container
-                  md={12}
-                  textAlign="center"
-                  alignItems="flex-end"
-                  justifyContent="space-betwen"
-                  sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
-                >
-                  <Grid item md={4}>
-                    <FadeIn delay={200}>
-                      <Button
-                        onClick={() => {
-                          setOpen(false);
-                          setResults([]);
-                          setProcessing([]);
-                          setEquipStep('');
-                        }}
-                      >
-                        Back
-                      </Button>
-                    </FadeIn>
-                  </Grid>
-                  <Grid item md={4}>
-                    <FadeIn delay={400}>
-                      <Button>Share</Button>
-                    </FadeIn>
-                  </Grid>
-                  <Grid item md={4}>
-                    <FadeIn delay={600}>
-                      <Button>Save in-game</Button>
-                    </FadeIn>
-                  </Grid>
+              <Grid
+                item
+                container
+                md={12}
+                textAlign="center"
+                alignItems="flex-end"
+                justifyContent="space-betwen"
+                sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+              >
+                <Grid item md={4}>
+                  <FadeIn delay={200}>
+                    <Button
+                      onClick={() => {
+                        setOpen(false);
+                        setResults([]);
+                        setProcessing([]);
+                        setEquipStep('');
+                      }}
+                    >
+                      Back
+                    </Button>
+                  </FadeIn>
                 </Grid>
-              </>
+                <Grid item md={4}>
+                  <FadeIn delay={400}>
+                    <Button>Share</Button>
+                  </FadeIn>
+                </Grid>
+                <Grid item md={4}>
+                  <FadeIn delay={600}>
+                    <Button>Save in-game</Button>
+                  </FadeIn>
+                </Grid>
+              </Grid>
             )}
           </Grid>
         </Paper>
