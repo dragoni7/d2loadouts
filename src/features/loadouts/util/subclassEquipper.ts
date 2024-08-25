@@ -9,7 +9,7 @@ export class SubclassEquipper extends Equipper {
   public async equipSubclass(subclass: Subclass) {
     const result = {
       status: STATUS.SUCCESS,
-      operationsStatus: '',
+      message: '',
       subject: subclass,
     };
 
@@ -17,16 +17,12 @@ export class SubclassEquipper extends Equipper {
       (error) => {
         if (error.response) {
           result.status = STATUS.FAIL;
-          result.operationsStatus = error.response.data.ErrorStatus.replace(
-            /([a-z])([A-Z])/g,
-            '$1 $2'
-          );
+          result.message = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
         }
       }
     );
 
-    if (response)
-      result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+    if (response) result.message = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
 
     this.result.push(result);
   }
@@ -38,7 +34,7 @@ export class SubclassEquipper extends Equipper {
 
     const result = {
       status: STATUS.SUCCESS,
-      operationsStatus: '',
+      message: '',
       subject: ability,
     };
 
@@ -55,16 +51,11 @@ export class SubclassEquipper extends Equipper {
         error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
           ? STATUS.SUCCESS
           : STATUS.FAIL;
-        this.result[0].status = result.status;
-        result.operationsStatus = error.response.data.ErrorStatus.replace(
-          /([a-z])([A-Z])/g,
-          '$1 $2'
-        );
+        result.message = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
       }
     });
 
-    if (response)
-      result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+    if (response) result.message = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
 
     this.result.push(result);
   }
@@ -76,7 +67,7 @@ export class SubclassEquipper extends Equipper {
 
     const result = {
       status: STATUS.SUCCESS,
-      operationsStatus: '',
+      message: '',
       subject: aspect,
     };
 
@@ -93,16 +84,11 @@ export class SubclassEquipper extends Equipper {
         error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
           ? STATUS.SUCCESS
           : STATUS.FAIL;
-        this.result[0].status = result.status;
-        result.operationsStatus = error.response.data.ErrorStatus?.replace(
-          /([a-z])([A-Z])/g,
-          '$1 $2'
-        );
+        result.message = error.response.data.ErrorStatus?.replace(/([a-z])([A-Z])/g, '$1 $2');
       }
     });
 
-    if (response)
-      result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+    if (response) result.message = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
 
     this.result.push(result);
   }
@@ -114,7 +100,7 @@ export class SubclassEquipper extends Equipper {
 
     const result = {
       status: STATUS.SUCCESS,
-      operationsStatus: '',
+      message: '',
       subject: fragment,
     };
 
@@ -131,16 +117,11 @@ export class SubclassEquipper extends Equipper {
         error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
           ? STATUS.SUCCESS
           : STATUS.FAIL;
-        this.result[0].status = result.status;
-        result.operationsStatus = error.response.data.ErrorStatus?.replace(
-          /([a-z])([A-Z])/g,
-          '$1 $2'
-        );
+        result.message = error.response.data.ErrorStatus?.replace(/([a-z])([A-Z])/g, '$1 $2');
       }
     });
 
-    if (response)
-      result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+    if (response) result.message = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
 
     this.result.push(result);
   }

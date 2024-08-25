@@ -6,7 +6,7 @@ import {
   transferItemRequest,
 } from '../../../lib/bungie_api/requests';
 import { DestinyArmor } from '../../../types/d2l-types';
-import { ManifestPlug, ManifestArmorStatMod } from '../../../types/manifest-types';
+import { ManifestArmorStatMod, ManifestArmorMod } from '../../../types/manifest-types';
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
 
@@ -67,7 +67,7 @@ export class ArmorEquipper extends Equipper {
   public async equipArmor(armor: DestinyArmor): Promise<void> {
     const result = {
       status: STATUS.SUCCESS,
-      operationsStatus: '',
+      message: '',
       subject: armor,
     };
 
@@ -85,10 +85,7 @@ export class ArmorEquipper extends Equipper {
         ).catch((error) => {
           if (error.response) {
             result.status = STATUS.FAIL;
-            result.operationsStatus = error.response.data.ErrorStatus.replace(
-              /([a-z])([A-Z])/g,
-              '$1 $2'
-            );
+            result.message = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
           }
         });
       }
@@ -103,10 +100,7 @@ export class ArmorEquipper extends Equipper {
       ).catch((error) => {
         if (error.response) {
           result.status = STATUS.FAIL;
-          result.operationsStatus = error.response.data.ErrorStatus.replace(
-            /([a-z])([A-Z])/g,
-            '$1 $2'
-          );
+          result.message = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
         }
       });
     }
@@ -115,61 +109,55 @@ export class ArmorEquipper extends Equipper {
     const response = await equipItemRequest(armor.instanceHash, this.characterId).catch((error) => {
       if (error.response) {
         result.status = STATUS.FAIL;
-        result.operationsStatus = error.response.data.ErrorStatus.replace(
-          /([a-z])([A-Z])/g,
-          '$1 $2'
-        );
+        result.message = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
       }
     });
 
-    if (response)
-      result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+    if (response) {
+      result.status = STATUS.SUCCESS;
+      result.message = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+    }
 
     this.result.push(result);
   }
 
   public async equipArmorMods(mods: {
-    [key: number]: ManifestPlug | ManifestArmorStatMod;
+    [key: number]: ManifestArmorMod | ManifestArmorStatMod;
   }): Promise<void> {
     const armor = this.result[0].subject;
 
-    if (armor) {
-      for (let i = 0; i < 5; i++) {
-        const result = {
-          status: STATUS.SUCCESS,
-          operationsStatus: '',
-          subject: mods[i],
-        };
+    if (!armor) return;
 
-        if (i === 4 && armor.artifice === false) continue;
+    for (let i = 0; i < 5; i++) {
+      const result = {
+        status: STATUS.SUCCESS,
+        message: '',
+        subject: mods[i],
+      };
 
-        const response = await insertSocketPlugFreeRequest(
-          armor.instanceHash,
-          {
-            plugItemHash: String(mods[i].itemHash),
-            socketArrayType: 0,
-            socketIndex: i === 4 && armor.artifice === true ? 11 : i,
-          },
-          this.characterId
-        ).catch((error) => {
-          if (error.response) {
-            result.status =
-              error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
-                ? STATUS.SUCCESS
-                : STATUS.FAIL;
-            this.result[0].status = result.status;
-            result.operationsStatus = error.response.data.ErrorStatus.replace(
-              /([a-z])([A-Z])/g,
-              '$1 $2'
-            );
-          }
-        });
+      if (i === 4 && armor.artifice === false) continue;
 
-        if (response)
-          result.operationsStatus = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+      const response = await insertSocketPlugFreeRequest(
+        armor.instanceHash,
+        {
+          plugItemHash: String(mods[i].itemHash),
+          socketArrayType: 0,
+          socketIndex: i === 4 && armor.artifice === true ? 11 : i,
+        },
+        this.characterId
+      ).catch((error) => {
+        if (error.response) {
+          result.status =
+            error.response.data.ErrorCode === ERRORS.SOCKET_ALREADY_CONTAINS_PLUG
+              ? STATUS.SUCCESS
+              : STATUS.FAIL;
+          result.message = error.response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+        }
+      });
 
-        this.result.push(result);
-      }
+      if (response) result.message = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+      this.result.push(result);
     }
   }
 }
