@@ -544,7 +544,6 @@ export const loadoutConfigSlice = createSlice({
     },
     updateLoadoutCharacter: (state, action: PayloadAction<Character>) => {
       state.loadout.characterId = action.payload.id;
-      state.loadout.subclassConfig = action.payload.equippedLoadout.subclassConfig;
     },
     resetLoadout: () => initialState,
   },
