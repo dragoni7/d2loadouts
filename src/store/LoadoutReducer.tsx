@@ -1,18 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Character, DamageType, DestinyArmor, Loadout, Plug, Subclass } from '../types/d2l-types';
+import { Character, DamageType, DestinyArmor, Loadout, Subclass } from '../types/d2l-types';
 import {
-  DAMAGE_TYPE,
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,
   EMPTY_MANIFEST_PLUG,
+  EMPTY_SOCKETS,
 } from '../lib/bungie_api/constants';
-import { ManifestArmorStatMod, ManifestPlug } from '../types/manifest-types';
-
-const EMPTY_PLUG: Plug = {
-  plugItemHash: '',
-  socketArrayType: 0,
-  socketIndex: -1,
-};
+import { ManifestArmorMod, ManifestArmorStatMod } from '../types/manifest-types';
 
 export interface InitialState {
   loadout: Loadout;
@@ -115,266 +109,11 @@ const initialState: InitialState = {
       name: '',
     },
     requiredStatMods: [],
-    helmetMods: [
-      {
-        itemHash: 1980618587,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 1078080765,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 1078080765,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 1078080765,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 4173924323,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-    ],
-    gauntletMods: [
-      {
-        itemHash: 1980618587,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 3820147479,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 3820147479,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 3820147479,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 4173924323,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-    ],
-    chestArmorMods: [
-      {
-        itemHash: 1980618587,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 1803434835,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 1803434835,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 1803434835,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 4173924323,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-    ],
-    legArmorMods: [
-      {
-        itemHash: 1980618587,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 2269836811,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 2269836811,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 2269836811,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 4173924323,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-    ],
-    classArmorMods: [
-      {
-        itemHash: 1980618587,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 3200810407,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 3200810407,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 3200810407,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-      {
-        itemHash: 4173924323,
-        perkName: '',
-        perkDescription: '',
-        perkIcon: '',
-        category: 0,
-        isOwned: false,
-        name: '',
-        icon: '',
-      },
-    ],
+    helmetMods: EMPTY_SOCKETS.HELMET,
+    gauntletMods: EMPTY_SOCKETS.GAUNTLETS,
+    chestArmorMods: EMPTY_SOCKETS.CHEST_ARMOR,
+    legArmorMods: EMPTY_SOCKETS.LEG_ARMOR,
+    classArmorMods: EMPTY_SOCKETS.CLASS_ARMOR,
     characterId: 0,
     subclassConfig: {
       subclass: {
@@ -418,7 +157,7 @@ export const loadoutConfigSlice = createSlice({
       action: PayloadAction<{
         armorType: string;
         slot: number;
-        plug: ManifestPlug | ManifestArmorStatMod;
+        plug: ManifestArmorMod | ManifestArmorStatMod;
       }>
     ) => {
       switch (action.payload.armorType) {
@@ -454,21 +193,26 @@ export const loadoutConfigSlice = createSlice({
       state.loadout.legArmorMods = initialState.loadout.legArmorMods;
       state.loadout.classArmorMods = initialState.loadout.classArmorMods;
     },
-    updateSubclass: (
-      state,
-      action: PayloadAction<{ damageType: DamageType; subclass: Subclass }>
-    ) => {
-      state.loadout.subclassConfig = {
-        subclass: action.payload.subclass,
-        damageType: action.payload.damageType,
-        super: EMPTY_MANIFEST_PLUG,
-        aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-        fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
-        classAbility: null,
-        meleeAbility: null,
-        movementAbility: null,
-        grenade: null,
-      };
+    updateSubclass: (state, action: PayloadAction<{ subclass: Subclass | undefined }>) => {
+      if (action.payload.subclass !== undefined) {
+        state.loadout.subclassConfig = {
+          subclass: action.payload.subclass,
+          damageType: action.payload.subclass.damageType as DamageType,
+          super: EMPTY_MANIFEST_PLUG,
+          aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+          fragments: [
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+          ],
+          classAbility: null,
+          meleeAbility: null,
+          movementAbility: null,
+          grenade: null,
+        };
+      }
     },
     updateSubclassMods: (state, action: PayloadAction<{ category: string; mods: any[] }>) => {
       const { category, mods } = action.payload;
@@ -505,7 +249,6 @@ export const loadoutConfigSlice = createSlice({
     },
     updateLoadoutCharacter: (state, action: PayloadAction<Character>) => {
       state.loadout.characterId = action.payload.id;
-      state.loadout.subclassConfig = action.payload.equippedLoadout.subclassConfig;
     },
     resetLoadout: () => initialState,
   },

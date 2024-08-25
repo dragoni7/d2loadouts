@@ -9,7 +9,13 @@ import { updateProfileData } from '../../store/ProfileReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
 import { filterPermutations } from '../../features/armor-optimization/filter-permutations';
-import { DestinyArmor, Character, FilteredPermutation, DamageType } from '../../types/d2l-types';
+import {
+  DestinyArmor,
+  Character,
+  FilteredPermutation,
+  DamageType,
+  SubclassConfig,
+} from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
@@ -20,7 +26,7 @@ import ArmorCustomization from '../../features/armor/components/ArmorCustomizati
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
 import { ManifestSubclass } from '../../types/manifest-types';
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
-import { updateManifest } from '../../lib/bungie_api/Manifest';
+import { updateManifest } from '../../lib/bungie_api/manifest';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -199,11 +205,11 @@ export const Dashboard: React.FC = () => {
 
   const handleSubclassSelect = (subclass: ManifestSubclass) => {
     setSelectedSubclass(subclass);
-    if (selectedCharacter) {
+
+    if (selectedCharacter && subclass.damageType in selectedCharacter.subclasses) {
       dispatch(
         updateSubclass({
-          damageType: subclass.damageType as DamageType,
-          subclass: selectedCharacter.subclasses[subclass.damageType],
+          subclass: selectedCharacter.subclasses[subclass.damageType]?.subclass,
         })
       );
     }

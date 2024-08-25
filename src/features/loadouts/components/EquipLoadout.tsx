@@ -1,22 +1,22 @@
-import { Backdrop, Badge, Box, Button, Grid, LinearProgress, Paper, Tooltip } from '@mui/material';
+import { Backdrop, Box, Button, Container, Grid, Paper, Tooltip } from '@mui/material';
 import { store } from '../../../store';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { EquipResult } from '../types';
-import ArmorIcon from '../../../components/ArmorIcon';
-import { CheckRounded, Close } from '@mui/icons-material';
 import { STATUS } from '../constants';
 import { ArmorEquipper } from '../util/armorEquipper';
-import { DestinyArmor, Plug, SubclassConfig } from '../../../types/d2l-types';
+import { DestinyArmor, SubclassConfig } from '../../../types/d2l-types';
 import React from 'react';
 import { SubclassEquipper } from '../util/subclassEquipper';
-import { ManifestArmorStatMod, ManifestPlug } from '../../../types/manifest-types';
+import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
+import LoadingBorder from './LoadingBorder';
+import FadeIn from './FadeIn';
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
   const [equipStep, setEquipStep] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
-  const [results, setResults] = useState<EquipResult[]>([]);
+  const [results, setResults] = useState<EquipResult[][]>([]);
   const [equipping, setEquipping] = useState<boolean>(false);
 
   const onEquipLoadout = async () => {
@@ -36,7 +36,7 @@ const EquipLoadout: React.FC = () => {
       setEquipping(true);
       const armorEquipper = new ArmorEquipper();
       const tempEquipped: any[] = [];
-      const tempResults: EquipResult[] = [];
+      const tempResults: EquipResult[][] = [];
 
       await armorEquipper.setCharacter(loadout.characterId);
 
@@ -84,9 +84,9 @@ const EquipLoadout: React.FC = () => {
   const processArmor = async (
     tempEquipped: DestinyArmor[],
     equipper: ArmorEquipper,
-    tempResults: EquipResult[],
+    tempResults: EquipResult[][],
     armor: DestinyArmor,
-    armorMods: { [key: number]: ManifestPlug | ManifestArmorStatMod }
+    armorMods: { [key: number]: ManifestArmorMod | ManifestArmorStatMod }
   ) => {
     tempEquipped.push(armor);
     setProcessing(tempEquipped);
@@ -101,7 +101,7 @@ const EquipLoadout: React.FC = () => {
   const processSubclass = async (
     tempEquipped: any[],
     equipper: SubclassEquipper,
-    tempResults: EquipResult[],
+    tempResults: EquipResult[][],
     subclassConfig: SubclassConfig
   ) => {
     tempEquipped.push(subclassConfig.subclass);
@@ -160,85 +160,108 @@ const EquipLoadout: React.FC = () => {
       </Button>
       <Backdrop open={open} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Paper
-          elevation={1}
+          elevation={5}
           sx={{
-            display: 'flex',
-            position: 'absolute',
-            width: '25vw',
-            height: '95vh',
-            backgroundColor: '#1c1c21',
+            width: '100%',
+            height: '87%',
+            backgroundColor: 'rgba(40,40,40,0.8)',
+            borderTop: '8px solid rgba(100,100,100,1.0)',
+            borderRadius: '0',
             color: 'white',
           }}
         >
-          <Grid
-            container
-            spacing={2}
-            justifyContent="space-between"
-            alignItems="flex-end"
-            paddingTop={1}
-            paddingLeft={1}
-            paddingBottom={4}
-          >
-            <Fragment>
+          <Grid container height="100%">
+            {equipping ? (
+              false
+            ) : (
+              <Grid
+                item
+                md={12}
+                lg={12}
+                textAlign="center"
+                sx={{ backgroundColor: 'rgba(48,48,48,0.8)' }}
+              >
+                <FadeIn>
+                  <h2>{equipStep}</h2>
+                </FadeIn>
+              </Grid>
+            )}
+            <Grid container item md={12} lg={12} spacing={3} py={4}>
               {processing.map((item, index) => (
-                <Fragment>
+                <>
                   {results[index] !== undefined ? (
-                    <Fragment>
-                      <Grid item md={2}>
-                        <Tooltip title={'Equipped'}>
-                          <Badge
-                            badgeContent={
-                              results[index].operationsStatus[0] === 'Success' ? (
-                                <CheckRounded sx={{ fontSize: 50, color: 'green' }} />
-                              ) : (
-                                <Close sx={{ fontSize: 50, color: 'red' }} />
-                              )
+                    <>
+                      <Grid item md={2} lg={2} />
+                      <Grid item md={1}>
+                        <FadeIn duration={1000}>
+                          <Tooltip
+                            title={
+                              results[index][0].status === STATUS.SUCCESS
+                                ? 'Equipped'
+                                : results[index][0].message
                             }
-                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                           >
-                            <ArmorIcon armor={item} size={64}></ArmorIcon>
-                          </Badge>
-                        </Tooltip>
+                            <img
+                              src={results[index][0].subject.icon}
+                              width={72}
+                              height={72}
+                              style={{
+                                border: `4px solid ${
+                                  results[index][0].status === STATUS.SUCCESS ? 'green' : 'red'
+                                }`,
+                              }}
+                            />
+                          </Tooltip>
+                        </FadeIn>
                       </Grid>
-                      <Grid item md={9}>
-                        {results[index].status === STATUS.SUCCESS
-                          ? 'Success'
-                          : results[index]?.operationsStatus
-                              .slice(1)
-                              .map((error) => (
-                                <Tooltip title={error}>
-                                  {error === 'Success' ? (
-                                    <CheckRounded sx={{ fontSize: 56, color: 'green' }} />
-                                  ) : (
-                                    <Close sx={{ fontSize: 56, color: 'red' }} />
-                                  )}
-                                </Tooltip>
-                              ))}
+                      <Grid item container md={9} gap={2}>
+                        {results[index].slice(1).map((result, index) => (
+                          <Grid item md="auto">
+                            <FadeIn delay={100 * index} duration={1000}>
+                              <Tooltip title={result.message}>
+                                <img
+                                  src={result.subject.icon}
+                                  width={72}
+                                  height={72}
+                                  style={{
+                                    border: `4px solid ${
+                                      result.status === STATUS.SUCCESS ? 'green' : 'red'
+                                    }`,
+                                  }}
+                                />
+                              </Tooltip>
+                            </FadeIn>
+                          </Grid>
+                        ))}
                       </Grid>
-                    </Fragment>
+                    </>
                   ) : (
-                    <Grid container item justifyContent="center" spacing={3}>
+                    <Grid container item alignItems="flex-start" spacing={1} height="100%">
                       <Grid item md={12} textAlign="center">
-                        <ArmorIcon armor={item} size={64} />
+                        <LoadingBorder armor={item} size={64} />
                       </Grid>
-                      <Grid item md={4}>
-                        <LinearProgress color="inherit" />
-                      </Grid>
-                      <Grid item md={12} textAlign="center">
+                      <Grid item md={12} textAlign="center" height="100%">
                         {equipStep}
                       </Grid>
                     </Grid>
                   )}
-                </Fragment>
+                </>
               ))}
-              {equipping ? (
-                false
-              ) : (
-                <Fragment>
-                  <Grid item md={12} textAlign="center">
-                    {equipStep}
-                  </Grid>
-                  <Grid item md={3} textAlign="center">
+            </Grid>
+            {equipping ? (
+              false
+            ) : (
+              <Grid
+                item
+                container
+                md={12}
+                textAlign="center"
+                alignItems="flex-end"
+                justifyContent="space-betwen"
+                sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+              >
+                <Grid item md={4}>
+                  <FadeIn delay={200}>
                     <Button
                       onClick={() => {
                         setOpen(false);
@@ -249,16 +272,20 @@ const EquipLoadout: React.FC = () => {
                     >
                       Back
                     </Button>
-                  </Grid>
-                  <Grid item md={3} textAlign="center">
+                  </FadeIn>
+                </Grid>
+                <Grid item md={4}>
+                  <FadeIn delay={400}>
                     <Button>Share</Button>
-                  </Grid>
-                  <Grid item md={3} textAlign="center">
+                  </FadeIn>
+                </Grid>
+                <Grid item md={4}>
+                  <FadeIn delay={600}>
                     <Button>Save in-game</Button>
-                  </Grid>
-                </Fragment>
-              )}
-            </Fragment>
+                  </FadeIn>
+                </Grid>
+              </Grid>
+            )}
           </Grid>
         </Paper>
       </Backdrop>

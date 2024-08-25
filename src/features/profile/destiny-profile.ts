@@ -54,391 +54,6 @@ export async function getProfileData(): Promise<ProfileData> {
           classItem: [],
         },
         subclasses: {},
-        equippedLoadout: {
-          helmet: {
-            intellect: 0,
-            discipline: 0,
-            resilience: 0,
-            mobility: 0,
-            strength: 0,
-            recovery: 0,
-            instanceHash: '',
-            itemHash: '',
-            artifice: undefined,
-            masterwork: false,
-            exotic: undefined,
-            class: undefined,
-            type: '',
-            socket: undefined,
-            location: 0,
-            icon: '',
-            name: '',
-          },
-          gauntlets: {
-            intellect: 0,
-            discipline: 0,
-            resilience: 0,
-            mobility: 0,
-            strength: 0,
-            recovery: 0,
-            instanceHash: '',
-            itemHash: '',
-            artifice: undefined,
-            masterwork: false,
-            exotic: undefined,
-            class: undefined,
-            type: '',
-            socket: undefined,
-            location: 0,
-            icon: '',
-            name: '',
-          },
-          chestArmor: {
-            intellect: 0,
-            discipline: 0,
-            resilience: 0,
-            mobility: 0,
-            strength: 0,
-            recovery: 0,
-            instanceHash: '',
-            itemHash: '',
-            artifice: undefined,
-            masterwork: false,
-            exotic: undefined,
-            class: undefined,
-            type: '',
-            socket: undefined,
-            location: 0,
-            icon: '',
-            name: '',
-          },
-          legArmor: {
-            intellect: 0,
-            discipline: 0,
-            resilience: 0,
-            mobility: 0,
-            strength: 0,
-            recovery: 0,
-            instanceHash: '',
-            itemHash: '',
-            artifice: undefined,
-            masterwork: false,
-            exotic: undefined,
-            class: undefined,
-            type: '',
-            socket: undefined,
-            location: 0,
-            icon: '',
-            name: '',
-          },
-          classArmor: {
-            intellect: 0,
-            discipline: 0,
-            resilience: 0,
-            mobility: 0,
-            strength: 0,
-            recovery: 0,
-            instanceHash: '',
-            itemHash: '',
-            artifice: undefined,
-            masterwork: false,
-            exotic: undefined,
-            class: undefined,
-            type: '',
-            socket: undefined,
-            location: 0,
-            icon: '',
-            name: '',
-          },
-          helmetMods: [
-            {
-              itemHash: 1980618587,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 1078080765,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 1078080765,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 1078080765,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 4173924323,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-          ],
-          gauntletMods: [
-            {
-              itemHash: 1980618587,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 3820147479,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 3820147479,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 3820147479,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 4173924323,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-          ],
-          chestArmorMods: [
-            {
-              itemHash: 1980618587,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 1803434835,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 1803434835,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 1803434835,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 4173924323,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-          ],
-          legArmorMods: [
-            {
-              itemHash: 1980618587,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 2269836811,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 2269836811,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 2269836811,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 4173924323,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-          ],
-          classArmorMods: [
-            {
-              itemHash: 1980618587,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 3200810407,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 3200810407,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 3200810407,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-            {
-              itemHash: 4173924323,
-              perkName: '',
-              perkDescription: '',
-              perkIcon: '',
-              category: 0,
-              isOwned: false,
-              name: '',
-              icon: '',
-            },
-          ],
-          characterId: characterData[key].characterId,
-          subclassConfig: {
-            subclass: {
-              instanceId: '',
-              screenshot: '',
-              damageType: 0,
-              isOwned: false,
-              class: '',
-              itemHash: 0,
-              name: '',
-              icon: '',
-            },
-            damageType: 1,
-            super: EMPTY_MANIFEST_PLUG,
-            aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-            fragments: [
-              EMPTY_FRAGMENT,
-              EMPTY_FRAGMENT,
-              EMPTY_FRAGMENT,
-              EMPTY_FRAGMENT,
-              EMPTY_FRAGMENT,
-            ],
-            classAbility: null,
-            meleeAbility: null,
-            movementAbility: null,
-            grenade: null,
-          },
-          requiredStatMods: [],
-        },
       };
 
       // iterate character's equipped items
@@ -480,16 +95,30 @@ export async function getProfileData(): Promise<ProfileData> {
                 screenshot: subclass.icon,
                 isOwned: subclass.isOwned,
               };
-              character.subclasses[subclass.damageType] = s;
+
+              character.subclasses[subclass.damageType] = {
+                subclass: s,
+                damageType: 1,
+                super: EMPTY_MANIFEST_PLUG,
+                aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+                fragments: [
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                ],
+                classAbility: null,
+                meleeAbility: null,
+                movementAbility: null,
+                grenade: null,
+              };
 
               // set equipped loadout subclass config
-              character.equippedLoadout.subclassConfig.subclass = s;
-              character.equippedLoadout.subclassConfig.damageType =
-                subclass.damageType as DamageType;
               const subclassSockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
 
               /*if (subclassSockets) {
-                character.equippedLoadout.subclassConfig.classAbility = {
+                character.subclasses[subclass.damageType].classAbility = {
                   plugItemHash: subclassSockets[0].plugHash,
                   socketArrayType: 0,
                   socketIndex: 1,
@@ -570,28 +199,24 @@ export async function getProfileData(): Promise<ProfileData> {
           case BUCKET_HASH.HELMET: {
             const helmet = await buildDestinyArmor(itemComponents, item, character.class, 'helmet');
             character.armor.helmet.push(helmet);
-            character.equippedLoadout.helmet = helmet;
             continue;
           }
 
           case BUCKET_HASH.GAUNTLETS: {
             const arms = await buildDestinyArmor(itemComponents, item, character.class, 'arms');
             character.armor.arms.push(arms);
-            character.equippedLoadout.gauntlets = arms;
             continue;
           }
 
           case BUCKET_HASH.CHEST_ARMOR: {
             const chest = await buildDestinyArmor(itemComponents, item, character.class, 'chest');
             character.armor.chest.push(chest);
-            character.equippedLoadout.chestArmor = chest;
             continue;
           }
 
           case BUCKET_HASH.LEG_ARMOR: {
             const legs = await buildDestinyArmor(itemComponents, item, character.class, 'legs');
             character.armor.legs.push(legs);
-            character.equippedLoadout.legArmor = legs;
             continue;
           }
 
@@ -603,7 +228,6 @@ export async function getProfileData(): Promise<ProfileData> {
               'class'
             );
             character.armor.classItem.push(classItem);
-            character.equippedLoadout.classArmor = classItem;
             continue;
           }
         }
@@ -620,7 +244,7 @@ export async function getProfileData(): Promise<ProfileData> {
             const subclass = await subclassQuery.first();
 
             if (subclass) {
-              character.subclasses[subclass.damageType] = {
+              const s: Subclass = {
                 instanceId: item.itemInstanceId,
                 itemHash: subclass.itemHash,
                 damageType: subclass.damageType,
@@ -629,6 +253,24 @@ export async function getProfileData(): Promise<ProfileData> {
                 icon: subclass.icon,
                 screenshot: subclass.icon,
                 isOwned: subclass.isOwned,
+              };
+
+              character.subclasses[subclass.damageType] = {
+                subclass: s,
+                damageType: 1,
+                super: EMPTY_MANIFEST_PLUG,
+                aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+                fragments: [
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                  EMPTY_FRAGMENT,
+                ],
+                classAbility: null,
+                meleeAbility: null,
+                movementAbility: null,
+                grenade: null,
               };
             }
             continue;
@@ -834,6 +476,16 @@ export async function getProfileData(): Promise<ProfileData> {
         for (const plug of profilePlugSets[key]) {
           if (plug.enabled) {
             await db.manifestSubclassModDef
+              .where('itemHash')
+              .equals(plug.plugItemHash)
+              .modify({ isOwned: true });
+
+            await db.manifestSubclassAspectsDef
+              .where('itemHash')
+              .equals(plug.plugItemHash)
+              .modify({ isOwned: true });
+
+            await db.manifestSubclassFragmentsDef
               .where('itemHash')
               .equals(plug.plugItemHash)
               .modify({ isOwned: true });

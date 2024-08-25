@@ -82,8 +82,7 @@ export type Character = {
   class: CharacterClass;
   emblem?: Emblem;
   armor: ArmorBySlot;
-  subclasses: { [key: number]: Subclass };
-  equippedLoadout: Loadout;
+  subclasses: { [key: number]: SubclassConfig | undefined };
 };
 
 export type Emblem = {

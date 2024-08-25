@@ -4,6 +4,6 @@ export type EquipStatus = STATUS.SUCCESS | STATUS.FAIL;
 
 export type EquipResult = {
   status: EquipStatus;
-  operationsStatus: string[];
+  message: string;
   subject: any;
 };
