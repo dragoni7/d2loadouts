@@ -209,7 +209,6 @@ const fetchMods = async (subclass: ManifestSubclass) => {
     return modsData;
   }
 };
-
 const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass }) => {
   const [mods, setMods] = useState<{
     [key: string]: (ManifestPlug | ManifestAspect | ManifestStatPlug)[];
@@ -237,6 +236,10 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
     }
   }, [subclass]);
 
+  const calculateAvailableFragmentSlots = useCallback(() => {
+    return loadout.aspects.reduce((total, aspect) => total + (aspect.energyCapacity || 0), 0);
+  }, [loadout.aspects]);
+
   const handleModSelect = (
     category: string,
     mod: ManifestPlug | ManifestAspect | ManifestStatPlug,
@@ -246,23 +249,22 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
 
     switch (category) {
       case 'ASPECTS':
-        updatedMods = [...loadout.aspects];
+        updatedMods = [...loadout.aspects] as ManifestAspect[];
         break;
       case 'FRAGMENTS':
-        updatedMods = [...loadout.fragments];
+        updatedMods = [...loadout.fragments] as ManifestStatPlug[];
         break;
       case 'SUPERS':
       case 'CLASS_ABILITIES':
       case 'MOVEMENT_ABILITIES':
       case 'MELEE_ABILITIES':
       case 'GRENADES':
-        updatedMods = [mod];
+        updatedMods = [mod] as ManifestPlug[];
         break;
       default:
         return;
     }
 
-    // Check if the mod already exists in another slot and replace it with an empty mod
     if (category === 'ASPECTS' || category === 'FRAGMENTS') {
       const modIndex = updatedMods.findIndex(
         (existingMod) => existingMod.itemHash === mod.itemHash
@@ -272,13 +274,39 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
         updatedMods[modIndex] = category === 'ASPECTS' ? EMPTY_ASPECT : EMPTY_FRAGMENT;
       }
 
-      // Assign the mod to the selected slot
-      updatedMods[index!] = mod;
-    } else {
-      // Directly assign the mod for SUPERS and abilities
-      updatedMods[0] = mod;
+      updatedMods[index!] = mod as (typeof updatedMods)[number];
+
+      // If updating aspects, we need to check if we need to empty any fragment slots
+      if (category === 'ASPECTS') {
+        const newAspects = updatedMods as ManifestAspect[];
+        const newAvailableSlots = newAspects.reduce(
+          (total, aspect) => total + (aspect.energyCapacity || 0),
+          0
+        );
+
+        // Update fragments, emptying any that exceed the new available slots
+        const updatedFragments = loadout.fragments.map((fragment, idx) =>
+          idx < newAvailableSlots ? fragment : EMPTY_FRAGMENT
+        );
+
+        // Dispatch updates for both aspects and fragments
+        dispatch(
+          updateSubclassMods({
+            category: 'ASPECTS',
+            mods: newAspects,
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'FRAGMENTS',
+            mods: updatedFragments,
+          })
+        );
+        return; // Exit the function early as we've already dispatched the updates
+      }
     }
 
+    // For all other cases, dispatch the update as before
     dispatch(
       updateSubclassMods({
         category,
@@ -312,21 +340,26 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
 
       const SlotComponent = category === 'SUPERS' ? SuperModSlot : ModSlot;
 
+      const availableFragmentSlots = calculateAvailableFragmentSlots();
+      const isDisabled = category === 'FRAGMENTS' && index! >= availableFragmentSlots;
+
       return (
         <Box key={slotId} position="relative" display="inline-block">
           <div onMouseEnter={(e) => handleMouseEnter(e, slotId)} onMouseLeave={handleMouseLeave}>
             <SlotComponent
               style={{
                 backgroundImage: currentMod ? `url(${currentMod.icon})` : 'none',
+                opacity: isDisabled ? 0.5 : 1,
+                pointerEvents: isDisabled ? 'none' : 'auto',
               }}
             >
               {isEmptyMod && (
                 <Typography variant="caption" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                  Empty
+                  {isDisabled ? 'Locked' : 'Empty'}
                 </Typography>
               )}
             </SlotComponent>
-            {isHovered && (
+            {isHovered && !isDisabled && (
               <SubmenuContainer
                 style={{
                   top: submenuPosition.top,
@@ -347,7 +380,7 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
         </Box>
       );
     },
-    [mods, handleModSelect, hoveredSlot, submenuPosition]
+    [mods, handleModSelect, hoveredSlot, submenuPosition, calculateAvailableFragmentSlots]
   );
 
   if (loading) {
@@ -413,9 +446,13 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             <Box marginBottom={2}>
               <StyledTitle variant="h6">FRAGMENTS</StyledTitle>
               <Box display="flex" flexWrap="wrap" gap={2}>
-                {loadout.fragments.map((fragment, index) => (
+                {Array.from({ length: 5 }).map((_, index) => (
                   <React.Fragment key={index}>
-                    {renderModCategory('FRAGMENTS', fragment, index)}
+                    {renderModCategory(
+                      'FRAGMENTS',
+                      loadout.fragments[index] || EMPTY_FRAGMENT,
+                      index
+                    )}
                   </React.Fragment>
                 ))}
               </Box>
