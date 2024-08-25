@@ -193,21 +193,26 @@ export const loadoutConfigSlice = createSlice({
       state.loadout.legArmorMods = initialState.loadout.legArmorMods;
       state.loadout.classArmorMods = initialState.loadout.classArmorMods;
     },
-    updateSubclass: (
-      state,
-      action: PayloadAction<{ damageType: DamageType; subclass: Subclass }>
-    ) => {
-      state.loadout.subclassConfig = {
-        subclass: action.payload.subclass,
-        damageType: action.payload.damageType,
-        super: EMPTY_MANIFEST_PLUG,
-        aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-        fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
-        classAbility: null,
-        meleeAbility: null,
-        movementAbility: null,
-        grenade: null,
-      };
+    updateSubclass: (state, action: PayloadAction<{ subclass: Subclass | undefined }>) => {
+      if (action.payload.subclass !== undefined) {
+        state.loadout.subclassConfig = {
+          subclass: action.payload.subclass,
+          damageType: action.payload.subclass.damageType as DamageType,
+          super: EMPTY_MANIFEST_PLUG,
+          aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+          fragments: [
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+            EMPTY_FRAGMENT,
+          ],
+          classAbility: null,
+          meleeAbility: null,
+          movementAbility: null,
+          grenade: null,
+        };
+      }
     },
     updateSubclassMods: (state, action: PayloadAction<{ category: string; mods: any[] }>) => {
       const { category, mods } = action.payload;
