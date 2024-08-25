@@ -276,7 +276,6 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
 
       updatedMods[index!] = mod as (typeof updatedMods)[number];
 
-      // If updating aspects, we need to check if we need to empty any fragment slots
       if (category === 'ASPECTS') {
         const newAspects = updatedMods as ManifestAspect[];
         const newAvailableSlots = newAspects.reduce(
@@ -284,12 +283,10 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
           0
         );
 
-        // Update fragments, emptying any that exceed the new available slots
         const updatedFragments = loadout.fragments.map((fragment, idx) =>
           idx < newAvailableSlots ? fragment : EMPTY_FRAGMENT
         );
 
-        // Dispatch updates for both aspects and fragments
         dispatch(
           updateSubclassMods({
             category: 'ASPECTS',
@@ -302,11 +299,10 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             mods: updatedFragments,
           })
         );
-        return; // Exit the function early as we've already dispatched the updates
+        return;
       }
     }
 
-    // For all other cases, dispatch the update as before
     dispatch(
       updateSubclassMods({
         category,
