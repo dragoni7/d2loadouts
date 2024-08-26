@@ -1,7 +1,13 @@
 import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
 import { DestinyArmor, Loadout, Subclass, SubclassConfig } from '../../../types/d2l-types';
-import { ManifestAspect, ManifestPlug, ManifestStatPlug } from '../../../types/manifest-types';
+import {
+  ManifestArmorMod,
+  ManifestArmorStatMod,
+  ManifestAspect,
+  ManifestPlug,
+  ManifestStatPlug,
+} from '../../../types/manifest-types';
 import { ARMOR_ARRAY } from '../constants';
 import { armorMods, EquipResult, setState } from '../types';
 import { ArmorEquipper } from './armorEquipper';
@@ -94,7 +100,7 @@ async function processArmor(
       setEquipStep('Equipping ' + armor.name + ' ...');
       await equipper.equipArmor(armor);
       setEquipStep('Inserting Mods in ' + armor.name + '...');
-      await equipper.equipArmorMods(loadout[mods]);
+      await equipper.equipArmorMods(sortMods(loadout[mods]));
       tempResults.push(equipper.getResult());
       setResults(tempResults);
 
@@ -106,10 +112,16 @@ async function processArmor(
     setEquipStep('Equipping ' + armor.name + ' ...');
     await equipper.equipArmor(armor);
     setEquipStep('Inserting Mods in ' + armor.name + '...');
-    await equipper.equipArmorMods(loadout[mods]);
+    await equipper.equipArmorMods(sortMods(loadout[mods]));
     tempResults.push(equipper.getResult());
     setResults(tempResults);
   }
+}
+
+function sortMods(mods: {
+  [key: number]: ManifestArmorMod | ManifestArmorStatMod;
+}): [string, ManifestArmorMod | ManifestArmorStatMod][] {
+  return Object.entries(mods).sort(([, a], [, b]) => b.energyCost - a.energyCost);
 }
 
 async function processSubclass(
