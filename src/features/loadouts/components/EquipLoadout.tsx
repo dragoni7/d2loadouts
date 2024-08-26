@@ -43,61 +43,6 @@ const EquipLoadout: React.FC = () => {
     }
   };
 
-  const processSubclass = async (
-    tempEquipped: any[],
-    equipper: SubclassEquipper,
-    tempResults: EquipResult[][],
-    subclassConfig: SubclassConfig
-  ) => {
-    tempEquipped.push(subclassConfig.subclass);
-    setProcessing(tempEquipped);
-
-    setEquipStep('Equipping ' + subclassConfig.subclass.name + ' ...');
-    await equipper.equipSubclass(subclassConfig.subclass);
-
-    setEquipStep('Equipping Super ...');
-    await equipper.equipSubclassAbility(subclassConfig.super, 0);
-
-    if (subclassConfig.classAbility) {
-      setEquipStep('Equipping Class Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.classAbility, 1);
-    }
-
-    if (subclassConfig.movementAbility) {
-      setEquipStep('Equipping Movement Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.movementAbility, 2);
-    }
-
-    if (subclassConfig.meleeAbility) {
-      setEquipStep('Equipping Melee Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.meleeAbility, 3);
-    }
-
-    if (subclassConfig.grenade) {
-      setEquipStep('Equipping Grenade Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.grenade, 4);
-    }
-
-    setEquipStep('Equipping Aspects ...');
-
-    let aspectIndex = subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5;
-
-    await equipper.equipSubclassAspect(subclassConfig.aspects[0], aspectIndex);
-    await equipper.equipSubclassAspect(subclassConfig.aspects[1], aspectIndex + 1);
-
-    setEquipStep('Equipping Fragments ...');
-
-    let fragmentIndex = subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7;
-
-    for (let i = 0; i < subclassConfig.fragments.length; i++) {
-      await equipper.equipSubclassFragments(subclassConfig.fragments[i], fragmentIndex + i);
-    }
-
-    const result = equipper.getResult();
-    tempResults.push(result);
-    setResults(tempResults);
-  };
-
   return (
     <Box>
       <Button variant="contained" onClick={onEquipLoadout}>
