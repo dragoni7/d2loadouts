@@ -18,10 +18,10 @@ interface LoadingBorderProps {
 const LoadingBorder: React.FC<LoadingBorderProps> = ({ armor, size }) => {
   const [border, api] = useSpring(
     () => ({
-      from: { border: '3px solid rgba(195, 195, 195, 0)' },
+      from: { border: '4px solid rgba(21, 165, 224, 0)' },
       to: async (next) => {
-        await next({ border: '3px solid rgba(195, 195, 195, 1)' });
-        await next({ border: '3px solid rgba(195, 195, 195, 0)' });
+        await next({ border: '4px solid rgba(21, 165, 224, 1)' });
+        await next({ border: '4px solid rgba(21, 165, 224, 0)' });
       },
       loop: true,
 

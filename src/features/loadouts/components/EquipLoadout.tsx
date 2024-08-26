@@ -1,16 +1,15 @@
-import { Backdrop, Box, Button, Container, Grid, Paper, Tooltip } from '@mui/material';
+import { Backdrop, Box, Button, Grid, Paper, Tooltip } from '@mui/material';
 import { store } from '../../../store';
 import { useState } from 'react';
 import { EquipResult } from '../types';
 import { STATUS } from '../constants';
-import { ArmorEquipper } from '../util/armorEquipper';
-import { DestinyArmor, SubclassConfig } from '../../../types/d2l-types';
+import { SubclassConfig } from '../../../types/d2l-types';
 import React from 'react';
 import { SubclassEquipper } from '../util/subclassEquipper';
-import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import LoadingBorder from './LoadingBorder';
 import FadeIn from './FadeIn';
+import { equipLoadout } from '../util/loadoutUtils';
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
@@ -34,68 +33,14 @@ const EquipLoadout: React.FC = () => {
     ) {
       setOpen(true);
       setEquipping(true);
-      const armorEquipper = new ArmorEquipper();
-      const tempEquipped: any[] = [];
-      const tempResults: EquipResult[][] = [];
 
-      await armorEquipper.setCharacter(loadout.characterId);
-
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.helmet,
-        loadout.helmetMods
-      );
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.gauntlets,
-        loadout.gauntletMods
-      );
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.chestArmor,
-        loadout.chestArmorMods
-      );
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.legArmor,
-        loadout.legArmorMods
-      );
-
-      const subclassEquipper = new SubclassEquipper();
-      subclassEquipper.setCharacter(loadout.characterId);
-
-      await processSubclass(tempEquipped, subclassEquipper, tempResults, loadout.subclassConfig);
+      await equipLoadout(loadout, setProcessing, setEquipStep, setResults);
 
       setEquipStep('Finished');
       setEquipping(false);
     } else {
       alert('Loadout Incomplete');
     }
-  };
-
-  const processArmor = async (
-    tempEquipped: DestinyArmor[],
-    equipper: ArmorEquipper,
-    tempResults: EquipResult[][],
-    armor: DestinyArmor,
-    armorMods: { [key: number]: ManifestArmorMod | ManifestArmorStatMod }
-  ) => {
-    tempEquipped.push(armor);
-    setProcessing(tempEquipped);
-    setEquipStep('Equipping ' + armor.name + ' ...');
-    await equipper.equipArmor(armor);
-    setEquipStep('Inserting Mods in ' + armor.name + '...');
-    await equipper.equipArmorMods(armorMods);
-    tempResults.push(equipper.getResult());
-    setResults(tempResults);
   };
 
   const processSubclass = async (
