@@ -7,3 +7,9 @@ export type EquipResult = {
   message: string;
   subject: any;
 };
+
+export type armor = 'helmet' | 'gauntlets' | 'chestArmor' | 'legArmor';
+
+export type armorMods = 'helmetMods' | 'gauntletMods' | 'chestArmorMods' | 'legArmorMods';
+
+export type setState = (value: React.SetStateAction<any | string[]>) => void;

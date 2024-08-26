@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods } from '../../../store/LoadoutReducer';
-import { DestinyArmor, Plug } from '../../../types/d2l-types';
+import { DestinyArmor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
 import { getSelectedModsBySlot, getModsBySlot } from '../util';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';

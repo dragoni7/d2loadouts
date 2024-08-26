@@ -1,16 +1,12 @@
-import { Backdrop, Box, Button, Container, Grid, Paper, Tooltip } from '@mui/material';
+import { Backdrop, Box, Button, Grid, Paper, Tooltip } from '@mui/material';
 import { store } from '../../../store';
 import { useState } from 'react';
 import { EquipResult } from '../types';
 import { STATUS } from '../constants';
-import { ArmorEquipper } from '../util/armorEquipper';
-import { DestinyArmor, SubclassConfig } from '../../../types/d2l-types';
 import React from 'react';
-import { SubclassEquipper } from '../util/subclassEquipper';
-import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import LoadingBorder from './LoadingBorder';
 import FadeIn from './FadeIn';
+import { equipLoadout } from '../util/loadoutUtils';
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
@@ -34,123 +30,14 @@ const EquipLoadout: React.FC = () => {
     ) {
       setOpen(true);
       setEquipping(true);
-      const armorEquipper = new ArmorEquipper();
-      const tempEquipped: any[] = [];
-      const tempResults: EquipResult[][] = [];
 
-      await armorEquipper.setCharacter(loadout.characterId);
-
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.helmet,
-        loadout.helmetMods
-      );
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.gauntlets,
-        loadout.gauntletMods
-      );
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.chestArmor,
-        loadout.chestArmorMods
-      );
-      await processArmor(
-        tempEquipped,
-        armorEquipper,
-        tempResults,
-        loadout.legArmor,
-        loadout.legArmorMods
-      );
-
-      const subclassEquipper = new SubclassEquipper();
-      subclassEquipper.setCharacter(loadout.characterId);
-
-      await processSubclass(tempEquipped, subclassEquipper, tempResults, loadout.subclassConfig);
+      await equipLoadout(loadout, setProcessing, setEquipStep, setResults);
 
       setEquipStep('Finished');
       setEquipping(false);
     } else {
       alert('Loadout Incomplete');
     }
-  };
-
-  const processArmor = async (
-    tempEquipped: DestinyArmor[],
-    equipper: ArmorEquipper,
-    tempResults: EquipResult[][],
-    armor: DestinyArmor,
-    armorMods: { [key: number]: ManifestArmorMod | ManifestArmorStatMod }
-  ) => {
-    tempEquipped.push(armor);
-    setProcessing(tempEquipped);
-    setEquipStep('Equipping ' + armor.name + ' ...');
-    await equipper.equipArmor(armor);
-    setEquipStep('Inserting Mods in ' + armor.name + '...');
-    await equipper.equipArmorMods(armorMods);
-    tempResults.push(equipper.getResult());
-    setResults(tempResults);
-  };
-
-  const processSubclass = async (
-    tempEquipped: any[],
-    equipper: SubclassEquipper,
-    tempResults: EquipResult[][],
-    subclassConfig: SubclassConfig
-  ) => {
-    tempEquipped.push(subclassConfig.subclass);
-    setProcessing(tempEquipped);
-
-    setEquipStep('Equipping ' + subclassConfig.subclass.name + ' ...');
-    await equipper.equipSubclass(subclassConfig.subclass);
-
-    setEquipStep('Equipping Super ...');
-    await equipper.equipSubclassAbility(subclassConfig.super, 0);
-
-    if (subclassConfig.classAbility) {
-      setEquipStep('Equipping Class Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.classAbility, 1);
-    }
-
-    if (subclassConfig.movementAbility) {
-      setEquipStep('Equipping Movement Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.movementAbility, 2);
-    }
-
-    if (subclassConfig.meleeAbility) {
-      setEquipStep('Equipping Melee Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.meleeAbility, 3);
-    }
-
-    if (subclassConfig.grenade) {
-      setEquipStep('Equipping Grenade Ability...');
-      await equipper.equipSubclassAbility(subclassConfig.grenade, 4);
-    }
-
-    setEquipStep('Equipping Aspects ...');
-
-    let aspectIndex = subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 7 : 5;
-
-    await equipper.equipSubclassAspect(subclassConfig.aspects[0], aspectIndex);
-    await equipper.equipSubclassAspect(subclassConfig.aspects[1], aspectIndex + 1);
-
-    setEquipStep('Equipping Fragments ...');
-
-    let fragmentIndex = subclassConfig.damageType === DAMAGE_TYPE.KINETIC ? 9 : 7;
-
-    for (let i = 0; i < subclassConfig.fragments.length; i++) {
-      await equipper.equipSubclassFragments(subclassConfig.fragments[i], fragmentIndex + i);
-    }
-
-    const result = equipper.getResult();
-    tempResults.push(result);
-    setResults(tempResults);
   };
 
   return (

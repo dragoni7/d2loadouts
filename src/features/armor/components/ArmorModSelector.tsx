@@ -1,5 +1,4 @@
 import { Box } from '@mui/system';
-import { Plug } from '../../../types/d2l-types';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 
 interface ModSelectorProps {
@@ -13,11 +12,7 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
     <Box
       className="armor-mod-slot"
       style={{
-        backgroundImage: `url(${
-          mods.find((mod) => {
-            return mod.itemHash === selected.itemHash;
-          })?.icon
-        })`,
+        backgroundImage: `url(${selected.icon})`,
       }}
     >
       <div className="submenu-grid">

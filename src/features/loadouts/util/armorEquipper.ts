@@ -121,18 +121,19 @@ export class ArmorEquipper extends Equipper {
     this.result.push(result);
   }
 
-  public async equipArmorMods(mods: {
-    [key: number]: ManifestArmorMod | ManifestArmorStatMod;
-  }): Promise<void> {
+  public async equipArmorMods(
+    mods: [string, ManifestArmorMod | ManifestArmorStatMod][]
+  ): Promise<void> {
     const armor = this.result[0].subject;
 
     if (!armor) return;
 
-    for (let i = 0; i < 5; i++) {
+    for (const [index, mod] of mods) {
+      const i = Number(index);
       const result = {
         status: STATUS.SUCCESS,
         message: '',
-        subject: mods[i],
+        subject: mod,
       };
 
       if (i === 4 && armor.artifice === false) continue;
@@ -140,7 +141,7 @@ export class ArmorEquipper extends Equipper {
       const response = await insertSocketPlugFreeRequest(
         armor.instanceHash,
         {
-          plugItemHash: String(mods[i].itemHash),
+          plugItemHash: String(mod.itemHash),
           socketArrayType: 0,
           socketIndex: i === 4 && armor.artifice === true ? 11 : i,
         },
@@ -157,7 +158,7 @@ export class ArmorEquipper extends Equipper {
 
       if (response) result.message = response.data.ErrorStatus.replace(/([a-z])([A-Z])/g, '$1 $2');
 
-      this.result.push(result);
+      this.result[i + 1] = result;
     }
   }
 }
