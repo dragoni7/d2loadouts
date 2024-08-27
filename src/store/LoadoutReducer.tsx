@@ -177,7 +177,7 @@ export const loadoutConfigSlice = createSlice({
           state.loadout.legArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'classItem': {
+        case 'class': {
           state.loadout.classArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }

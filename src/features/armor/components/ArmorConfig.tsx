@@ -33,13 +33,8 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
     );
   };
 
-  const onSelectMod = async (
-    mod: ManifestArmorMod | ManifestArmorStatMod,
-    slot: number,
-    socketIndex: number
-  ) => {
+  const onSelectMod = async (mod: ManifestArmorMod | ManifestArmorStatMod, slot: number) => {
     let totalCost = mod.energyCost;
-
     for (const key in selectedMods) {
       if (Number(key) !== slot) {
         let statEnergyCost = armorMods.find(
@@ -79,28 +74,28 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
           selected={selectedMods[0]}
           mods={statMods}
           onSelectMod={(mod: ManifestArmorMod) => {
-            onSelectMod(mod, 0, 0);
+            onSelectMod(mod, 0);
           }}
         />
         <ArmorModSelector
           selected={selectedMods[1]}
           mods={armorMods}
           onSelectMod={(mod: ManifestArmorMod) => {
-            onSelectMod(mod, 1, 1);
+            onSelectMod(mod, 1);
           }}
         />
         <ArmorModSelector
           selected={selectedMods[2]}
           mods={armorMods}
           onSelectMod={(mod: ManifestArmorMod) => {
-            onSelectMod(mod, 2, 2);
+            onSelectMod(mod, 2);
           }}
         />
         <ArmorModSelector
           selected={selectedMods[3]}
           mods={armorMods}
           onSelectMod={(mod: ManifestArmorMod) => {
-            onSelectMod(mod, 3, 3);
+            onSelectMod(mod, 3);
           }}
         />
         {armor.artifice === true ? (
@@ -108,7 +103,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
             selected={selectedMods[4]}
             mods={artificeMods}
             onSelectMod={(mod: ManifestArmorMod) => {
-              onSelectMod(mod, 4, 11);
+              onSelectMod(mod, 4);
             }}
           />
         ) : (
