@@ -5,15 +5,16 @@ export const generatePermutations = (
   armorClass: ArmorBySlot,
   selectedExoticItemHash: string | null = null
 ): DestinyArmor[][] => {
-  const { helmet, arms, legs, chest } = armorClass;
+  const { helmet, arms, legs, chest, classItem } = armorClass;
 
   let filteredHelmet = helmet;
   let filteredArms = arms;
   let filteredLegs = legs;
   let filteredChest = chest;
+  let filteredClass = classItem;
 
   if (selectedExoticItemHash) {
-    const allItems = [...helmet, ...arms, ...legs, ...chest];
+    const allItems = [...helmet, ...arms, ...legs, ...chest, ...classItem];
     const selectedExoticItems: DestinyArmor[] = allItems.filter(
       (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
     );
@@ -54,6 +55,9 @@ export const generatePermutations = (
             (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
           );
           break;
+        case 'class':
+          console.log('exotic class item selected');
+          break;
       }
     } else {
       console.error('Selected exotic items not found!');
@@ -62,24 +66,27 @@ export const generatePermutations = (
 
   const armorTypes = [filteredHelmet, filteredArms, filteredLegs, filteredChest];
 
-  const fakeClassItem: DestinyArmor = {
-    intellect: 2,
-    discipline: 2,
-    resilience: 2,
-    mobility: 2,
-    strength: 2,
-    recovery: 2,
-    instanceHash: 'fake_class_item',
-    itemHash: 'fake_class_item',
-    artifice: true,
-    masterwork: false,
-    exotic: false,
-    class: undefined,
-    type: 'classItem',
-    location: -1,
-    icon: 'https://www.bungie.net/common/destiny2_content/icons/faeea62cd4cfaec3683a0ad84f1fa2ac.jpg',
-    name: 'Class Item Bonus',
-  };
+  // find best class armor to use for permutation
+  // if additionally class armor filtering is implemented, do so here
+  let masterworkedClassArmor = undefined;
+  let artificeMasterworkedClassArmor = undefined;
+
+  for (const item of classItem) {
+    if (masterworkedClassArmor !== undefined && artificeMasterworkedClassArmor !== undefined) break;
+
+    if (item.masterwork === true) {
+      masterworkedClassArmor = item;
+
+      if (item.artifice === true) artificeMasterworkedClassArmor = item;
+    }
+  }
+
+  const bestClassArmor: DestinyArmor =
+    artificeMasterworkedClassArmor === undefined
+      ? masterworkedClassArmor === undefined
+        ? classItem[0]
+        : masterworkedClassArmor
+      : artificeMasterworkedClassArmor;
 
   const heap = new MaxHeap<DestinyArmor[]>((a: DestinyArmor[], b: DestinyArmor[]) => {
     const sumStats = (items: DestinyArmor[]) =>
@@ -104,7 +111,7 @@ export const generatePermutations = (
     exoticCount: number
   ) => {
     if (currentTypeIndex === armorTypes.length) {
-      const modifiedPermutation = [...currentPermutation, fakeClassItem];
+      const modifiedPermutation = [...currentPermutation, bestClassArmor];
       const totalStats = modifiedPermutation.reduce(
         (sum: number, item: DestinyArmor) =>
           sum +
