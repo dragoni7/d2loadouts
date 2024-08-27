@@ -1,4 +1,4 @@
-import { Box, styled } from '@mui/system';
+import { styled } from '@mui/system';
 import { DestinyArmor } from '../types/d2l-types';
 
 const MasterworkedIconContainer = styled('img')({
