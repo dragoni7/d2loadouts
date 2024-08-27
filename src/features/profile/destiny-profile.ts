@@ -33,7 +33,6 @@ export async function getProfileData(): Promise<ProfileData> {
     const characterInventories = response.data.Response.characterInventories.data;
     const characterEquipment = response.data.Response.characterEquipment.data;
     const characterData = response.data.Response.characters.data;
-    const profilePlugSets = response.data.Response.profilePlugSets.data.plugs;
     const profileCollectibles = response.data.Response.profileCollectibles.data.collectibles;
 
     for (const key in characterData) {
@@ -399,29 +398,34 @@ export async function getProfileData(): Promise<ProfileData> {
         .equals(Number(collectible))
         .first();
 
-      if (
-        exoticCollectable &&
-        COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state))
-      ) {
-        await db.manifestExoticArmorCollection
-          .where('collectibleHash')
-          .equals(Number(collectible))
-          .modify({ isOwned: true });
-      }
-
       const armorModDef = await db.manifestArmorModDef
         .where('collectibleHash')
         .equals(Number(collectible))
         .first();
 
-      if (
-        armorModDef &&
-        COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state))
-      ) {
-        await db.manifestArmorModDef
-          .where('collectibleHash')
-          .equals(Number(collectible))
-          .modify({ isOwned: true });
+      const armorStatModDef = await db.manifestArmorStatModDef
+        .where('collectibleHash')
+        .equals(Number(collectible))
+        .first();
+
+      if (exoticCollectable) {
+        if (COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state)))
+          await db.manifestExoticArmorCollection
+            .where('collectibleHash')
+            .equals(Number(collectible))
+            .modify({ isOwned: true });
+      } else if (armorModDef) {
+        if (!COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state)))
+          await db.manifestArmorModDef
+            .where('collectibleHash')
+            .equals(Number(collectible))
+            .modify({ isOwned: false });
+      } else if (armorStatModDef) {
+        if (!COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state)))
+          await db.manifestArmorStatModDef
+            .where('collectibleHash')
+            .equals(Number(collectible))
+            .modify({ isOwned: false });
       }
     }
 

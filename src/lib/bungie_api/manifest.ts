@@ -85,6 +85,7 @@ export async function updateManifest() {
               current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS) &&
               current.displayProperties.name &&
               current.displayProperties.name !== 'Locked Armor Mod' &&
+              !current.displayProperties.description.includes('deprecated') &&
               !current.itemTypeDisplayName.includes('Legacy') &&
               !current.itemTypeDisplayName.includes('Deprecated') &&
               !current.itemTypeDisplayName.includes('Artifact Mod') &&
@@ -102,7 +103,7 @@ export async function updateManifest() {
                   icon: urlPrefix + current.displayProperties.icon,
                   energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                   category: current.plug.plugCategoryHash,
-                  isOwned: false,
+                  isOwned: true,
                   collectibleHash: -1,
                   perkName: '',
                   perkDescription: '',
@@ -145,7 +146,7 @@ export async function updateManifest() {
                   icon: urlPrefix + current.displayProperties.icon,
                   energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                   category: current.plug.plugCategoryHash,
-                  isOwned: false,
+                  isOwned: true,
                   collectibleHash: -1,
                   perkName: '',
                   perkDescription: '',
@@ -252,6 +253,11 @@ export async function updateManifest() {
           } else {
             // get collection hash for armor mods
             await db.manifestArmorModDef
+              .where('itemHash')
+              .equals(current.itemHash)
+              .modify({ collectibleHash: current.hash });
+
+            await db.manifestArmorStatModDef
               .where('itemHash')
               .equals(current.itemHash)
               .modify({ collectibleHash: current.hash });
