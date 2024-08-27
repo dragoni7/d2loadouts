@@ -9,7 +9,7 @@ import {
   STAT_HASH,
   SUBCLASS_PLUG_SETS,
 } from '../../lib/bungie_api/constants';
-import { getProfileDataRequest } from '../../lib/bungie_api/req';
+import { getProfileDataRequest } from '../../lib/bungie_api/requests';
 import { db } from '../../store/db';
 import {
   Character,

@@ -1,6 +1,6 @@
 import { db } from '../../store/db';
 import { getManifestItemClass, getManifestItemSlot } from './utils';
-import { getManifestComponentRequest, getManifestRequest } from './req';
+import { getManifestComponentRequest, getManifestRequest } from './requests';
 import {
   ITEM_CATEGORY_HASHES,
   MANIFEST_CLASS,

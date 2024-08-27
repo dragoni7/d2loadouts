@@ -1,4 +1,4 @@
-import { getDestinyMembershipsRequest } from '../../lib/bungie_api/req';
+import { getDestinyMembershipsRequest } from '../../lib/bungie_api/requests';
 import { DestinyMembership } from '../../types/d2l-types';
 
 export async function getDestinyMembershipId(): Promise<DestinyMembership> {

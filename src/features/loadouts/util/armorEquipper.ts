@@ -4,7 +4,7 @@ import {
   getCharacterInventoryRequest,
   insertSocketPlugFreeRequest,
   transferItemRequest,
-} from '../../../lib/bungie_api/req';
+} from '../../../lib/bungie_api/requests';
 import { DestinyArmor } from '../../../types/d2l-types';
 import { ManifestArmorStatMod, ManifestArmorMod } from '../../../types/manifest-types';
 import { STATUS } from '../constants';

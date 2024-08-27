@@ -1,5 +1,5 @@
 import { ERRORS } from '../../../lib/bungie_api/constants';
-import { equipItemRequest, insertSocketPlugFreeRequest } from '../../../lib/bungie_api/req';
+import { equipItemRequest, insertSocketPlugFreeRequest } from '../../../lib/bungie_api/requests';
 import { Subclass } from '../../../types/d2l-types';
 import { ManifestAspect, ManifestPlug, ManifestStatPlug } from '../../../types/manifest-types';
 import { STATUS } from '../constants';
