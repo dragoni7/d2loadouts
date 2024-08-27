@@ -26,7 +26,7 @@ import ArmorCustomization from '../../features/armor/components/ArmorCustomizati
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
 import { ManifestSubclass } from '../../types/manifest-types';
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
-import { updateManifest } from '../../lib/bungie_api/manifest';
+import { updateManifest } from '../../lib/bungie_api/Manifest';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -259,7 +259,6 @@ export const Dashboard: React.FC = () => {
           onBackClick={handleArmorCustomizationBackClick}
           screenshot={selectedSubclass?.screenshot || ''}
           subclass={selectedSubclass!}
-          setSelectedSubclass={setSelectedSubclass}
         />
       ) : (
         <>
