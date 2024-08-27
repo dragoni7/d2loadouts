@@ -7,17 +7,14 @@ import {
   PRIMARY_STATS,
   SOCKET_HASH,
   STAT_HASH,
-  SUBCLASS_PLUG_SETS,
 } from '../../lib/bungie_api/constants';
 import { getProfileDataRequest } from '../../lib/bungie_api/requests';
 import { db } from '../../store/db';
 import {
   Character,
   CharacterClass,
-  DamageType,
   DestinyArmor,
   Emblem,
-  Plug,
   ProfileData,
   Subclass,
 } from '../../types/d2l-types';
@@ -36,7 +33,6 @@ export async function getProfileData(): Promise<ProfileData> {
     const characterInventories = response.data.Response.characterInventories.data;
     const characterEquipment = response.data.Response.characterEquipment.data;
     const characterData = response.data.Response.characters.data;
-    const profilePlugSets = response.data.Response.profilePlugSets.data.plugs;
     const profileCollectibles = response.data.Response.profileCollectibles.data.collectibles;
 
     for (const key in characterData) {
@@ -313,16 +309,6 @@ export async function getProfileData(): Promise<ProfileData> {
         }
       }
 
-      // check character plugs for stasis grenade state
-      if (plugSets[SUBCLASS_PLUG_SETS.GRENADES.STASIS]) {
-        for (const plug of plugSets[SUBCLASS_PLUG_SETS.GRENADES.STASIS]) {
-          await db.manifestSubclassModDef
-            .where('itemHash')
-            .equals(plug.plugItemHash)
-            .modify({ isOwned: true });
-        }
-      }
-
       profile.characters.push(character);
     }
 
@@ -405,95 +391,6 @@ export async function getProfileData(): Promise<ProfileData> {
       }
     }
 
-    // iterate profile plugs
-    let abilityPlugSets: number[] = [
-      SUBCLASS_PLUG_SETS.FRAGMENTS.ARC,
-      SUBCLASS_PLUG_SETS.FRAGMENTS.SOLAR,
-      SUBCLASS_PLUG_SETS.FRAGMENTS.VOID,
-      SUBCLASS_PLUG_SETS.FRAGMENTS.STASIS,
-      SUBCLASS_PLUG_SETS.FRAGMENTS.STRAND,
-      SUBCLASS_PLUG_SETS.FRAGMENTS.PRISMATIC,
-
-      SUBCLASS_PLUG_SETS.GRENADES.ARC,
-      SUBCLASS_PLUG_SETS.GRENADES.SOLAR,
-      SUBCLASS_PLUG_SETS.GRENADES.VOID,
-      SUBCLASS_PLUG_SETS.GRENADES.STASIS,
-      SUBCLASS_PLUG_SETS.GRENADES.STRAND,
-      SUBCLASS_PLUG_SETS.GRENADES.PRISMATIC_HUNTER,
-      SUBCLASS_PLUG_SETS.GRENADES.PRISMATIC_WARLOCK,
-
-      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.ARC,
-      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.VOID,
-      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.SOLAR,
-      SUBCLASS_PLUG_SETS.ASPECTS.HUNTER.PRISMATIC,
-
-      SUBCLASS_PLUG_SETS.ASPECTS.TITAN.ARC,
-      SUBCLASS_PLUG_SETS.ASPECTS.TITAN.VOID,
-      SUBCLASS_PLUG_SETS.ASPECTS.TITAN.SOLAR,
-
-      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.ARC,
-      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.VOID,
-      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.SOLAR,
-      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.STASIS,
-      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.STRAND,
-      SUBCLASS_PLUG_SETS.ASPECTS.WARLOCK.PRISMATIC,
-
-      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.ARC,
-      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.VOID,
-      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.SOLAR,
-      SUBCLASS_PLUG_SETS.SUPERS.HUNTER.PRISMATIC,
-
-      SUBCLASS_PLUG_SETS.SUPERS.TITAN.ARC,
-      SUBCLASS_PLUG_SETS.SUPERS.TITAN.VOID,
-      SUBCLASS_PLUG_SETS.SUPERS.TITAN.SOLAR,
-
-      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.ARC,
-      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.VOID,
-      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.SOLAR,
-      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.STASIS,
-      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.STRAND,
-      SUBCLASS_PLUG_SETS.SUPERS.WARLOCK.PRISMATIC,
-
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.ARC,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.VOID,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.SOLAR,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.HUNTER.PRISMATIC,
-
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.TITAN.ARC,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.TITAN.VOID,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.TITAN.SOLAR,
-
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.ARC,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.VOID,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.SOLAR,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.STASIS,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.STRAND,
-      SUBCLASS_PLUG_SETS.MELEE_ABILITIES.WARLOCK.PRISMATIC,
-    ];
-
-    for (const key of abilityPlugSets) {
-      if (profilePlugSets[key]) {
-        for (const plug of profilePlugSets[key]) {
-          if (plug.enabled) {
-            await db.manifestSubclassModDef
-              .where('itemHash')
-              .equals(plug.plugItemHash)
-              .modify({ isOwned: true });
-
-            await db.manifestSubclassAspectsDef
-              .where('itemHash')
-              .equals(plug.plugItemHash)
-              .modify({ isOwned: true });
-
-            await db.manifestSubclassFragmentsDef
-              .where('itemHash')
-              .equals(plug.plugItemHash)
-              .modify({ isOwned: true });
-          }
-        }
-      }
-    }
-
     // iterate profile collectibles
     for (const collectible in profileCollectibles) {
       const exoticCollectable = await db.manifestExoticArmorCollection
@@ -501,29 +398,34 @@ export async function getProfileData(): Promise<ProfileData> {
         .equals(Number(collectible))
         .first();
 
-      if (
-        exoticCollectable &&
-        COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state))
-      ) {
-        await db.manifestExoticArmorCollection
-          .where('collectibleHash')
-          .equals(Number(collectible))
-          .modify({ isOwned: true });
-      }
-
       const armorModDef = await db.manifestArmorModDef
         .where('collectibleHash')
         .equals(Number(collectible))
         .first();
 
-      if (
-        armorModDef &&
-        COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state))
-      ) {
-        await db.manifestArmorModDef
-          .where('collectibleHash')
-          .equals(Number(collectible))
-          .modify({ isOwned: true });
+      const armorStatModDef = await db.manifestArmorStatModDef
+        .where('collectibleHash')
+        .equals(Number(collectible))
+        .first();
+
+      if (exoticCollectable) {
+        if (COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state)))
+          await db.manifestExoticArmorCollection
+            .where('collectibleHash')
+            .equals(Number(collectible))
+            .modify({ isOwned: true });
+      } else if (armorModDef) {
+        if (!COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state)))
+          await db.manifestArmorModDef
+            .where('collectibleHash')
+            .equals(Number(collectible))
+            .modify({ isOwned: false });
+      } else if (armorStatModDef) {
+        if (!COLLECTIBLE_OWNED.includes(Number(profileCollectibles[collectible].state)))
+          await db.manifestArmorStatModDef
+            .where('collectibleHash')
+            .equals(Number(collectible))
+            .modify({ isOwned: false });
       }
     }
 

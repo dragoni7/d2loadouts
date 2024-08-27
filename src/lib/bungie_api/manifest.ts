@@ -21,10 +21,13 @@ export async function updateManifest() {
     if (!currentVersion || currentVersion !== response.data.Response.version) {
       await db.manifestArmorDef.clear();
       await db.manifestArmorModDef.clear();
+      await db.manifestArmorStatModDef.clear();
       await db.manifestEmblemDef.clear();
       await db.manifestExoticArmorCollection.clear();
       await db.manifestSubclass.clear();
       await db.manifestSubclassModDef.clear();
+      await db.manifestSubclassFragmentsDef.clear();
+      await db.manifestSubclassAspectsDef.clear();
       localStorage.setItem('manifestVersion', response.data.Response.version);
 
       const itemInventoryComponent =
@@ -80,7 +83,9 @@ export async function updateManifest() {
             if (
               current.itemSubType !== MANIFEST_TYPES.ORNAMENTS &&
               current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS) &&
+              current.displayProperties.name &&
               current.displayProperties.name !== 'Locked Armor Mod' &&
+              !current.displayProperties.description.includes('deprecated') &&
               !current.itemTypeDisplayName.includes('Legacy') &&
               !current.itemTypeDisplayName.includes('Deprecated') &&
               !current.itemTypeDisplayName.includes('Artifact Mod') &&
@@ -98,7 +103,7 @@ export async function updateManifest() {
                   icon: urlPrefix + current.displayProperties.icon,
                   energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                   category: current.plug.plugCategoryHash,
-                  isOwned: false,
+                  isOwned: true,
                   collectibleHash: -1,
                   perkName: '',
                   perkDescription: '',
@@ -141,7 +146,7 @@ export async function updateManifest() {
                   icon: urlPrefix + current.displayProperties.icon,
                   energyCost: current.plug.energyCost ? current.plug.energyCost.energyCost : 0,
                   category: current.plug.plugCategoryHash,
-                  isOwned: false,
+                  isOwned: true,
                   collectibleHash: -1,
                   perkName: '',
                   perkDescription: '',
@@ -155,7 +160,7 @@ export async function updateManifest() {
                   name: current.displayProperties.name,
                   icon: urlPrefix + current.displayProperties.icon,
                   category: current.plug.plugCategoryHash,
-                  isOwned: false,
+                  isOwned: true,
                   perkName: '',
                   perkDescription: '',
                   perkIcon: '',
@@ -167,7 +172,7 @@ export async function updateManifest() {
                   name: current.displayProperties.name,
                   icon: urlPrefix + current.displayProperties.icon,
                   category: current.plug.plugCategoryHash,
-                  isOwned: false,
+                  isOwned: true,
                   perkName: '',
                   perkDescription: '',
                   perkIcon: '',
@@ -208,7 +213,7 @@ export async function updateManifest() {
                   name: current.displayProperties.name,
                   icon: urlPrefix + current.displayProperties.icon,
                   category: current.plug.plugCategoryHash,
-                  isOwned: false,
+                  isOwned: true,
                   perkName: '',
                   perkDescription: '',
                   perkIcon: '',
@@ -248,6 +253,11 @@ export async function updateManifest() {
           } else {
             // get collection hash for armor mods
             await db.manifestArmorModDef
+              .where('itemHash')
+              .equals(current.itemHash)
+              .modify({ collectibleHash: current.hash });
+
+            await db.manifestArmorStatModDef
               .where('itemHash')
               .equals(current.itemHash)
               .modify({ collectibleHash: current.hash });

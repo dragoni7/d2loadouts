@@ -7,6 +7,9 @@ interface ModSelectorProps {
   onSelectMod: (mod: ManifestArmorMod | ManifestArmorStatMod) => void;
 }
 
+const lockedModIcon =
+  'https://www.bungie.net/common/destiny2_content/icons/1426b518acd10943c31171c99222e6fd.png';
+
 const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelectMod }) => {
   return (
     <Box
@@ -20,9 +23,11 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
           <div
             key={mod.itemHash}
             className="submenu-item"
-            style={{ backgroundImage: `url(${mod.icon})` }}
+            style={{
+              backgroundImage: `url(${mod.isOwned ? mod.icon : lockedModIcon})`,
+            }}
             onClick={() => {
-              if (selected.itemHash !== mod.itemHash) {
+              if (selected.itemHash !== mod.itemHash && mod.isOwned) {
                 onSelectMod(mod);
               }
             }}
