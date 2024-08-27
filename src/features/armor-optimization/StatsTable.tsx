@@ -11,7 +11,7 @@ import {
   updateRequiredStatMods,
 } from '../../store/LoadoutReducer';
 import ArmorIcon from '../../components/ArmorIcon';
-import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/constants';
+import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/cont';
 import { db } from '../../store/db';
 import { ManifestArmorStatMod } from '../../types/manifest-types';
 

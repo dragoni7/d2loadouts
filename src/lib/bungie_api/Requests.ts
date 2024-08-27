@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { getBungieMembershipId, getTokens } from '../../store/TokensStore';
 import { _get, _post } from './bungie-api-client';
-import { API_CREDENTIALS } from './constants';
+import { API_CREDENTIALS } from './cont';
 import { store } from '../../store';
 import { Plug } from '../../types/d2l-types';
 

@@ -5,7 +5,7 @@ import {
   EMPTY_FRAGMENT,
   EMPTY_MANIFEST_PLUG,
   EMPTY_SOCKETS,
-} from '../lib/bungie_api/constants';
+} from '../lib/bungie_api/cont';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../types/manifest-types';
 
 export interface InitialState {

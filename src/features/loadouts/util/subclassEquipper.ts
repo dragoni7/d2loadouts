@@ -1,4 +1,4 @@
-import { ERRORS } from '../../../lib/bungie_api/constants';
+import { ERRORS } from '../../../lib/bungie_api/cont';
 import { equipItemRequest, insertSocketPlugFreeRequest } from '../../../lib/bungie_api/requests';
 import { Subclass } from '../../../types/d2l-types';
 import { ManifestAspect, ManifestPlug, ManifestStatPlug } from '../../../types/manifest-types';

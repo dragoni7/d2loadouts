@@ -1,4 +1,4 @@
-import { BUCKET_HASH, ERRORS, ITEM_LOCATIONS } from '../../../lib/bungie_api/constants';
+import { BUCKET_HASH, ERRORS, ITEM_LOCATIONS } from '../../../lib/bungie_api/cont';
 import {
   equipItemRequest,
   getCharacterInventoryRequest,

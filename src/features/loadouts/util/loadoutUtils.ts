@@ -1,4 +1,4 @@
-import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
+import { DAMAGE_TYPE } from '../../../lib/bungie_api/cont';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
 import { DestinyArmor, Loadout, Subclass, SubclassConfig } from '../../../types/d2l-types';
 import {
