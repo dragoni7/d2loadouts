@@ -80,6 +80,7 @@ export async function updateManifest() {
             if (
               current.itemSubType !== MANIFEST_TYPES.ORNAMENTS &&
               current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.ARMOR_MODS) &&
+              current.displayProperties.name &&
               current.displayProperties.name !== 'Locked Armor Mod' &&
               !current.itemTypeDisplayName.includes('Legacy') &&
               !current.itemTypeDisplayName.includes('Deprecated') &&
