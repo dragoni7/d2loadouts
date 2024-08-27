@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { isTokenExpired } from './token-services';
 import { getTokens } from '../../store/TokensStore';
-import { API_CREDENTIALS } from './cont';
+import { API_CREDENTIALS } from './constants';
 
 /**
  * Navigates to the Bungie OAuth url

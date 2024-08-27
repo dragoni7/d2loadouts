@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Paper, Grid, ButtonBase } from '@mui/material';
-import { STATS } from '../../lib/bungie_api/cont';
+import { STATS } from '../../lib/bungie_api/constants';
 
 const ContainerWithBorder = styled(Paper)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,

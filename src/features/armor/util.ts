@@ -1,5 +1,5 @@
 import { db } from '../../store/db';
-import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/cont';
+import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/constants';
 import { store } from '../../store';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../types/manifest-types';
 

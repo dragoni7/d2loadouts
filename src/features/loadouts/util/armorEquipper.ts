@@ -1,10 +1,10 @@
-import { BUCKET_HASH, ERRORS, ITEM_LOCATIONS } from '../../../lib/bungie_api/cont';
+import { BUCKET_HASH, ERRORS, ITEM_LOCATIONS } from '../../../lib/bungie_api/constants';
 import {
   equipItemRequest,
   getCharacterInventoryRequest,
   insertSocketPlugFreeRequest,
   transferItemRequest,
-} from '../../../lib/bungie_api/requests';
+} from '../../../lib/bungie_api/req';
 import { DestinyArmor } from '../../../types/d2l-types';
 import { ManifestArmorStatMod, ManifestArmorMod } from '../../../types/manifest-types';
 import { STATUS } from '../constants';

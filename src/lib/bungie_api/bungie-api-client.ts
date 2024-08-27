@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_CREDENTIALS } from './cont';
+import { API_CREDENTIALS } from './constants';
 
 const BASE_URL = 'https://www.bungie.net';
 

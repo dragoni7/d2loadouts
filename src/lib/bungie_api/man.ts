@@ -1,13 +1,13 @@
 import { db } from '../../store/db';
 import { getManifestItemClass, getManifestItemSlot } from './utils';
-import { getManifestComponentRequest, getManifestRequest } from './requests';
+import { getManifestComponentRequest, getManifestRequest } from './req';
 import {
   ITEM_CATEGORY_HASHES,
   MANIFEST_CLASS,
   MANIFEST_TYPES,
   PLUG_CATEGORY_HASH,
   STAT_HASH,
-} from './cont';
+} from './constants';
 
 const EXOTIC = 2759499571;
 const urlPrefix = 'https://bungie.net';

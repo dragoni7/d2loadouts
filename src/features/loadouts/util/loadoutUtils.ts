@@ -1,5 +1,5 @@
-import { DAMAGE_TYPE } from '../../../lib/bungie_api/cont';
-import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
+import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
+import { snapShotLoadoutRequest } from '../../../lib/bungie_api/req';
 import { DestinyArmor, Loadout, Subclass, SubclassConfig } from '../../../types/d2l-types';
 import {
   ManifestArmorMod,

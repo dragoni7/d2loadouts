@@ -1,5 +1,5 @@
 import { CharacterClass } from '../../types/d2l-types';
-import { MANIFEST_ARMOR, MANIFEST_CLASS, STAT_HASH, STAT_MOD_HASHES } from './cont';
+import { MANIFEST_ARMOR, MANIFEST_CLASS, STAT_HASH, STAT_MOD_HASHES } from './constants';
 
 export function getManifestItemSlot(slotNum: number): string {
   switch (slotNum) {

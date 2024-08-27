@@ -1,7 +1,7 @@
 import { Token, Tokens, getTokens, setTokens } from '../../store/TokensStore';
 import { _post } from './bungie-api-client';
 import { AxiosResponse } from 'axios';
-import { getOAuthTokensRequest } from './requests';
+import { getOAuthTokensRequest } from './req';
 
 export function canTokensRefresh() {
   const tokens = getTokens();
