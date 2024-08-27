@@ -72,6 +72,8 @@ export const generatePermutations = (
   let artificeMasterworkedClassArmor = undefined;
 
   for (const item of classItem) {
+    if (item.exotic) continue;
+
     if (masterworkedClassArmor !== undefined && artificeMasterworkedClassArmor !== undefined) break;
 
     if (item.masterwork === true) {
