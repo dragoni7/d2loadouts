@@ -21,10 +21,13 @@ export async function updateManifest() {
     if (!currentVersion || currentVersion !== response.data.Response.version) {
       await db.manifestArmorDef.clear();
       await db.manifestArmorModDef.clear();
+      await db.manifestArmorStatModDef.clear();
       await db.manifestEmblemDef.clear();
       await db.manifestExoticArmorCollection.clear();
       await db.manifestSubclass.clear();
       await db.manifestSubclassModDef.clear();
+      await db.manifestSubclassFragmentsDef.clear();
+      await db.manifestSubclassAspectsDef.clear();
       localStorage.setItem('manifestVersion', response.data.Response.version);
 
       const itemInventoryComponent =
