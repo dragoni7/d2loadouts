@@ -67,13 +67,14 @@ const EquipLoadout: React.FC = () => {
                 lg={12}
                 textAlign="center"
                 sx={{ backgroundColor: 'rgba(48,48,48,0.8)' }}
+                height={'10%'}
               >
                 <FadeIn>
                   <h2>{equipStep}</h2>
                 </FadeIn>
               </Grid>
             )}
-            <Grid container item md={12} lg={12} spacing={3} py={4}>
+            <Grid container item md={12} lg={12} spacing={1} py={2}>
               {processing.map((item, index) => (
                 <>
                   {results[index] !== undefined ? (
@@ -108,8 +109,8 @@ const EquipLoadout: React.FC = () => {
                               <Tooltip title={result.message}>
                                 <img
                                   src={result.subject.icon}
-                                  width={72}
-                                  height={72}
+                                  width={74}
+                                  height={74}
                                   style={{
                                     border: `4px solid ${
                                       result.status === STATUS.SUCCESS ? 'green' : 'red'

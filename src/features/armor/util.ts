@@ -15,7 +15,7 @@ export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
         ? PLUG_CATEGORY_HASH.ARMOR_MODS.CHEST_ARMOR_MODS
         : slot === 'legs'
         ? PLUG_CATEGORY_HASH.ARMOR_MODS.LEG_ARMOR_MODS
-        : slot === 'classItem'
+        : slot === 'class'
         ? PLUG_CATEGORY_HASH.ARMOR_MODS.CLASS_ARMOR_MODS
         : 0
     )
@@ -25,7 +25,6 @@ export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
 }
 
 export function getSelectedModsBySlot(slot: string): (ManifestArmorMod | ManifestArmorStatMod)[] {
-  console.log(slot);
   switch (slot) {
     case 'helmet': {
       return store.getState().loadoutConfig.loadout.helmetMods;

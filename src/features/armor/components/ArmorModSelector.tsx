@@ -4,7 +4,7 @@ import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-
 interface ModSelectorProps {
   selected: ManifestArmorMod | ManifestArmorStatMod;
   mods: ManifestArmorMod[];
-  onSelectMod: (mod: ManifestArmorMod) => void;
+  onSelectMod: (mod: ManifestArmorMod | ManifestArmorStatMod) => void;
 }
 
 const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelectMod }) => {
