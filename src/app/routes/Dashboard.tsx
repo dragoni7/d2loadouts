@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { styled } from '@mui/system';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store';
+import { updateSelectedExoticItemHash, updateSelectedValues } from '../../store/DashboardReducer';
+import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
+import { filterPermutations } from '../../features/armor-optimization/filter-permutations';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
 import { updateProfileData } from '../../store/ProfileReducer';
-import { useDispatch, useSelector } from 'react-redux';
-import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
-import { filterPermutations } from '../../features/armor-optimization/filter-permutations';
 import { DestinyArmor, Character, FilteredPermutation } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
-import { RootState } from '../../store';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
 import greyBackground from '../../assets/grey.png';
@@ -52,17 +53,6 @@ const Container = styled('div')({
     background: 'grey',
     borderRadius: '0',
   },
-});
-
-const TopPane = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  width: '100%',
-  padding: '10px',
-  boxSizing: 'border-box',
-  marginBottom: '20px',
-  backgroundColor: 'transparent',
-  border: '2px solid white',
 });
 
 const BottomPane = styled('div')({
@@ -113,21 +103,17 @@ const NewComponentWrapper = styled('div')({
 });
 
 export const Dashboard: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
-  const [selectedExoticItemHash, setSelectedExoticItemHash] = useState<string | null>(null);
-  const [permutations, setPermutations] = useState<DestinyArmor[][] | null>(null);
-  const [filteredPermutations, setFilteredPermutations] = useState<FilteredPermutation[] | null>(
-    null
+  const { selectedValues, selectedExoticItemHash } = useSelector(
+    (state: RootState) => state.dashboard
   );
-  const [selectedValues, setSelectedValues] = useState<{ [key: string]: number }>({});
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [direction, setDirection] = useState<'left' | 'right'>('left');
+
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
   const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
-  const [showCustomizationPanel, setShowCustomizationPanel] = useState(false);
   const [customizingSubclass, setCustomizingSubclass] = useState<ManifestSubclass | null>(null);
   const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<ManifestSubclass | null>(
     null
@@ -155,9 +141,6 @@ export const Dashboard: React.FC = () => {
     if (selectedCharacter) {
       dispatch(resetLoadout());
       dispatch(updateLoadoutCharacter(selectedCharacter));
-      const newPermutations = generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
-      console.log(newPermutations.length);
-      setPermutations(newPermutations);
       fetchSubclasses(selectedCharacter).then((subclassesData) => {
         setSubclasses(subclassesData);
         if (subclassesData.length > 0) {
@@ -169,31 +152,28 @@ export const Dashboard: React.FC = () => {
         }
       });
     }
+  }, [selectedCharacter, dispatch]);
+
+  const permutations = useMemo(() => {
+    if (selectedCharacter && selectedExoticItemHash !== undefined) {
+      return generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
+    }
+    return null;
   }, [selectedCharacter, selectedExoticItemHash]);
 
-  useEffect(() => {
-    if (permutations) {
+  const filteredPermutations = useMemo(() => {
+    if (permutations && selectedValues) {
+      setIsLoading(true);
       const filtered = filterPermutations(permutations, selectedValues);
-      setFilteredPermutations(filtered);
+      setIsLoading(false);
+      return filtered;
     }
-  }, [selectedValues, permutations]);
-
-  const handleThresholdChange = (thresholds: { [key: string]: number }) => {
-    setSelectedValues(thresholds);
-  };
+    return null;
+  }, [permutations, selectedValues]);
 
   const handleCharacterClick = (character: Character) => {
     if (selectedCharacter && selectedCharacter?.id !== character.id) {
-      setDirection(character.class === 'warlock' ? 'left' : 'right');
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setSelectedCharacter(character);
-        const newPermutations = generatePermutations(character.armor, selectedExoticItemHash);
-        setPermutations(newPermutations);
-        const filtered = filterPermutations(newPermutations, selectedValues);
-        setFilteredPermutations(filtered);
-        setIsTransitioning(false);
-      }, 300);
+      setSelectedCharacter(character);
     }
   };
 
@@ -270,7 +250,7 @@ export const Dashboard: React.FC = () => {
             <NewComponentWrapper>
               <ExoticSearch
                 selectedCharacter={selectedCharacter}
-                onExoticSelect={setSelectedExoticItemHash}
+                selectedExoticItemHash={selectedExoticItemHash}
               />
             </NewComponentWrapper>
             <BottomPane>
@@ -284,18 +264,20 @@ export const Dashboard: React.FC = () => {
                   />
                 </DiamondButtonWrapper>
                 <NumberBoxesWrapper>
-                  <NumberBoxes onThresholdChange={handleThresholdChange} />
+                  <NumberBoxes />
                 </NumberBoxesWrapper>
               </LeftPane>
               <RightPane>
                 <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
-                {filteredPermutations ? (
+                {isLoading ? (
+                  <p>Loading...</p>
+                ) : filteredPermutations ? (
                   <StatsTable
                     permutations={filteredPermutations}
                     onPermutationClick={handlePermutationClick}
                   />
                 ) : (
-                  <p>Loading...</p>
+                  <p>Loading....</p>
                 )}
               </RightPane>
             </BottomPane>
@@ -305,3 +287,5 @@ export const Dashboard: React.FC = () => {
     </PageContainer>
   );
 };
+
+export default Dashboard;

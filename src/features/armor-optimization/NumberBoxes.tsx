@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Paper, Grid, ButtonBase } from '@mui/material';
 import { STATS } from '../../lib/bungie_api/constants';
+import { updateSelectedValues } from '../../store/DashboardReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store';
 
 const ContainerWithBorder = styled(Paper)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
@@ -49,14 +52,6 @@ const StatIcon = styled('img')({
   marginRight: 10,
 });
 
-interface SelectedNumbers {
-  [key: string]: number;
-}
-
-interface NumberBoxesProps {
-  onThresholdChange: (thresholds: SelectedNumbers) => void;
-}
-
 const statIcons: Record<string, string> = {
   mobility:
     'https://www.bungie.net/common/destiny2_content/icons/e26e0e93a9daf4fdd21bf64eb9246340.png',
@@ -72,16 +67,16 @@ const statIcons: Record<string, string> = {
     'https://www.bungie.net/common/destiny2_content/icons/ea5af04ccd6a3470a44fd7bb0f66e2f7.png',
 };
 
-const NumberBoxes: React.FC<NumberBoxesProps> = ({ onThresholdChange }) => {
-  const [selectedNumbers, setSelectedNumbers] = useState<SelectedNumbers>({});
+const NumberBoxes: React.FC = () => {
+  const dispatch = useDispatch();
+  const selectedValues = useSelector((state: RootState) => state.dashboard.selectedValues);
 
   const handleSelect = (stat: string, number: number) => {
-    const updatedNumbers = {
-      ...selectedNumbers,
+    const updatedValues = {
+      ...selectedValues,
       [stat]: number,
     };
-    setSelectedNumbers(updatedNumbers);
-    onThresholdChange(updatedNumbers);
+    dispatch(updateSelectedValues(updatedValues));
   };
 
   return (
@@ -98,7 +93,7 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ onThresholdChange }) => {
                   <NumberBox
                     key={number}
                     isSelected={
-                      selectedNumbers[stat] !== undefined && number <= selectedNumbers[stat]
+                      selectedValues[stat] !== undefined && number <= selectedValues[stat]
                     }
                     onClick={() => handleSelect(stat, number)}
                   >
