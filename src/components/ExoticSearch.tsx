@@ -3,6 +3,8 @@ import { styled } from '@mui/material/styles';
 import { Autocomplete, TextField, Popper } from '@mui/material';
 import { db } from '../store/db';
 import { Character } from '../types/d2l-types';
+import { updateSelectedExoticItemHash } from '../store/DashboardReducer';
+import { useDispatch } from 'react-redux';
 
 const NewComponentContainer = styled('div')({
   backgroundColor: 'transparent',
@@ -96,10 +98,14 @@ type ExoticViewModel = {
 
 interface ExoticSearchProps {
   selectedCharacter: Character | null;
-  onExoticSelect: (itemHash: string | null) => void;
+  selectedExoticItemHash: string | null;
 }
 
-const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter, onExoticSelect }) => {
+const ExoticSearch: React.FC<ExoticSearchProps> = ({
+  selectedCharacter,
+  selectedExoticItemHash,
+}) => {
+  const dispatch = useDispatch();
   const [exotics, setExotics] = useState<ExoticViewModel[]>([]);
   const [selectedExotic, setSelectedExotic] = useState<ExoticViewModel | null>(null);
   const [inputValue, setInputValue] = React.useState('');
@@ -126,19 +132,27 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter, onExotic
   }, [selectedCharacter]);
 
   useEffect(() => {
-    if (selectedExotic) {
-      onExoticSelect(selectedExotic.itemHash);
+    if (selectedExoticItemHash) {
+      const exotic = exotics.find((e) => e.itemHash === selectedExoticItemHash);
+      setSelectedExotic(exotic || null);
     } else {
-      onExoticSelect(null);
+      setSelectedExotic(null);
     }
-  }, [selectedExotic, onExoticSelect]);
+  }, [selectedExoticItemHash, exotics]);
 
   useEffect(() => {
     setSelectedExotic(null);
+    setInputValue('');
   }, [selectedCharacter]);
+
+  const handleExoticSelect = (newValue: ExoticViewModel | null) => {
+    setSelectedExotic(newValue);
+    dispatch(updateSelectedExoticItemHash(newValue ? newValue.itemHash : null));
+  };
 
   const handleClearSelection = () => {
     setSelectedExotic(null);
+    dispatch(updateSelectedExoticItemHash(null));
   };
 
   return (
@@ -149,9 +163,7 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter, onExotic
           <Autocomplete
             disablePortal
             value={selectedExotic}
-            onChange={(event, newValue) => {
-              setSelectedExotic(newValue as ExoticViewModel | null);
-            }}
+            onChange={(event, newValue) => handleExoticSelect(newValue as ExoticViewModel | null)}
             inputValue={inputValue}
             onInputChange={(event, newInputValue) => {
               setInputValue(newInputValue);
@@ -161,20 +173,24 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({ selectedCharacter, onExotic
             getOptionLabel={(option: ExoticViewModel) => option.name}
             sx={{ width: 300 }}
             PopperComponent={StyledPopper}
-            renderOption={(props, option) => (
-              <li
-                {...props}
-                style={{ color: option.isOwned ? 'inherit' : 'rgba(211, 211, 211, 0.7)' }}
-              >
-                <ExoticIcon
-                  src={option.icon}
-                  alt="Exotic Icon"
-                  isOwned={option.isOwned}
-                  isSelected={false}
-                />
-                {option.name}
-              </li>
-            )}
+            renderOption={(props, option) => {
+              const { key, ...otherProps } = props;
+              return (
+                <li
+                  {...otherProps}
+                  key={option.itemHash}
+                  style={{ color: option.isOwned ? 'inherit' : 'rgba(211, 211, 211, 0.7)' }}
+                >
+                  <ExoticIcon
+                    src={option.icon}
+                    alt="Exotic Icon"
+                    isOwned={option.isOwned}
+                    isSelected={false}
+                  />
+                  {option.name}
+                </li>
+              );
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}

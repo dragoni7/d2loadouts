@@ -5,42 +5,20 @@ import { regenerateTokens } from '../../lib/bungie_api/token-services';
 import { isAuthenticated } from '../../lib/bungie_api/Authorization';
 import { Container, Grid, Paper, Box, Typography } from '@mui/material';
 import pyramidBackground from '../../assets/pyramid.jpg';
+import FeatureSlider from '../../components/FeatureSlider';
+import { useScramble } from 'use-scramble';
 
-const FogOverlay = () => (
-  <Box
-    sx={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      overflow: 'hidden',
-      pointerEvents: 'none',
-      '&::before, &::after': {
-        content: '""',
-        position: 'absolute',
-        left: '-50%',
-        top: '-50%',
-        right: '-50%',
-        bottom: '-50%',
-        background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%)',
-        animation: 'fogAnimation 10s infinite linear',
-      },
-      '&::after': {
-        animationDirection: 'reverse',
-        animationDuration: '15s',
-      },
-      '@keyframes fogAnimation': {
-        '0%': { transform: 'translate(0, 0)' },
-        '100%': { transform: 'translate(25%, 25%)' },
-      },
-    }}
-  />
-);
-
-export const LandingRoute = () => {
+export const LandingRoute: React.FC = () => {
   const navigate = useNavigate();
   const [hidden, setHidden] = useState(true);
+  const { ref, replay } = useScramble({
+    text: 'D2Loadouts',
+    speed: 0.3,
+    tick: 1,
+    step: 1,
+    scramble: 10,
+    seed: 0.5,
+  });
 
   useEffect(() => {
     setTimeout(async () => {
@@ -57,8 +35,14 @@ export const LandingRoute = () => {
     }, 300);
   }, [navigate]);
 
+  useEffect(() => {
+    if (!hidden) {
+      replay();
+    }
+  }, [hidden, replay]);
+
   if (hidden) {
-    return null;
+    return <div>Loading...</div>;
   }
 
   return (
@@ -73,8 +57,10 @@ export const LandingRoute = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        fontFamily: 'Helvetica, Arial, sans-serif',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -87,7 +73,6 @@ export const LandingRoute = () => {
         },
       }}
     >
-      <FogOverlay />
       <Container maxWidth="md">
         <Paper
           elevation={8}
@@ -98,38 +83,52 @@ export const LandingRoute = () => {
             border: '1px solid rgba(255,255,255,0.1)',
           }}
         >
-          <Grid
-            container
-            spacing={3}
-            direction="column"
-            justifyContent="space-around"
-            alignItems="center"
-          >
-            <Grid item xs={12} marginBottom={6}>
+          <Grid container spacing={3} direction="column" alignItems="center">
+            <Grid item xs={12}>
               <Typography
+                ref={ref}
                 variant="h2"
                 component="h1"
                 color="white"
-                sx={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}
-              >
-                D2Loadouts
-              </Typography>
+                sx={{
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontWeight: 'bold',
+                }}
+              />
             </Grid>
-            <Grid item xs={12} marginBottom={4}>
+            <Grid item xs={12}>
               <Typography
                 variant="body1"
                 color="white"
-                sx={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}
+                sx={{
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                  fontFamily: 'Helvetica, Arial, sans-serif',
+                }}
               >
                 D2Loadouts requires permission to read your Destiny 2 information
               </Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ width: '100%', maxWidth: 600, margin: 'auto' }}>
+              <FeatureSlider />
+            </Grid>
+            <Grid item xs={12} sx={{ marginTop: 4 }}>
               <BungieLogin />
             </Grid>
           </Grid>
         </Paper>
       </Container>
+      <Typography
+        variant="body2"
+        color="white"
+        sx={{
+          marginTop: 2,
+          opacity: 0.7,
+          fontFamily: 'Helvetica, Arial, sans-serif',
+        }}
+      >
+        Made by Rorschach and Dragoni
+      </Typography>
     </Box>
   );
 };
