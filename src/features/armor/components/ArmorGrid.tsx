@@ -6,7 +6,7 @@ import ArmorConfig from './ArmorConfig';
 import { ManifestArmorMod } from '../../../types/manifest-types';
 import { Grid } from '@mui/material';
 
-const LoadoutArmor: React.FC = () => {
+const ArmorGrid: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
   const [statMods, setStatMods] = useState<ManifestArmorMod[]>([]);
   const [artificeMods, setArtificeMods] = useState<ManifestArmorMod[]>([]);
@@ -59,13 +59,20 @@ const LoadoutArmor: React.FC = () => {
   }, []);
 
   return (
-    <Grid container rowGap={3} columnGap={1.5} marginLeft={5}>
+    <Grid item container md={12} spacing={1}>
       <Grid item md={12}>
         Required Mods:
       </Grid>
       {requiredMods.map((mod, index) => (
-        <Grid item key={index}>
-          <img src={mod.icon} style={{ backgroundColor: 'black', height: 81, width: 81 }} />
+        <Grid item key={index} md={1}>
+          <img
+            src={mod.icon}
+            style={{
+              backgroundColor: 'black',
+              maxWidth: '100%',
+              height: 'auto',
+            }}
+          />
         </Grid>
       ))}
       {/* Helmet */}
@@ -94,4 +101,4 @@ const LoadoutArmor: React.FC = () => {
   );
 };
 
-export default LoadoutArmor;
+export default ArmorGrid;

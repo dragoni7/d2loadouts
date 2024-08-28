@@ -1,10 +1,10 @@
 import React from 'react';
 import './ArmorCustomization.css';
-import LoadoutArmor from './LoadoutArmor';
+import ArmorGrid from './ArmorGrid';
 import EquipLoadout from '../../loadouts/components/EquipLoadout';
 import { ManifestSubclass } from '../../../types/manifest-types';
 import AbilitiesModification from '../../subclass/AbilitiesModification';
-import { Button, Box, Grid, Container, Stack } from '@mui/material';
+import { Button, Box, Container, Stack, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 interface ArmorCustomizationProps {
@@ -44,24 +44,29 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
     >
       <Grid
         item
+        container
+        alignItems="flex-start"
+        px={3}
         md={6}
-        alignItems="center"
-        justifyContent="center"
         sx={{
           zIndex: 1,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
         }}
       >
-        <TransparentButton
-          onClick={onBackClick}
-          startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}
-        >
-          Back
-        </TransparentButton>
-        <LoadoutArmor />
-        <EquipLoadout />
+        <Grid item md={12}>
+          <TransparentButton
+            onClick={onBackClick}
+            startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}
+          >
+            Back
+          </TransparentButton>
+        </Grid>
+        <ArmorGrid />
+        <Grid item md={12}>
+          <EquipLoadout />
+        </Grid>
       </Grid>
-      <Grid item md={6}>
+      <Grid item container md={6}>
         <AbilitiesModification subclass={subclass} />
       </Grid>
     </Grid>

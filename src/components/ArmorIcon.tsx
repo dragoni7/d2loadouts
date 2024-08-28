@@ -9,6 +9,8 @@ const MasterworkedIconContainer = styled('img')({
   alignItems: 'center',
   justifyContent: 'center',
   marginRight: '5px',
+  maxWidth: '100%',
+  height: 'auto',
 });
 
 const DefaultIconContainer = styled('img')({
@@ -18,6 +20,8 @@ const DefaultIconContainer = styled('img')({
   alignItems: 'center',
   justifyContent: 'center',
   marginRight: '5px',
+  maxWidth: '100%',
+  height: 'auto',
 });
 
 interface ArmorIconProps {

@@ -67,11 +67,11 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
   }, []);
 
   return (
-    <Grid item container md={12} spacing={1}>
-      <Grid item>
-        <ArmorIcon armor={armor} size={81} />
+    <Grid item container md={12}>
+      <Grid item md={2}>
+        <ArmorIcon armor={armor} />
       </Grid>
-      <Grid item>
+      <Grid item md={2}>
         <ArmorModSelector
           selected={selectedMods[0]}
           mods={statMods}
@@ -80,7 +80,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
           }}
         />
       </Grid>
-      <Grid item>
+      <Grid item md={2}>
         <ArmorModSelector
           selected={selectedMods[1]}
           mods={armorMods}
@@ -89,7 +89,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
           }}
         />
       </Grid>
-      <Grid item>
+      <Grid item md={2}>
         <ArmorModSelector
           selected={selectedMods[2]}
           mods={armorMods}
@@ -98,7 +98,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
           }}
         />
       </Grid>
-      <Grid item>
+      <Grid item md={2}>
         <ArmorModSelector
           selected={selectedMods[3]}
           mods={armorMods}
@@ -108,7 +108,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         />
       </Grid>
       {armor.artifice === true ? (
-        <Grid item>
+        <Grid item md={2}>
           <ArmorModSelector
             selected={selectedMods[4]}
             mods={artificeMods}

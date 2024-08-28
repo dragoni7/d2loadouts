@@ -12,6 +12,9 @@ const AppRouter = () => {
 };
 
 const theme = createTheme({
+  typography: {
+    fontFamily: ['Helvetica'].join(','),
+  },
   breakpoints: {
     values: {
       xs: 0,
