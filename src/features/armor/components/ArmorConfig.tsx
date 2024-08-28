@@ -1,4 +1,3 @@
-import { Stack } from '@mui/system';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
@@ -7,6 +6,7 @@ import { DestinyArmor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
 import { getSelectedModsBySlot, getModsBySlot } from '../util';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
+import { Grid } from '@mui/material';
 
 interface ArmorConfigProps {
   armor: DestinyArmor;
@@ -67,9 +67,11 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
   }, []);
 
   return (
-    <div key={armor.name} className="armor-slot">
-      <Stack direction="row" spacing={3}>
+    <Grid item container md={12} spacing={1}>
+      <Grid item>
         <ArmorIcon armor={armor} size={81} />
+      </Grid>
+      <Grid item>
         <ArmorModSelector
           selected={selectedMods[0]}
           mods={statMods}
@@ -77,6 +79,8 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
             onSelectMod(mod, 0);
           }}
         />
+      </Grid>
+      <Grid item>
         <ArmorModSelector
           selected={selectedMods[1]}
           mods={armorMods}
@@ -84,6 +88,8 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
             onSelectMod(mod, 1);
           }}
         />
+      </Grid>
+      <Grid item>
         <ArmorModSelector
           selected={selectedMods[2]}
           mods={armorMods}
@@ -91,6 +97,8 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
             onSelectMod(mod, 2);
           }}
         />
+      </Grid>
+      <Grid item>
         <ArmorModSelector
           selected={selectedMods[3]}
           mods={armorMods}
@@ -98,7 +106,9 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
             onSelectMod(mod, 3);
           }}
         />
-        {armor.artifice === true ? (
+      </Grid>
+      {armor.artifice === true ? (
+        <Grid item>
           <ArmorModSelector
             selected={selectedMods[4]}
             mods={artificeMods}
@@ -106,11 +116,11 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
               onSelectMod(mod, 4);
             }}
           />
-        ) : (
-          false
-        )}
-      </Stack>
-    </div>
+        </Grid>
+      ) : (
+        false
+      )}
+    </Grid>
   );
 };
 

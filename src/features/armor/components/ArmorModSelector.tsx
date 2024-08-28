@@ -13,11 +13,15 @@ const lockedModIcon =
 const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelectMod }) => {
   return (
     <Box
-      className="armor-mod-slot"
-      style={{
-        backgroundImage: `url(${selected.icon})`,
+      sx={{
+        position: 'relative',
+        cursor: 'pointer',
+        '&:hover .submenu-grid': { display: 'flex' },
+        width: 81,
+        height: 81,
       }}
     >
+      <img src={selected.icon} width={'100%'} height={'100%'} />
       <div className="submenu-grid">
         {mods.map((mod) => (
           <div

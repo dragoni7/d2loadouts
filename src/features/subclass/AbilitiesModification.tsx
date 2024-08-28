@@ -362,7 +362,7 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
       const isDisabled = category === 'FRAGMENTS' && index! >= availableFragmentSlots;
 
       return (
-        <Box key={slotId} position="relative" display="inline-block">
+        <Box key={slotId}>
           <div
             data-slot-id={slotId}
             onMouseEnter={(e) => handleMouseEnter(e, slotId)}

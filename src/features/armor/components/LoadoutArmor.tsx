@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import { Box, Container } from '@mui/system';
 import ArmorConfig from './ArmorConfig';
 import { ManifestArmorMod } from '../../../types/manifest-types';
+import { Grid } from '@mui/material';
 
 const LoadoutArmor: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
@@ -61,58 +62,38 @@ const LoadoutArmor: React.FC = () => {
   }, []);
 
   return (
-    <div className="customization-panel">
-      <Container maxWidth="md">
-        <Box marginBottom={4} marginLeft={1.5}>
-          <Stack direction="row" spacing={3}>
-            <Box width={81} height={81}>
-              Required Mods:
-            </Box>
-            {requiredMods.map((mod, index) => (
-              <Box
-                className="armor-mod-slot"
-                key={index}
-                style={{
-                  backgroundImage: `url(${mod.icon})`,
-                }}
-              />
-            ))}
-          </Stack>
-        </Box>
-        <Stack spacing={2} className="armor-slots">
-          {/* Helmet */}
-          <ArmorConfig
-            armor={currentConfig.helmet}
-            statMods={statMods}
-            artificeMods={artificeMods}
-          />
-          {/* Gauntlets */}
-          <ArmorConfig
-            armor={currentConfig.gauntlets}
-            statMods={statMods}
-            artificeMods={artificeMods}
-          />
-          {/* Chest Armor */}
-          <ArmorConfig
-            armor={currentConfig.chestArmor}
-            statMods={statMods}
-            artificeMods={artificeMods}
-          />
-          {/* Leg Armor */}
-          <ArmorConfig
-            armor={currentConfig.legArmor}
-            statMods={statMods}
-            artificeMods={artificeMods}
-          />
-          {/* Class Armor */}
-          <ArmorConfig
-            armor={currentConfig.classArmor}
-            statMods={statMods}
-            artificeMods={artificeMods}
-          />
-        </Stack>
-      </Container>
-    </div>
+    <Grid container rowGap={3} columnGap={1.5} marginLeft={5}>
+      <Grid item md={12}>
+        Required Mods:
+      </Grid>
+      {requiredMods.map((mod, index) => (
+        <Grid item key={index}>
+          <img src={mod.icon} style={{ backgroundColor: 'black', height: 81, width: 81 }} />
+        </Grid>
+      ))}
+      {/* Helmet */}
+      <ArmorConfig armor={currentConfig.helmet} statMods={statMods} artificeMods={artificeMods} />
+      {/* Gauntlets */}
+      <ArmorConfig
+        armor={currentConfig.gauntlets}
+        statMods={statMods}
+        artificeMods={artificeMods}
+      />
+      {/* Chest Armor */}
+      <ArmorConfig
+        armor={currentConfig.chestArmor}
+        statMods={statMods}
+        artificeMods={artificeMods}
+      />
+      {/* Leg Armor */}
+      <ArmorConfig armor={currentConfig.legArmor} statMods={statMods} artificeMods={artificeMods} />
+      {/* Class Armor */}
+      <ArmorConfig
+        armor={currentConfig.classArmor}
+        statMods={statMods}
+        artificeMods={artificeMods}
+      />
+    </Grid>
   );
 };
 
