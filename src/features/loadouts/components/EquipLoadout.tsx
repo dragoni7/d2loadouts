@@ -58,23 +58,23 @@ const EquipLoadout: React.FC = () => {
           }}
         >
           <Grid container height="100%">
-            {equipping ? (
-              false
-            ) : (
-              <Grid
-                item
-                md={12}
-                lg={12}
-                textAlign="center"
-                sx={{ backgroundColor: 'rgba(48,48,48,0.8)' }}
-                height={'10%'}
-              >
+            <Grid
+              item
+              md={12}
+              lg={12}
+              textAlign="center"
+              sx={{ backgroundColor: 'rgba(48,48,48,0.8)' }}
+              height={'10%'}
+            >
+              {equipping ? (
+                ''
+              ) : (
                 <FadeIn>
                   <h2>{equipStep}</h2>
                 </FadeIn>
-              </Grid>
-            )}
-            <Grid container item md={12} lg={12} spacing={1} py={2}>
+              )}
+            </Grid>
+            <Grid container item md={12} lg={12} spacing={1} py={2} height="84%">
               {processing.map((item, index) => (
                 <>
                   {results[index] !== undefined ? (
@@ -136,44 +136,47 @@ const EquipLoadout: React.FC = () => {
                 </>
               ))}
             </Grid>
-            {equipping ? (
-              false
-            ) : (
-              <Grid
-                item
-                container
-                md={12}
-                textAlign="center"
-                alignItems="flex-end"
-                justifyContent="space-betwen"
-                sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
-              >
-                <Grid item md={4}>
-                  <FadeIn delay={200}>
-                    <Button
-                      onClick={() => {
-                        setOpen(false);
-                        setResults([]);
-                        setProcessing([]);
-                        setEquipStep('');
-                      }}
-                    >
-                      Back
-                    </Button>
-                  </FadeIn>
-                </Grid>
-                <Grid item md={4}>
-                  <FadeIn delay={400}>
-                    <Button>Share</Button>
-                  </FadeIn>
-                </Grid>
-                <Grid item md={4}>
-                  <FadeIn delay={600}>
-                    <Button>Save in-game</Button>
-                  </FadeIn>
-                </Grid>
-              </Grid>
-            )}
+            <Grid
+              item
+              container
+              md={12}
+              textAlign="center"
+              alignItems="flex-end"
+              justifyContent="space-betwen"
+              height="7%"
+              sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+            >
+              {equipping ? (
+                ''
+              ) : (
+                <>
+                  <Grid item md={4}>
+                    <FadeIn delay={200}>
+                      <Button
+                        onClick={() => {
+                          setOpen(false);
+                          setResults([]);
+                          setProcessing([]);
+                          setEquipStep('');
+                        }}
+                      >
+                        Back
+                      </Button>
+                    </FadeIn>
+                  </Grid>
+                  <Grid item md={4}>
+                    <FadeIn delay={400}>
+                      <Button>Share</Button>
+                    </FadeIn>
+                  </Grid>
+                  <Grid item md={4}>
+                    <FadeIn delay={600}>
+                      <Button>Save in-game</Button>
+                    </FadeIn>
+                  </Grid>
+                </>
+              )}
+            </Grid>
           </Grid>
         </Paper>
       </Backdrop>

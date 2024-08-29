@@ -59,22 +59,24 @@ const ArmorGrid: React.FC = () => {
   }, []);
 
   return (
-    <Grid item container md={12} spacing={1}>
-      <Grid item md={12}>
+    <Grid container columns={{ md: 6 }} spacing={1}>
+      <Grid item md={6}>
         Required Mods:
       </Grid>
-      {requiredMods.map((mod, index) => (
-        <Grid item key={index} md={1}>
-          <img
-            src={mod.icon}
-            style={{
-              backgroundColor: 'black',
-              maxWidth: '100%',
-              height: 'auto',
-            }}
-          />
-        </Grid>
-      ))}
+      <Grid item container columns={{ md: 11 }} columnGap={0.5} md={8}>
+        {requiredMods.map((mod, index) => (
+          <Grid item key={index} md={1}>
+            <img
+              src={mod.icon}
+              style={{
+                backgroundColor: 'black',
+                maxWidth: '100%',
+                height: 'auto',
+              }}
+            />
+          </Grid>
+        ))}
+      </Grid>
       {/* Helmet */}
       <ArmorConfig armor={currentConfig.helmet} statMods={statMods} artificeMods={artificeMods} />
       {/* Gauntlets */}

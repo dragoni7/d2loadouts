@@ -6,6 +6,7 @@ import { ManifestSubclass } from '../../../types/manifest-types';
 import AbilitiesModification from '../../subclass/AbilitiesModification';
 import { Button, Box, Container, Stack, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { flexRender } from '@tanstack/react-table';
 
 interface ArmorCustomizationProps {
   onBackClick: () => void;
@@ -32,28 +33,18 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
   subclass,
 }) => {
   return (
-    <Grid
-      container
+    <Box
       sx={{
+        width: '100vw',
+        display: 'flex',
+        flexGrow: 1,
         backgroundImage: `url(${screenshot})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        width: '100vw',
-        height: '100vh',
       }}
     >
-      <Grid
-        item
-        container
-        alignItems="flex-start"
-        px={3}
-        md={6}
-        sx={{
-          zIndex: 1,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        }}
-      >
-        <Grid item md={12}>
+      <Grid container columns={2}>
+        <Grid item md={1} sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
           <TransparentButton
             onClick={onBackClick}
             startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}
@@ -61,15 +52,31 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
             Back
           </TransparentButton>
         </Grid>
-        <ArmorGrid />
-        <Grid item md={12}>
+        <Grid item md={1}>
+          SPACE FOR SOMETHING
+        </Grid>
+        <Grid
+          item
+          md={1}
+          sx={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <Container maxWidth="lg">
+            <ArmorGrid />
+          </Container>
+        </Grid>
+        <Grid item md={1}>
+          <AbilitiesModification subclass={subclass} />
+        </Grid>
+        <Grid item md={1} sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          SPACE FOR SOMETHING
+        </Grid>
+        <Grid item md={1} sx={{ textAlign: 'center' }}>
           <EquipLoadout />
         </Grid>
       </Grid>
-      <Grid item container md={6}>
-        <AbilitiesModification subclass={subclass} />
-      </Grid>
-    </Grid>
+    </Box>
   );
 };
 

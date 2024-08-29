@@ -17,11 +17,14 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
         position: 'relative',
         cursor: 'pointer',
         '&:hover .submenu-grid': { display: 'flex' },
-        width: '100%',
-        height: '100%',
+        maxWidth: '100%',
+        height: 'auto',
       }}
     >
-      <img src={selected.icon} style={{ maxWidth: '100%', height: 'auto' }} />
+      <img
+        src={selected.icon}
+        style={{ maxWidth: '100%', height: 'auto', backgroundColor: 'black' }}
+      />
       <div className="submenu-grid">
         {mods.map((mod) => (
           <div
