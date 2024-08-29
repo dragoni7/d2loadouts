@@ -1,6 +1,6 @@
 import React from 'react';
 import './ArmorCustomization.css';
-import ArmorGrid from './ArmorGrid';
+import ModCustomization from './ModCustomization';
 import EquipLoadout from '../../loadouts/components/EquipLoadout';
 import { ManifestSubclass } from '../../../types/manifest-types';
 import AbilitiesModification from '../../subclass/AbilitiesModification';
@@ -52,9 +52,7 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
             Back
           </TransparentButton>
         </Grid>
-        <Grid item md={1}>
-          SPACE FOR SOMETHING
-        </Grid>
+        <Grid item md={1} />
         <Grid
           item
           md={1}
@@ -63,15 +61,13 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
           }}
         >
           <Container maxWidth="lg">
-            <ArmorGrid />
+            <ModCustomization />
           </Container>
         </Grid>
         <Grid item md={1}>
           <AbilitiesModification subclass={subclass} />
         </Grid>
-        <Grid item md={1} sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-          SPACE FOR SOMETHING
-        </Grid>
+        <Grid item md={1} sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}></Grid>
         <Grid item md={1} sx={{ textAlign: 'center' }}>
           <EquipLoadout />
         </Grid>

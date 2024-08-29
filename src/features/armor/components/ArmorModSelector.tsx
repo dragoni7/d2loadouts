@@ -23,7 +23,7 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
     >
       <img
         src={selected.icon}
-        style={{ maxWidth: '100%', height: 'auto', backgroundColor: 'black' }}
+        style={{ maxWidth: '91px', width: '58%', height: 'auto', backgroundColor: 'black' }}
       />
       <div className="submenu-grid">
         {mods.map((mod) => (

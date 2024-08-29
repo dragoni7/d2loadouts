@@ -3,10 +3,25 @@ import { store } from '../../../store';
 import { db } from '../../../store/db';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 import ArmorConfig from './ArmorConfig';
-import { ManifestArmorMod } from '../../../types/manifest-types';
-import { Grid } from '@mui/material';
+import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
+import { Grid, styled, Tooltip, Typography } from '@mui/material';
 
-const ArmorGrid: React.FC = () => {
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  paddingBottom: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+  fontSize: '28px',
+  fontWeight: 'bold',
+}));
+
+const StyledSubTitle = styled(Typography)(({ theme }) => ({
+  opacity: 0.7,
+  borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
+  paddingBottom: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+  width: '90%',
+}));
+
+const ModCustomization: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
   const [statMods, setStatMods] = useState<ManifestArmorMod[]>([]);
   const [artificeMods, setArtificeMods] = useState<ManifestArmorMod[]>([]);
@@ -59,21 +74,27 @@ const ArmorGrid: React.FC = () => {
   }, []);
 
   return (
-    <Grid container columns={{ md: 6 }} spacing={1}>
-      <Grid item md={6}>
-        Required Mods:
+    <Grid container columns={{ md: 6 }}>
+      <Grid item md={6} marginBottom={5} marginX={{ md: 5, lg: 8 }}>
+        <StyledTitle>MOD CUSTOMIZATION</StyledTitle>
       </Grid>
-      <Grid item container columns={{ md: 11 }} columnGap={0.5} md={8}>
+      <Grid item container columns={{ md: 10 }} md={10} marginBottom={5} marginX={{ md: 5, lg: 8 }}>
+        <Grid item md={10}>
+          <StyledSubTitle>SELECTED MODS</StyledSubTitle>
+        </Grid>
         {requiredMods.map((mod, index) => (
           <Grid item key={index} md={1}>
-            <img
-              src={mod.icon}
-              style={{
-                backgroundColor: 'black',
-                maxWidth: '100%',
-                height: 'auto',
-              }}
-            />
+            <Tooltip title={mod.name}>
+              <img
+                src={mod.icon}
+                style={{
+                  maxWidth: '91px',
+                  width: '58%',
+                  height: 'auto',
+                  backgroundColor: 'black',
+                }}
+              />
+            </Tooltip>
           </Grid>
         ))}
       </Grid>
@@ -103,4 +124,4 @@ const ArmorGrid: React.FC = () => {
   );
 };
 
-export default ArmorGrid;
+export default ModCustomization;
