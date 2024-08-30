@@ -1,13 +1,13 @@
 import React from 'react';
-import './ArmorCustomization.css';
-import ModCustomization from './ModCustomization';
-import EquipLoadout from '../../loadouts/components/EquipLoadout';
-import { ManifestSubclass } from '../../../types/manifest-types';
-import AbilitiesModification from '../../subclass/AbilitiesModification';
+import './LoadoutCustomization.css';
 import { Button, Box, Container, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import ModCustomization from '../features/armor/components/ModCustomization';
+import EquipLoadout from '../features/loadouts/components/EquipLoadout';
+import AbilitiesModification from '../features/subclass/AbilitiesModification';
+import { ManifestSubclass } from '../types/manifest-types';
 
-interface ArmorCustomizationProps {
+interface LoadoutCustomizationProps {
   onBackClick: () => void;
   screenshot: string;
   subclass: ManifestSubclass;
@@ -26,7 +26,7 @@ const TransparentButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
+const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
   onBackClick,
   screenshot,
   subclass,
@@ -66,13 +66,16 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
         <Grid item md={1}>
           <AbilitiesModification subclass={subclass} />
         </Grid>
-        <Grid item md={1} sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}></Grid>
+        <Grid item md={1} sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', textAlign: 'center' }}>
+          FREE SPACE FOR SOMETHING
+        </Grid>
         <Grid item md={1} sx={{ textAlign: 'center' }}>
           <EquipLoadout />
+          SHARE LOADOUT BUTTON ?
         </Grid>
       </Grid>
     </Box>
   );
 };
 
-export default ArmorCustomization;
+export default LoadoutCustomization;
