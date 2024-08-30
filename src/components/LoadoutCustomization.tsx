@@ -6,6 +6,7 @@ import ModCustomization from '../features/armor/components/ModCustomization';
 import EquipLoadout from '../features/loadouts/components/EquipLoadout';
 import AbilitiesModification from '../features/subclass/AbilitiesModification';
 import { ManifestSubclass } from '../types/manifest-types';
+import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;
@@ -71,7 +72,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
         </Grid>
         <Grid item md={1} sx={{ textAlign: 'center' }}>
           <EquipLoadout />
-          SHARE LOADOUT BUTTON ?
+          <ShareLoadout />
         </Grid>
       </Grid>
     </Box>
