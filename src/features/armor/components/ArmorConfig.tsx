@@ -4,7 +4,7 @@ import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods } from '../../../store/LoadoutReducer';
 import { DestinyArmor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
-import { getSelectedModsBySlot, getModsBySlot } from '../util';
+import { getSelectedModsBySlot, getModsBySlot } from '../mod-utils';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { Grid } from '@mui/material';
 

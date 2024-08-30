@@ -5,6 +5,8 @@ import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 import ArmorConfig from './ArmorConfig';
 import { ManifestArmorMod } from '../../../types/manifest-types';
 import { Grid, Stack, styled, Tooltip, Typography } from '@mui/material';
+import useArtificeMods from '../hooks/use-artifice-mods';
+import useStatMods from '../hooks/use-stat-mods';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -23,44 +25,9 @@ const StyledSubTitle = styled(Typography)(({ theme }) => ({
 
 const ModCustomization: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
-  const [statMods, setStatMods] = useState<ManifestArmorMod[]>([]);
-  const [artificeMods, setArtificeMods] = useState<ManifestArmorMod[]>([]);
+  const statMods = useStatMods();
+  const artificeMods = useArtificeMods();
   const requiredMods = store.getState().loadoutConfig.loadout.requiredStatMods;
-
-  useEffect(() => {
-    const gatherMods = async () => {
-      const dbStatMods = await db.manifestArmorStatModDef
-        .where('category')
-        .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.STAT_ARMOR_MODS)
-        .toArray();
-
-      const dbArtificeMods = await db.manifestArmorStatModDef
-        .where('category')
-        .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.ARTIFICE_ARMOR_MODS)
-        .toArray();
-
-      setStatMods(
-        dbStatMods.sort((a, b) =>
-          a.name.localeCompare('Empty Mod Socket') === 0
-            ? -1
-            : b.name.localeCompare('Empty Mod Socket') === 0
-            ? 1
-            : a.name.localeCompare(b.name)
-        )
-      );
-      setArtificeMods(
-        dbArtificeMods.sort((a, b) =>
-          a.name.localeCompare('Empty Mod Socket') === 0
-            ? -1
-            : b.name.localeCompare('Empty Mod Socket') === 0
-            ? 1
-            : a.name.localeCompare(b.name)
-        )
-      );
-    };
-
-    gatherMods().catch(console.error);
-  }, []);
 
   return (
     <Grid container>
@@ -82,7 +49,6 @@ const ModCustomization: React.FC = () => {
                       maxWidth: '71px',
                       width: '58%',
                       height: 'auto',
-                      backgroundColor: 'black',
                     }}
                   />
                 </Tooltip>
