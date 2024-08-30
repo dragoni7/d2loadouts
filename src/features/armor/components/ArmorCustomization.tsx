@@ -6,6 +6,7 @@ import { ManifestSubclass } from '../../../types/manifest-types';
 import AbilitiesModification from '../../subclass/AbilitiesModification';
 import { Button, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import ShareLoadout from '../../loadouts/components/ShareLoadout';
 
 interface ArmorCustomizationProps {
   onBackClick: () => void;
@@ -43,6 +44,7 @@ const ArmorCustomization: React.FC<ArmorCustomizationProps> = ({
       <div className="left-panel">
         <LoadoutArmor />
         <EquipLoadout />
+        <ShareLoadout /> {/* Add the ShareLoadout component here */}
       </div>
       <AbilitiesModification subclass={subclass} />
     </div>
