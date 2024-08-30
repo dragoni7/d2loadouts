@@ -1,12 +1,3 @@
-.abilities-modification {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 5px;
-  color: #ffffff;
-  font-family: Helvetica;
-}
-
 .back-button {
   align-self: flex-start;
   margin-bottom: 5px;
@@ -25,21 +16,25 @@
 .abilities-grid {
   display: grid;
   grid-template-areas:
-    "super"
-    "aspects"
-    "fragments"
-    "other";
+    'super'
+    'aspects'
+    'fragments'
+    'other';
   gap: 5px;
   justify-content: center;
 }
 
-.super-section { 
+.super-section {
   grid-area: super;
   min-width: 300px;
 }
-.aspects-section { grid-area: aspects; }
-.fragments-section { grid-area: fragments; }
-.other-abilities-section { 
+.aspects-section {
+  grid-area: aspects;
+}
+.fragments-section {
+  grid-area: fragments;
+}
+.other-abilities-section {
   grid-area: other;
 }
 
@@ -231,10 +226,10 @@
 @media (min-width: 768px) {
   .abilities-grid {
     grid-template-areas:
-      ". super ."
-      "aspects aspects aspects"
-      "fragments fragments fragments"
-      "other other other";
+      '. super .'
+      'aspects aspects aspects'
+      'fragments fragments fragments'
+      'other other other';
   }
 
   .abilities-container {
@@ -255,10 +250,10 @@
 @media (min-width: 1024px) {
   .abilities-grid {
     grid-template-areas:
-      ". super ."
-      "aspects aspects aspects"
-      "fragments fragments fragments"
-      "other other other";
+      '. super .'
+      'aspects aspects aspects'
+      'fragments fragments fragments'
+      'other other other';
     max-width: 1200px;
     margin: 0 auto;
   }
