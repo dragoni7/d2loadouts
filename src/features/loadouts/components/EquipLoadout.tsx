@@ -1,4 +1,4 @@
-import { Backdrop, Box, Button, Grid, Paper, Tooltip } from '@mui/material';
+import { Backdrop, Button, Grid, Paper, styled, Tooltip, Typography } from '@mui/material';
 import { store } from '../../../store';
 import { useState } from 'react';
 import { EquipResult } from '../types';
@@ -7,6 +7,21 @@ import React from 'react';
 import LoadingBorder from './LoadingBorder';
 import FadeIn from './FadeIn';
 import { equipLoadout } from '../util/loadoutUtils';
+
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  paddingBottom: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+  fontSize: '28px',
+  fontWeight: 'bold',
+}));
+
+const StyledSubTitle = styled(Typography)(({ theme }) => ({
+  opacity: 0.7,
+  borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
+  paddingBottom: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+  width: '90%',
+}));
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
@@ -41,7 +56,7 @@ const EquipLoadout: React.FC = () => {
   };
 
   return (
-    <Box>
+    <>
       <Button variant="contained" onClick={onEquipLoadout}>
         Equip Loadout
       </Button>
@@ -63,6 +78,7 @@ const EquipLoadout: React.FC = () => {
               md={12}
               lg={12}
               textAlign="center"
+              alignContent="center"
               sx={{ backgroundColor: 'rgba(48,48,48,0.8)' }}
               height={'10%'}
             >
@@ -70,7 +86,7 @@ const EquipLoadout: React.FC = () => {
                 ''
               ) : (
                 <FadeIn>
-                  <h2>{equipStep}</h2>
+                  <StyledTitle>{equipStep.toUpperCase()}</StyledTitle>
                 </FadeIn>
               )}
             </Grid>
@@ -180,7 +196,7 @@ const EquipLoadout: React.FC = () => {
           </Grid>
         </Paper>
       </Backdrop>
-    </Box>
+    </>
   );
 };
 

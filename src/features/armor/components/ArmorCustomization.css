@@ -1,15 +1,3 @@
-.right-panel {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  gap: 90px;
-  position: relative;
-  z-index: 1;
-  flex-grow: 1;
-}
-
 .back-button {
   position: absolute;
   top: 20px;
@@ -24,144 +12,6 @@
   z-index: 1;
 }
 
-.mod-category {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-.super-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  margin-bottom: 50px;
-  z-index: 1;
-}
-
-.selected-super {
-  width: 200px;
-  height: 200px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  opacity: 0.99;
-  z-index: 10;
-}
-
-.selected-super:hover::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 1px solid rgba(255, 255, 255, 1);
-  z-index: -1;
-}
-
-.super-name,
-.super-item-name,
-.slot-name {
-  display: none;
-  position: absolute;
-  top: -30px;
-  right: 20px;
-  background-color: #444;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  white-space: nowrap;
-  z-index: 100;
-}
-
-.selected-super:hover .super-name,
-.non-selected-super:hover .super-item-name,
-.fragment-slot:hover .slot-name,
-.other-slot:hover .slot-name,
-.aspect-slot:hover .slot-name {
-  display: block;
-}
-
-.non-selected-supers {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  position: absolute;
-  top: -220px;
-  left: -230px;
-  z-index: 10;
-}
-
-.non-selected-super {
-  width: 80px;
-  height: 80px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  opacity: 0.99;
-  z-index: 10;
-}
-
-.non-selected-super:hover::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 1px solid rgba(255, 255, 255, 1);
-  z-index: -1;
-}
-
-.fragment-slots,
-.other-slots,
-.aspect-slots {
-  display: flex;
-  gap: 20px;
-  position: relative;
-  z-index: -1;
-  flex-wrap: wrap;
-}
-
-.fragment-slot,
-.other-slot,
-.aspect-slot {
-  width: 80px;
-  height: 80px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  opacity: 0.99;
-  z-index: -1;
-}
-
-.fragment-slot:hover::after,
-.other-slot:hover::after,
-.aspect-slot:hover::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 1px solid rgba(255, 255, 255, 1);
-  z-index: -1;
-}
-
 .submenu-grid {
   display: none;
   position: absolute;
@@ -172,7 +22,6 @@
   z-index: 10;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 5px;
   border-radius: 5px;
   border: none;
   padding: 0;
@@ -213,22 +62,4 @@
   bottom: -4px;
   border: 1px solid rgba(255, 255, 255, 1);
   z-index: -1;
-}
-
-.submenu-item-name {
-  display: none;
-  position: absolute;
-  top: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #666;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  white-space: nowrap;
-  z-index: 100;
-}
-
-.submenu-item:hover .submenu-item-name {
-  display: block;
 }

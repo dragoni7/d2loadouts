@@ -4,9 +4,8 @@ import ModCustomization from './ModCustomization';
 import EquipLoadout from '../../loadouts/components/EquipLoadout';
 import { ManifestSubclass } from '../../../types/manifest-types';
 import AbilitiesModification from '../../subclass/AbilitiesModification';
-import { Button, Box, Container, Stack, Grid } from '@mui/material';
+import { Button, Box, Container, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { flexRender } from '@tanstack/react-table';
 
 interface ArmorCustomizationProps {
   onBackClick: () => void;

@@ -3,8 +3,8 @@ import { store } from '../../../store';
 import { db } from '../../../store/db';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 import ArmorConfig from './ArmorConfig';
-import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import { Grid, styled, Tooltip, Typography } from '@mui/material';
+import { ManifestArmorMod } from '../../../types/manifest-types';
+import { Grid, Stack, styled, Tooltip, Typography } from '@mui/material';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -25,7 +25,7 @@ const ModCustomization: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
   const [statMods, setStatMods] = useState<ManifestArmorMod[]>([]);
   const [artificeMods, setArtificeMods] = useState<ManifestArmorMod[]>([]);
-  const [requiredMods, setRequiredMods] = useState<ManifestArmorMod[]>([]);
+  const requiredMods = store.getState().loadoutConfig.loadout.requiredStatMods;
 
   useEffect(() => {
     const gatherMods = async () => {
@@ -57,47 +57,42 @@ const ModCustomization: React.FC = () => {
             : a.name.localeCompare(b.name)
         )
       );
-
-      const requiredStatMods = store.getState().loadoutConfig.loadout.requiredStatMods;
-      const allStatMods = dbStatMods.concat(dbArtificeMods);
-      let matches: ManifestArmorMod[] = [];
-
-      for (const mod of requiredStatMods) {
-        const found = allStatMods.find((statMod) => statMod.itemHash === mod.itemHash);
-        if (found) matches.push(found);
-      }
-
-      setRequiredMods(matches);
     };
 
     gatherMods().catch(console.error);
   }, []);
 
   return (
-    <Grid container columns={{ md: 6 }}>
-      <Grid item md={6} marginBottom={5} marginX={{ md: 5, lg: 8 }}>
+    <Grid container>
+      <Grid item md={12} marginBottom={5} marginX={{ md: 5, lg: 8 }}>
         <StyledTitle>MOD CUSTOMIZATION</StyledTitle>
       </Grid>
-      <Grid item container columns={{ md: 10 }} md={10} marginBottom={5} marginX={{ md: 5, lg: 8 }}>
-        <Grid item md={10}>
-          <StyledSubTitle>SELECTED MODS</StyledSubTitle>
-        </Grid>
-        {requiredMods.map((mod, index) => (
-          <Grid item key={index} md={1}>
-            <Tooltip title={mod.name}>
-              <img
-                src={mod.icon}
-                style={{
-                  maxWidth: '91px',
-                  width: '58%',
-                  height: 'auto',
-                  backgroundColor: 'black',
-                }}
-              />
-            </Tooltip>
+      {requiredMods.length !== 0 ? (
+        <>
+          <Grid item md={12} marginLeft={{ md: 4, lg: 8 }}>
+            <StyledSubTitle>REQUIRED MODS</StyledSubTitle>
           </Grid>
-        ))}
-      </Grid>
+          <Grid item md={10} marginBottom={6} marginLeft={{ md: 4, lg: 8 }}>
+            <Stack direction="row" spacing={2}>
+              {requiredMods.map((mod) => (
+                <Tooltip title={mod.name}>
+                  <img
+                    src={mod.icon}
+                    style={{
+                      maxWidth: '71px',
+                      width: '58%',
+                      height: 'auto',
+                      backgroundColor: 'black',
+                    }}
+                  />
+                </Tooltip>
+              ))}
+            </Stack>
+          </Grid>
+        </>
+      ) : (
+        <Grid item md={12} marginBottom={6} marginLeft={{ md: 4, lg: 8 }} />
+      )}
       {/* Helmet */}
       <ArmorConfig armor={currentConfig.helmet} statMods={statMods} artificeMods={artificeMods} />
       {/* Gauntlets */}

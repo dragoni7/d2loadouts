@@ -1,9 +1,11 @@
 import { Box } from '@mui/system';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
+import { useState } from 'react';
+import { Tooltip } from '@mui/material';
 
 interface ModSelectorProps {
   selected: ManifestArmorMod | ManifestArmorStatMod;
-  mods: ManifestArmorMod[];
+  mods: (ManifestArmorMod | ManifestArmorStatMod)[];
   onSelectMod: (mod: ManifestArmorMod | ManifestArmorStatMod) => void;
 }
 
@@ -23,26 +25,31 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
     >
       <img
         src={selected.icon}
-        style={{ maxWidth: '91px', width: '58%', height: 'auto', backgroundColor: 'black' }}
+        style={{
+          maxWidth: '91px',
+          width: '58%',
+          height: 'auto',
+          backgroundColor: 'rgba(60, 60, 60, 0.45)',
+        }}
       />
-      <div className="submenu-grid">
+      <Box className="submenu-grid">
         {mods.map((mod) => (
-          <div
-            key={mod.itemHash}
-            className="submenu-item"
-            style={{
-              backgroundImage: `url(${mod.isOwned ? mod.icon : lockedModIcon})`,
-            }}
-            onClick={() => {
-              if (selected.itemHash !== mod.itemHash && mod.isOwned) {
-                onSelectMod(mod);
-              }
-            }}
-          >
-            <div className="submenu-item-name">{mod.name}</div>
-          </div>
+          <Tooltip title={mod.name} placement="top" disableInteractive>
+            <div
+              key={mod.itemHash}
+              className="submenu-item"
+              style={{
+                backgroundImage: `url(${mod.isOwned ? mod.icon : lockedModIcon})`,
+              }}
+              onClick={() => {
+                if (selected.itemHash !== mod.itemHash && mod.isOwned) {
+                  onSelectMod(mod);
+                }
+              }}
+            />
+          </Tooltip>
         ))}
-      </div>
+      </Box>
     </Box>
   );
 };
