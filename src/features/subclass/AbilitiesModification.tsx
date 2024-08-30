@@ -362,7 +362,7 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
       const isDisabled = category === 'FRAGMENTS' && index! >= availableFragmentSlots;
 
       return (
-        <Box key={slotId} position="relative" display="inline-block">
+        <Box key={slotId}>
           <div
             data-slot-id={slotId}
             onMouseEnter={(e) => handleMouseEnter(e, slotId)}
@@ -426,63 +426,55 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
   }
 
   return (
-    <div className="abilities-modification">
-      <Container maxWidth="md">
-        <Box marginBottom={4} marginTop={10}>
-          <StyledTitle variant="h4">{subclass.name}</StyledTitle>
+    <Container maxWidth="lg">
+      <Box marginBottom={4}>
+        <StyledTitle variant="h4">{subclass.name}</StyledTitle>
+      </Box>
+
+      <Box display="flex" flexDirection="row" gap={10}>
+        <Box flex={1} display="flex" justifyContent="center" alignItems="flex-start" marginTop={15}>
+          {renderModCategory('SUPERS', loadout.super)}
         </Box>
 
-        <Box display="flex" flexDirection="row" gap={10}>
-          <Box
-            flex={1}
-            display="flex"
-            justifyContent="center"
-            alignItems="flex-start"
-            marginTop={15}
-          >
-            {renderModCategory('SUPERS', loadout.super)}
+        <Box flex={3}>
+          <Box marginBottom={2}>
+            <StyledTitle variant="h6">ABILITIES</StyledTitle>
+            <Box display="flex" flexWrap="wrap" gap={2}>
+              {renderModCategory('CLASS_ABILITIES', loadout.classAbility)}
+              {renderModCategory('MOVEMENT_ABILITIES', loadout.movementAbility)}
+              {renderModCategory('MELEE_ABILITIES', loadout.meleeAbility)}
+              {renderModCategory('GRENADES', loadout.grenade)}
+            </Box>
           </Box>
 
-          <Box flex={3}>
-            <Box marginBottom={2}>
-              <StyledTitle variant="h6">ABILITIES</StyledTitle>
-              <Box display="flex" flexWrap="wrap" gap={2}>
-                {renderModCategory('CLASS_ABILITIES', loadout.classAbility)}
-                {renderModCategory('MOVEMENT_ABILITIES', loadout.movementAbility)}
-                {renderModCategory('MELEE_ABILITIES', loadout.meleeAbility)}
-                {renderModCategory('GRENADES', loadout.grenade)}
-              </Box>
+          <Box marginBottom={2}>
+            <StyledTitle variant="h6">ASPECTS</StyledTitle>
+            <Box display="flex" flexWrap="wrap" gap={2}>
+              {loadout.aspects.map((aspect, index) => (
+                <React.Fragment key={index}>
+                  {renderModCategory('ASPECTS', aspect, index)}
+                </React.Fragment>
+              ))}
             </Box>
+          </Box>
 
-            <Box marginBottom={2}>
-              <StyledTitle variant="h6">ASPECTS</StyledTitle>
-              <Box display="flex" flexWrap="wrap" gap={2}>
-                {loadout.aspects.map((aspect, index) => (
-                  <React.Fragment key={index}>
-                    {renderModCategory('ASPECTS', aspect, index)}
-                  </React.Fragment>
-                ))}
-              </Box>
-            </Box>
-
-            <Box marginBottom={2}>
-              <StyledTitle variant="h6">FRAGMENTS</StyledTitle>
-              <Box display="flex" flexWrap="wrap" gap={2}>
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <React.Fragment key={index}>
-                    {renderModCategory(
-                      'FRAGMENTS',
-                      loadout.fragments[index] || EMPTY_FRAGMENT,
-                      index
-                    )}
-                  </React.Fragment>
-                ))}
-              </Box>
+          <Box marginBottom={2}>
+            <StyledTitle variant="h6">FRAGMENTS</StyledTitle>
+            <Box display="flex" flexWrap="wrap" gap={2}>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <React.Fragment key={index}>
+                  {renderModCategory(
+                    'FRAGMENTS',
+                    loadout.fragments[index] || EMPTY_FRAGMENT,
+                    index
+                  )}
+                </React.Fragment>
+              ))}
             </Box>
           </Box>
         </Box>
-      </Container>
-    </div>
+      </Box>
+    </Container>
   );
 };
 export default AbilitiesModification;

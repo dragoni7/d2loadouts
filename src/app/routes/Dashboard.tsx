@@ -17,11 +17,11 @@ import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
-import ArmorCustomization from '../../features/armor/components/ArmorCustomization';
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
 import { ManifestSubclass } from '../../types/manifest-types';
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
+import LoadoutCustomization from '../../components/LoadoutCustomization';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -205,7 +205,7 @@ export const Dashboard: React.FC = () => {
     setShowArmorCustomization(true);
   };
 
-  const handleArmorCustomizationBackClick = () => {
+  const handleLoadoutCustomizationBackClick = () => {
     setShowArmorCustomization(false);
   };
 
@@ -229,8 +229,8 @@ export const Dashboard: React.FC = () => {
           screenshot={customizingSubclass.screenshot}
         />
       ) : showArmorCustomization ? (
-        <ArmorCustomization
-          onBackClick={handleArmorCustomizationBackClick}
+        <LoadoutCustomization
+          onBackClick={handleLoadoutCustomizationBackClick}
           screenshot={selectedSubclass?.screenshot || ''}
           subclass={selectedSubclass!}
         />
