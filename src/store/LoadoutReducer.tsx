@@ -110,7 +110,7 @@ const initialState: InitialState = {
     },
     requiredStatMods: [],
     helmetMods: EMPTY_SOCKETS.HELMET,
-    gauntletMods: EMPTY_SOCKETS.GAUNTLETS,
+    gauntletsMods: EMPTY_SOCKETS.GAUNTLETS,
     chestArmorMods: EMPTY_SOCKETS.CHEST_ARMOR,
     legArmorMods: EMPTY_SOCKETS.LEG_ARMOR,
     classArmorMods: EMPTY_SOCKETS.CLASS_ARMOR,
@@ -165,19 +165,19 @@ export const loadoutConfigSlice = createSlice({
           state.loadout.helmetMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'arms': {
-          state.loadout.gauntletMods[action.payload.slot] = action.payload.plug;
+        case 'gauntlets': {
+          state.loadout.gauntletsMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'chest': {
+        case 'chestArmor': {
           state.loadout.chestArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'legs': {
+        case 'legArmor': {
           state.loadout.legArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'class': {
+        case 'classArmor': {
           state.loadout.classArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }
@@ -188,7 +188,7 @@ export const loadoutConfigSlice = createSlice({
     },
     resetLoadoutArmorMods: (state) => {
       state.loadout.helmetMods = initialState.loadout.helmetMods;
-      state.loadout.gauntletMods = initialState.loadout.gauntletMods;
+      state.loadout.gauntletsMods = initialState.loadout.gauntletsMods;
       state.loadout.chestArmorMods = initialState.loadout.chestArmorMods;
       state.loadout.legArmorMods = initialState.loadout.legArmorMods;
       state.loadout.classArmorMods = initialState.loadout.classArmorMods;

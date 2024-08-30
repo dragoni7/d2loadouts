@@ -18,10 +18,10 @@ export class ArmorEquipper extends Equipper {
 
     this.inventorySlots = {
       helmet: [],
-      arms: [],
-      chest: [],
-      legs: [],
-      class: [],
+      gauntlets: [],
+      chestArmor: [],
+      legArmor: [],
+      classArmor: [],
     };
   }
 
@@ -37,23 +37,23 @@ export class ArmorEquipper extends Equipper {
         // get armor slot counts
         switch (item.bucketHash) {
           case BUCKET_HASH.HELMET: {
-            this.inventorySlots['helmet'].push(item);
+            this.inventorySlots.helmet.push(item);
             continue;
           }
           case BUCKET_HASH.CHEST_ARMOR: {
-            this.inventorySlots['chest'].push(item);
+            this.inventorySlots.chestArmor.push(item);
             continue;
           }
           case BUCKET_HASH.GAUNTLETS: {
-            this.inventorySlots['arms'].push(item);
+            this.inventorySlots.gauntlets.push(item);
             continue;
           }
           case BUCKET_HASH.LEG_ARMOR: {
-            this.inventorySlots['legs'].push(item);
+            this.inventorySlots.legArmor.push(item);
             continue;
           }
           case BUCKET_HASH.CLASS_ARMOR: {
-            this.inventorySlots['class'].push(item);
+            this.inventorySlots.classArmor.push(item);
             continue;
           }
           default: {

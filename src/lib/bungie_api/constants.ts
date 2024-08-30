@@ -1,3 +1,4 @@
+import { armor } from '../../types/d2l-types';
 import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../types/manifest-types';
 
 export enum API_CREDENTIALS {
@@ -57,6 +58,22 @@ export const STATS: string[] = [
   'discipline',
   'intellect',
   'strength',
+];
+
+export enum ARMOR {
+  HELMET = 'helmet',
+  GAUNTLETS = 'gauntlets',
+  CHEST_ARMOR = 'chestArmor',
+  LEG_ARMOR = 'legArmor',
+  CLASS_ARMOR = 'classArmor',
+}
+
+export const ARMOR_ARRAY: armor[] = [
+  ARMOR.HELMET,
+  ARMOR.GAUNTLETS,
+  ARMOR.CHEST_ARMOR,
+  ARMOR.LEG_ARMOR,
+  ARMOR.CLASS_ARMOR,
 ];
 
 export module EMPTY_SOCKETS {

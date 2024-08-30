@@ -1,3 +1,4 @@
+import { ARMOR } from '../lib/bungie_api/constants';
 import {
   ManifestArmorMod,
   ManifestArmorStatMod,
@@ -10,6 +11,20 @@ import {
 export type CharacterClass = 'warlock' | 'hunter' | 'titan' | '';
 
 export type DamageType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+export type armor =
+  | ARMOR.HELMET
+  | ARMOR.GAUNTLETS
+  | ARMOR.CHEST_ARMOR
+  | ARMOR.LEG_ARMOR
+  | ARMOR.CLASS_ARMOR;
+
+export type armorMods =
+  | 'helmetMods'
+  | 'gauntletsMods'
+  | 'chestArmorMods'
+  | 'legArmorMods'
+  | 'classArmorMods';
 
 export type DestinyArmor = {
   intellect: number;
@@ -65,7 +80,7 @@ export type Loadout = {
   classArmor: DestinyArmor;
   requiredStatMods: ManifestArmorStatMod[];
   helmetMods: (ManifestArmorMod | ManifestArmorStatMod)[];
-  gauntletMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  gauntletsMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   chestArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   legArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   classArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 import { db } from '../../../store/db';
-import { ManifestArmorMod } from '../../../types/manifest-types';
+import { ManifestArmorStatMod } from '../../../types/manifest-types';
 
 export default function useArtificeMods() {
-  const [artificeMods, setArtificeMods] = useState<ManifestArmorMod[]>([]);
+  const [artificeMods, setArtificeMods] = useState<ManifestArmorStatMod[]>([]);
 
   useEffect(() => {
     const gatherMods = async () => {

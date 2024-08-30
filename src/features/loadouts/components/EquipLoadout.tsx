@@ -15,14 +15,6 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
 }));
 
-const StyledSubTitle = styled(Typography)(({ theme }) => ({
-  opacity: 0.7,
-  borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
-  paddingBottom: theme.spacing(1),
-  marginBottom: theme.spacing(2),
-  width: '90%',
-}));
-
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
   const [equipStep, setEquipStep] = useState<string>('');

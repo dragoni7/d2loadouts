@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
 import { store } from '../../../store';
-import { db } from '../../../store/db';
-import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 import ArmorConfig from './ArmorConfig';
-import { ManifestArmorMod } from '../../../types/manifest-types';
-import { Grid, Stack, styled, Tooltip, Typography } from '@mui/material';
+import { Grid, Stack, styled, Typography } from '@mui/material';
 import useArtificeMods from '../hooks/use-artifice-mods';
 import useStatMods from '../hooks/use-stat-mods';
+import RequiredMod from './RequiredMod';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -41,17 +38,8 @@ const ModCustomization: React.FC = () => {
           </Grid>
           <Grid item md={10} marginBottom={6} marginLeft={{ md: 4, lg: 8 }}>
             <Stack direction="row" spacing={2}>
-              {requiredMods.map((mod) => (
-                <Tooltip title={mod.name}>
-                  <img
-                    src={mod.icon}
-                    style={{
-                      maxWidth: '71px',
-                      width: '58%',
-                      height: 'auto',
-                    }}
-                  />
-                </Tooltip>
+              {requiredMods.map((mod, index) => (
+                <RequiredMod mod={mod} index={index} />
               ))}
             </Stack>
           </Grid>
