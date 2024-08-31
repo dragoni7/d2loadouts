@@ -1,6 +1,12 @@
-import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
+import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
-import { DestinyArmor, Loadout, Subclass, SubclassConfig } from '../../../types/d2l-types';
+import {
+  armorMods,
+  DestinyArmor,
+  Loadout,
+  Subclass,
+  SubclassConfig,
+} from '../../../types/d2l-types';
 import {
   ManifestArmorMod,
   ManifestArmorStatMod,
@@ -8,8 +14,7 @@ import {
   ManifestPlug,
   ManifestStatPlug,
 } from '../../../types/manifest-types';
-import { ARMOR_ARRAY } from '../constants';
-import { armorMods, EquipResult, setState } from '../types';
+import { EquipResult, setState } from '../types';
 import { ArmorEquipper } from './armorEquipper';
 import { SubclassEquipper } from './subclassEquipper';
 
@@ -78,11 +83,7 @@ async function processArmor(
 ) {
   for (let j = i; j < ARMOR_ARRAY.length; j++) {
     const armor = loadout[ARMOR_ARRAY[j]];
-    const mods: armorMods = (
-      ARMOR_ARRAY[j] === 'gauntlets'
-        ? ARMOR_ARRAY[j].slice(0, -1) + 'Mods'
-        : ARMOR_ARRAY[j] + 'Mods'
-    ) as armorMods;
+    const mods = (armor + 'Mods') as armorMods;
 
     if (armor.exotic && armor.exotic === true) {
       await processArmor(

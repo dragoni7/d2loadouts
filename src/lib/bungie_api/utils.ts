@@ -7,16 +7,16 @@ export function getManifestItemSlot(slotNum: number): string {
       return 'helmet';
     }
     case MANIFEST_ARMOR.CHEST: {
-      return 'chest';
+      return 'chestArmor';
     }
     case MANIFEST_ARMOR.GAUNTLETS: {
-      return 'arms';
+      return 'gauntlets';
     }
     case MANIFEST_ARMOR.LEGS: {
-      return 'legs';
+      return 'legArmor';
     }
     case MANIFEST_ARMOR.CLASS: {
-      return 'class';
+      return 'classArmor';
     }
     default: {
       return '';

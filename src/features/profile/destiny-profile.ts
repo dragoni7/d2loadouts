@@ -1,4 +1,5 @@
 import {
+  ARMOR,
   BUCKET_HASH,
   COLLECTIBLE_OWNED,
   EMPTY_ASPECT,
@@ -193,25 +194,45 @@ export async function getProfileData(): Promise<ProfileData> {
           }
 
           case BUCKET_HASH.HELMET: {
-            const helmet = await buildDestinyArmor(itemComponents, item, character.class, 'helmet');
+            const helmet = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.HELMET
+            );
             character.armor.helmet.push(helmet);
             continue;
           }
 
           case BUCKET_HASH.GAUNTLETS: {
-            const arms = await buildDestinyArmor(itemComponents, item, character.class, 'arms');
+            const arms = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.GAUNTLETS
+            );
             character.armor.arms.push(arms);
             continue;
           }
 
           case BUCKET_HASH.CHEST_ARMOR: {
-            const chest = await buildDestinyArmor(itemComponents, item, character.class, 'chest');
+            const chest = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.CHEST_ARMOR
+            );
             character.armor.chest.push(chest);
             continue;
           }
 
           case BUCKET_HASH.LEG_ARMOR: {
-            const legs = await buildDestinyArmor(itemComponents, item, character.class, 'legs');
+            const legs = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.LEG_ARMOR
+            );
             character.armor.legs.push(legs);
             continue;
           }
@@ -221,7 +242,7 @@ export async function getProfileData(): Promise<ProfileData> {
               itemComponents,
               item,
               character.class,
-              'class'
+              ARMOR.CLASS_ARMOR
             );
             character.armor.classItem.push(classItem);
             continue;
@@ -366,23 +387,23 @@ export async function getProfileData(): Promise<ProfileData> {
 
         for (const character of target) {
           switch (destinyArmor.type) {
-            case 'helmet': {
+            case ARMOR.HELMET: {
               character.armor.helmet.push(destinyArmor);
               continue;
             }
-            case 'arms': {
+            case ARMOR.GAUNTLETS: {
               character.armor.arms.push(destinyArmor);
               continue;
             }
-            case 'chest': {
+            case ARMOR.CHEST_ARMOR: {
               character.armor.chest.push(destinyArmor);
               continue;
             }
-            case 'legs': {
+            case ARMOR.LEG_ARMOR: {
               character.armor.legs.push(destinyArmor);
               continue;
             }
-            case 'class': {
+            case ARMOR.CLASS_ARMOR: {
               character.armor.classItem.push(destinyArmor);
               continue;
             }

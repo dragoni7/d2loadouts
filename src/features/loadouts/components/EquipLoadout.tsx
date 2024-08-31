@@ -1,4 +1,18 @@
-import { Backdrop, Button, Grid, Paper, styled, Tooltip, Typography } from '@mui/material';
+import {
+  Backdrop,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Paper,
+  Slide,
+  styled,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { store } from '../../../store';
 import { useState } from 'react';
 import { EquipResult } from '../types';
@@ -7,6 +21,7 @@ import React from 'react';
 import LoadingBorder from './LoadingBorder';
 import FadeIn from './FadeIn';
 import { equipLoadout } from '../util/loadoutUtils';
+import { TransitionProps } from '@mui/material/transitions';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -15,13 +30,30 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 'bold',
 }));
 
-const StyledSubTitle = styled(Typography)(({ theme }) => ({
-  opacity: 0.7,
-  borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
-  paddingBottom: theme.spacing(1),
-  marginBottom: theme.spacing(2),
-  width: '90%',
+const LoadoutDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(1),
+    height: '10vh',
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+    backgroundColor: 'black',
+  },
+  '& .MuiDialogTitle-root': {
+    padding: theme.spacing(1),
+    backgroundColor: 'rgba(130,130,130,1.0)',
+    color: 'white',
+  },
 }));
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const EquipLoadout: React.FC = () => {
   const [processing, setProcessing] = useState<any[]>([]);
@@ -29,8 +61,9 @@ const EquipLoadout: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [results, setResults] = useState<EquipResult[][]>([]);
   const [equipping, setEquipping] = useState<boolean>(false);
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
-  const onEquipLoadout = async () => {
+  async function handleEquipLoadout() {
     const loadout = store.getState().loadoutConfig.loadout;
 
     // validate loadout
@@ -51,15 +84,49 @@ const EquipLoadout: React.FC = () => {
       setEquipStep('Finished');
       setEquipping(false);
     } else {
-      alert('Loadout Incomplete');
+      alert('Loadout Errors');
     }
-  };
+  }
+
+  async function onButtonClick() {
+    const loadout = store.getState().loadoutConfig.loadout;
+
+    if (loadout.requiredStatMods.some((required) => required.equipped === false)) {
+      setAlertOpen(true);
+      return;
+    }
+
+    await handleEquipLoadout();
+  }
+
+  async function onDialogContinue() {
+    setAlertOpen(false);
+    await handleEquipLoadout();
+  }
 
   return (
     <>
-      <Button variant="contained" onClick={onEquipLoadout}>
+      <Button variant="contained" onClick={onButtonClick}>
         Equip Loadout
       </Button>
+      <LoadoutDialog
+        open={alertOpen}
+        onClose={() => setAlertOpen(false)}
+        TransitionComponent={Transition}
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-description"
+      >
+        <DialogTitle id="dialog-title">{'MISSING REQUIRED MODS!'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="dialog-description">
+            Loadout missing optimized stat mods, are you sure you still want to equip?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onDialogContinue}>CONTINUE</Button>
+          <Button onClick={() => setAlertOpen(false)}>GO BACK</Button>
+        </DialogActions>
+      </LoadoutDialog>
       <Backdrop open={open} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Paper
           elevation={5}

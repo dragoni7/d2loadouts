@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { store } from '../../../store';
-import { db } from '../../../store/db';
-import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
+import { RootState, store } from '../../../store';
 import ArmorConfig from './ArmorConfig';
-import { ManifestArmorMod } from '../../../types/manifest-types';
-import { Grid, Stack, styled, Tooltip, Typography } from '@mui/material';
+import { Grid, Stack, styled, Typography } from '@mui/material';
+import useArtificeMods from '../hooks/use-artifice-mods';
+import useStatMods from '../hooks/use-stat-mods';
+import RequiredMod from './RequiredMod';
+import { useSelector } from 'react-redux';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -23,44 +23,11 @@ const StyledSubTitle = styled(Typography)(({ theme }) => ({
 
 const ModCustomization: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
-  const [statMods, setStatMods] = useState<ManifestArmorMod[]>([]);
-  const [artificeMods, setArtificeMods] = useState<ManifestArmorMod[]>([]);
-  const requiredMods = store.getState().loadoutConfig.loadout.requiredStatMods;
-
-  useEffect(() => {
-    const gatherMods = async () => {
-      const dbStatMods = await db.manifestArmorStatModDef
-        .where('category')
-        .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.STAT_ARMOR_MODS)
-        .toArray();
-
-      const dbArtificeMods = await db.manifestArmorStatModDef
-        .where('category')
-        .equals(PLUG_CATEGORY_HASH.ARMOR_MODS.ARTIFICE_ARMOR_MODS)
-        .toArray();
-
-      setStatMods(
-        dbStatMods.sort((a, b) =>
-          a.name.localeCompare('Empty Mod Socket') === 0
-            ? -1
-            : b.name.localeCompare('Empty Mod Socket') === 0
-            ? 1
-            : a.name.localeCompare(b.name)
-        )
-      );
-      setArtificeMods(
-        dbArtificeMods.sort((a, b) =>
-          a.name.localeCompare('Empty Mod Socket') === 0
-            ? -1
-            : b.name.localeCompare('Empty Mod Socket') === 0
-            ? 1
-            : a.name.localeCompare(b.name)
-        )
-      );
-    };
-
-    gatherMods().catch(console.error);
-  }, []);
+  const statMods = useStatMods();
+  const artificeMods = useArtificeMods();
+  const requiredMods = useSelector(
+    (state: RootState) => state.loadoutConfig.loadout.requiredStatMods
+  );
 
   return (
     <Grid container>
@@ -74,18 +41,8 @@ const ModCustomization: React.FC = () => {
           </Grid>
           <Grid item md={10} marginBottom={6} marginLeft={{ md: 4, lg: 8 }}>
             <Stack direction="row" spacing={2}>
-              {requiredMods.map((mod) => (
-                <Tooltip title={mod.name}>
-                  <img
-                    src={mod.icon}
-                    style={{
-                      maxWidth: '71px',
-                      width: '58%',
-                      height: 'auto',
-                      backgroundColor: 'black',
-                    }}
-                  />
-                </Tooltip>
+              {requiredMods.map((required) => (
+                <RequiredMod required={required} />
               ))}
             </Stack>
           </Grid>
