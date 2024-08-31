@@ -29,7 +29,7 @@ db.version(2).stores({
   manifestExoticArmorCollection: 'itemHash, name, icon, class, slot, isOwned, collectibleHash',
   manifestEmblemDef: 'itemHash, name, icon, secondaryOverlay, secondarySpecial',
   manifestArmorModDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, collectibleHash',
+    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, unique, collectibleHash',
   manifestArmorStatModDef:
     'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, collectibleHash, mobilityMod, resilienceMod, recoveryMod, discipline, intellect, strength',
   manifestSubclassModDef:

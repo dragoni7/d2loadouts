@@ -51,6 +51,7 @@ export interface ManifestAspect extends ManifestPlug {
 export interface ManifestArmorMod extends ManifestPlug {
   energyCost: number;
   collectibleHash: number;
+  unique: boolean;
 }
 
 export interface ManifestArmorStatMod extends ManifestStatPlug {
