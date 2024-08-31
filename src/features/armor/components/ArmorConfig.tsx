@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
-import { updateLoadoutArmorMods } from '../../../store/LoadoutReducer';
-import { DestinyArmor } from '../../../types/d2l-types';
+import { updateLoadoutArmorMods, updateRequiredStatMods } from '../../../store/LoadoutReducer';
+import { armorMods, DestinyArmor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
-import { getSelectedModsBySlot, getModsBySlot } from '../mod-utils';
+import { getModsBySlot } from '../mod-utils';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { Grid } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState, store } from '../../../store';
+import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 
 interface ArmorConfigProps {
   armor: DestinyArmor;
@@ -16,8 +19,8 @@ interface ArmorConfigProps {
 
 const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods }) => {
   const [armorMods, setArmorMods] = useState<(ManifestArmorMod | ManifestArmorStatMod)[]>([]);
-  const [selectedMods, setSelectedMods] = useState<(ManifestArmorMod | ManifestArmorStatMod)[]>(
-    getSelectedModsBySlot(armor.type)
+  const selectedMods: (ManifestArmorMod | ManifestArmorStatMod)[] = useSelector(
+    (state: RootState) => state.loadoutConfig.loadout[(armor.type + 'Mods') as armorMods]
   );
   const dispatch = useDispatch();
 
@@ -59,7 +62,17 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         plug: mod,
       })
     );
-    setSelectedMods(getSelectedModsBySlot(armor.type));
+
+    if (
+      mod.category === PLUG_CATEGORY_HASH.ARMOR_MODS.STAT_ARMOR_MODS ||
+      mod.category === PLUG_CATEGORY_HASH.ARMOR_MODS.ARTIFICE_ARMOR_MODS
+    ) {
+      const newRequired = [...store.getState().loadoutConfig.loadout.requiredStatMods];
+      const idx = newRequired.findIndex((required) => required.mod === selectedMods[slot]);
+      newRequired[idx] = { mod: newRequired[idx].mod, equipped: false };
+
+      dispatch(updateRequiredStatMods(newRequired));
+    }
   };
 
   useEffect(() => {

@@ -5,8 +5,7 @@ import { autoEquipStatMod } from '../mod-utils';
 import { useDispatch } from 'react-redux';
 
 interface RequiredModProps {
-  mod: ManifestArmorStatMod;
-  index: number;
+  required: { mod: ManifestArmorStatMod; equipped: boolean };
 }
 
 const RequiredModImg = styled('img')(({ theme }) => ({
@@ -17,22 +16,20 @@ const RequiredModImg = styled('img')(({ theme }) => ({
   backgroundColor: 'black',
 }));
 
-export default function RequiredMod({ mod, index }: RequiredModProps) {
-  const [equipped, setEquipped] = useState<boolean>(false);
-
+export default function RequiredMod({ required }: RequiredModProps) {
   const dispatch = useDispatch();
 
   function handleOnClick() {
-    setEquipped(autoEquipStatMod(mod, dispatch));
+    autoEquipStatMod(required.mod, dispatch);
   }
 
   return (
-    <Tooltip title={mod.name}>
+    <Tooltip title={required.mod.name}>
       <RequiredModImg
-        src={mod.icon}
+        src={required.mod.icon}
         onClick={handleOnClick}
         sx={{
-          border: `3px solid ${equipped ? 'rgba(100,100,100,0.35)' : 'red'}`,
+          border: `3px solid ${required.equipped ? 'rgba(100,100,100,0.35)' : 'red'}`,
           '&:hover': { scale: 1.07 },
         }}
       />

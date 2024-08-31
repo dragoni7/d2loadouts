@@ -9,7 +9,7 @@ import { store } from '../../store';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../types/manifest-types';
 import { armorMods } from '../../types/d2l-types';
 import { Dispatch, UnknownAction } from 'redux';
-import { updateLoadoutArmorMods } from '../../store/LoadoutReducer';
+import { updateLoadoutArmorMods, updateRequiredStatMods } from '../../store/LoadoutReducer';
 
 export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
   const slotMods = await db.manifestArmorModDef
@@ -30,29 +30,6 @@ export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
     .toArray();
 
   return slotMods;
-}
-
-export function getSelectedModsBySlot(slot: string): (ManifestArmorMod | ManifestArmorStatMod)[] {
-  switch (slot) {
-    case ARMOR.HELMET: {
-      return store.getState().loadoutConfig.loadout.helmetMods;
-    }
-    case ARMOR.GAUNTLETS: {
-      return store.getState().loadoutConfig.loadout.gauntletsMods;
-    }
-    case ARMOR.CHEST_ARMOR: {
-      return store.getState().loadoutConfig.loadout.chestArmorMods;
-    }
-    case ARMOR.LEG_ARMOR: {
-      return store.getState().loadoutConfig.loadout.legArmorMods;
-    }
-    case ARMOR.CLASS_ARMOR: {
-      return store.getState().loadoutConfig.loadout.classArmorMods;
-    }
-    default: {
-      return [];
-    }
-  }
 }
 
 export function autoEquipStatMod(
@@ -76,6 +53,12 @@ export function autoEquipStatMod(
           plug: mod,
         })
       );
+
+      const newRequired = [...store.getState().loadoutConfig.loadout.requiredStatMods];
+      const idx = newRequired.findIndex((required) => required.mod === mod);
+      newRequired[idx] = { mod: newRequired[idx].mod, equipped: true };
+
+      dispatch(updateRequiredStatMods(newRequired));
       return true;
     }
   }

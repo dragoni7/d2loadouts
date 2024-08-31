@@ -78,7 +78,7 @@ export type Loadout = {
   chestArmor: DestinyArmor;
   legArmor: DestinyArmor;
   classArmor: DestinyArmor;
-  requiredStatMods: ManifestArmorStatMod[];
+  requiredStatMods: { mod: ManifestArmorStatMod; equipped: boolean }[];
   helmetMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   gauntletsMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   chestArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];

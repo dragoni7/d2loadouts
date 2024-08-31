@@ -1,9 +1,10 @@
-import { store } from '../../../store';
+import { RootState, store } from '../../../store';
 import ArmorConfig from './ArmorConfig';
 import { Grid, Stack, styled, Typography } from '@mui/material';
 import useArtificeMods from '../hooks/use-artifice-mods';
 import useStatMods from '../hooks/use-stat-mods';
 import RequiredMod from './RequiredMod';
+import { useSelector } from 'react-redux';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -24,7 +25,9 @@ const ModCustomization: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
   const statMods = useStatMods();
   const artificeMods = useArtificeMods();
-  const requiredMods = store.getState().loadoutConfig.loadout.requiredStatMods;
+  const requiredMods = useSelector(
+    (state: RootState) => state.loadoutConfig.loadout.requiredStatMods
+  );
 
   return (
     <Grid container>
@@ -38,8 +41,8 @@ const ModCustomization: React.FC = () => {
           </Grid>
           <Grid item md={10} marginBottom={6} marginLeft={{ md: 4, lg: 8 }}>
             <Stack direction="row" spacing={2}>
-              {requiredMods.map((mod, index) => (
-                <RequiredMod mod={mod} index={index} />
+              {requiredMods.map((required) => (
+                <RequiredMod required={required} />
               ))}
             </Stack>
           </Grid>

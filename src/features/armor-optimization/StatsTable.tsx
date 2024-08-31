@@ -192,7 +192,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
             onClick={async () => {
               dispatch(resetLoadoutArmorMods());
               dispatch(updateLoadoutArmor(perm.permutation));
-              let requiredMods: ManifestArmorStatMod[] = [];
+              let requiredMods: { mod: ManifestArmorStatMod; equipped: boolean }[] = [];
 
               for (const [stat, costs] of Object.entries(perm.modsArray)) {
                 for (const cost of costs) {
@@ -200,7 +200,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
                     .where(stat + 'Mod')
                     .equals(cost)
                     .first();
-                  if (mod !== undefined) requiredMods.push(mod);
+                  if (mod !== undefined) requiredMods.push({ mod: mod, equipped: false });
                 }
               }
 

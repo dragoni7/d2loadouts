@@ -183,7 +183,10 @@ export const loadoutConfigSlice = createSlice({
         }
       }
     },
-    updateRequiredStatMods: (state, action: PayloadAction<ManifestArmorStatMod[]>) => {
+    updateRequiredStatMods: (
+      state,
+      action: PayloadAction<{ mod: ManifestArmorStatMod; equipped: boolean }[]>
+    ) => {
       state.loadout.requiredStatMods = action.payload;
     },
     resetLoadoutArmorMods: (state) => {
