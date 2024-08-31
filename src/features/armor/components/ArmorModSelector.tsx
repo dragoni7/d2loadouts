@@ -1,6 +1,6 @@
 import { Box } from '@mui/system';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import { useState } from 'react';
+
 import { Tooltip } from '@mui/material';
 
 interface ModSelectorProps {
@@ -29,22 +29,20 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
           maxWidth: '91px',
           width: '58%',
           height: 'auto',
-          backgroundColor: 'rgba(60, 60, 60, 0.45)',
+          backgroundColor: 'rgba(10, 10, 10, 0.8)',
         }}
       />
       <Box className="submenu-grid">
         {mods.map((mod) => (
           <Tooltip title={mod.name} placement="top" disableInteractive>
-            <div
+            <Box
               key={mod.itemHash}
               className="submenu-item"
               style={{
                 backgroundImage: `url(${mod.isOwned ? mod.icon : lockedModIcon})`,
               }}
               onClick={() => {
-                if (selected.itemHash !== mod.itemHash && mod.isOwned) {
-                  onSelectMod(mod);
-                }
+                onSelectMod(mod);
               }}
             />
           </Tooltip>
