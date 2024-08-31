@@ -151,6 +151,11 @@ export async function updateManifest() {
                   perkName: '',
                   perkDescription: '',
                   perkIcon: '',
+                  unique: current.tooltipNotifications.some(
+                    (notification: any) =>
+                      notification.displayString ===
+                      'Equipping additional copies of this mod provides no benefit.'
+                  ),
                 });
               }
             } else if (current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.SUBCLASS_MODS)) {

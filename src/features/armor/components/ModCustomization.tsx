@@ -5,6 +5,7 @@ import useArtificeMods from '../hooks/use-artifice-mods';
 import useStatMods from '../hooks/use-stat-mods';
 import RequiredMod from './RequiredMod';
 import { useSelector } from 'react-redux';
+import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -23,8 +24,8 @@ const StyledSubTitle = styled(Typography)(({ theme }) => ({
 
 const ModCustomization: React.FC = () => {
   const currentConfig = store.getState().loadoutConfig.loadout;
-  const statMods = useStatMods();
-  const artificeMods = useArtificeMods();
+  const statMods: (ManifestArmorMod | ManifestArmorStatMod)[] = useStatMods();
+  const artificeMods: (ManifestArmorMod | ManifestArmorStatMod)[] = useArtificeMods();
   const requiredMods = useSelector(
     (state: RootState) => state.loadoutConfig.loadout.requiredStatMods
   );

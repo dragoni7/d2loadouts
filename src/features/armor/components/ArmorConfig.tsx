@@ -13,8 +13,8 @@ import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 
 interface ArmorConfigProps {
   armor: DestinyArmor;
-  statMods: ManifestArmorMod[];
-  artificeMods: ManifestArmorMod[];
+  statMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  artificeMods: (ManifestArmorMod | ManifestArmorStatMod)[];
 }
 
 const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods }) => {
@@ -107,7 +107,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         <ArmorModSelector
           selected={selectedMods[0]}
           mods={statMods}
-          onSelectMod={(mod: ManifestArmorMod) => {
+          onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
             onSelectMod(mod, 0);
           }}
         />
@@ -116,7 +116,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         <ArmorModSelector
           selected={selectedMods[1]}
           mods={armorMods}
-          onSelectMod={(mod: ManifestArmorMod) => {
+          onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
             onSelectMod(mod, 1);
           }}
         />
@@ -125,7 +125,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         <ArmorModSelector
           selected={selectedMods[2]}
           mods={armorMods}
-          onSelectMod={(mod: ManifestArmorMod) => {
+          onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
             onSelectMod(mod, 2);
           }}
         />
@@ -134,7 +134,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
         <ArmorModSelector
           selected={selectedMods[3]}
           mods={armorMods}
-          onSelectMod={(mod: ManifestArmorMod) => {
+          onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
             onSelectMod(mod, 3);
           }}
         />
@@ -144,7 +144,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
           <ArmorModSelector
             selected={selectedMods[4]}
             mods={artificeMods}
-            onSelectMod={(mod: ManifestArmorMod) => {
+            onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
               onSelectMod(mod, 4);
             }}
           />
