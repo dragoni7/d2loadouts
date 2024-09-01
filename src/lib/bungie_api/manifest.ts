@@ -269,6 +269,26 @@ export async function updateManifest() {
           }
         }
       }
+
+      const sandboxPerksComponent =
+        response.data.Response.jsonWorldComponentContentPaths.en['DestinySandboxPerkDefinition'];
+
+      const sandboxPerksResponse = await getManifestComponentRequest(sandboxPerksComponent);
+
+      if (sandboxPerksResponse) {
+        for (const perkHash in sandboxPerksResponse.data) {
+          const current = sandboxPerksResponse.data[perkHash];
+
+          if (current.isDisplayable && !current.displayProperties.name.includes('Deprecated')) {
+            await db.manifestSandboxPerkDef.add({
+              itemHash: current.hash,
+              name: current.displayProperties.name,
+              description: current.displayProperties.description,
+              icon: urlPrefix + current.displayProperties.icon,
+            });
+          }
+        }
+      }
     }
   } else {
     throw new Error('Error retrieving manifest');

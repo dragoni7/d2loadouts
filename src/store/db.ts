@@ -10,9 +10,11 @@ import {
   ManifestArmorStatMod,
   ManifestAspect,
   ManifestStatPlug,
+  ManifestSandboxPerk,
 } from '../types/manifest-types';
 
 const db = new Dexie('manifestDb') as Dexie & {
+  manifestSandboxPerkDef: EntityTable<ManifestSandboxPerk, 'itemHash'>;
   manifestArmorDef: EntityTable<ManifestArmor, 'itemHash'>;
   manifestExoticArmorCollection: EntityTable<ManifestExoticArmor, 'itemHash'>;
   manifestEmblemDef: EntityTable<ManifestEmblem, 'itemHash'>;
@@ -25,6 +27,7 @@ const db = new Dexie('manifestDb') as Dexie & {
 };
 
 db.version(2).stores({
+  manifestSandboxPerkDef: 'itemHash, name, icon, description',
   manifestArmorDef: 'itemHash, name, icon, isExotic, class, slot',
   manifestExoticArmorCollection: 'itemHash, name, icon, class, slot, isOwned, collectibleHash',
   manifestEmblemDef: 'itemHash, name, icon, secondaryOverlay, secondarySpecial',

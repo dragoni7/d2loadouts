@@ -6,6 +6,10 @@ export interface ManifestEntry {
   icon: string;
 }
 
+export interface ManifestSandboxPerk extends ManifestEntry {
+  description: string;
+}
+
 export interface ManifestArmor extends ManifestEntry {
   isExotic: boolean;
   class: CharacterClass;
