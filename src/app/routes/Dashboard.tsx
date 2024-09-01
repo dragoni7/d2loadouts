@@ -13,7 +13,7 @@ import { updateProfileData } from '../../store/ProfileReducer';
 import { Character } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import HeaderComponent from '../../components/HeaderComponent';
-import ExoticSearch from '../../components/ExoticSearch';
+import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
@@ -254,7 +254,7 @@ export const Dashboard: React.FC = () => {
           )}
           <Container>
             <NewComponentWrapper>
-              <ExoticSearch
+              <ExoticSelector
                 selectedCharacter={selectedCharacter}
                 selectedExoticItemHash={selectedExotic.itemHash}
               />

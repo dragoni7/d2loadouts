@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Autocomplete, TextField, Popper } from '@mui/material';
-import { db } from '../store/db';
-import { armor, Character, ExoticClassCombo } from '../types/d2l-types';
+import { db } from '../../store/db';
+import { armor, Character, ExoticClassCombo } from '../../types/d2l-types';
 import {
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
-} from '../store/DashboardReducer';
+} from '../../store/DashboardReducer';
 import { useDispatch } from 'react-redux';
-import { ManifestExoticArmor } from '../types/manifest-types';
-import { ARMOR } from '../lib/bungie_api/constants';
+import { ManifestExoticArmor } from '../../types/manifest-types';
+import { ARMOR } from '../../lib/bungie_api/constants';
 
 const NewComponentContainer = styled('div')({
   backgroundColor: 'transparent',
@@ -94,12 +94,12 @@ const StyledPopper = styled(Popper)({
   },
 });
 
-interface ExoticSearchProps {
+interface ExoticSelectorProps {
   selectedCharacter: Character | undefined;
   selectedExoticItemHash: number | null;
 }
 
-const ExoticSearch: React.FC<ExoticSearchProps> = ({
+const ExoticSelector: React.FC<ExoticSelectorProps> = ({
   selectedCharacter,
   selectedExoticItemHash,
 }) => {
@@ -313,4 +313,4 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({
   );
 };
 
-export default ExoticSearch;
+export default ExoticSelector;
