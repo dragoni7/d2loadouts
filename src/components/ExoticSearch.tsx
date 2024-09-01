@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Autocomplete, TextField, Popper } from '@mui/material';
 import { db } from '../store/db';
-import { Character } from '../types/d2l-types';
+import { armor, Character } from '../types/d2l-types';
 import { updateSelectedExoticItemHash } from '../store/DashboardReducer';
 import { useDispatch } from 'react-redux';
+import { ManifestExoticArmor } from '../types/manifest-types';
 
 const NewComponentContainer = styled('div')({
   backgroundColor: 'transparent',
@@ -19,8 +20,8 @@ const NewComponentContainer = styled('div')({
 
 const ExoticIcon = styled('img')<{ isOwned: boolean; isSelected: boolean }>(
   ({ isOwned, isSelected }) => ({
-    width: isSelected ? '100px' : '50px',
-    height: isSelected ? '100px' : '50px',
+    width: isSelected ? '91px' : '50px',
+    height: isSelected ? '91px' : '50px',
     marginRight: '10px',
     filter: isOwned ? 'none' : 'grayscale(100%)',
     border: isSelected ? '5px solid transparent' : 'none',
@@ -89,16 +90,9 @@ const StyledPopper = styled(Popper)({
   },
 });
 
-type ExoticViewModel = {
-  itemHash: string;
-  name: string;
-  icon: string;
-  isOwned: boolean;
-};
-
 interface ExoticSearchProps {
-  selectedCharacter: Character | null;
-  selectedExoticItemHash: string | null;
+  selectedCharacter: Character | undefined;
+  selectedExoticItemHash: number | null;
 }
 
 const ExoticSearch: React.FC<ExoticSearchProps> = ({
@@ -106,8 +100,8 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({
   selectedExoticItemHash,
 }) => {
   const dispatch = useDispatch();
-  const [exotics, setExotics] = useState<ExoticViewModel[]>([]);
-  const [selectedExotic, setSelectedExotic] = useState<ExoticViewModel | null>(null);
+  const [exotics, setExotics] = useState<ManifestExoticArmor[]>([]);
+  const [selectedExotic, setSelectedExotic] = useState<ManifestExoticArmor | null>(null);
   const [inputValue, setInputValue] = React.useState('');
 
   const fetchExoticData = async () => {
@@ -116,14 +110,7 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({
         .where('class')
         .equalsIgnoreCase(selectedCharacter.class)
         .toArray();
-      setExotics(
-        data.map((item) => ({
-          itemHash: item.itemHash.toString(),
-          name: item.name,
-          icon: item.icon,
-          isOwned: item.isOwned,
-        }))
-      );
+      setExotics(data);
     }
   };
 
@@ -145,14 +132,19 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({
     setInputValue('');
   }, [selectedCharacter]);
 
-  const handleExoticSelect = (newValue: ExoticViewModel | null) => {
+  const handleExoticSelect = (newValue: ManifestExoticArmor | null) => {
     setSelectedExotic(newValue);
-    dispatch(updateSelectedExoticItemHash(newValue ? newValue.itemHash : null));
+    dispatch(
+      updateSelectedExoticItemHash({
+        itemHash: newValue ? newValue.itemHash : null,
+        slot: newValue?.slot as armor,
+      })
+    );
   };
 
   const handleClearSelection = () => {
     setSelectedExotic(null);
-    dispatch(updateSelectedExoticItemHash(null));
+    dispatch(updateSelectedExoticItemHash({ itemHash: null, slot: null }));
   };
 
   return (
@@ -163,14 +155,16 @@ const ExoticSearch: React.FC<ExoticSearchProps> = ({
           <Autocomplete
             disablePortal
             value={selectedExotic}
-            onChange={(event, newValue) => handleExoticSelect(newValue as ExoticViewModel | null)}
+            onChange={(event, newValue) =>
+              handleExoticSelect(newValue as ManifestExoticArmor | null)
+            }
             inputValue={inputValue}
             onInputChange={(event, newInputValue) => {
               setInputValue(newInputValue);
             }}
             id="exotics"
             options={exotics}
-            getOptionLabel={(option: ExoticViewModel) => option.name}
+            getOptionLabel={(option: ManifestExoticArmor) => option.name}
             sx={{ width: 300 }}
             PopperComponent={StyledPopper}
             renderOption={(props, option) => {

@@ -114,7 +114,7 @@ const ShareLoadout: React.FC = () => {
     legArmorMods: state.loadoutConfig.loadout.legArmorMods,
     subclassConfig: state.loadoutConfig.loadout.subclassConfig,
     selectedValues: state.dashboard.selectedValues,
-    selectedExoticItemHash: state.dashboard.selectedExoticItemHash,
+    selectedExoticItemHash: state.dashboard.selectedExotic,
   }));
 
   const [statPriority, setStatPriority] = useState<string[]>([

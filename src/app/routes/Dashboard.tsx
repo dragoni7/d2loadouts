@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
-import { updateSelectedExoticItemHash, updateSelectedValues } from '../../store/DashboardReducer';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
 import { filterPermutations } from '../../features/armor-optimization/filter-permutations';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
@@ -11,7 +10,7 @@ import { getDestinyMembershipId } from '../../features/membership/bungie-account
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
 import { updateProfileData } from '../../store/ProfileReducer';
-import { DestinyArmor, Character, FilteredPermutation } from '../../types/d2l-types';
+import { Character } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
@@ -106,11 +105,11 @@ export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
-  const { selectedValues, selectedExoticItemHash } = useSelector(
+  const { selectedValues, selectedExotic: selectedExoticItemHash } = useSelector(
     (state: RootState) => state.dashboard
   );
 
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
   const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
@@ -250,7 +249,7 @@ export const Dashboard: React.FC = () => {
             <NewComponentWrapper>
               <ExoticSearch
                 selectedCharacter={selectedCharacter}
-                selectedExoticItemHash={selectedExoticItemHash}
+                selectedExoticItemHash={selectedExoticItemHash.itemHash}
               />
             </NewComponentWrapper>
             <BottomPane>
