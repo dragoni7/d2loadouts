@@ -12,6 +12,7 @@ import {
 import { getProfileDataRequest } from '../../lib/bungie_api/requests';
 import { db } from '../../store/db';
 import {
+  armor,
   Character,
   CharacterClass,
   DestinyArmor,
@@ -38,7 +39,6 @@ export async function getProfileData(): Promise<ProfileData> {
 
     for (const key in characterData) {
       const characterClass = getCharacterClass(characterData[key].classHash);
-      const plugSets = response.data.Response.characterPlugSets.data[key].plugs;
 
       const character: Character = {
         id: characterData[key].characterId,
@@ -51,6 +51,7 @@ export async function getProfileData(): Promise<ProfileData> {
           classItem: [],
         },
         subclasses: {},
+        exoticClassCombos: [],
       };
 
       // iterate character's equipped items
@@ -245,6 +246,26 @@ export async function getProfileData(): Promise<ProfileData> {
               ARMOR.CLASS_ARMOR
             );
             character.armor.classItem.push(classItem);
+            // add exotic class combo
+            if (classItem.exotic) {
+              const sockets = itemComponents.sockets.data[classItem.instanceHash]?.sockets;
+
+              const target = character.exoticClassCombos.findIndex(
+                (combo) =>
+                  combo.firstIntrinsicHash === sockets[10].plugHash &&
+                  combo.secondIntrinsicHash === sockets[11].plugHash
+              );
+
+              if (target !== -1) {
+                character.exoticClassCombos[target].instanceHashes.push(classItem.instanceHash);
+              } else {
+                character.exoticClassCombos.push({
+                  instanceHashes: [classItem.instanceHash],
+                  firstIntrinsicHash: sockets[10].plugHash,
+                  secondIntrinsicHash: sockets[11].plugHash,
+                });
+              }
+            }
             continue;
           }
         }
@@ -295,36 +316,60 @@ export async function getProfileData(): Promise<ProfileData> {
 
           case BUCKET_HASH.HELMET: {
             character.armor.helmet.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'helmet')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.HELMET)
             );
             continue;
           }
 
           case BUCKET_HASH.GAUNTLETS: {
             character.armor.arms.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'arms')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.GAUNTLETS)
             );
             continue;
           }
 
           case BUCKET_HASH.CHEST_ARMOR: {
             character.armor.chest.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'chest')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.CHEST_ARMOR)
             );
             continue;
           }
 
           case BUCKET_HASH.LEG_ARMOR: {
             character.armor.legs.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'legs')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.LEG_ARMOR)
             );
             continue;
           }
 
           case BUCKET_HASH.CLASS_ARMOR: {
-            character.armor.classItem.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'class')
+            const classItem = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.CLASS_ARMOR
             );
+            character.armor.classItem.push(classItem);
+            // add exotic class combo
+            if (classItem.exotic) {
+              const sockets = itemComponents.sockets.data[classItem.instanceHash]?.sockets;
+
+              const target = character.exoticClassCombos.findIndex(
+                (combo) =>
+                  combo.firstIntrinsicHash === sockets[10].plugHash &&
+                  combo.secondIntrinsicHash === sockets[11].plugHash
+              );
+
+              if (target !== -1) {
+                character.exoticClassCombos[target].instanceHashes.push(classItem.instanceHash);
+              } else {
+                character.exoticClassCombos.push({
+                  instanceHashes: [classItem.instanceHash],
+                  firstIntrinsicHash: sockets[10].plugHash,
+                  secondIntrinsicHash: sockets[11].plugHash,
+                });
+              }
+            }
             continue;
           }
         }
@@ -405,6 +450,28 @@ export async function getProfileData(): Promise<ProfileData> {
             }
             case ARMOR.CLASS_ARMOR: {
               character.armor.classItem.push(destinyArmor);
+              // add exotic class combo
+              if (destinyArmor.exotic) {
+                const sockets = itemComponents.sockets.data[destinyArmor.instanceHash]?.sockets;
+
+                const target = character.exoticClassCombos.findIndex(
+                  (combo) =>
+                    combo.firstIntrinsicHash === sockets[10].plugHash &&
+                    combo.secondIntrinsicHash === sockets[11].plugHash
+                );
+
+                if (target !== -1) {
+                  character.exoticClassCombos[target].instanceHashes.push(
+                    destinyArmor.instanceHash
+                  );
+                } else {
+                  character.exoticClassCombos.push({
+                    instanceHashes: [destinyArmor.instanceHash],
+                    firstIntrinsicHash: sockets[10].plugHash,
+                    secondIntrinsicHash: sockets[11].plugHash,
+                  });
+                }
+              }
               continue;
             }
           }
@@ -482,7 +549,7 @@ async function buildDestinyArmor(
   itemComponents: any,
   item: any,
   characterClass: CharacterClass,
-  armorSlot: string
+  armorSlot: armor
 ): Promise<DestinyArmor> {
   const itemInstance = itemComponents.instances.data[item.itemInstanceId];
   const stats = itemComponents.stats.data[item.itemInstanceId].stats;

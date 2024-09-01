@@ -2,7 +2,7 @@ import React from 'react';
 import './LoadoutCustomization.css';
 import { Button, Box, Container, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import ModCustomization from '../features/armor/components/ModCustomization';
+import ModCustomization from '../features/armor-mods/components/ModCustomization';
 import EquipLoadout from '../features/loadouts/components/EquipLoadout';
 import AbilitiesModification from '../features/subclass/AbilitiesModification';
 import { ManifestSubclass } from '../types/manifest-types';

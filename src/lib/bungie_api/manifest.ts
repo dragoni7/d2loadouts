@@ -224,6 +224,15 @@ export async function updateManifest() {
                   perkIcon: '',
                 });
               }
+            } else if (
+              current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.INTRINSIC_WEAPON_MOD)
+            ) {
+              await db.manifestIntrinsicModDef.add({
+                itemHash: Number(itemHash),
+                name: current.displayProperties.name,
+                icon: urlPrefix + current.displayProperties.icon,
+                perks: current.perks.map((p: any) => p.perkHash),
+              });
             }
           }
         }
@@ -266,6 +275,26 @@ export async function updateManifest() {
               .where('itemHash')
               .equals(current.itemHash)
               .modify({ collectibleHash: current.hash });
+          }
+        }
+      }
+
+      const sandboxPerksComponent =
+        response.data.Response.jsonWorldComponentContentPaths.en['DestinySandboxPerkDefinition'];
+
+      const sandboxPerksResponse = await getManifestComponentRequest(sandboxPerksComponent);
+
+      if (sandboxPerksResponse) {
+        for (const perkHash in sandboxPerksResponse.data) {
+          const current = sandboxPerksResponse.data[perkHash];
+
+          if (current.isDisplayable && !current.displayProperties.name.includes('Deprecated')) {
+            await db.manifestSandboxPerkDef.add({
+              itemHash: current.hash,
+              name: current.displayProperties.name,
+              description: current.displayProperties.description,
+              icon: urlPrefix + current.displayProperties.icon,
+            });
           }
         }
       }

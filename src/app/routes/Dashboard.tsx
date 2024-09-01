@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
-import { updateSelectedExoticItemHash, updateSelectedValues } from '../../store/DashboardReducer';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
 import { filterPermutations } from '../../features/armor-optimization/filter-permutations';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
@@ -11,10 +10,10 @@ import { getDestinyMembershipId } from '../../features/membership/bungie-account
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
 import { updateProfileData } from '../../store/ProfileReducer';
-import { DestinyArmor, Character, FilteredPermutation } from '../../types/d2l-types';
+import { Character } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import HeaderComponent from '../../components/HeaderComponent';
-import ExoticSearch from '../../components/ExoticSearch';
+import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
@@ -106,11 +105,11 @@ export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
-  const { selectedValues, selectedExoticItemHash } = useSelector(
+  const { selectedValues, selectedExotic, selectedExoticClassCombo } = useSelector(
     (state: RootState) => state.dashboard
   );
 
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
   const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
@@ -135,7 +134,7 @@ export const Dashboard: React.FC = () => {
     };
 
     updateProfile().catch(console.error);
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (selectedCharacter) {
@@ -155,11 +154,18 @@ export const Dashboard: React.FC = () => {
   }, [selectedCharacter, dispatch]);
 
   const permutations = useMemo(() => {
-    if (selectedCharacter && selectedExoticItemHash !== undefined) {
-      return generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
+    if (selectedCharacter && selectedExotic !== undefined) {
+      if (selectedExoticClassCombo)
+        return generatePermutations(
+          selectedCharacter.armor,
+          selectedExotic,
+          selectedExoticClassCombo
+        );
+
+      return generatePermutations(selectedCharacter.armor, selectedExotic);
     }
     return null;
-  }, [selectedCharacter, selectedExoticItemHash]);
+  }, [selectedCharacter, selectedExotic, selectedExoticClassCombo]);
 
   const filteredPermutations = useMemo(() => {
     if (permutations && selectedValues) {
@@ -248,9 +254,9 @@ export const Dashboard: React.FC = () => {
           )}
           <Container>
             <NewComponentWrapper>
-              <ExoticSearch
+              <ExoticSelector
                 selectedCharacter={selectedCharacter}
-                selectedExoticItemHash={selectedExoticItemHash}
+                selectedExoticItemHash={selectedExotic.itemHash}
               />
             </NewComponentWrapper>
             <BottomPane>
