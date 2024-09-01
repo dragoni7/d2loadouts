@@ -224,6 +224,15 @@ export async function updateManifest() {
                   perkIcon: '',
                 });
               }
+            } else if (
+              current.itemCategoryHashes.includes(ITEM_CATEGORY_HASHES.INTRINSIC_WEAPON_MOD)
+            ) {
+              await db.manifestIntrinsicModDef.add({
+                itemHash: Number(itemHash),
+                name: current.displayProperties.name,
+                icon: urlPrefix + current.displayProperties.icon,
+                perks: current.perks.map((p: any) => p.perkHash),
+              });
             }
           }
         }

@@ -46,6 +46,12 @@ export type DestinyArmor = {
   name: string;
 };
 
+export type ExoticClassInstance = {
+  instanceHashes: string[];
+  firstIntrinsicHash: number;
+  secondIntrinsicHash: number;
+};
+
 export interface ArmorBySlot {
   helmet: DestinyArmor[];
   arms: DestinyArmor[];
@@ -98,6 +104,7 @@ export type Character = {
   emblem?: Emblem;
   armor: ArmorBySlot;
   subclasses: { [key: number]: SubclassConfig | undefined };
+  exoticClassCombos: ExoticClassInstance[];
 };
 
 export type Emblem = {
