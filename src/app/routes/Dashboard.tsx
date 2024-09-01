@@ -105,7 +105,7 @@ export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
-  const { selectedValues, selectedExotic: selectedExoticItemHash } = useSelector(
+  const { selectedValues, selectedExotic: selectedExotic } = useSelector(
     (state: RootState) => state.dashboard
   );
 
@@ -134,7 +134,7 @@ export const Dashboard: React.FC = () => {
     };
 
     updateProfile().catch(console.error);
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (selectedCharacter) {
@@ -154,11 +154,11 @@ export const Dashboard: React.FC = () => {
   }, [selectedCharacter, dispatch]);
 
   const permutations = useMemo(() => {
-    if (selectedCharacter && selectedExoticItemHash !== undefined) {
-      return generatePermutations(selectedCharacter.armor, selectedExoticItemHash);
+    if (selectedCharacter && selectedExotic !== undefined) {
+      return generatePermutations(selectedCharacter.armor, selectedExotic);
     }
     return null;
-  }, [selectedCharacter, selectedExoticItemHash]);
+  }, [selectedCharacter, selectedExotic]);
 
   const filteredPermutations = useMemo(() => {
     if (permutations && selectedValues) {
@@ -249,7 +249,7 @@ export const Dashboard: React.FC = () => {
             <NewComponentWrapper>
               <ExoticSearch
                 selectedCharacter={selectedCharacter}
-                selectedExoticItemHash={selectedExoticItemHash.itemHash}
+                selectedExoticItemHash={selectedExotic.itemHash}
               />
             </NewComponentWrapper>
             <BottomPane>
