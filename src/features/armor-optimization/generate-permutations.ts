@@ -1,5 +1,5 @@
 import { ARMOR } from '../../lib/bungie_api/constants';
-import { DestinyArmor, ArmorBySlot, armor } from '../../types/d2l-types';
+import { DestinyArmor, ArmorBySlot, armor, ExoticClassCombo } from '../../types/d2l-types';
 import MaxHeap from 'heap-js';
 
 export const generatePermutations = (
@@ -7,7 +7,8 @@ export const generatePermutations = (
   selectedExoticItem: { itemHash: number | null; slot: armor | null } = {
     itemHash: null,
     slot: null,
-  }
+  },
+  selectedExoticClassCombo?: ExoticClassCombo
 ): DestinyArmor[][] => {
   const { helmet, arms, legs, chest, classItem } = armorClass;
 
@@ -53,9 +54,11 @@ export const generatePermutations = (
       filteredArms = arms.filter((item) => !item.exotic);
       filteredLegs = legs.filter((item) => !item.exotic);
       filteredChest = chest.filter((item) => !item.exotic);
-      filteredClass = classItem.filter(
-        (item) => Number(item.itemHash) === selectedExoticItem.itemHash
-      );
+      filteredClass = selectedExoticClassCombo
+        ? classItem.filter((item) =>
+            selectedExoticClassCombo.instanceHashes.includes(item.instanceHash)
+          )
+        : classItem.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
       break;
   }
 

@@ -105,7 +105,7 @@ export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
-  const { selectedValues, selectedExotic: selectedExotic } = useSelector(
+  const { selectedValues, selectedExotic, selectedExoticClassCombo } = useSelector(
     (state: RootState) => state.dashboard
   );
 
@@ -155,10 +155,17 @@ export const Dashboard: React.FC = () => {
 
   const permutations = useMemo(() => {
     if (selectedCharacter && selectedExotic !== undefined) {
+      if (selectedExoticClassCombo)
+        return generatePermutations(
+          selectedCharacter.armor,
+          selectedExotic,
+          selectedExoticClassCombo
+        );
+
       return generatePermutations(selectedCharacter.armor, selectedExotic);
     }
     return null;
-  }, [selectedCharacter, selectedExotic]);
+  }, [selectedCharacter, selectedExotic, selectedExoticClassCombo]);
 
   const filteredPermutations = useMemo(() => {
     if (permutations && selectedValues) {
