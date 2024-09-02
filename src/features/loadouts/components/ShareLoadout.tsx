@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/index';
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
+import { encodeLoadout, decodeLoadout, LoadoutData } from './efficientLoadoutEncoder';
 import {
   Button,
   TextField,
@@ -140,29 +140,46 @@ const ShareLoadout: React.FC = () => {
   };
 
   const generateShareLink = () => {
-    const dataToShare = {
-      ...loadoutState,
+    const dataToShare: LoadoutData = {
+      mods: {
+        helmet: loadoutState.helmetMods.map((mod) => mod.itemHash),
+        gauntlets: loadoutState.gauntletMods.map((mod) => mod.itemHash),
+        chest: loadoutState.chestArmorMods.map((mod) => mod.itemHash),
+        legs: loadoutState.legArmorMods.map((mod) => mod.itemHash),
+      },
+      subclass: {
+        super: loadoutState.subclassConfig.super?.itemHash ?? 0,
+        aspects: loadoutState.subclassConfig.aspects.map((aspect) => aspect.itemHash),
+        fragments: loadoutState.subclassConfig.fragments.map((fragment) => fragment.itemHash),
+        classAbility: loadoutState.subclassConfig.classAbility?.itemHash ?? 0,
+        meleeAbility: loadoutState.subclassConfig.meleeAbility?.itemHash ?? 0,
+        movementAbility: loadoutState.subclassConfig.movementAbility?.itemHash ?? 0,
+        grenade: loadoutState.subclassConfig.grenade?.itemHash ?? 0,
+      },
+      selectedExoticItemHash: loadoutState.selectedExoticItemHash ?? '',
+      selectedValues: loadoutState.selectedValues,
       statPriority,
     };
-    const compressedData = compressToEncodedURIComponent(JSON.stringify(dataToShare));
-    const shareableLink = `${window.location.origin}/loadout?data=${compressedData}`;
+    const encodedData = encodeLoadout(dataToShare);
+    const shareableLink = `${window.location.origin}/loadout?d=${encodedData}`;
     setShareLink(shareableLink);
   };
 
   const parseLink = () => {
     try {
       const url = new URL(shareLink);
-      const compressedData = url.searchParams.get('data');
-      if (!compressedData) {
+      const encodedData = url.searchParams.get('d');
+      if (!encodedData) {
         throw new Error('Invalid loadout link');
       }
-      const decompressedData = decompressFromEncodedURIComponent(compressedData);
-      if (!decompressedData) {
-        throw new Error('Failed to decompress loadout data');
-      }
-      const parsedData = JSON.parse(decompressedData);
-      setParsedLink(JSON.stringify(parsedData, null, 2));
-      console.log('Parsed loadout:', parsedData);
+      const decodedData = decodeLoadout(encodedData);
+      setParsedLink(JSON.stringify(decodedData, null, 2));
+      console.log('Parsed loadout:', decodedData);
+
+      // Here you would typically reconstruct the full loadout data
+      // by fetching item details using the hashes
+      const reconstructedLoadout = decodedData;
+      console.log('Reconstructed loadout:', reconstructedLoadout);
     } catch (error) {
       console.error('Error parsing loadout link:', error);
       setParsedLink('Error parsing link');
