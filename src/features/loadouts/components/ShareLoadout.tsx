@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/index';
-import { encodeLoadout, decodeLoadout, LoadoutData } from './efficientLoadoutEncoder';
+import { encodeLoadout, decodeLoadout, LoadoutData } from './loadoutEncoder';
 import {
   Button,
   TextField,
