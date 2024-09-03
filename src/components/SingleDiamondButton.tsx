@@ -2,12 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSpring, animated, config, to } from 'react-spring';
 import './SingleDiamondButton.css';
 import { ManifestSubclass } from '../types/manifest-types';
+import { SubclassConfig } from '../types/d2l-types';
+import { DAMAGE_TYPE } from '../lib/bungie_api/constants';
+import { damp } from 'three/src/math/MathUtils';
 
 interface SingleDiamondButtonProps {
-  subclasses: ManifestSubclass[];
-  selectedSubclass: ManifestSubclass | null;
-  onSubclassSelect: (subclass: ManifestSubclass) => void;
-  onSubclassRightClick: (subclass: ManifestSubclass) => void;
+  subclasses: { [key: number]: SubclassConfig | undefined } | undefined;
+  selectedSubclass: SubclassConfig | null;
+  onSubclassSelect: (subclass: SubclassConfig) => void;
+  onSubclassRightClick: (subclass: SubclassConfig) => void;
 }
 
 const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
@@ -16,10 +19,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
   onSubclassSelect,
   onSubclassRightClick,
 }) => {
-  const [currentSubclass, setCurrentSubclass] = useState<ManifestSubclass | null>(null);
-  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<ManifestSubclass | null>(
-    null
-  );
+  const [currentSubclass, setCurrentSubclass] = useState<SubclassConfig | undefined>(undefined);
+  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<
+    SubclassConfig | undefined
+  >(undefined);
   const [isPrismaticActive, setIsPrismaticActive] = useState(false);
   const [isAccelerating, setIsAccelerating] = useState(false);
   const [isOblong, setIsOblong] = useState(false);
@@ -85,29 +88,40 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     }
   }, [isAccelerating, scaleApi]);
 
-  const getDefaultSubclass = () => {
-    return subclasses.find((subclass) => !subclass.name.includes('Prismatic')) || subclasses[0];
-  };
+  function getDefaultSubclass(): SubclassConfig | undefined {
+    if (subclasses) {
+      const keys = Object.keys(subclasses);
+      for (let i = 0; i < keys.length; i++) {
+        if (
+          subclasses[Number(keys[i])] !== undefined &&
+          subclasses[Number(keys[i])]?.damageType !== DAMAGE_TYPE.KINETIC
+        )
+          return subclasses[Number(keys[i])]!;
+      }
+    }
+
+    return undefined;
+  }
 
   useEffect(() => {
     if (selectedSubclass) {
       setCurrentSubclass(selectedSubclass);
-      setIsPrismaticActive(selectedSubclass.name.includes('Prismatic'));
-      if (!selectedSubclass.name.includes('Prismatic')) {
+      setIsPrismaticActive(selectedSubclass.subclass.damageType === DAMAGE_TYPE.KINETIC);
+      if (selectedSubclass.subclass.damageType !== DAMAGE_TYPE.KINETIC) {
         setLastNonPrismaticSubclass(selectedSubclass);
       } else if (!lastNonPrismaticSubclass) {
         setLastNonPrismaticSubclass(getDefaultSubclass());
       }
-    } else if (subclasses.length > 0) {
+    } else if (subclasses) {
       const defaultSubclass = getDefaultSubclass();
       setCurrentSubclass(defaultSubclass);
       setLastNonPrismaticSubclass(defaultSubclass);
-      onSubclassSelect(defaultSubclass);
+      onSubclassSelect(defaultSubclass!);
     }
   }, [selectedSubclass, subclasses, onSubclassSelect, lastNonPrismaticSubclass]);
 
-  const handleSelect = (subclass: ManifestSubclass) => {
-    if (subclass.name.includes('Prismatic')) {
+  const handleSelect = (subclass: SubclassConfig) => {
+    if (subclass.damageType === DAMAGE_TYPE.KINETIC) {
       setIsPrismaticActive(true);
     } else {
       setIsPrismaticActive(false);
@@ -125,15 +139,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     }
   };
 
-  const handleRightClick = (event: React.MouseEvent, subclass: ManifestSubclass) => {
+  const handleRightClick = (event: React.MouseEvent, subclass: SubclassConfig) => {
     event.preventDefault();
     onSubclassRightClick(subclass);
   };
-
-  const prismaticSubclass = subclasses.find((subclass) => subclass.name.includes('Prismatic'));
-  const nonPrismaticSubclasses = subclasses
-    .filter((subclass) => !subclass.name.includes('Prismatic') && subclass !== currentSubclass)
-    .slice(0, 4);
 
   const RotatingShape = ({ rotationOffset = 0 }: { rotationOffset?: number }) => (
     <animated.div
@@ -153,16 +162,35 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     <div className="single-diamond-wrapper">
       {!isPrismaticActive && (
         <div className="diamond-grid">
-          {nonPrismaticSubclasses.map((subclass, index) => (
-            <div
-              key={subclass.itemHash}
-              className={`diamond-button button-${index + 1}`}
-              onClick={() => handleSelect(subclass)}
-              onContextMenu={(event) => handleRightClick(event, subclass)}
-            >
-              <img src={subclass.icon} alt={subclass.name} className="diamond-icon" />
-            </div>
-          ))}
+          {subclasses &&
+            [
+              DAMAGE_TYPE.ARC,
+              DAMAGE_TYPE.SOLAR,
+              DAMAGE_TYPE.STASIS,
+              DAMAGE_TYPE.STRAND,
+              DAMAGE_TYPE.VOID,
+            ]
+              .filter((key) => Number(key) !== selectedSubclass?.damageType)
+              .map((damageType, index) => (
+                <div
+                  key={index}
+                  className={`diamond-button button-${index + 1}`}
+                  onClick={() => {
+                    if (damageType in subclasses) handleSelect(subclasses[Number(damageType)]!);
+                  }}
+                  onContextMenu={(event) => {
+                    if (damageType in subclasses && selectedSubclass?.damageType === damageType)
+                      handleRightClick(event, subclasses[Number(damageType)]!);
+                  }}
+                >
+                  <img
+                    src={`src/assets/subclass-icons/${damageType}.png`}
+                    alt={String(damageType)}
+                    className="diamond-icon"
+                    style={{ filter: damageType in subclasses ? 'none' : 'grayscale(100%)' }}
+                  />
+                </div>
+              ))}
         </div>
       )}
       {isPrismaticActive ? (
@@ -170,22 +198,32 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
           <div
             className="prismatic-button diamond-shape"
             onClick={handleReset}
-            onContextMenu={(event) => handleRightClick(event, currentSubclass!)}
+            onContextMenu={(event) => {
+              if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
+                handleRightClick(event, currentSubclass!);
+            }}
           >
             <div className="prismatic-glow diamond-shape"></div>
             <RotatingShape />
             <RotatingShape rotationOffset={120} />
             <RotatingShape rotationOffset={240} />
-            <img src={currentSubclass!.icon} alt={currentSubclass!.name} className="diamond-icon" />
+            <img
+              src={currentSubclass!.subclass.icon}
+              alt={currentSubclass!.subclass.name}
+              className="diamond-icon"
+            />
           </div>
           <div
             className="single-diamond-button"
             onClick={() => handleSelect(lastNonPrismaticSubclass!)}
-            onContextMenu={(event) => handleRightClick(event, lastNonPrismaticSubclass!)}
+            onContextMenu={(event) => {
+              if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
+                handleRightClick(event, lastNonPrismaticSubclass!);
+            }}
           >
             <img
-              src={lastNonPrismaticSubclass!.icon}
-              alt={lastNonPrismaticSubclass!.name}
+              src={lastNonPrismaticSubclass!.subclass.icon}
+              alt={lastNonPrismaticSubclass!.subclass.name}
               className="diamond-icon"
             />
           </div>
@@ -194,28 +232,40 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
         <>
           <div
             className="single-diamond-button"
-            onContextMenu={(event) => handleRightClick(event, currentSubclass!)}
+            onContextMenu={(event) => {
+              if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
+                handleRightClick(event, currentSubclass!);
+            }}
           >
             {currentSubclass && (
-              <img src={currentSubclass.icon} alt={currentSubclass.name} className="diamond-icon" />
+              <img
+                src={currentSubclass.subclass.icon}
+                alt={currentSubclass.subclass.name}
+                className="diamond-icon"
+              />
             )}
           </div>
-          {prismaticSubclass && (
+          {subclasses !== undefined && subclasses[DAMAGE_TYPE.KINETIC] ? (
             <div
               className="prismatic-button"
-              onClick={() => handleSelect(prismaticSubclass)}
-              onContextMenu={(event) => handleRightClick(event, prismaticSubclass)}
+              onClick={() => handleSelect(subclasses[DAMAGE_TYPE.KINETIC]!)}
+              onContextMenu={(event) => {
+                if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
+                  handleRightClick(event, subclasses[DAMAGE_TYPE.KINETIC]!);
+              }}
             >
               <div className="prismatic-glow"></div>
               <RotatingShape />
               <RotatingShape rotationOffset={120} />
               <RotatingShape rotationOffset={240} />
               <img
-                src={prismaticSubclass.icon}
-                alt={prismaticSubclass.name}
+                src={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.icon}
+                alt={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.name}
                 className="circular-icon"
               />
             </div>
+          ) : (
+            <div></div>
           )}
         </>
       )}

@@ -10,17 +10,16 @@ import { getDestinyMembershipId } from '../../features/membership/bungie-account
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
 import { updateProfileData } from '../../store/ProfileReducer';
-import { Character } from '../../types/d2l-types';
+import { Character, SubclassConfig } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import greyBackground from '../../assets/grey.png';
-import { db } from '../../store/db';
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
-import { ManifestSubclass } from '../../types/manifest-types';
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
+import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -103,6 +102,7 @@ const NewComponentWrapper = styled('div')({
 
 export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
   const { selectedValues, selectedExotic, selectedExoticClassCombo } = useSelector(
@@ -110,11 +110,14 @@ export const Dashboard: React.FC = () => {
   );
 
   const [selectedCharacter, setSelectedCharacter] = useState<Character | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
-  const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
-  const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
-  const [customizingSubclass, setCustomizingSubclass] = useState<ManifestSubclass | null>(null);
-  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<ManifestSubclass | null>(
+  const [dataLoading, setDataLoading] = useState<boolean>(true);
+  const [generatingPermutations, setGeneratingPermutations] = useState(false);
+  const [subclasses, setSubclasses] = useState<
+    { [key: number]: SubclassConfig | undefined } | undefined
+  >(undefined);
+  const [selectedSubclass, setSelectedSubclass] = useState<SubclassConfig | null>(null);
+  const [customizingSubclass, setCustomizingSubclass] = useState<SubclassConfig | null>(null);
+  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<SubclassConfig | null>(
     null
   );
   const [showArmorCustomization, setShowArmorCustomization] = useState(false);
@@ -134,22 +137,34 @@ export const Dashboard: React.FC = () => {
     };
 
     updateProfile().catch(console.error);
+
+    setDataLoading(false);
   }, []);
 
   useEffect(() => {
     if (selectedCharacter) {
       dispatch(resetLoadout());
       dispatch(updateLoadoutCharacter(selectedCharacter));
-      fetchSubclasses(selectedCharacter).then((subclassesData) => {
-        setSubclasses(subclassesData);
-        if (subclassesData.length > 0) {
-          setSelectedSubclass(subclassesData[0]);
-          const defaultSubclass =
-            subclassesData.find((subclass) => !subclass.name.includes('Prismatic')) ||
-            subclassesData[0];
-          setLastNonPrismaticSubclass(defaultSubclass);
+
+      setSubclasses(selectedCharacter.subclasses);
+
+      const keys = Object.keys(selectedCharacter.subclasses);
+
+      for (let i = 0; i < keys.length; i++) {
+        if (
+          selectedCharacter.subclasses[Number(keys[i])] !== undefined &&
+          selectedCharacter.subclasses[Number(keys[i])]!.damageType !== DAMAGE_TYPE.KINETIC
+        ) {
+          setSelectedSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
+          setLastNonPrismaticSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
+          dispatch(
+            updateSubclass({
+              subclass: selectedCharacter.subclasses[Number(keys[i])],
+            })
+          );
+          break;
         }
-      });
+      }
     }
   }, [selectedCharacter, dispatch]);
 
@@ -169,9 +184,9 @@ export const Dashboard: React.FC = () => {
 
   const filteredPermutations = useMemo(() => {
     if (permutations && selectedValues) {
-      setIsLoading(true);
+      setGeneratingPermutations(true);
       const filtered = filterPermutations(permutations, selectedValues);
-      setIsLoading(false);
+      setGeneratingPermutations(false);
       return filtered;
     }
     return null;
@@ -183,22 +198,28 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const handleSubclassSelect = (subclass: ManifestSubclass) => {
+  const handleSubclassSelect = (subclass: SubclassConfig) => {
     setSelectedSubclass(subclass);
 
-    if (selectedCharacter && subclass.damageType in selectedCharacter.subclasses) {
+    dispatch(
+      updateSubclass({
+        subclass: subclass,
+      })
+    );
+
+    if (selectedCharacter) {
       dispatch(
         updateSubclass({
-          subclass: selectedCharacter.subclasses[subclass.damageType]?.subclass,
+          subclass: selectedCharacter.subclasses[subclass.damageType],
         })
       );
     }
-    if (!subclass.name.includes('Prismatic')) {
+    if (subclass.damageType !== DAMAGE_TYPE.KINETIC) {
       setLastNonPrismaticSubclass(subclass);
     }
   };
 
-  const handleSubclassRightClick = (subclass: ManifestSubclass) => {
+  const handleSubclassRightClick = (subclass: SubclassConfig) => {
     setCustomizingSubclass(subclass);
     setShowAbilitiesModification(true);
   };
@@ -215,29 +236,18 @@ export const Dashboard: React.FC = () => {
     setShowArmorCustomization(false);
   };
 
-  const fetchSubclasses = async (character: Character): Promise<ManifestSubclass[]> => {
-    const data = await db.manifestSubclass
-      .where('class')
-      .equalsIgnoreCase(character.class)
-      .toArray();
-    return data.map((item) => ({
-      ...item,
-      itemHash: item.itemHash,
-    }));
-  };
-
-  return (
+  return !dataLoading ? (
     <PageContainer>
       {showAbilitiesModification && customizingSubclass ? (
         <SubclassCustomizationWrapper
           onBackClick={handleBackClick}
           subclass={customizingSubclass}
-          screenshot={customizingSubclass.screenshot}
+          screenshot={customizingSubclass.subclass.screenshot}
         />
       ) : showArmorCustomization ? (
         <LoadoutCustomization
           onBackClick={handleLoadoutCustomizationBackClick}
-          screenshot={selectedSubclass?.screenshot || ''}
+          screenshot={selectedSubclass?.subclass.screenshot || ''}
           subclass={selectedSubclass!}
         />
       ) : (
@@ -275,7 +285,7 @@ export const Dashboard: React.FC = () => {
               </LeftPane>
               <RightPane>
                 <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
-                {isLoading ? (
+                {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (
                   <StatsTable
@@ -291,6 +301,8 @@ export const Dashboard: React.FC = () => {
         </>
       )}
     </PageContainer>
+  ) : (
+    <div>loading...</div>
   );
 };
 

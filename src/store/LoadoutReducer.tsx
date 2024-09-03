@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Character, DamageType, DestinyArmor, Loadout, Subclass } from '../types/d2l-types';
+import {
+  Character,
+  DamageType,
+  DestinyArmor,
+  Loadout,
+  Subclass,
+  SubclassConfig,
+} from '../types/d2l-types';
 import {
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,
@@ -196,25 +203,9 @@ export const loadoutConfigSlice = createSlice({
       state.loadout.legArmorMods = initialState.loadout.legArmorMods;
       state.loadout.classArmorMods = initialState.loadout.classArmorMods;
     },
-    updateSubclass: (state, action: PayloadAction<{ subclass: Subclass | undefined }>) => {
+    updateSubclass: (state, action: PayloadAction<{ subclass: SubclassConfig | undefined }>) => {
       if (action.payload.subclass !== undefined) {
-        state.loadout.subclassConfig = {
-          subclass: action.payload.subclass,
-          damageType: action.payload.subclass.damageType as DamageType,
-          super: EMPTY_MANIFEST_PLUG,
-          aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-          fragments: [
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-          ],
-          classAbility: null,
-          meleeAbility: null,
-          movementAbility: null,
-          grenade: null,
-        };
+        state.loadout.subclassConfig = action.payload.subclass;
       }
     },
     updateSubclassMods: (state, action: PayloadAction<{ category: string; mods: any[] }>) => {

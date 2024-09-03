@@ -2,6 +2,7 @@ import {
   ARMOR,
   BUCKET_HASH,
   COLLECTIBLE_OWNED,
+  DAMAGE_TYPE,
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,
   EMPTY_MANIFEST_PLUG,
@@ -15,6 +16,7 @@ import {
   armor,
   Character,
   CharacterClass,
+  DamageType,
   DestinyArmor,
   Emblem,
   ProfileData,
@@ -76,121 +78,7 @@ export async function getProfileData(): Promise<ProfileData> {
           }
 
           case BUCKET_HASH.SUBCLASS: {
-            const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
-
-            await subclassQuery.modify({ isOwned: true });
-
-            const subclass = await subclassQuery.first();
-
-            if (subclass) {
-              const s: Subclass = {
-                instanceId: item.itemInstanceId,
-                itemHash: subclass.itemHash,
-                damageType: subclass.damageType,
-                name: subclass.name,
-                class: subclass.class,
-                icon: subclass.icon,
-                screenshot: subclass.icon,
-                isOwned: subclass.isOwned,
-              };
-
-              character.subclasses[subclass.damageType] = {
-                subclass: s,
-                damageType: 1,
-                super: EMPTY_MANIFEST_PLUG,
-                aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-                fragments: [
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                ],
-                classAbility: null,
-                meleeAbility: null,
-                movementAbility: null,
-                grenade: null,
-              };
-
-              // set equipped loadout subclass config
-              const subclassSockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
-
-              /*if (subclassSockets) {
-                character.subclasses[subclass.damageType].classAbility = {
-                  plugItemHash: subclassSockets[0].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 1,
-                };
-                character.equippedLoadout.subclassConfig.movementAbility = {
-                  plugItemHash: subclassSockets[1].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 2,
-                };
-                character.equippedLoadout.subclassConfig.super = {
-                  plugItemHash: subclassSockets[2].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 0,
-                };
-                character.equippedLoadout.subclassConfig.meleeAbility = {
-                  plugItemHash: subclassSockets[3].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 3,
-                };
-                character.equippedLoadout.subclassConfig.grenade = {
-                  plugItemHash: subclassSockets[4].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 4,
-                };
-
-                if (character.equippedLoadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC) {
-                  character.equippedLoadout.subclassConfig.aspects = [
-                    {
-                      plugItemHash: subclassSockets[7].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 7,
-                    },
-                    {
-                      plugItemHash: subclassSockets[8].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 8,
-                    },
-                  ];
-
-                  character.equippedLoadout.subclassConfig.fragments = subclassSockets
-                    .slice(9, subclassSockets.length)
-                    .map((p: any, index: number): Plug => {
-                      return {
-                        plugItemHash: p.plugHash,
-                        socketArrayType: 0,
-                        socketIndex: 9 + index,
-                      };
-                    });
-                } else {
-                  character.equippedLoadout.subclassConfig.aspects = [
-                    {
-                      plugItemHash: subclassSockets[5].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 5,
-                    },
-                    {
-                      plugItemHash: subclassSockets[6].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 6,
-                    },
-                  ];
-
-                  character.equippedLoadout.subclassConfig.fragments = subclassSockets
-                    .slice(7, subclassSockets.length)
-                    .map((p: any, index: number): Plug => {
-                      return {
-                        plugItemHash: p.plugHash,
-                        socketArrayType: 7 + 0,
-                        socketIndex: index,
-                      };
-                    });
-                }
-              }*/
-            }
+            buildSubclassConfig(item, character, itemComponents);
             continue;
           }
 
@@ -275,42 +163,7 @@ export async function getProfileData(): Promise<ProfileData> {
       for (const item of characterInventories[key].items) {
         switch (item.bucketHash) {
           case BUCKET_HASH.SUBCLASS: {
-            const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
-
-            await subclassQuery.modify({ isOwned: true });
-
-            const subclass = await subclassQuery.first();
-
-            if (subclass) {
-              const s: Subclass = {
-                instanceId: item.itemInstanceId,
-                itemHash: subclass.itemHash,
-                damageType: subclass.damageType,
-                name: subclass.name,
-                class: subclass.class,
-                icon: subclass.icon,
-                screenshot: subclass.icon,
-                isOwned: subclass.isOwned,
-              };
-
-              character.subclasses[subclass.damageType] = {
-                subclass: s,
-                damageType: 1,
-                super: EMPTY_MANIFEST_PLUG,
-                aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-                fragments: [
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                ],
-                classAbility: null,
-                meleeAbility: null,
-                movementAbility: null,
-                grenade: null,
-              };
-            }
+            buildSubclassConfig(item, character, itemComponents);
             continue;
           }
 
@@ -543,6 +396,130 @@ export async function getProfileData(): Promise<ProfileData> {
   }
 
   return profile;
+}
+
+async function buildSubclassConfig(item: any, character: Character, itemComponents: any) {
+  const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
+
+  await subclassQuery.modify({ isOwned: true });
+
+  const subclass = await subclassQuery.first();
+
+  if (subclass) {
+    const s: Subclass = {
+      instanceId: item.itemInstanceId,
+      itemHash: subclass.itemHash,
+      damageType: subclass.damageType,
+      name: subclass.name,
+      class: subclass.class,
+      icon: subclass.icon,
+      screenshot: subclass.screenshot,
+      isOwned: subclass.isOwned,
+    };
+
+    character.subclasses[subclass.damageType] = {
+      subclass: s,
+      damageType: subclass.damageType as DamageType,
+      super: EMPTY_MANIFEST_PLUG,
+      aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+      fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
+      classAbility: null,
+      meleeAbility: null,
+      movementAbility: null,
+      grenade: null,
+    };
+
+    // set equipped loadout subclass config
+    const subclassSockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
+
+    if (subclassSockets && character.subclasses[subclass.damageType] !== undefined) {
+      const classAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[0].plugHash)
+        .first();
+
+      if (classAbility) character.subclasses[subclass.damageType]!.classAbility = classAbility;
+
+      const movementAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[1].plugHash)
+        .first();
+
+      if (movementAbility)
+        character.subclasses[subclass.damageType]!.movementAbility = movementAbility;
+
+      const superAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[2].plugHash)
+        .first();
+
+      if (superAbility) character.subclasses[subclass.damageType]!.super = superAbility;
+
+      const meleeAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[3].plugHash)
+        .first();
+
+      if (meleeAbility) character.subclasses[subclass.damageType]!.meleeAbility = meleeAbility;
+
+      const grenade = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[4].plugHash)
+        .first();
+
+      if (grenade) character.subclasses[subclass.damageType]!.grenade = grenade;
+
+      if (subclass.damageType === DAMAGE_TYPE.KINETIC) {
+        const firstAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[7].plugHash)
+          .first();
+
+        if (firstAspect) character.subclasses[subclass.damageType]!.aspects[0] = firstAspect;
+
+        const secondAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[8].plugHash)
+          .first();
+
+        if (secondAspect) character.subclasses[subclass.damageType]!.aspects[1] = secondAspect;
+
+        const fragments = subclassSockets.slice(9, subclassSockets.length);
+        for (let i = 0; i < fragments.length; i++) {
+          const fragment = await db.manifestSubclassFragmentsDef
+            .where('itemHash')
+            .equals(fragments[i].plugHash)
+            .first();
+
+          if (fragment) character.subclasses[subclass.damageType]!.fragments[i] = fragment;
+        }
+      } else {
+        const firstAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[5].plugHash)
+          .first();
+
+        if (firstAspect) character.subclasses[subclass.damageType]!.aspects[0] = firstAspect;
+
+        const secondAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[6].plugHash)
+          .first();
+
+        if (secondAspect) character.subclasses[subclass.damageType]!.aspects[1] = secondAspect;
+
+        const fragments = subclassSockets.slice(7, subclassSockets.length);
+        for (let i = 0; i < fragments.length; i++) {
+          const fragment = await db.manifestSubclassFragmentsDef
+            .where('itemHash')
+            .equals(fragments[i].plugHash)
+            .first();
+
+          if (fragment) character.subclasses[subclass.damageType]!.fragments[i] = fragment;
+        }
+      }
+    }
+  }
 }
 
 async function buildDestinyArmor(
