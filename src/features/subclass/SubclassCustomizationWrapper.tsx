@@ -4,10 +4,11 @@ import './SubclassCustomizationWrapper.css';
 import { Button, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { ManifestSubclass } from '../../types/manifest-types';
+import { SubclassConfig } from '../../types/d2l-types';
 
 interface SubclassCustomizationWrapperProps {
   onBackClick: () => void;
-  subclass: ManifestSubclass;
+  subclass: SubclassConfig;
   screenshot: string;
 }
 
@@ -41,7 +42,7 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
           Back
         </TransparentButton>
       </Box>
-      <AbilitiesModification subclass={subclass} />
+      <AbilitiesModification subclass={subclass.subclass} />
     </div>
   );
 };

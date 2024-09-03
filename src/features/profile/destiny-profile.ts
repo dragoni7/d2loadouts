@@ -413,7 +413,7 @@ async function buildSubclassConfig(item: any, character: Character, itemComponen
       name: subclass.name,
       class: subclass.class,
       icon: subclass.icon,
-      screenshot: subclass.icon,
+      screenshot: subclass.screenshot,
       isOwned: subclass.isOwned,
     };
 
