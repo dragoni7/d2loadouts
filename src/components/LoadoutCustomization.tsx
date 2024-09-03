@@ -65,7 +65,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
           </Container>
         </Grid>
         <Grid item md={1}>
-          <AbilitiesModification subclass={subclass.subclass} />
+          <AbilitiesModification subclass={subclass} />
         </Grid>
         <Grid item md={1} sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', textAlign: 'center' }}>
           FREE SPACE FOR SOMETHING

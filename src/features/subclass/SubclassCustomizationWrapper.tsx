@@ -30,7 +30,7 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
   screenshot,
 }) => {
   return (
-    <div
+    <Box
       className="subclass-customization-wrapper"
       style={{ backgroundImage: `url(${screenshot})` }}
     >
@@ -42,8 +42,10 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
           Back
         </TransparentButton>
       </Box>
-      <AbilitiesModification subclass={subclass.subclass} />
-    </div>
+      <Box sx={{ marginTop: '15vh' }}>
+        <AbilitiesModification subclass={subclass} />
+      </Box>
+    </Box>
   );
 };
 

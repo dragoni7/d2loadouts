@@ -5,17 +5,17 @@ import { Box, Container } from '@mui/system';
 import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/subclass-constants';
 import { RootState } from '../../store';
 import { db } from '../../store/db';
-import { updateSubclassMods } from '../../store/LoadoutReducer';
+import { updateSubclass, updateSubclassMods } from '../../store/LoadoutReducer';
 import {
   ManifestSubclass,
   ManifestPlug,
   ManifestAspect,
   ManifestStatPlug,
 } from '../../types/manifest-types';
-import { DamageType } from '../../types/d2l-types';
+import { DamageType, SubclassConfig } from '../../types/d2l-types';
 
 interface AbilitiesModificationProps {
-  subclass: ManifestSubclass;
+  subclass: SubclassConfig;
 }
 
 export const EMPTY_MANIFEST_PLUG: ManifestPlug = {
@@ -153,7 +153,7 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   width: '40%',
 }));
 
-const fetchMods = async (subclass: ManifestSubclass) => {
+const fetchMods = async (subclass: SubclassConfig) => {
   const modsData: { [key: string]: (ManifestPlug | ManifestAspect | ManifestStatPlug)[] } = {
     SUPERS: [],
     CLASS_ABILITIES: [],
@@ -164,7 +164,7 @@ const fetchMods = async (subclass: ManifestSubclass) => {
     FRAGMENTS: [],
   };
 
-  const classType = subclass.class.toUpperCase() as keyof typeof PLUG_CATEGORY_HASH;
+  const classType = subclass.subclass.class.toUpperCase() as keyof typeof PLUG_CATEGORY_HASH;
   const damageType = subclassTypeMap[
     subclass.damageType as DamageType
   ] as keyof (typeof PLUG_CATEGORY_HASH)[typeof classType];
@@ -217,6 +217,7 @@ const fetchMods = async (subclass: ManifestSubclass) => {
     return modsData;
   }
 };
+
 const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass }) => {
   const [mods, setMods] = useState<{
     [key: string]: (ManifestPlug | ManifestAspect | ManifestStatPlug)[];
@@ -426,16 +427,14 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <Box marginBottom={4}>
-        <StyledTitle variant="h4">{subclass.name}</StyledTitle>
+        <StyledTitle variant="h4">{subclass.subclass.name}</StyledTitle>
       </Box>
-
       <Box display="flex" flexDirection="row" gap={10}>
         <Box flex={1} display="flex" justifyContent="center" alignItems="flex-start" marginTop={15}>
           {renderModCategory('SUPERS', loadout.super)}
         </Box>
-
         <Box flex={3}>
           <Box marginBottom={2}>
             <StyledTitle variant="h6">ABILITIES</StyledTitle>
@@ -446,7 +445,6 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
               {renderModCategory('GRENADES', loadout.grenade)}
             </Box>
           </Box>
-
           <Box marginBottom={2}>
             <StyledTitle variant="h6">ASPECTS</StyledTitle>
             <Box display="flex" flexWrap="wrap" gap={2}>
@@ -457,7 +455,6 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
               ))}
             </Box>
           </Box>
-
           <Box marginBottom={2}>
             <StyledTitle variant="h6">FRAGMENTS</StyledTitle>
             <Box display="flex" flexWrap="wrap" gap={2}>

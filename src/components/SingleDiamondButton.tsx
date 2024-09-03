@@ -198,7 +198,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
           <div
             className="prismatic-button diamond-shape"
             onClick={handleReset}
-            onContextMenu={(event) => handleRightClick(event, currentSubclass!)}
+            onContextMenu={(event) => {
+              if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
+                handleRightClick(event, currentSubclass!);
+            }}
           >
             <div className="prismatic-glow diamond-shape"></div>
             <RotatingShape />
@@ -213,7 +216,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
           <div
             className="single-diamond-button"
             onClick={() => handleSelect(lastNonPrismaticSubclass!)}
-            onContextMenu={(event) => handleRightClick(event, lastNonPrismaticSubclass!)}
+            onContextMenu={(event) => {
+              if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
+                handleRightClick(event, lastNonPrismaticSubclass!);
+            }}
           >
             <img
               src={lastNonPrismaticSubclass!.subclass.icon}
@@ -226,7 +232,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
         <>
           <div
             className="single-diamond-button"
-            onContextMenu={(event) => handleRightClick(event, currentSubclass!)}
+            onContextMenu={(event) => {
+              if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
+                handleRightClick(event, currentSubclass!);
+            }}
           >
             {currentSubclass && (
               <img
@@ -240,7 +249,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
             <div
               className="prismatic-button"
               onClick={() => handleSelect(subclasses[DAMAGE_TYPE.KINETIC]!)}
-              onContextMenu={(event) => handleRightClick(event, subclasses[DAMAGE_TYPE.KINETIC]!)}
+              onContextMenu={(event) => {
+                if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
+                  handleRightClick(event, subclasses[DAMAGE_TYPE.KINETIC]!);
+              }}
             >
               <div className="prismatic-glow"></div>
               <RotatingShape />

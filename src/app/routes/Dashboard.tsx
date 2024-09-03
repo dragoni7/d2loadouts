@@ -133,20 +133,6 @@ export const Dashboard: React.FC = () => {
 
       if (profileData.characters.length > 0) {
         setSelectedCharacter(profileData.characters[0]);
-        setSubclasses(profileData.characters[0].subclasses);
-
-        const keys = Object.keys(profileData.characters[0].subclasses);
-        for (let i = 0; i < keys.length; i++) {
-          if (
-            profileData.characters[0].subclasses[Number(keys[i])] !== undefined &&
-            profileData.characters[0].subclasses[Number(keys[i])]!.damageType !==
-              DAMAGE_TYPE.KINETIC
-          ) {
-            setSelectedSubclass(profileData.characters[0].subclasses[Number(keys[i])]!);
-            setLastNonPrismaticSubclass(profileData.characters[0].subclasses[Number(keys[i])]!);
-            break;
-          }
-        }
       }
     };
 
@@ -171,6 +157,11 @@ export const Dashboard: React.FC = () => {
         ) {
           setSelectedSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
           setLastNonPrismaticSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
+          dispatch(
+            updateSubclass({
+              subclass: selectedCharacter.subclasses[Number(keys[i])],
+            })
+          );
           break;
         }
       }
@@ -210,10 +201,16 @@ export const Dashboard: React.FC = () => {
   const handleSubclassSelect = (subclass: SubclassConfig) => {
     setSelectedSubclass(subclass);
 
+    dispatch(
+      updateSubclass({
+        subclass: subclass,
+      })
+    );
+
     if (selectedCharacter) {
       dispatch(
         updateSubclass({
-          subclass: selectedCharacter.subclasses[subclass.damageType]?.subclass,
+          subclass: selectedCharacter.subclasses[subclass.damageType],
         })
       );
     }
