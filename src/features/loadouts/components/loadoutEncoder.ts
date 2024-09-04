@@ -1,3 +1,5 @@
+import { CharacterClass } from "../../../types/d2l-types";
+
 /**
  * This file provides functions to encode and decode `LoadoutData` objects
  * into compact, URL-safe strings and back. It uses a custom base64-like 
@@ -21,12 +23,14 @@
  *              meleeAbility: 9, movementAbility: 10, grenade: 11 },
  *   selectedExoticItemHash: '12',
  *   selectedValues: { mobility: 13, resilience: 14 },
- *   statPriority: ['mobility', 'resilience']
+ *   statPriority: ['mobility', 'resilience'],
+ *   characterClass: 'Titan'
  * };
  * ```
- * `encodeLoadout(loadout)` might return: "1|2|3|4~5|6|7|8|9|A|B~C~mob:D,res:E~mobres".
+ * `encodeLoadout(loadout)` might return: "1|2|3|4~5|6|7|8|9|A|B~C~mob:D,res:E~mobres~Titan".
  * Decoding this string with `decodeLoadout` returns the original `LoadoutData` object.
  */
+
 // We'll use a custom base64 encoding to make the strings URL-safe
 const base64Chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_';
 
@@ -67,6 +71,7 @@ export interface LoadoutData {
   selectedExoticItemHash: string;
   selectedValues: Record<string, number>;
   statPriority: string[];
+  characterClass: CharacterClass | null;
 }
 
 export function encodeLoadout(loadout: LoadoutData): string {
@@ -75,7 +80,8 @@ export function encodeLoadout(loadout: LoadoutData): string {
     subclass,
     selectedExoticItemHash,
     selectedValues,
-    statPriority
+    statPriority,
+    characterClass
   } = loadout;
 
   // Encode mods
@@ -106,11 +112,14 @@ export function encodeLoadout(loadout: LoadoutData): string {
   const statOrder = ['mobility', 'resilience', 'recovery', 'discipline', 'intellect', 'strength'];
   const encodedPriority = statPriority.map(stat => statOrder.indexOf(stat).toString()).join('');
 
-  return [encodedMods, encodedSubclass, encodedExotic, encodedValues, encodedPriority].join('~');
+  // Encode character class
+  const encodedClass = characterClass || '';
+
+  return [encodedMods, encodedSubclass, encodedExotic, encodedValues, encodedPriority, encodedClass].join('~');
 }
 
 export function decodeLoadout(encoded: string): LoadoutData {
-  const [encodedMods, encodedSubclass, encodedExotic, encodedValues, encodedPriority] = encoded.split('~');
+  const [encodedMods, encodedSubclass, encodedExotic, encodedValues, encodedPriority, encodedClass] = encoded.split('~');
 
   const mods = {
     helmet: encodedMods.split('|')[0].split(',').map(decodeNumber),
@@ -142,11 +151,15 @@ export function decodeLoadout(encoded: string): LoadoutData {
   const statOrder = ['mobility', 'resilience', 'recovery', 'discipline', 'intellect', 'strength'];
   const statPriority = encodedPriority.split('').map(index => statOrder[parseInt(index)]);
 
+  // Decode character class
+  const characterClass = (encodedClass as CharacterClass) || null;
+
   return {
     mods,
     subclass,
     selectedExoticItemHash,
     selectedValues,
-    statPriority
+    statPriority,
+    characterClass
   };
 }

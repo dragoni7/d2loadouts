@@ -10,18 +10,18 @@ import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
-import { updateProfileData } from '../../store/ProfileReducer';
-import { DestinyArmor, Character, FilteredPermutation } from '../../types/d2l-types';
+import { updateProfileData, updateSelectedCharacter } from '../../store/ProfileReducer';
+import { Character, FilteredPermutation } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import HeaderComponent from '../../components/HeaderComponent';
 import ExoticSearch from '../../components/ExoticSearch';
-import greyBackground from '../../assets/grey.png';
 import { db } from '../../store/db';
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
 import { ManifestSubclass } from '../../types/manifest-types';
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
+import greyBackground from '../../assets/grey.png';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -106,11 +106,11 @@ export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.profileData.characters);
+  const selectedCharacter = useSelector((state: RootState) => state.profile.selectedCharacter);
   const { selectedValues, selectedExoticItemHash } = useSelector(
     (state: RootState) => state.dashboard
   );
 
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [subclasses, setSubclasses] = useState<ManifestSubclass[]>([]);
   const [selectedSubclass, setSelectedSubclass] = useState<ManifestSubclass | null>(null);
@@ -130,7 +130,7 @@ export const Dashboard: React.FC = () => {
       dispatch(updateProfileData(profileData));
 
       if (profileData.characters.length > 0) {
-        setSelectedCharacter(profileData.characters[0]);
+        dispatch(updateSelectedCharacter(profileData.characters[0]));
       }
     };
 
@@ -172,9 +172,7 @@ export const Dashboard: React.FC = () => {
   }, [permutations, selectedValues]);
 
   const handleCharacterClick = (character: Character) => {
-    if (selectedCharacter && selectedCharacter?.id !== character.id) {
-      setSelectedCharacter(character);
-    }
+    dispatch(updateSelectedCharacter(character));
   };
 
   const handleSubclassSelect = (subclass: ManifestSubclass) => {
