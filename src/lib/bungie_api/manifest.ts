@@ -59,6 +59,7 @@ export async function updateManifest() {
               secondarySpecial: urlPrefix + current.secondarySpecial,
               name: current.displayProperties.name,
               icon: urlPrefix + current.displayProperties.icon,
+              secondaryIcon: urlPrefix + current.secondaryIcon,
             });
           }
 
@@ -71,7 +72,9 @@ export async function updateManifest() {
               itemHash: Number(itemHash),
               name: current.displayProperties.name,
               icon: urlPrefix + current.displayProperties.icon,
+              secondaryIcon: urlPrefix + current.displayProperties.highResIcon,
               screenshot: urlPrefix + current.screenshot,
+              flavorText: current.flavorText,
               damageType: current.talentGrid.hudDamageType,
               isOwned: false,
               class: getManifestItemClass(current.classType),
@@ -105,9 +108,7 @@ export async function updateManifest() {
                   category: current.plug.plugCategoryHash,
                   isOwned: true,
                   collectibleHash: -1,
-                  perkName: '',
-                  perkDescription: '',
-                  perkIcon: '',
+                  perks: current.perks.map((p: any) => p.perkHash),
                   mobilityMod:
                     0 |
                     current.investmentStats.find(
@@ -148,9 +149,7 @@ export async function updateManifest() {
                   category: current.plug.plugCategoryHash,
                   isOwned: true,
                   collectibleHash: -1,
-                  perkName: '',
-                  perkDescription: '',
-                  perkIcon: '',
+                  perks: current.perks.map((p: any) => p.perkHash),
                   unique: current.tooltipNotifications.some(
                     (notification: any) =>
                       notification.displayString ===
@@ -164,11 +163,11 @@ export async function updateManifest() {
                   itemHash: Number(itemHash),
                   name: current.displayProperties.name,
                   icon: urlPrefix + current.displayProperties.icon,
+                  secondaryIcon: urlPrefix + current.secondaryIcon,
+                  flavorText: current.flavorText,
                   category: current.plug.plugCategoryHash,
                   isOwned: true,
-                  perkName: '',
-                  perkDescription: '',
-                  perkIcon: '',
+                  perks: current.perks.map((p: any) => p.perkHash),
                   energyCapacity: current.investmentStats[0].value,
                 });
               } else if (current.itemTypeDisplayName.includes('Fragment')) {
@@ -176,11 +175,10 @@ export async function updateManifest() {
                   itemHash: Number(itemHash),
                   name: current.displayProperties.name,
                   icon: urlPrefix + current.displayProperties.icon,
+                  secondaryIcon: urlPrefix + current.secondaryIcon,
                   category: current.plug.plugCategoryHash,
                   isOwned: true,
-                  perkName: '',
-                  perkDescription: '',
-                  perkIcon: '',
+                  perks: current.perks.map((p: any) => p.perkHash),
                   mobilityMod:
                     0 |
                     current.investmentStats.find(
@@ -216,12 +214,12 @@ export async function updateManifest() {
                 await db.manifestSubclassModDef.add({
                   itemHash: Number(itemHash),
                   name: current.displayProperties.name,
+                  description: current.displayProperties.description,
                   icon: urlPrefix + current.displayProperties.icon,
+                  secondaryIcon: urlPrefix + current.secondaryIcon,
                   category: current.plug.plugCategoryHash,
                   isOwned: true,
-                  perkName: '',
-                  perkDescription: '',
-                  perkIcon: '',
+                  perks: current.perks.map((p: any) => p.perkHash),
                 });
               }
             } else if (
@@ -230,6 +228,7 @@ export async function updateManifest() {
               await db.manifestIntrinsicModDef.add({
                 itemHash: Number(itemHash),
                 name: current.displayProperties.name,
+                description: current.displayProperties.description,
                 icon: urlPrefix + current.displayProperties.icon,
                 perks: current.perks.map((p: any) => p.perkHash),
               });

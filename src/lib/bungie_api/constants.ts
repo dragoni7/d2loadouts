@@ -9,27 +9,27 @@ export enum API_CREDENTIALS {
   CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET,
 }
 
-export const EMPTY_MANIFEST_PLUG: ManifestPlug = {
-  perkName: '',
-  perkDescription: '',
-  perkIcon: '',
+export const EMPTY_SUBCLASS_MOD: ManifestPlug = {
+  perks: [],
   category: 0,
   isOwned: false,
   itemHash: 0,
   name: '',
   icon: '',
+  secondaryIcon: '',
+  description: '',
 };
 
 export const EMPTY_ASPECT: ManifestAspect = {
   energyCapacity: 0,
-  perkName: '',
-  perkDescription: '',
-  perkIcon: '',
+  perks: [],
   category: 0,
   isOwned: false,
   itemHash: 0,
   name: '',
   icon: '',
+  secondaryIcon: '',
+  flavorText: '',
 };
 
 export const EMPTY_FRAGMENT: ManifestStatPlug = {
@@ -39,14 +39,13 @@ export const EMPTY_FRAGMENT: ManifestStatPlug = {
   disciplineMod: 0,
   intellectMod: 0,
   strengthMod: 0,
-  perkName: '',
-  perkDescription: '',
-  perkIcon: '',
+  perks: [],
   category: 0,
   isOwned: false,
   itemHash: 0,
   name: '',
   icon: '',
+  secondaryIcon: '',
 };
 
 export const COLLECTIBLE_OWNED: number[] = [0, 16, 64, 80];

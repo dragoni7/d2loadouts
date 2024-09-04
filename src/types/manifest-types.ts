@@ -4,14 +4,10 @@ export interface ManifestEntry {
   itemHash: number;
   name: string;
   icon: string;
-}
-
-export interface ManifestSandboxPerk extends ManifestEntry {
-  description: string;
-}
-
-export interface ManifestIntrinsicMod extends ManifestEntry {
-  perks: number[];
+  secondaryIcon?: string;
+  description?: string;
+  flavorText?: string;
+  perks?: number[];
 }
 
 export interface ManifestArmor extends ManifestEntry {
@@ -21,10 +17,10 @@ export interface ManifestArmor extends ManifestEntry {
 }
 
 export interface ManifestExoticArmor extends ManifestEntry {
+  collectibleHash: number;
   isOwned: boolean;
   class: CharacterClass;
   slot: string;
-  collectibleHash: number;
 }
 
 export interface ManifestSubclass extends ManifestEntry {
@@ -35,10 +31,6 @@ export interface ManifestSubclass extends ManifestEntry {
 }
 
 export interface ManifestPlug extends ManifestEntry {
-  perkName: string;
-  perkDescription: string;
-  perkIcon: string;
-  secondaryIcon?: string;
   category: number;
   isOwned: boolean;
 }
@@ -53,7 +45,7 @@ export interface ManifestStatPlug extends ManifestPlug {
 }
 
 export interface ManifestAspect extends ManifestPlug {
-  energyCapacity?: number;
+  energyCapacity: number;
 }
 
 export interface ManifestArmorMod extends ManifestPlug {

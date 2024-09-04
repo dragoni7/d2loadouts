@@ -10,7 +10,7 @@ import {
 import {
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,
-  EMPTY_MANIFEST_PLUG,
+  EMPTY_SUBCLASS_MOD,
   EMPTY_SOCKETS,
 } from '../lib/bungie_api/constants';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../types/manifest-types';
@@ -134,7 +134,7 @@ const initialState: InitialState = {
         icon: '',
       },
       damageType: 1,
-      super: EMPTY_MANIFEST_PLUG,
+      super: EMPTY_SUBCLASS_MOD,
       aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
       fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
       classAbility: null,
@@ -213,7 +213,7 @@ export const loadoutConfigSlice = createSlice({
 
       switch (category) {
         case 'SUPERS':
-          state.loadout.subclassConfig.super = mods[0] || EMPTY_MANIFEST_PLUG;
+          state.loadout.subclassConfig.super = mods[0] || EMPTY_SUBCLASS_MOD;
           break;
         case 'ASPECTS':
           mods.forEach((mod, index) => {

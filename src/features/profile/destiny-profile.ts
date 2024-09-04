@@ -5,7 +5,7 @@ import {
   DAMAGE_TYPE,
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,
-  EMPTY_MANIFEST_PLUG,
+  EMPTY_SUBCLASS_MOD,
   PRIMARY_STATS,
   SOCKET_HASH,
   STAT_HASH,
@@ -420,7 +420,7 @@ async function buildSubclassConfig(item: any, character: Character, itemComponen
     character.subclasses[subclass.damageType] = {
       subclass: s,
       damageType: subclass.damageType as DamageType,
-      super: EMPTY_MANIFEST_PLUG,
+      super: EMPTY_SUBCLASS_MOD,
       aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
       fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
       classAbility: null,
