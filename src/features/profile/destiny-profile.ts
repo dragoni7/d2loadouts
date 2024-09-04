@@ -1,6 +1,8 @@
 import {
+  ARMOR,
   BUCKET_HASH,
   COLLECTIBLE_OWNED,
+  DAMAGE_TYPE,
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,
   EMPTY_MANIFEST_PLUG,
@@ -11,8 +13,10 @@ import {
 import { getProfileDataRequest } from '../../lib/bungie_api/requests';
 import { db } from '../../store/db';
 import {
+  armor,
   Character,
   CharacterClass,
+  DamageType,
   DestinyArmor,
   Emblem,
   ProfileData,
@@ -37,7 +41,6 @@ export async function getProfileData(): Promise<ProfileData> {
 
     for (const key in characterData) {
       const characterClass = getCharacterClass(characterData[key].classHash);
-      const plugSets = response.data.Response.characterPlugSets.data[key].plugs;
 
       const character: Character = {
         id: characterData[key].characterId,
@@ -50,6 +53,7 @@ export async function getProfileData(): Promise<ProfileData> {
           classItem: [],
         },
         subclasses: {},
+        exoticClassCombos: [],
       };
 
       // iterate character's equipped items
@@ -74,144 +78,50 @@ export async function getProfileData(): Promise<ProfileData> {
           }
 
           case BUCKET_HASH.SUBCLASS: {
-            const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
-
-            await subclassQuery.modify({ isOwned: true });
-
-            const subclass = await subclassQuery.first();
-
-            if (subclass) {
-              const s: Subclass = {
-                instanceId: item.itemInstanceId,
-                itemHash: subclass.itemHash,
-                damageType: subclass.damageType,
-                name: subclass.name,
-                class: subclass.class,
-                icon: subclass.icon,
-                screenshot: subclass.icon,
-                isOwned: subclass.isOwned,
-              };
-
-              character.subclasses[subclass.damageType] = {
-                subclass: s,
-                damageType: 1,
-                super: EMPTY_MANIFEST_PLUG,
-                aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-                fragments: [
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                ],
-                classAbility: null,
-                meleeAbility: null,
-                movementAbility: null,
-                grenade: null,
-              };
-
-              // set equipped loadout subclass config
-              const subclassSockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
-
-              /*if (subclassSockets) {
-                character.subclasses[subclass.damageType].classAbility = {
-                  plugItemHash: subclassSockets[0].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 1,
-                };
-                character.equippedLoadout.subclassConfig.movementAbility = {
-                  plugItemHash: subclassSockets[1].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 2,
-                };
-                character.equippedLoadout.subclassConfig.super = {
-                  plugItemHash: subclassSockets[2].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 0,
-                };
-                character.equippedLoadout.subclassConfig.meleeAbility = {
-                  plugItemHash: subclassSockets[3].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 3,
-                };
-                character.equippedLoadout.subclassConfig.grenade = {
-                  plugItemHash: subclassSockets[4].plugHash,
-                  socketArrayType: 0,
-                  socketIndex: 4,
-                };
-
-                if (character.equippedLoadout.subclassConfig.damageType === DAMAGE_TYPE.KINETIC) {
-                  character.equippedLoadout.subclassConfig.aspects = [
-                    {
-                      plugItemHash: subclassSockets[7].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 7,
-                    },
-                    {
-                      plugItemHash: subclassSockets[8].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 8,
-                    },
-                  ];
-
-                  character.equippedLoadout.subclassConfig.fragments = subclassSockets
-                    .slice(9, subclassSockets.length)
-                    .map((p: any, index: number): Plug => {
-                      return {
-                        plugItemHash: p.plugHash,
-                        socketArrayType: 0,
-                        socketIndex: 9 + index,
-                      };
-                    });
-                } else {
-                  character.equippedLoadout.subclassConfig.aspects = [
-                    {
-                      plugItemHash: subclassSockets[5].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 5,
-                    },
-                    {
-                      plugItemHash: subclassSockets[6].plugHash,
-                      socketArrayType: 0,
-                      socketIndex: 6,
-                    },
-                  ];
-
-                  character.equippedLoadout.subclassConfig.fragments = subclassSockets
-                    .slice(7, subclassSockets.length)
-                    .map((p: any, index: number): Plug => {
-                      return {
-                        plugItemHash: p.plugHash,
-                        socketArrayType: 7 + 0,
-                        socketIndex: index,
-                      };
-                    });
-                }
-              }*/
-            }
+            buildSubclassConfig(item, character, itemComponents);
             continue;
           }
 
           case BUCKET_HASH.HELMET: {
-            const helmet = await buildDestinyArmor(itemComponents, item, character.class, 'helmet');
+            const helmet = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.HELMET
+            );
             character.armor.helmet.push(helmet);
             continue;
           }
 
           case BUCKET_HASH.GAUNTLETS: {
-            const arms = await buildDestinyArmor(itemComponents, item, character.class, 'arms');
+            const arms = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.GAUNTLETS
+            );
             character.armor.arms.push(arms);
             continue;
           }
 
           case BUCKET_HASH.CHEST_ARMOR: {
-            const chest = await buildDestinyArmor(itemComponents, item, character.class, 'chest');
+            const chest = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.CHEST_ARMOR
+            );
             character.armor.chest.push(chest);
             continue;
           }
 
           case BUCKET_HASH.LEG_ARMOR: {
-            const legs = await buildDestinyArmor(itemComponents, item, character.class, 'legs');
+            const legs = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.LEG_ARMOR
+            );
             character.armor.legs.push(legs);
             continue;
           }
@@ -221,9 +131,29 @@ export async function getProfileData(): Promise<ProfileData> {
               itemComponents,
               item,
               character.class,
-              'class'
+              ARMOR.CLASS_ARMOR
             );
             character.armor.classItem.push(classItem);
+            // add exotic class combo
+            if (classItem.exotic) {
+              const sockets = itemComponents.sockets.data[classItem.instanceHash]?.sockets;
+
+              const target = character.exoticClassCombos.findIndex(
+                (combo) =>
+                  combo.firstIntrinsicHash === sockets[10].plugHash &&
+                  combo.secondIntrinsicHash === sockets[11].plugHash
+              );
+
+              if (target !== -1) {
+                character.exoticClassCombos[target].instanceHashes.push(classItem.instanceHash);
+              } else {
+                character.exoticClassCombos.push({
+                  instanceHashes: [classItem.instanceHash],
+                  firstIntrinsicHash: sockets[10].plugHash,
+                  secondIntrinsicHash: sockets[11].plugHash,
+                });
+              }
+            }
             continue;
           }
         }
@@ -233,77 +163,66 @@ export async function getProfileData(): Promise<ProfileData> {
       for (const item of characterInventories[key].items) {
         switch (item.bucketHash) {
           case BUCKET_HASH.SUBCLASS: {
-            const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
-
-            await subclassQuery.modify({ isOwned: true });
-
-            const subclass = await subclassQuery.first();
-
-            if (subclass) {
-              const s: Subclass = {
-                instanceId: item.itemInstanceId,
-                itemHash: subclass.itemHash,
-                damageType: subclass.damageType,
-                name: subclass.name,
-                class: subclass.class,
-                icon: subclass.icon,
-                screenshot: subclass.icon,
-                isOwned: subclass.isOwned,
-              };
-
-              character.subclasses[subclass.damageType] = {
-                subclass: s,
-                damageType: 1,
-                super: EMPTY_MANIFEST_PLUG,
-                aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-                fragments: [
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                  EMPTY_FRAGMENT,
-                ],
-                classAbility: null,
-                meleeAbility: null,
-                movementAbility: null,
-                grenade: null,
-              };
-            }
+            buildSubclassConfig(item, character, itemComponents);
             continue;
           }
 
           case BUCKET_HASH.HELMET: {
             character.armor.helmet.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'helmet')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.HELMET)
             );
             continue;
           }
 
           case BUCKET_HASH.GAUNTLETS: {
             character.armor.arms.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'arms')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.GAUNTLETS)
             );
             continue;
           }
 
           case BUCKET_HASH.CHEST_ARMOR: {
             character.armor.chest.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'chest')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.CHEST_ARMOR)
             );
             continue;
           }
 
           case BUCKET_HASH.LEG_ARMOR: {
             character.armor.legs.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'legs')
+              await buildDestinyArmor(itemComponents, item, character.class, ARMOR.LEG_ARMOR)
             );
             continue;
           }
 
           case BUCKET_HASH.CLASS_ARMOR: {
-            character.armor.classItem.push(
-              await buildDestinyArmor(itemComponents, item, character.class, 'class')
+            const classItem = await buildDestinyArmor(
+              itemComponents,
+              item,
+              character.class,
+              ARMOR.CLASS_ARMOR
             );
+            character.armor.classItem.push(classItem);
+            // add exotic class combo
+            if (classItem.exotic) {
+              const sockets = itemComponents.sockets.data[classItem.instanceHash]?.sockets;
+
+              const target = character.exoticClassCombos.findIndex(
+                (combo) =>
+                  combo.firstIntrinsicHash === sockets[10].plugHash &&
+                  combo.secondIntrinsicHash === sockets[11].plugHash
+              );
+
+              if (target !== -1) {
+                character.exoticClassCombos[target].instanceHashes.push(classItem.instanceHash);
+              } else {
+                character.exoticClassCombos.push({
+                  instanceHashes: [classItem.instanceHash],
+                  firstIntrinsicHash: sockets[10].plugHash,
+                  secondIntrinsicHash: sockets[11].plugHash,
+                });
+              }
+            }
             continue;
           }
         }
@@ -366,24 +285,46 @@ export async function getProfileData(): Promise<ProfileData> {
 
         for (const character of target) {
           switch (destinyArmor.type) {
-            case 'helmet': {
+            case ARMOR.HELMET: {
               character.armor.helmet.push(destinyArmor);
               continue;
             }
-            case 'arms': {
+            case ARMOR.GAUNTLETS: {
               character.armor.arms.push(destinyArmor);
               continue;
             }
-            case 'chest': {
+            case ARMOR.CHEST_ARMOR: {
               character.armor.chest.push(destinyArmor);
               continue;
             }
-            case 'legs': {
+            case ARMOR.LEG_ARMOR: {
               character.armor.legs.push(destinyArmor);
               continue;
             }
-            case 'class': {
+            case ARMOR.CLASS_ARMOR: {
               character.armor.classItem.push(destinyArmor);
+              // add exotic class combo
+              if (destinyArmor.exotic) {
+                const sockets = itemComponents.sockets.data[destinyArmor.instanceHash]?.sockets;
+
+                const target = character.exoticClassCombos.findIndex(
+                  (combo) =>
+                    combo.firstIntrinsicHash === sockets[10].plugHash &&
+                    combo.secondIntrinsicHash === sockets[11].plugHash
+                );
+
+                if (target !== -1) {
+                  character.exoticClassCombos[target].instanceHashes.push(
+                    destinyArmor.instanceHash
+                  );
+                } else {
+                  character.exoticClassCombos.push({
+                    instanceHashes: [destinyArmor.instanceHash],
+                    firstIntrinsicHash: sockets[10].plugHash,
+                    secondIntrinsicHash: sockets[11].plugHash,
+                  });
+                }
+              }
               continue;
             }
           }
@@ -457,11 +398,135 @@ export async function getProfileData(): Promise<ProfileData> {
   return profile;
 }
 
+async function buildSubclassConfig(item: any, character: Character, itemComponents: any) {
+  const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
+
+  await subclassQuery.modify({ isOwned: true });
+
+  const subclass = await subclassQuery.first();
+
+  if (subclass) {
+    const s: Subclass = {
+      instanceId: item.itemInstanceId,
+      itemHash: subclass.itemHash,
+      damageType: subclass.damageType,
+      name: subclass.name,
+      class: subclass.class,
+      icon: subclass.icon,
+      screenshot: subclass.screenshot,
+      isOwned: subclass.isOwned,
+    };
+
+    character.subclasses[subclass.damageType] = {
+      subclass: s,
+      damageType: subclass.damageType as DamageType,
+      super: EMPTY_MANIFEST_PLUG,
+      aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
+      fragments: [EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT, EMPTY_FRAGMENT],
+      classAbility: null,
+      meleeAbility: null,
+      movementAbility: null,
+      grenade: null,
+    };
+
+    // set equipped loadout subclass config
+    const subclassSockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
+
+    if (subclassSockets && character.subclasses[subclass.damageType] !== undefined) {
+      const classAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[0].plugHash)
+        .first();
+
+      if (classAbility) character.subclasses[subclass.damageType]!.classAbility = classAbility;
+
+      const movementAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[1].plugHash)
+        .first();
+
+      if (movementAbility)
+        character.subclasses[subclass.damageType]!.movementAbility = movementAbility;
+
+      const superAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[2].plugHash)
+        .first();
+
+      if (superAbility) character.subclasses[subclass.damageType]!.super = superAbility;
+
+      const meleeAbility = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[3].plugHash)
+        .first();
+
+      if (meleeAbility) character.subclasses[subclass.damageType]!.meleeAbility = meleeAbility;
+
+      const grenade = await db.manifestSubclassModDef
+        .where('itemHash')
+        .equals(subclassSockets[4].plugHash)
+        .first();
+
+      if (grenade) character.subclasses[subclass.damageType]!.grenade = grenade;
+
+      if (subclass.damageType === DAMAGE_TYPE.KINETIC) {
+        const firstAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[7].plugHash)
+          .first();
+
+        if (firstAspect) character.subclasses[subclass.damageType]!.aspects[0] = firstAspect;
+
+        const secondAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[8].plugHash)
+          .first();
+
+        if (secondAspect) character.subclasses[subclass.damageType]!.aspects[1] = secondAspect;
+
+        const fragments = subclassSockets.slice(9, subclassSockets.length);
+        for (let i = 0; i < fragments.length; i++) {
+          const fragment = await db.manifestSubclassFragmentsDef
+            .where('itemHash')
+            .equals(fragments[i].plugHash)
+            .first();
+
+          if (fragment) character.subclasses[subclass.damageType]!.fragments[i] = fragment;
+        }
+      } else {
+        const firstAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[5].plugHash)
+          .first();
+
+        if (firstAspect) character.subclasses[subclass.damageType]!.aspects[0] = firstAspect;
+
+        const secondAspect = await db.manifestSubclassAspectsDef
+          .where('itemHash')
+          .equals(subclassSockets[6].plugHash)
+          .first();
+
+        if (secondAspect) character.subclasses[subclass.damageType]!.aspects[1] = secondAspect;
+
+        const fragments = subclassSockets.slice(7, subclassSockets.length);
+        for (let i = 0; i < fragments.length; i++) {
+          const fragment = await db.manifestSubclassFragmentsDef
+            .where('itemHash')
+            .equals(fragments[i].plugHash)
+            .first();
+
+          if (fragment) character.subclasses[subclass.damageType]!.fragments[i] = fragment;
+        }
+      }
+    }
+  }
+}
+
 async function buildDestinyArmor(
   itemComponents: any,
   item: any,
   characterClass: CharacterClass,
-  armorSlot: string
+  armorSlot: armor
 ): Promise<DestinyArmor> {
   const itemInstance = itemComponents.instances.data[item.itemInstanceId];
   const stats = itemComponents.stats.data[item.itemInstanceId].stats;

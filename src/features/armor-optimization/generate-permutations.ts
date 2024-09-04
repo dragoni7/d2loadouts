@@ -1,9 +1,14 @@
-import { DestinyArmor, ArmorBySlot } from '../../types/d2l-types';
+import { ARMOR } from '../../lib/bungie_api/constants';
+import { DestinyArmor, ArmorBySlot, armor, ExoticClassCombo } from '../../types/d2l-types';
 import MaxHeap from 'heap-js';
 
 export const generatePermutations = (
   armorClass: ArmorBySlot,
-  selectedExoticItemHash: string | null = null
+  selectedExoticItem: { itemHash: number | null; slot: armor | null } = {
+    itemHash: null,
+    slot: null,
+  },
+  selectedExoticClassCombo?: ExoticClassCombo
 ): DestinyArmor[][] => {
   const { helmet, arms, legs, chest, classItem } = armorClass;
 
@@ -13,67 +18,58 @@ export const generatePermutations = (
   let filteredChest = chest;
   let filteredClass = classItem;
 
-  if (selectedExoticItemHash) {
-    const allItems = [...helmet, ...arms, ...legs, ...chest, ...classItem];
-    const selectedExoticItems: DestinyArmor[] = allItems.filter(
-      (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
-    );
-
-    if (selectedExoticItems.length > 0) {
-      const selectedExoticItem = selectedExoticItems[0];
-
-      switch (selectedExoticItem.type) {
-        case 'helmet':
-          filteredHelmet = helmet.filter(
-            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
-          );
-          filteredArms = arms.filter((item) => !item.exotic);
-          filteredLegs = legs.filter((item) => !item.exotic);
-          filteredChest = chest.filter((item) => !item.exotic);
-          break;
-        case 'arms':
-          filteredHelmet = helmet.filter((item) => !item.exotic);
-          filteredArms = arms.filter(
-            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
-          );
-          filteredLegs = legs.filter((item) => !item.exotic);
-          filteredChest = chest.filter((item) => !item.exotic);
-          break;
-        case 'legs':
-          filteredHelmet = helmet.filter((item) => !item.exotic);
-          filteredArms = arms.filter((item) => !item.exotic);
-          filteredLegs = legs.filter(
-            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
-          );
-          filteredChest = chest.filter((item) => !item.exotic);
-          break;
-        case 'chest':
-          filteredHelmet = helmet.filter((item) => !item.exotic);
-          filteredArms = arms.filter((item) => !item.exotic);
-          filteredLegs = legs.filter((item) => !item.exotic);
-          filteredChest = chest.filter(
-            (item) => Number(item.itemHash) === Number(selectedExoticItemHash)
-          );
-          break;
-        case 'class':
-          console.log('exotic class item selected');
-          break;
-      }
-    } else {
-      console.error('Selected exotic items not found!');
-    }
+  switch (selectedExoticItem.slot) {
+    case ARMOR.HELMET:
+      filteredHelmet = helmet.filter(
+        (item) => Number(item.itemHash) === selectedExoticItem.itemHash
+      );
+      filteredArms = arms.filter((item) => !item.exotic);
+      filteredLegs = legs.filter((item) => !item.exotic);
+      filteredChest = chest.filter((item) => !item.exotic);
+      filteredClass = classItem.filter((item) => !item.exotic);
+      break;
+    case ARMOR.GAUNTLETS:
+      filteredHelmet = helmet.filter((item) => !item.exotic);
+      filteredArms = arms.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+      filteredLegs = legs.filter((item) => !item.exotic);
+      filteredChest = chest.filter((item) => !item.exotic);
+      filteredClass = classItem.filter((item) => !item.exotic);
+      break;
+    case ARMOR.LEG_ARMOR:
+      filteredHelmet = helmet.filter((item) => !item.exotic);
+      filteredArms = arms.filter((item) => !item.exotic);
+      filteredLegs = legs.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+      filteredChest = chest.filter((item) => !item.exotic);
+      filteredClass = classItem.filter((item) => !item.exotic);
+      break;
+    case ARMOR.CHEST_ARMOR:
+      filteredHelmet = helmet.filter((item) => !item.exotic);
+      filteredArms = arms.filter((item) => !item.exotic);
+      filteredLegs = legs.filter((item) => !item.exotic);
+      filteredChest = chest.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+      filteredClass = classItem.filter((item) => !item.exotic);
+      break;
+    case ARMOR.CLASS_ARMOR:
+      filteredHelmet = helmet.filter((item) => !item.exotic);
+      filteredArms = arms.filter((item) => !item.exotic);
+      filteredLegs = legs.filter((item) => !item.exotic);
+      filteredChest = chest.filter((item) => !item.exotic);
+      filteredClass = selectedExoticClassCombo
+        ? classItem.filter((item) =>
+            selectedExoticClassCombo.instanceHashes.includes(item.instanceHash)
+          )
+        : classItem.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+      break;
   }
 
   const armorTypes = [filteredHelmet, filteredArms, filteredLegs, filteredChest];
 
   // find best class armor to use for permutation
-  // if additionally class armor filtering is implemented, do so here
+  // if additional class armor filtering is implemented, do so here
   let masterworkedClassArmor = undefined;
   let artificeMasterworkedClassArmor = undefined;
 
-  for (const item of classItem) {
-    if (item.exotic) continue;
-
+  for (const item of filteredClass) {
     if (masterworkedClassArmor !== undefined && artificeMasterworkedClassArmor !== undefined) break;
 
     if (item.masterwork === true) {
@@ -86,7 +82,7 @@ export const generatePermutations = (
   const bestClassArmor: DestinyArmor =
     artificeMasterworkedClassArmor === undefined
       ? masterworkedClassArmor === undefined
-        ? classItem[0]
+        ? filteredClass[0]
         : masterworkedClassArmor
       : artificeMasterworkedClassArmor;
 
@@ -155,11 +151,7 @@ export const generatePermutations = (
     const currentSlot = armorTypes[currentTypeIndex];
 
     for (const item of currentSlot) {
-      if (
-        item.exotic &&
-        exoticCount > 0 &&
-        Number(item.itemHash) !== Number(selectedExoticItemHash)
-      ) {
+      if (item.exotic && exoticCount > 0 && Number(item.itemHash) !== selectedExoticItem.itemHash) {
         continue;
       }
 

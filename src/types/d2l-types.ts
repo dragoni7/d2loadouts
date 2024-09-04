@@ -1,3 +1,4 @@
+import { ARMOR } from '../lib/bungie_api/constants';
 import {
   ManifestArmorMod,
   ManifestArmorStatMod,
@@ -12,6 +13,20 @@ export type CharacterClass = 'warlock' | 'hunter' | 'titan' | '';
 export type DamageType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export type StatName = 'mobility' | 'resilience' | 'recovery' | 'discipline' | 'intellect' | 'strength';
+
+export type armor =
+  | ARMOR.HELMET
+  | ARMOR.GAUNTLETS
+  | ARMOR.CHEST_ARMOR
+  | ARMOR.LEG_ARMOR
+  | ARMOR.CLASS_ARMOR;
+
+export type armorMods =
+  | 'helmetMods'
+  | 'gauntletsMods'
+  | 'chestArmorMods'
+  | 'legArmorMods'
+  | 'classArmorMods';
 
 export type DestinyArmor = {
   intellect: number;
@@ -31,6 +46,12 @@ export type DestinyArmor = {
   location: number;
   icon: string;
   name: string;
+};
+
+export type ExoticClassCombo = {
+  instanceHashes: string[];
+  firstIntrinsicHash: number;
+  secondIntrinsicHash: number;
 };
 
 export interface ArmorBySlot {
@@ -65,9 +86,9 @@ export type Loadout = {
   chestArmor: DestinyArmor;
   legArmor: DestinyArmor;
   classArmor: DestinyArmor;
-  requiredStatMods: ManifestArmorStatMod[];
+  requiredStatMods: { mod: ManifestArmorStatMod; equipped: boolean }[];
   helmetMods: (ManifestArmorMod | ManifestArmorStatMod)[];
-  gauntletMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  gauntletsMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   chestArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   legArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   classArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
@@ -85,6 +106,7 @@ export type Character = {
   emblem?: Emblem;
   armor: ArmorBySlot;
   subclasses: { [key: number]: SubclassConfig | undefined };
+  exoticClassCombos: ExoticClassCombo[];
 };
 
 export type Emblem = {

@@ -8,13 +8,4 @@ export type EquipResult = {
   subject: any;
 };
 
-export type armor = 'helmet' | 'gauntlets' | 'chestArmor' | 'legArmor' | 'classArmor';
-
-export type armorMods =
-  | 'helmetMods'
-  | 'gauntletMods'
-  | 'chestArmorMods'
-  | 'legArmorMods'
-  | 'classArmorMods';
-
 export type setState = (value: React.SetStateAction<any | string[]>) => void;

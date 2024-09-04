@@ -6,6 +6,14 @@ export interface ManifestEntry {
   icon: string;
 }
 
+export interface ManifestSandboxPerk extends ManifestEntry {
+  description: string;
+}
+
+export interface ManifestIntrinsicMod extends ManifestEntry {
+  perks: number[];
+}
+
 export interface ManifestArmor extends ManifestEntry {
   isExotic: boolean;
   class: CharacterClass;
@@ -51,6 +59,7 @@ export interface ManifestAspect extends ManifestPlug {
 export interface ManifestArmorMod extends ManifestPlug {
   energyCost: number;
   collectibleHash: number;
+  unique: boolean;
 }
 
 export interface ManifestArmorStatMod extends ManifestStatPlug {

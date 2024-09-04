@@ -145,12 +145,12 @@ const selectLoadoutState = createSelector(
   (state: RootState) => state.dashboard,
   (loadout, dashboard) => ({
     helmetMods: loadout.helmetMods,
-    gauntletMods: loadout.gauntletMods,
+    gauntletMods: loadout.gauntletsMods,
     chestArmorMods: loadout.chestArmorMods,
     legArmorMods: loadout.legArmorMods,
     subclassConfig: loadout.subclassConfig,
     selectedValues: dashboard.selectedValues,
-    selectedExoticItemHash: dashboard.selectedExoticItemHash,
+    selectedExoticItemHash: String(dashboard.selectedExotic.itemHash),
   })
 );
 

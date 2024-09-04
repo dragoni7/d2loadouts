@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Character, DamageType, DestinyArmor, Loadout, Subclass } from '../types/d2l-types';
+import {
+  Character,
+  DamageType,
+  DestinyArmor,
+  Loadout,
+  Subclass,
+  SubclassConfig,
+} from '../types/d2l-types';
 import {
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,
@@ -110,7 +117,7 @@ const initialState: InitialState = {
     },
     requiredStatMods: [],
     helmetMods: EMPTY_SOCKETS.HELMET,
-    gauntletMods: EMPTY_SOCKETS.GAUNTLETS,
+    gauntletsMods: EMPTY_SOCKETS.GAUNTLETS,
     chestArmorMods: EMPTY_SOCKETS.CHEST_ARMOR,
     legArmorMods: EMPTY_SOCKETS.LEG_ARMOR,
     classArmorMods: EMPTY_SOCKETS.CLASS_ARMOR,
@@ -165,53 +172,40 @@ export const loadoutConfigSlice = createSlice({
           state.loadout.helmetMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'arms': {
-          state.loadout.gauntletMods[action.payload.slot] = action.payload.plug;
+        case 'gauntlets': {
+          state.loadout.gauntletsMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'chest': {
+        case 'chestArmor': {
           state.loadout.chestArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'legs': {
+        case 'legArmor': {
           state.loadout.legArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }
-        case 'class': {
+        case 'classArmor': {
           state.loadout.classArmorMods[action.payload.slot] = action.payload.plug;
           break;
         }
       }
     },
-    updateRequiredStatMods: (state, action: PayloadAction<ManifestArmorStatMod[]>) => {
+    updateRequiredStatMods: (
+      state,
+      action: PayloadAction<{ mod: ManifestArmorStatMod; equipped: boolean }[]>
+    ) => {
       state.loadout.requiredStatMods = action.payload;
     },
     resetLoadoutArmorMods: (state) => {
       state.loadout.helmetMods = initialState.loadout.helmetMods;
-      state.loadout.gauntletMods = initialState.loadout.gauntletMods;
+      state.loadout.gauntletsMods = initialState.loadout.gauntletsMods;
       state.loadout.chestArmorMods = initialState.loadout.chestArmorMods;
       state.loadout.legArmorMods = initialState.loadout.legArmorMods;
       state.loadout.classArmorMods = initialState.loadout.classArmorMods;
     },
-    updateSubclass: (state, action: PayloadAction<{ subclass: Subclass | undefined }>) => {
+    updateSubclass: (state, action: PayloadAction<{ subclass: SubclassConfig | undefined }>) => {
       if (action.payload.subclass !== undefined) {
-        state.loadout.subclassConfig = {
-          subclass: action.payload.subclass,
-          damageType: action.payload.subclass.damageType as DamageType,
-          super: EMPTY_MANIFEST_PLUG,
-          aspects: [EMPTY_ASPECT, EMPTY_ASPECT],
-          fragments: [
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-            EMPTY_FRAGMENT,
-          ],
-          classAbility: null,
-          meleeAbility: null,
-          movementAbility: null,
-          grenade: null,
-        };
+        state.loadout.subclassConfig = action.payload.subclass;
       }
     },
     updateSubclassMods: (state, action: PayloadAction<{ category: string; mods: any[] }>) => {

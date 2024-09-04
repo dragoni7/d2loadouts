@@ -24,6 +24,10 @@ const theme = createTheme({
       xl: 3000,
     },
   },
+  palette: {
+    mode: 'dark',
+    background: {},
+  },
 });
 
 function App() {
