@@ -110,7 +110,7 @@ export const Dashboard: React.FC = () => {
     (state: RootState) => state.dashboard
   );
 
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | undefined>(undefined);
+  const selectedCharacter = useSelector((state: RootState) => state.profile.selectedCharacter);
   const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [generatingPermutations, setGeneratingPermutations] = useState(false);
   const [subclasses, setSubclasses] = useState<
@@ -264,7 +264,7 @@ export const Dashboard: React.FC = () => {
           <Container>
             <NewComponentWrapper>
               <ExoticSelector
-                selectedCharacter={selectedCharacter}
+                selectedCharacter={selectedCharacter!}
                 selectedExoticItemHash={selectedExotic.itemHash}
               />
             </NewComponentWrapper>
