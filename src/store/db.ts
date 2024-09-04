@@ -10,17 +10,16 @@ import {
   ManifestArmorStatMod,
   ManifestAspect,
   ManifestStatPlug,
-  ManifestSandboxPerk,
-  ManifestIntrinsicMod,
+  ManifestEntry,
 } from '../types/manifest-types';
 
 const db = new Dexie('manifestDb') as Dexie & {
-  manifestSandboxPerkDef: EntityTable<ManifestSandboxPerk, 'itemHash'>;
+  manifestSandboxPerkDef: EntityTable<ManifestEntry, 'itemHash'>;
   manifestArmorDef: EntityTable<ManifestArmor, 'itemHash'>;
   manifestExoticArmorCollection: EntityTable<ManifestExoticArmor, 'itemHash'>;
   manifestEmblemDef: EntityTable<ManifestEmblem, 'itemHash'>;
   manifestArmorModDef: EntityTable<ManifestArmorMod, 'itemHash'>;
-  manifestIntrinsicModDef: EntityTable<ManifestIntrinsicMod, 'itemHash'>;
+  manifestIntrinsicModDef: EntityTable<ManifestEntry, 'itemHash'>;
   manifestArmorStatModDef: EntityTable<ManifestArmorStatMod, 'itemHash'>;
   manifestSubclassModDef: EntityTable<ManifestPlug, 'itemHash'>;
   manifestSubclassAspectsDef: EntityTable<ManifestAspect, 'itemHash'>;
@@ -29,22 +28,21 @@ const db = new Dexie('manifestDb') as Dexie & {
 };
 
 db.version(1).stores({
-  manifestSandboxPerkDef: 'itemHash, name, icon, description',
+  manifestSandboxPerkDef: 'itemHash, name, description, icon',
   manifestArmorDef: 'itemHash, name, icon, isExotic, class, slot',
   manifestExoticArmorCollection: 'itemHash, name, icon, class, slot, isOwned, collectibleHash',
-  manifestEmblemDef: 'itemHash, name, icon, secondaryOverlay, secondarySpecial',
-  manifestArmorModDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, unique, collectibleHash',
-  manifestIntrinsicModDef: 'itemHash, name, icon, perks',
+  manifestEmblemDef: 'itemHash, name, icon, secondaryIcon, secondaryOverlay, secondarySpecial',
+  manifestArmorModDef: 'itemHash, name, icon, category, perks, isOwned, unique, collectibleHash',
+  manifestIntrinsicModDef: 'itemHash, name, description, icon, perks',
   manifestArmorStatModDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, collectibleHash, mobilityMod, resilienceMod, recoveryMod, disciplineMod, intellectMod, strengthMod',
-  manifestSubclassModDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned',
+    'itemHash, name, icon, category, perks, isOwned, collectibleHash, mobilityMod, resilienceMod, recoveryMod, disciplineMod, intellectMod, strengthMod',
+  manifestSubclassModDef: 'itemHash, name, description, icon, secondaryIcon, category, isOwned',
   manifestSubclassAspectsDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, energyCapacity',
+    'itemHash, name, icon, secondaryIcon, flavorText, category, perks, isOwned, energyCapacity',
   manifestSubclassFragmentsDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, mobilityMod, resilienceMod, recoveryMod, disciplineMod, intellectMod, strengthMod',
-  manifestSubclass: 'itemHash, name, icon, highResIcon, screenshot, damageType, class, isOwned',
+    'itemHash, name, icon, secondaryIcon, category, perks, isOwned, mobilityMod, resilienceMod, recoveryMod, disciplineMod, intellectMod, strengthMod',
+  manifestSubclass:
+    'itemHash, name, icon, secondaryIcon, screenshot, flavorText, damageType, class, isOwned',
 });
 
 export { db };
