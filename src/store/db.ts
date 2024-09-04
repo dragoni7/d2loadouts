@@ -28,7 +28,7 @@ const db = new Dexie('manifestDb') as Dexie & {
   manifestSubclass: EntityTable<ManifestSubclass, 'itemHash'>;
 };
 
-db.version(2).stores({
+db.version(1).stores({
   manifestSandboxPerkDef: 'itemHash, name, icon, description',
   manifestArmorDef: 'itemHash, name, icon, isExotic, class, slot',
   manifestExoticArmorCollection: 'itemHash, name, icon, class, slot, isOwned, collectibleHash',
@@ -37,13 +37,13 @@ db.version(2).stores({
     'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, unique, collectibleHash',
   manifestIntrinsicModDef: 'itemHash, name, icon, perks',
   manifestArmorStatModDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, collectibleHash, mobilityMod, resilienceMod, recoveryMod, discipline, intellect, strength',
+    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, collectibleHash, mobilityMod, resilienceMod, recoveryMod, disciplineMod, intellectMod, strengthMod',
   manifestSubclassModDef:
     'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned',
   manifestSubclassAspectsDef:
     'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, energyCapacity',
   manifestSubclassFragmentsDef:
-    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, mobilityMod, resilienceMod, recoveryMod, discipline, intellect, strength',
+    'itemHash, name, icon, category, perkName, perkDescription, perkIcon, isOwned, mobilityMod, resilienceMod, recoveryMod, disciplineMod, intellectMod, strengthMod',
   manifestSubclass: 'itemHash, name, icon, highResIcon, screenshot, damageType, class, isOwned',
 });
 

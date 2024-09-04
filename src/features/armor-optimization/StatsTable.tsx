@@ -196,7 +196,6 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
 
               for (const [stat, costs] of Object.entries(perm.modsArray)) {
                 for (const cost of costs) {
-                  console.log(cost);
                   const mod = await db.manifestArmorStatModDef
                     .where(stat + 'Mod')
                     .equals(cost)
