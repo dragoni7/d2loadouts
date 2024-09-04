@@ -1,6 +1,8 @@
 import React from 'react';
 import { styled } from '@mui/system';
 import { Character } from '../types/d2l-types';
+import { useDispatch } from 'react-redux';
+import { updateSelectedCharacter } from '../store/ProfileReducer';
 
 interface HeaderComponentProps {
   emblemUrl: string;
@@ -74,22 +76,31 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({
   characters,
   selectedCharacter,
   onCharacterClick,
-}) => (
-  <Header emblemUrl={emblemUrl}>
-    <OverlayImage src={overlayUrl} alt="Overlay Image" />
-    <DisplayName>{displayName}</DisplayName>
-    <ButtonContainer>
-      {characters.map((character) => (
-        <CharacterText
-          key={character.id}
-          isSelected={selectedCharacter?.id === character.id}
-          onClick={() => onCharacterClick(character)}
-        >
-          {character.class}
-        </CharacterText>
-      ))}
-    </ButtonContainer>
-  </Header>
-);
+}) => {
+  const dispatch = useDispatch();
+
+  const handleCharacterClick = (character: Character) => {
+    onCharacterClick(character);
+    dispatch(updateSelectedCharacter(character));
+  };
+
+  return (
+    <Header emblemUrl={emblemUrl}>
+      <OverlayImage src={overlayUrl} alt="Overlay" />
+      <DisplayName>{displayName}</DisplayName>
+      <ButtonContainer>
+        {characters.map((character) => (
+          <CharacterText
+            key={character.id}
+            isSelected={selectedCharacter?.id === character.id}
+            onClick={() => handleCharacterClick(character)}
+          >
+            {character.class}
+          </CharacterText>
+        ))}
+      </ButtonContainer>
+    </Header>
+  );
+};
 
 export default HeaderComponent;

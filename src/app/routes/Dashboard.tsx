@@ -9,16 +9,17 @@ import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
-import { updateProfileData } from '../../store/ProfileReducer';
-import { Character, SubclassConfig } from '../../types/d2l-types';
+import { updateProfileData, updateSelectedCharacter } from '../../store/ProfileReducer';
+import { Character, FilteredPermutation, SubclassConfig } from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import HeaderComponent from '../../components/HeaderComponent';
-import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
-import greyBackground from '../../assets/grey.png';
+import { db } from '../../store/db';
 import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
+import greyBackground from '../../assets/grey.png';
+import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 
 const PageContainer = styled('div')({
@@ -132,7 +133,7 @@ export const Dashboard: React.FC = () => {
       dispatch(updateProfileData(profileData));
 
       if (profileData.characters.length > 0) {
-        setSelectedCharacter(profileData.characters[0]);
+        dispatch(updateSelectedCharacter(profileData.characters[0]));
       }
     };
 
@@ -193,9 +194,7 @@ export const Dashboard: React.FC = () => {
   }, [permutations, selectedValues]);
 
   const handleCharacterClick = (character: Character) => {
-    if (selectedCharacter && selectedCharacter?.id !== character.id) {
-      setSelectedCharacter(character);
-    }
+    dispatch(updateSelectedCharacter(character));
   };
 
   const handleSubclassSelect = (subclass: SubclassConfig) => {
