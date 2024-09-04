@@ -83,7 +83,7 @@ async function processArmor(
 ) {
   for (let j = i; j < ARMOR_ARRAY.length; j++) {
     const armor = loadout[ARMOR_ARRAY[j]];
-    const mods = (armor + 'Mods') as armorMods;
+    const mods = (armor.type + 'Mods') as armorMods;
 
     if (armor.exotic && armor.exotic === true) {
       await processArmor(
@@ -141,16 +141,16 @@ async function processSubclass(
   await equipper.equipSubclass(subclassConfig.subclass);
 
   setEquipStep('Equipping Super ...');
-  await equipper.equipSubclassAbility(subclassConfig.super, 0);
+  await equipper.equipSubclassAbility(subclassConfig.super, 2);
 
   if (subclassConfig.classAbility) {
     setEquipStep('Equipping Class Ability...');
-    await equipper.equipSubclassAbility(subclassConfig.classAbility, 1);
+    await equipper.equipSubclassAbility(subclassConfig.classAbility, 0);
   }
 
   if (subclassConfig.movementAbility) {
     setEquipStep('Equipping Movement Ability...');
-    await equipper.equipSubclassAbility(subclassConfig.movementAbility, 2);
+    await equipper.equipSubclassAbility(subclassConfig.movementAbility, 1);
   }
 
   if (subclassConfig.meleeAbility) {
