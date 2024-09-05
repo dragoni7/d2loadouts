@@ -21,6 +21,10 @@ import LoadoutCustomization from '../../components/LoadoutCustomization';
 import greyBackground from '../../assets/grey.png';
 import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
+import {
+  updateSelectedExoticClassCombo,
+  updateSelectedExoticItemHash,
+} from '../../store/DashboardReducer';
 
 const PageContainer = styled('div')({
   display: 'flex',
@@ -195,6 +199,8 @@ export const Dashboard: React.FC = () => {
 
   const handleCharacterClick = (character: Character) => {
     dispatch(updateSelectedCharacter(character));
+    dispatch(updateSelectedExoticItemHash({ itemHash: null, slot: null }));
+    dispatch(updateSelectedExoticClassCombo(null));
   };
 
   const handleSubclassSelect = (subclass: SubclassConfig) => {
