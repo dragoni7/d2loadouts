@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../store/index';
 import { createSelector } from '@reduxjs/toolkit';
-import { encodeLoadout, decodeLoadout, LoadoutData } from './loadoutEncoder';
+import { encodeLoadout, decodeLoadout } from '../util/loadout-encoder';
 import { findMatchingArmorSet, DecodedLoadoutInfo } from './findMatchingArmorSet';
 import {
   Button,
@@ -24,6 +24,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { styled } from '@mui/material/styles';
 import { CharacterClass, FilteredPermutation, StatName } from '../../../types/d2l-types';
+import { SharedLoadoutDto } from '../types';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -239,7 +240,7 @@ const ShareLoadout: React.FC = () => {
   };
 
   const generateShareLink = () => {
-    const dataToShare: LoadoutData = {
+    const dataToShare: SharedLoadoutDto = {
       mods: {
         helmet: loadoutState.helmetMods.map((mod) => mod.itemHash),
         gauntlets: loadoutState.gauntletMods.map((mod) => mod.itemHash),
@@ -261,7 +262,7 @@ const ShareLoadout: React.FC = () => {
       characterClass: selectedCharacterClass || null,
     };
     const encodedData = encodeLoadout(dataToShare);
-    const shareableLink = `${window.location.origin}/loadout?d=${encodedData}`;
+    const shareableLink = `${window.location.origin}/?d=${encodedData}`;
     setShareLink(shareableLink);
     console.log('Generated link:', shareableLink);
   };

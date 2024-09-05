@@ -139,6 +139,10 @@ export const Dashboard: React.FC = () => {
 
     updateProfile().catch(console.error);
 
+    // if navigated here using a share link
+    if (localStorage.getItem('lastShared') !== '') {
+    }
+
     setDataLoading(false);
   }, []);
 

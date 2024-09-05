@@ -15,8 +15,8 @@ import {
   ManifestStatPlug,
 } from '../../../types/manifest-types';
 import { EquipResult, setState } from '../types';
-import { ArmorEquipper } from './armorEquipper';
-import { SubclassEquipper } from './subclassEquipper';
+import { ArmorEquipper } from './armor-equipper';
+import { SubclassEquipper } from './subclass-equipper';
 
 export async function createInGameLoadout(
   characterId: string,

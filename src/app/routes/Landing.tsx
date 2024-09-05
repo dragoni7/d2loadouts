@@ -21,6 +21,9 @@ export const LandingRoute: React.FC = () => {
   });
 
   useEffect(() => {
+    // if navigated with share link, store the data before authenticating
+    if (window.location.href.includes('d='))
+      localStorage.setItem('lastShared', window.location.href.split('d=')[1]);
     setTimeout(async () => {
       if (isAuthenticated()) {
         console.log('Already authenticated');
