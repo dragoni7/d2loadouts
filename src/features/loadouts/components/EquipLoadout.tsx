@@ -53,7 +53,7 @@ const TransparentButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1, 2),
   fontFamily: 'Helvetica, Arial, sans-serif',
   '&:hover': {
-    background: 'rgba(255, 255, 255, 0.2)',
+    background: 'rgba(0, 0, 0, 0.7)',
     backdropFilter: 'blur(10px)',
     border: '1px solid rgba(255, 255, 255, 1)',
   },
