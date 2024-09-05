@@ -41,6 +41,8 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
         backgroundImage: `url(${screenshot})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        overflow: 'auto',
       }}
     >
       <Grid container columns={2}>
