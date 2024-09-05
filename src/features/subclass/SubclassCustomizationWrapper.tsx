@@ -1,14 +1,10 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { createSelector } from '@reduxjs/toolkit';
 import AbilitiesModification from './AbilitiesModification';
 import StatModifications from './StatModifications';
 import './SubclassCustomizationWrapper.css';
 import { Button, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { RootState } from '../../store';
 import { SubclassConfig } from '../../types/d2l-types';
-import { ManifestStatPlug } from '../../types/manifest-types';
 
 interface SubclassCustomizationWrapperProps {
   onBackClick: () => void;
@@ -28,30 +24,11 @@ const TransparentButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const selectFragmentStatModifications = createSelector(
-  (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments,
-  (fragments: ManifestStatPlug[]) =>
-    fragments.reduce((acc, fragment) => {
-      if (fragment.itemHash !== 0) {
-        const stats = ['mobility', 'resilience', 'recovery', 'discipline', 'intellect', 'strength'];
-        stats.forEach((stat) => {
-          const value = fragment[`${stat}Mod` as keyof ManifestStatPlug] as number;
-          if (value !== 0) {
-            acc.push({ stat, value, name: fragment.name });
-          }
-        });
-      }
-      return acc;
-    }, [] as { stat: string; value: number; name: string }[])
-);
-
 const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> = ({
   onBackClick,
   subclass,
   screenshot,
 }) => {
-  const fragmentStatMods = useSelector(selectFragmentStatModifications);
-
   return (
     <Box
       className="subclass-customization-wrapper"
@@ -65,7 +42,7 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
           Back
         </TransparentButton>
       </Box>
-      <StatModifications modifications={fragmentStatMods} />
+      <StatModifications />
       <Box sx={{ marginTop: '15vh' }}>
         <AbilitiesModification subclass={subclass} />
       </Box>

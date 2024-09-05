@@ -1,15 +1,9 @@
 import React from 'react';
 import { Box, styled } from '@mui/material';
-
-interface StatModification {
-  stat: string;
-  value: number;
-  name: string;
-}
-
-interface StatModificationsProps {
-  modifications: StatModification[];
-}
+import { useSelector } from 'react-redux';
+import { createSelector } from '@reduxjs/toolkit';
+import { RootState } from '../../store';
+import { ManifestStatPlug } from '../../types/manifest-types';
 
 const StatModificationsContainer = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -31,7 +25,30 @@ const StatModificationText = styled('div')(({ theme }) => ({
   textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
 }));
 
-const StatModifications: React.FC<StatModificationsProps> = ({ modifications }) => {
+const selectFragmentStatModifications = createSelector(
+  (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments,
+  (fragments: ManifestStatPlug[]) =>
+    fragments.reduce((acc, fragment) => {
+      if (fragment.itemHash !== 0) {
+        const stats = ['mobility', 'resilience', 'recovery', 'discipline', 'intellect', 'strength'];
+        stats.forEach((stat) => {
+          const value = fragment[`${stat}Mod` as keyof ManifestStatPlug] as number;
+          if (value !== 0) {
+            acc.push({ stat, value, name: fragment.name });
+          }
+        });
+      }
+      return acc;
+    }, [] as { stat: string; value: number; name: string }[])
+);
+
+const StatModifications: React.FC = () => {
+  const modifications = useSelector(selectFragmentStatModifications);
+
+  if (modifications.length === 0) {
+    return null;
+  }
+
   return (
     <StatModificationsContainer>
       {modifications.map(({ stat, value, name }, index) => {
