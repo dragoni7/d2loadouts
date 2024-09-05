@@ -46,6 +46,22 @@ const LoadoutDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const TransparentButton = styled(Button)(({ theme }) => ({
+  background: 'rgba(0, 0, 0, 0.4)',
+  backdropFilter: 'blur(10px)',
+  color: 'white',
+  padding: theme.spacing(1, 2),
+  fontFamily: 'Helvetica, Arial, sans-serif',
+  '&:hover': {
+    background: 'rgba(0, 0, 0, 0.7)',
+    backdropFilter: 'blur(10px)',
+    border: '1px solid rgba(255, 255, 255, 1)',
+  },
+  borderRadius: 0,
+  border: '1px solid rgba(255, 255, 255, 0.5)',
+  transition: 'all 0.3s ease',
+}));
+
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
@@ -106,9 +122,7 @@ const EquipLoadout: React.FC = () => {
 
   return (
     <>
-      <Button variant="contained" onClick={onButtonClick}>
-        Equip Loadout
-      </Button>
+      <TransparentButton onClick={onButtonClick}>Equip Loadout</TransparentButton>
       <LoadoutDialog
         open={alertOpen}
         onClose={() => setAlertOpen(false)}
