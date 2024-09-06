@@ -1,4 +1,9 @@
-import { DestinyArmor, FilteredPermutation } from '../../types/d2l-types';
+import {
+  DecodedLoadoutData,
+  DestinyArmor,
+  FilteredPermutation,
+  StatName,
+} from '../../types/d2l-types';
 import { precalculatedModCombinations } from './precalculatedModCombinations';
 
 interface SelectedThresholds {
@@ -89,3 +94,62 @@ export const filterPermutations = (
 
   return results;
 };
+
+export function filterFromSharedLoadout(
+  decodedLoadout: DecodedLoadoutData,
+  permutations: DestinyArmor[][]
+): FilteredPermutation | null {
+  console.log('Starting findMatchingArmorSet with decoded loadout:', decodedLoadout);
+
+  // Start with only the highest priority stat
+  let currentThresholds: { [K in StatName]: number } = {
+    mobility: 0,
+    resilience: 0,
+    recovery: 0,
+    discipline: 0,
+    intellect: 0,
+    strength: 0,
+  };
+
+  for (let priorityIndex = 0; priorityIndex < decodedLoadout.statPriority.length; priorityIndex++) {
+    const currentStat = decodedLoadout.statPriority[priorityIndex];
+    currentThresholds[currentStat] = 100;
+
+    console.log(`\nConsidering stat: ${currentStat}`);
+    console.log('Current thresholds:', currentThresholds);
+
+    let found = false;
+    while (!found) {
+      console.log('Filtering permutations...');
+      const filteredPermutations = filterPermutations(permutations, currentThresholds);
+      console.log(`Found ${filteredPermutations.length} matching permutations`);
+
+      if (filteredPermutations.length > 0) {
+        found = true;
+        if (priorityIndex === decodedLoadout.statPriority.length - 1) {
+          // If we're on the last stat and found a match, we're done
+          console.log('Match found! Returning best matching permutation.');
+          console.log('Matched Permutation Details:');
+          console.log('Mods Array:', filteredPermutations[0].modsArray);
+          return filteredPermutations[0];
+        }
+      } else {
+        // Reduce the threshold of the current stat
+        currentThresholds[currentStat] = Math.max(0, currentThresholds[currentStat] - 10);
+        console.log(`Reduced ${currentStat} threshold to ${currentThresholds[currentStat]}`);
+
+        if (currentThresholds[currentStat] === 0) {
+          // If we've reduced the current stat to 0 and still no match, move to the next stat
+          break;
+        }
+      }
+    }
+
+    if (!found) {
+      console.log(`Could not find a match considering up to ${currentStat}`);
+      break;
+    }
+  }
+
+  return null;
+}

@@ -20,7 +20,7 @@ import { STATUS } from '../constants';
 import React from 'react';
 import LoadingBorder from './LoadingBorder';
 import FadeIn from './FadeIn';
-import { equipLoadout } from '../util/loadoutUtils';
+import { equipLoadout } from '../util/loadout-utils';
 import { TransitionProps } from '@mui/material/transitions';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
