@@ -384,6 +384,8 @@ export const Dashboard: React.FC = () => {
 
   const handleCharacterClick = (character: Character) => {
     dispatch(updateSelectedCharacter(character));
+    dispatch(updateSelectedExoticItemHash({ itemHash: null, slot: null }));
+    dispatch(updateSelectedExoticClassCombo(null));
   };
 
   const handleSubclassSelect = (subclass: SubclassConfig) => {

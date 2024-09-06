@@ -94,9 +94,33 @@ const StyledPopper = styled(Popper)({
   },
 });
 
+const ComboOption = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+});
+
+const ComboItem = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '4px',
+});
+
+const ComboIcon = styled('img')({
+  width: '24px',
+  height: '24px',
+  marginRight: '8px',
+});
+
 interface ExoticSelectorProps {
   selectedCharacter: Character | undefined;
   selectedExoticItemHash: number | null;
+}
+
+interface IntrinsicMod {
+  itemHash: number;
+  name: string;
+  icon: string;
 }
 
 const ExoticSelector: React.FC<ExoticSelectorProps> = ({
@@ -109,6 +133,7 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
   const [selectedExotic, setSelectedExotic] = useState<ManifestExoticArmor | null>(null);
   const [selectedCombo, setSelectedCombo] = useState<ExoticClassCombo | null>(null);
   const [inputValue, setInputValue] = React.useState('');
+  const [intrinsicMods, setIntrinsicMods] = useState<{ [key: number]: IntrinsicMod }>({});
   const exoticClassCombos = selectedCharacter?.exoticClassCombos;
 
   const fetchExoticData = async () => {
@@ -121,8 +146,32 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
     }
   };
 
+  const fetchIntrinsicModData = async () => {
+    if (exoticClassCombos) {
+      const hashes = new Set(
+        exoticClassCombos.flatMap((combo) => [combo.firstIntrinsicHash, combo.secondIntrinsicHash])
+      );
+      const modsData = await db.manifestIntrinsicModDef
+        .where('itemHash')
+        .anyOf([...hashes])
+        .toArray();
+
+      const modsMap = modsData.reduce((acc, mod) => {
+        acc[mod.itemHash] = {
+          itemHash: mod.itemHash,
+          name: mod.name,
+          icon: mod.icon,
+        };
+        return acc;
+      }, {} as { [key: number]: IntrinsicMod });
+
+      setIntrinsicMods(modsMap);
+    }
+  };
+
   useEffect(() => {
     fetchExoticData();
+    fetchIntrinsicModData();
   }, [selectedCharacter]);
 
   useEffect(() => {
@@ -231,82 +280,84 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {selectedExotic && (
-            <>
-              <ExoticIcon
-                src={selectedExotic.icon}
-                alt="Exotic Icon"
-                isOwned={selectedExotic.isOwned}
-                isSelected={true}
-              />
-              {selectedExotic.slot === ARMOR.CLASS_ARMOR && (
-                <Autocomplete
-                  id="exotic_combos"
-                  disablePortal
-                  value={selectedCombo}
-                  onChange={(event, newValue) =>
-                    handleExoticClassComboSelect(newValue as ExoticClassCombo | null)
-                  }
-                  inputValue={comboInput}
-                  onInputChange={(event, newInputValue) => {
-                    setComboInput(newInputValue);
+          <ExoticIcon
+            src={selectedExotic.icon}
+            alt="Exotic Icon"
+            isOwned={selectedExotic.isOwned}
+            isSelected={true}
+          />
+          {selectedExotic.slot === ARMOR.CLASS_ARMOR && (
+            <Autocomplete
+              id="exotic_combos"
+              disablePortal
+              value={selectedCombo}
+              onChange={(event, newValue) =>
+                handleExoticClassComboSelect(newValue as ExoticClassCombo | null)
+              }
+              inputValue={comboInput}
+              onInputChange={(event, newInputValue) => {
+                setComboInput(newInputValue);
+              }}
+              options={exoticClassCombos ? exoticClassCombos : []}
+              getOptionLabel={(option: ExoticClassCombo) => {
+                const first = intrinsicMods[option.firstIntrinsicHash];
+                const second = intrinsicMods[option.secondIntrinsicHash];
+                return `${first?.name || ''} / ${second?.name || ''}`;
+              }}
+              sx={{ width: 300 }}
+              PopperComponent={StyledPopper}
+              renderOption={(props, option) => {
+                const { key, ...otherProps } = props;
+                const first = intrinsicMods[option.firstIntrinsicHash];
+                const second = intrinsicMods[option.secondIntrinsicHash];
+                return (
+                  <li {...otherProps} key={option.firstIntrinsicHash + option.secondIntrinsicHash}>
+                    <ComboOption>
+                      <ComboItem>
+                        {first && <ComboIcon src={first.icon} alt={first.name} />}
+                        <span>{first?.name || ''}</span>
+                      </ComboItem>
+                      <ComboItem>
+                        {second && <ComboIcon src={second.icon} alt={second.name} />}
+                        <span>{second?.name || ''}</span>
+                      </ComboItem>
+                    </ComboOption>
+                  </li>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Exotic Class Options"
+                  variant="outlined"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      color: 'white',
+                      borderRadius: '0',
+                      '& fieldset': {
+                        borderColor: 'white',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'white',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: 'white',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: 'white',
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: 'white',
+                    },
                   }}
-                  options={exoticClassCombos ? exoticClassCombos : []}
-                  getOptionLabel={(option: ExoticClassCombo) =>
-                    String(option.firstIntrinsicHash) + ' & ' + String(option.secondIntrinsicHash)
-                  }
-                  sx={{ width: 250 }}
-                  PopperComponent={StyledPopper}
-                  renderOption={(props, option) => {
-                    const { key, ...otherProps } = props;
-                    return (
-                      <li
-                        {...otherProps}
-                        key={option.firstIntrinsicHash + option.secondIntrinsicHash}
-                      >
-                        <div>
-                          {option.firstIntrinsicHash}
-                          {' & '}
-                          {option.secondIntrinsicHash}
-                        </div>
-                      </li>
-                    );
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Exotic Class Options"
-                      variant="outlined"
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          color: 'white',
-                          borderRadius: '0',
-                          '& fieldset': {
-                            borderColor: 'white',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: 'white',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: 'white',
-                          },
-                        },
-                        '& .MuiInputLabel-root': {
-                          color: 'white',
-                        },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: 'white',
-                        },
-                      }}
-                    />
-                  )}
                 />
               )}
-              <ArrowButton isSelected={true} onClick={handleClearSelection}>
-                <ArrowIcon isSelected={true} />
-              </ArrowButton>
-            </>
+            />
           )}
+          <ArrowButton isSelected={true} onClick={handleClearSelection}>
+            <ArrowIcon isSelected={true} />
+          </ArrowButton>
         </div>
       )}
     </NewComponentContainer>
