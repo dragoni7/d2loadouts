@@ -12,7 +12,13 @@ export type CharacterClass = 'warlock' | 'hunter' | 'titan' | '';
 
 export type DamageType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-export type StatName = 'mobility' | 'resilience' | 'recovery' | 'discipline' | 'intellect' | 'strength';
+export type StatName =
+  | 'mobility'
+  | 'resilience'
+  | 'recovery'
+  | 'discipline'
+  | 'intellect'
+  | 'strength';
 
 export type armor =
   | ARMOR.HELMET
@@ -95,6 +101,15 @@ export type Loadout = {
   characterId: number;
   subclassConfig: SubclassConfig;
 };
+
+export interface DecodedLoadoutData {
+  selectedExoticItemHash: string;
+  selectedValues: {
+    [K in StatName]: number;
+  };
+  statPriority: StatName[];
+  characterClass: CharacterClass;
+}
 
 export type ProfileData = {
   characters: Character[];

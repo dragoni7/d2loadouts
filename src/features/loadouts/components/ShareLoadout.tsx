@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../store/index';
 import { createSelector } from '@reduxjs/toolkit';
 import { encodeLoadout, decodeLoadout } from '../util/loadout-encoder';
-import { findMatchingArmorSet, DecodedLoadoutInfo } from './findMatchingArmorSet';
 import {
   Button,
   TextField,
@@ -23,7 +22,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { styled } from '@mui/material/styles';
-import { CharacterClass, FilteredPermutation, StatName } from '../../../types/d2l-types';
+import {
+  CharacterClass,
+  DecodedLoadoutData,
+  FilteredPermutation,
+  StatName,
+} from '../../../types/d2l-types';
 import { SharedLoadoutDto } from '../types';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -131,18 +135,12 @@ const ArrowContainer = styled(Box)(({ theme }) => ({
 }));
 
 const statIcons: Record<StatName, string> = {
-  mobility:
-    'https://www.bungie.net/common/destiny2_content/icons/e26e0e93a9daf4fdd21bf64eb9246340.png',
-  resilience:
-    'https://www.bungie.net/common/destiny2_content/icons/202ecc1c6febeb6b97dafc856e863140.png',
-  recovery:
-    'https://www.bungie.net/common/destiny2_content/icons/128eee4ee7fc127851ab32eac6ca91cf.png',
-  discipline:
-    'https://www.bungie.net/common/destiny2_content/icons/79be2d4adef6a19203f7385e5c63b45b.png',
-  intellect:
-    'https://www.bungie.net/common/destiny2_content/icons/d1c154469670e9a592c9d4cbdcae5764.png',
-  strength:
-    'https://www.bungie.net/common/destiny2_content/icons/ea5af04ccd6a3470a44fd7bb0f66e2f7.png',
+  mobility: 'src/assets/mob.png',
+  resilience: 'src/assets/res.png',
+  recovery: 'src/assets/rec.png',
+  discipline: 'src/assets/disc.png',
+  intellect: 'src/assets/int.png',
+  strength: 'src/assets/str.png',
 };
 
 const selectLoadoutState = createSelector(
@@ -214,15 +212,11 @@ const StatPriorityList: React.FC<{
   );
 });
 const ShareLoadout: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const state = useSelector((state: RootState) => state);
   const loadoutState = useSelector(selectLoadoutState);
   const selectedCharacterClass = useSelector(selectSelectedCharacterClass);
 
   const [open, setOpen] = useState(false);
   const [shareLink, setShareLink] = useState<string>('');
-  const [parsedLink, setParsedLink] = useState<string>('');
-  const [matchingArmorSet, setMatchingArmorSet] = useState<FilteredPermutation | null>(null);
   const [statPriority, setStatPriority] = useState<StatName[]>([
     'mobility',
     'resilience',
@@ -248,6 +242,7 @@ const ShareLoadout: React.FC = () => {
         legs: loadoutState.legArmorMods.map((mod) => mod.itemHash),
       },
       subclass: {
+        damageType: loadoutState.subclassConfig.subclass.damageType,
         super: loadoutState.subclassConfig.super?.itemHash ?? 0,
         aspects: loadoutState.subclassConfig.aspects.map((aspect) => aspect.itemHash),
         fragments: loadoutState.subclassConfig.fragments.map((fragment) => fragment.itemHash),
@@ -267,58 +262,10 @@ const ShareLoadout: React.FC = () => {
     console.log('Generated link:', shareableLink);
   };
 
-  const parseLink = () => {
-    try {
-      const url = new URL(shareLink);
-      const encodedData = url.searchParams.get('d');
-      if (!encodedData) {
-        throw new Error('Invalid loadout link');
-      }
-      const decodedData = decodeLoadout(encodedData);
-      setParsedLink(JSON.stringify(decodedData, null, 2));
-      console.log('Parsed loadout:', decodedData);
-    } catch (error) {
-      console.error('Error parsing loadout link:', error);
-      setParsedLink('Error parsing link');
-    }
-  };
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareLink).then(() => {
       alert('Link copied to clipboard!');
     });
-  };
-
-  const findMatchingSet = () => {
-    try {
-      const url = new URL(shareLink);
-      const encodedData = url.searchParams.get('d');
-      if (!encodedData) {
-        throw new Error('Invalid loadout link');
-      }
-      const decodedLoadout = decodeLoadout(encodedData);
-
-      const decodedLoadoutInfo: DecodedLoadoutInfo = {
-        selectedExoticItemHash: decodedLoadout.selectedExoticItemHash,
-        selectedValues: {
-          mobility: decodedLoadout.selectedValues.mobility || 0,
-          resilience: decodedLoadout.selectedValues.resilience || 0,
-          recovery: decodedLoadout.selectedValues.recovery || 0,
-          discipline: decodedLoadout.selectedValues.discipline || 0,
-          intellect: decodedLoadout.selectedValues.intellect || 0,
-          strength: decodedLoadout.selectedValues.strength || 0,
-        },
-        statPriority: decodedLoadout.statPriority as StatName[],
-        characterClass: decodedLoadout.characterClass as CharacterClass,
-      };
-
-      const matchingSet = findMatchingArmorSet(decodedLoadoutInfo, state);
-      setMatchingArmorSet(matchingSet);
-      console.log('Matching armor set:', matchingSet);
-    } catch (error) {
-      console.error('Error finding matching armor set:', error);
-      setMatchingArmorSet(null);
-    }
   };
 
   return (
@@ -366,41 +313,7 @@ const ShareLoadout: React.FC = () => {
                 <TransparentButton onClick={copyToClipboard} sx={{ mr: 1 }}>
                   Copy Link
                 </TransparentButton>
-                <TransparentButton onClick={parseLink} sx={{ mr: 1 }}>
-                  Parse Link
-                </TransparentButton>
-                <TransparentButton onClick={findMatchingSet}>Find Matching Set</TransparentButton>
               </Box>
-            </Box>
-          )}
-          {parsedLink && (
-            <Box sx={{ mb: 2 }}>
-              <h3>Parsed Loadout:</h3>
-              <StyledTextField
-                fullWidth
-                multiline
-                rows={10}
-                variant="outlined"
-                value={parsedLink}
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Box>
-          )}
-          {matchingArmorSet && (
-            <Box sx={{ mb: 2 }}>
-              <h3>Matching Armor Set:</h3>
-              <StyledTextField
-                fullWidth
-                multiline
-                rows={10}
-                variant="outlined"
-                value={JSON.stringify(matchingArmorSet, null, 2)}
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
             </Box>
           )}
         </DialogContent>

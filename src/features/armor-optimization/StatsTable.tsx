@@ -5,11 +5,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { FilteredPermutation, DestinyArmor } from '../../types/d2l-types';
 import { useDispatch } from 'react-redux';
-import {
-  resetLoadoutArmorMods,
-  updateLoadoutArmor,
-  updateRequiredStatMods,
-} from '../../store/LoadoutReducer';
 import ArmorIcon from '../../components/ArmorIcon';
 import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/constants';
 import { db } from '../../store/db';
@@ -17,7 +12,7 @@ import { ManifestArmorStatMod } from '../../types/manifest-types';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
-  onPermutationClick: () => void;
+  onPermutationClick: (filteredPermutation: FilteredPermutation) => void;
 }
 
 const StatsTableContainer = styled(Box)(({ theme }) => ({
@@ -190,22 +185,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
           <StyledCard
             key={index}
             onClick={async () => {
-              dispatch(resetLoadoutArmorMods());
-              dispatch(updateLoadoutArmor(perm.permutation));
-              let requiredMods: { mod: ManifestArmorStatMod; equipped: boolean }[] = [];
-
-              for (const [stat, costs] of Object.entries(perm.modsArray)) {
-                for (const cost of costs) {
-                  const mod = await db.manifestArmorStatModDef
-                    .where(stat + 'Mod')
-                    .equals(cost)
-                    .first();
-                  if (mod !== undefined) requiredMods.push({ mod: mod, equipped: false });
-                }
-              }
-
-              dispatch(updateRequiredStatMods(requiredMods));
-              onPermutationClick();
+              await onPermutationClick(perm);
             }}
           >
             <ArmorRow container spacing={1}>

@@ -19,6 +19,7 @@ export type SharedLoadoutDto = {
     legs: number[];
   };
   subclass: {
+    damageType: number;
     super: number;
     aspects: number[];
     fragments: number[];

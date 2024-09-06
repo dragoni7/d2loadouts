@@ -64,6 +64,7 @@ export function encodeLoadout(loadout: SharedLoadoutDto): string {
 
   // Encode subclass
   const encodedSubclass = [
+    encodeNumber(subclass.damageType),
     encodeNumber(subclass.super),
     subclass.aspects.map(encodeNumber).join(','),
     subclass.fragments.map(encodeNumber).join(','),
@@ -117,13 +118,14 @@ export function decodeLoadout(encoded: string): SharedLoadoutDto {
 
   const subclassParts = encodedSubclass.split('|');
   const subclass = {
-    super: decodeNumber(subclassParts[0]),
-    aspects: subclassParts[1].split(',').map(decodeNumber),
-    fragments: subclassParts[2].split(',').map(decodeNumber),
-    classAbility: decodeNumber(subclassParts[3]),
-    meleeAbility: decodeNumber(subclassParts[4]),
-    movementAbility: decodeNumber(subclassParts[5]),
-    grenade: decodeNumber(subclassParts[6]),
+    damageType: decodeNumber(subclassParts[0]),
+    super: decodeNumber(subclassParts[1]),
+    aspects: subclassParts[2].split(',').map(decodeNumber),
+    fragments: subclassParts[3].split(',').map(decodeNumber),
+    classAbility: decodeNumber(subclassParts[4]),
+    meleeAbility: decodeNumber(subclassParts[5]),
+    movementAbility: decodeNumber(subclassParts[6]),
+    grenade: decodeNumber(subclassParts[7]),
   };
 
   const selectedExoticItemHash = decodeNumber(encodedExotic).toString();
