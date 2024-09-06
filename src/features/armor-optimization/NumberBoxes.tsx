@@ -53,18 +53,12 @@ const StatIcon = styled('img')({
 });
 
 const statIcons: Record<string, string> = {
-  mobility:
-    'https://www.bungie.net/common/destiny2_content/icons/e26e0e93a9daf4fdd21bf64eb9246340.png',
-  resilience:
-    'https://www.bungie.net/common/destiny2_content/icons/202ecc1c6febeb6b97dafc856e863140.png',
-  recovery:
-    'https://www.bungie.net/common/destiny2_content/icons/128eee4ee7fc127851ab32eac6ca91cf.png',
-  discipline:
-    'https://www.bungie.net/common/destiny2_content/icons/79be2d4adef6a19203f7385e5c63b45b.png',
-  intellect:
-    'https://www.bungie.net/common/destiny2_content/icons/d1c154469670e9a592c9d4cbdcae5764.png',
-  strength:
-    'https://www.bungie.net/common/destiny2_content/icons/ea5af04ccd6a3470a44fd7bb0f66e2f7.png',
+  mobility: 'src/assets/mob.png',
+  resilience: 'src/assets/res.png',
+  recovery: 'src/assets/rec.png',
+  discipline: 'src/assets/disc.png',
+  intellect: 'src/assets/int.png',
+  strength: 'src/assets/str.png',
 };
 
 const NumberBoxes: React.FC = () => {
