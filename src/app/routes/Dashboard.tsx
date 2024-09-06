@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { styled } from '@mui/system';
+import { Box, Container, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
@@ -25,85 +25,65 @@ import {
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
+import StatModifications from '../../features/subclass/StatModifications';
+import { Grid, Paper } from '@mui/material';
 
-const PageContainer = styled('div')({
+const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
   overflow: 'hidden',
-});
+}));
 
-const Container = styled('div')({
+const ContentContainer = styled(Box)(({ theme }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  padding: '20px',
-  width: '100vw',
-  boxSizing: 'border-box',
+  width: '100%',
   overflowY: 'auto',
   backgroundImage: `url(${greyBackground})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  marginTop: '110px',
-  '::-webkit-scrollbar': {
-    width: '10px',
-  },
-  '::-webkit-scrollbar-track': {
-    background: 'none',
-  },
-  '::-webkit-scrollbar-thumb': {
-    background: 'grey',
-    borderRadius: '0',
-  },
-});
+  padding: theme.spacing(3),
+  paddingTop: '120px',
+}));
 
-const BottomPane = styled('div')({
-  display: 'flex',
-  width: '100%',
-  padding: '10px',
-  boxSizing: 'border-box',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap',
-});
-
-const LeftPane = styled('div')({
+const LeftRightColumn = styled(Grid)(({ theme }) => ({
+  width: '40%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  width: '100%',
-  maxWidth: '600px',
-  padding: '10px',
-  boxSizing: 'border-box',
-  marginTop: '-80px',
-  margin: '0 auto',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+  },
+}));
+
+const MiddleColumn = styled(Grid)(({ theme }) => ({
+  width: '20%',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+  },
+}));
+
+const HeaderWrapper = styled(Box)({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  zIndex: 1100,
 });
 
-const RightPane = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  width: '100%',
-  maxWidth: '800px',
-  padding: '5px',
-  boxSizing: 'border-box',
-  margin: '0 auto',
-});
-
-const DiamondButtonWrapper = styled('div')({
-  marginTop: '50px',
-  marginBottom: '80px',
-  marginRight: '40px',
-  alignSelf: 'flex-end',
-});
-
-const NumberBoxesWrapper = styled('div')({
-  marginBottom: '20px',
-});
-
-const NewComponentWrapper = styled('div')({
-  marginBottom: '20px',
-});
+const NumberBoxesContainer = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+  marginLeft: theme.spacing(25),
+  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  backdropFilter: 'blur(5px)',
+  borderRadius: 0,
+  padding: theme.spacing(2),
+  alignSelf: 'flex-start',
+  width: 'auto',
+  maxWidth: '100%',
+}));
 
 export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -257,39 +237,39 @@ export const Dashboard: React.FC = () => {
         />
       ) : (
         <>
-          {selectedCharacter?.emblem?.secondarySpecial && (
+          <HeaderWrapper>
             <HeaderComponent
-              emblemUrl={selectedCharacter.emblem.secondarySpecial}
-              overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
+              emblemUrl={selectedCharacter?.emblem?.secondarySpecial || ''}
+              overlayUrl={selectedCharacter?.emblem?.secondaryOverlay || ''}
               displayName={membership.bungieGlobalDisplayName}
               characters={characters}
-              selectedCharacter={selectedCharacter}
+              selectedCharacter={selectedCharacter!}
               onCharacterClick={handleCharacterClick}
             />
-          )}
-          <Container>
-            <NewComponentWrapper>
-              <ExoticSelector
-                selectedCharacter={selectedCharacter!}
-                selectedExoticItemHash={selectedExotic.itemHash}
-              />
-            </NewComponentWrapper>
-            <BottomPane>
-              <LeftPane>
-                <DiamondButtonWrapper>
-                  <SingleDiamondButton
-                    subclasses={subclasses}
-                    selectedSubclass={selectedSubclass}
-                    onSubclassSelect={handleSubclassSelect}
-                    onSubclassRightClick={handleSubclassRightClick}
-                  />
-                </DiamondButtonWrapper>
-                <NumberBoxesWrapper>
+          </HeaderWrapper>
+          <ContentContainer>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <ExoticSelector
+                  selectedCharacter={selectedCharacter!}
+                  selectedExoticItemHash={selectedExotic.itemHash}
+                />
+              </Grid>
+              <LeftRightColumn item xs={12} md={5}>
+                <SingleDiamondButton
+                  subclasses={subclasses}
+                  selectedSubclass={selectedSubclass}
+                  onSubclassSelect={handleSubclassSelect}
+                  onSubclassRightClick={handleSubclassRightClick}
+                />
+                <NumberBoxesContainer>
                   <NumberBoxes />
-                </NumberBoxesWrapper>
-              </LeftPane>
-              <RightPane>
-                <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
+                </NumberBoxesContainer>
+              </LeftRightColumn>
+              <MiddleColumn item xs={12} md={2}>
+                <StatModifications />
+              </MiddleColumn>
+              <LeftRightColumn item xs={12} md={5}>
                 {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (
@@ -300,9 +280,9 @@ export const Dashboard: React.FC = () => {
                 ) : (
                   <p>Loading....</p>
                 )}
-              </RightPane>
-            </BottomPane>
-          </Container>
+              </LeftRightColumn>
+            </Grid>
+          </ContentContainer>
         </>
       )}
     </PageContainer>

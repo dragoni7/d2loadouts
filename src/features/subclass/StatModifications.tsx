@@ -6,10 +6,6 @@ import { RootState } from '../../store';
 import { ManifestStatPlug } from '../../types/manifest-types';
 
 const StatModificationsContainer = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  bottom: 16,
-  left: 16,
-  zIndex: 1000,
   padding: theme.spacing(2),
   backgroundColor: 'rgba(0, 0, 0, 0.2)',
   backdropFilter: 'blur(5px)',

@@ -1,19 +1,10 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Paper, Grid, ButtonBase } from '@mui/material';
+import { Box, Grid, ButtonBase } from '@mui/material';
 import { STATS } from '../../lib/bungie_api/constants';
 import { updateSelectedValues } from '../../store/DashboardReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
-
-const ContainerWithBorder = styled(Paper)(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  padding: theme.spacing(2),
-  width: 'fit-content',
-  margin: theme.spacing(1, 0),
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  backdropFilter: 'blur(10px)',
-}));
 
 const StatRow = styled(Grid)(({ theme }) => ({
   marginBottom: theme.spacing(1),
@@ -22,6 +13,7 @@ const StatRow = styled(Grid)(({ theme }) => ({
 const NumberBoxContainer = styled(Box)({
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'flex-start',
 });
 
 interface NumberBoxProps {
@@ -31,16 +23,16 @@ interface NumberBoxProps {
 const NumberBox = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
 })<NumberBoxProps>(({ isSelected }) => ({
-  width: 40,
-  height: 40,
-  lineHeight: '40px',
+  width: 32, // Increased size
+  height: 32, // Increased size
+  lineHeight: '32px',
   textAlign: 'center',
-  border: `1px solid ${isSelected ? '#bdab6d' : 'white'}`,
-  marginRight: 2,
-  backgroundColor: 'transparent',
+  border: `1px solid ${isSelected ? '#bdab6d' : 'rgba(255, 255, 255, 0.5)'}`,
+  margin: '0 2px', // Increased margin between boxes
+  backgroundColor: isSelected ? 'rgba(189, 171, 109, 0.2)' : 'transparent',
   color: isSelected ? '#bdab6d' : 'white',
   cursor: 'pointer',
-  fontSize: 16,
+  fontSize: 14, // Increased font size
   '&:hover': {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
@@ -49,7 +41,7 @@ const NumberBox = styled(ButtonBase, {
 const StatIcon = styled('img')({
   width: 24,
   height: 24,
-  marginRight: 10,
+  marginRight: 12,
 });
 
 const statIcons: Record<string, string> = {
@@ -80,32 +72,28 @@ const NumberBoxes: React.FC = () => {
   };
 
   return (
-    <ContainerWithBorder elevation={3}>
-      <Box>
-        {STATS.map((stat) => (
-          <StatRow key={stat} container alignItems="center" spacing={1}>
-            <Grid item>
-              <StatIcon src={statIcons[stat.toLowerCase()]} alt={stat} />
-            </Grid>
-            <Grid item xs>
-              <NumberBoxContainer>
-                {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => (
-                  <NumberBox
-                    key={number}
-                    isSelected={
-                      selectedValues[stat] !== undefined && number <= selectedValues[stat]
-                    }
-                    onClick={() => handleSelect(stat, number)}
-                  >
-                    {number}
-                  </NumberBox>
-                ))}
-              </NumberBoxContainer>
-            </Grid>
-          </StatRow>
-        ))}
-      </Box>
-    </ContainerWithBorder>
+    <Box>
+      {STATS.map((stat) => (
+        <StatRow key={stat} container alignItems="center" spacing={1}>
+          <Grid item>
+            <StatIcon src={statIcons[stat.toLowerCase()]} alt={stat} />
+          </Grid>
+          <Grid item xs>
+            <NumberBoxContainer>
+              {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => (
+                <NumberBox
+                  key={number}
+                  isSelected={selectedValues[stat] !== undefined && number <= selectedValues[stat]}
+                  onClick={() => handleSelect(stat, number)}
+                >
+                  {number / 10}
+                </NumberBox>
+              ))}
+            </NumberBoxContainer>
+          </Grid>
+        </StatRow>
+      ))}
+    </Box>
   );
 };
 
