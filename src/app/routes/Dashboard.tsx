@@ -42,7 +42,10 @@ import greyBackground from '../../assets/grey.png';
 import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
-import { updateSelectedExoticItemHash } from '../../store/DashboardReducer';
+import {
+  updateSelectedExoticClassCombo,
+  updateSelectedExoticItemHash,
+} from '../../store/DashboardReducer';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 
