@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import BungieLogin from '../../features/auth/BungieLogin';
 import { regenerateTokens } from '../../lib/bungie_api/token-services';
-import { isAuthenticated } from '../../lib/bungie_api/a';
+import { isAuthenticated } from '../../lib/bungie_api/authorization';
 import { Container, Grid, Paper, Box, Typography } from '@mui/material';
 import pyramidBackground from '../../assets/pyramid.jpg';
 import FeatureSlider from '../../components/FeatureSlider';
