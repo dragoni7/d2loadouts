@@ -10,6 +10,21 @@ export interface ManifestEntry {
   perks?: number[];
 }
 
+interface ManifestLoadoutIdentifier {
+  hash: number;
+  index: number;
+}
+
+export interface ManifestLoadoutName extends ManifestLoadoutIdentifier {
+  name: string;
+}
+
+export interface ManifestLoadoutColor extends ManifestLoadoutIdentifier {
+  imagePath: string;
+}
+
+export interface ManifestLoadoutIcon extends ManifestLoadoutColor {}
+
 export interface ManifestArmor extends ManifestEntry {
   isExotic: boolean;
   class: CharacterClass;
