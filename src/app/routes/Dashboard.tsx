@@ -2,7 +2,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Container, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
-import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
+import {
+  FragmentStatModifications,
+  generatePermutations,
+} from '../../features/armor-optimization/generate-permutations';
 import {
   filterFromSharedLoadout,
   filterPermutations,
@@ -118,6 +121,9 @@ export const Dashboard: React.FC = () => {
   );
 
   const selectedCharacter = useSelector((state: RootState) => state.profile.selectedCharacter);
+  const fragments = useSelector(
+    (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
+  );
   const [generatingPermutations, setGeneratingPermutations] = useState(false);
   const [subclasses, setSubclasses] = useState<
     { [key: number]: SubclassConfig | undefined } | undefined
@@ -130,6 +136,30 @@ export const Dashboard: React.FC = () => {
   const [showLoadoutCustomization, setShowLoadoutCustomization] = useState(false);
   const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
   const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
+
+  const fragmentStatModifications = useMemo(() => {
+    return fragments.reduce(
+      (acc, fragment) => {
+        if (fragment.itemHash !== 0) {
+          acc.mobility += fragment.mobilityMod || 0;
+          acc.resilience += fragment.resilienceMod || 0;
+          acc.recovery += fragment.recoveryMod || 0;
+          acc.discipline += fragment.disciplineMod || 0;
+          acc.intellect += fragment.intellectMod || 0;
+          acc.strength += fragment.strengthMod || 0;
+        }
+        return acc;
+      },
+      {
+        mobility: 0,
+        resilience: 0,
+        recovery: 0,
+        discipline: 0,
+        intellect: 0,
+        strength: 0,
+      } as FragmentStatModifications
+    );
+  }, [fragments]);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -301,13 +331,19 @@ export const Dashboard: React.FC = () => {
         return generatePermutations(
           selectedCharacter.armor,
           selectedExotic,
-          selectedExoticClassCombo
+          selectedExoticClassCombo,
+          fragmentStatModifications
         );
 
-      return generatePermutations(selectedCharacter.armor, selectedExotic);
+      return generatePermutations(
+        selectedCharacter.armor,
+        selectedExotic,
+        undefined,
+        fragmentStatModifications
+      );
     }
     return null;
-  }, [selectedCharacter, selectedExotic, selectedExoticClassCombo]);
+  }, [selectedCharacter, selectedExotic, selectedExoticClassCombo, fragmentStatModifications]);
 
   const filteredPermutations = useMemo(() => {
     let filtered: FilteredPermutation[] | null = null;
@@ -327,17 +363,21 @@ export const Dashboard: React.FC = () => {
         characterClass: sharedLoadoutDto.characterClass as CharacterClass,
       };
       setGeneratingPermutations(true);
-      const sharedLoadoutPermutation = filterFromSharedLoadout(decodedLoadoutData, permutations);
+      const sharedLoadoutPermutation = filterFromSharedLoadout(
+        decodedLoadoutData,
+        permutations,
+        fragmentStatModifications
+      );
       filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
     } else if (permutations && selectedValues) {
       setGeneratingPermutations(true);
-      filtered = filterPermutations(permutations, selectedValues);
+      filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
     }
 
     setGeneratingPermutations(false);
 
     return filtered;
-  }, [permutations, selectedValues, sharedLoadoutDto]);
+  }, [permutations, selectedValues, sharedLoadoutDto, fragmentStatModifications]);
 
   useEffect(() => {
     if (filteredPermutations && sharedLoadoutDto) {

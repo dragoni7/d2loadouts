@@ -10,9 +10,19 @@ interface SelectedThresholds {
   [key: string]: number;
 }
 
+export interface FragmentStatModifications {
+  mobility: number;
+  resilience: number;
+  recovery: number;
+  discipline: number;
+  intellect: number;
+  strength: number;
+}
+
 export const filterPermutations = (
   permutations: DestinyArmor[][],
-  thresholds: SelectedThresholds
+  thresholds: SelectedThresholds,
+  fragmentStatModifications: FragmentStatModifications
 ): FilteredPermutation[] => {
   let acceptedCount = 0;
   let discardedCount = 0;
@@ -31,11 +41,12 @@ export const filterPermutations = (
 
     const artificeCount = permutation.filter((armor) => armor.artifice).length;
 
-    // Calculate initial stat totals and deficits
+    // Calculate initial stat totals and deficits, including fragment modifications
     const statDeficits: Record<string, number> = {};
     for (const stat in thresholds) {
-      const key = stat.toLowerCase() as keyof DestinyArmor;
-      const totalStat = permutation.reduce((sum, item) => sum + ((item[key] as number) || 0), 0);
+      const key = stat.toLowerCase() as keyof DestinyArmor & keyof FragmentStatModifications;
+      const totalStat = permutation.reduce((sum, item) => sum + ((item[key] as number) || 0), 0) + 
+                        fragmentStatModifications[key];
       statDeficits[stat] = Math.max(0, thresholds[stat] - totalStat);
     }
 
@@ -97,9 +108,9 @@ export const filterPermutations = (
 
 export function filterFromSharedLoadout(
   decodedLoadout: DecodedLoadoutData,
-  permutations: DestinyArmor[][]
+  permutations: DestinyArmor[][],
+  fragmentStatModifications: FragmentStatModifications
 ): FilteredPermutation | null {
-  console.log('Starting findMatchingArmorSet with decoded loadout:', decodedLoadout);
 
   // Start with only the highest priority stat
   let currentThresholds: { [K in StatName]: number } = {
@@ -121,16 +132,13 @@ export function filterFromSharedLoadout(
     let found = false;
     while (!found) {
       console.log('Filtering permutations...');
-      const filteredPermutations = filterPermutations(permutations, currentThresholds);
+      const filteredPermutations = filterPermutations(permutations, currentThresholds, fragmentStatModifications);
       console.log(`Found ${filteredPermutations.length} matching permutations`);
 
       if (filteredPermutations.length > 0) {
         found = true;
         if (priorityIndex === decodedLoadout.statPriority.length - 1) {
           // If we're on the last stat and found a match, we're done
-          console.log('Match found! Returning best matching permutation.');
-          console.log('Matched Permutation Details:');
-          console.log('Mods Array:', filteredPermutations[0].modsArray);
           return filteredPermutations[0];
         }
       } else {
@@ -146,7 +154,6 @@ export function filterFromSharedLoadout(
     }
 
     if (!found) {
-      console.log(`Could not find a match considering up to ${currentStat}`);
       break;
     }
   }
