@@ -13,50 +13,11 @@ import {
   ManifestStatPlug,
 } from '../../types/manifest-types';
 import { DamageType, SubclassConfig } from '../../types/d2l-types';
+import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../lib/bungie_api/constants';
 
 interface AbilitiesModificationProps {
   subclass: SubclassConfig;
 }
-
-export const EMPTY_MANIFEST_PLUG: ManifestPlug = {
-  perkName: '',
-  perkDescription: '',
-  perkIcon: '',
-  category: 0,
-  isOwned: false,
-  itemHash: 0,
-  name: '',
-  icon: '',
-};
-
-export const EMPTY_ASPECT: ManifestAspect = {
-  energyCapacity: 0,
-  perkName: '',
-  perkDescription: '',
-  perkIcon: '',
-  category: 0,
-  isOwned: false,
-  itemHash: 0,
-  name: '',
-  icon: '',
-};
-
-export const EMPTY_FRAGMENT: ManifestStatPlug = {
-  mobilityMod: 0,
-  resilienceMod: 0,
-  recoveryMod: 0,
-  disciplineMod: 0,
-  intellectMod: 0,
-  strengthMod: 0,
-  perkName: '',
-  perkDescription: '',
-  perkIcon: '',
-  category: 0,
-  isOwned: false,
-  itemHash: 0,
-  name: '',
-  icon: '',
-};
 
 const subclassTypeMap: { [key in DamageType]: string } = {
   1: 'PRISMATIC',

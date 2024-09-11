@@ -1,9 +1,14 @@
 import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
+import { db } from '../../../store/db';
 import {
+  armor,
   armorMods,
+  Character,
   DestinyArmor,
+  FilteredPermutation,
   Loadout,
+  StatName,
   Subclass,
   SubclassConfig,
 } from '../../../types/d2l-types';
@@ -14,9 +19,12 @@ import {
   ManifestPlug,
   ManifestStatPlug,
 } from '../../../types/manifest-types';
+import { filterPermutations } from '../../armor-optimization/filter-permutations';
+import { generatePermutations } from '../../armor-optimization/generate-permutations';
+import { DecodedLoadoutInfo } from '../components/findMatchingArmorSet';
 import { EquipResult, setState } from '../types';
-import { ArmorEquipper } from './armorEquipper';
-import { SubclassEquipper } from './subclassEquipper';
+import { ArmorEquipper } from './armor-equipper';
+import { SubclassEquipper } from './subclass-equipper';
 
 export async function createInGameLoadout(
   characterId: string,

@@ -3,30 +3,53 @@ import { Box, Container, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
-import { filterPermutations } from '../../features/armor-optimization/filter-permutations';
+import {
+  filterFromSharedLoadout,
+  filterPermutations,
+} from '../../features/armor-optimization/filter-permutations';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
 import { updateProfileData, updateSelectedCharacter } from '../../store/ProfileReducer';
-import { Character, FilteredPermutation, SubclassConfig } from '../../types/d2l-types';
+import {
+  armor,
+  Character,
+  CharacterClass,
+  DecodedLoadoutData,
+  DestinyArmor,
+  FilteredPermutation,
+  StatName,
+  SubclassConfig,
+} from '../../types/d2l-types';
 import StatsTable from '../../features/armor-optimization/StatsTable';
 import HeaderComponent from '../../components/HeaderComponent';
 import { db } from '../../store/db';
-import { resetLoadout, updateLoadoutCharacter, updateSubclass } from '../../store/LoadoutReducer';
+import {
+  resetLoadout,
+  resetLoadoutArmorMods,
+  updateLoadoutArmor,
+  updateLoadoutCharacter,
+  updateRequiredStatMods,
+  updateSubclass,
+  updateSubclassMods,
+} from '../../store/LoadoutReducer';
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
 import greyBackground from '../../assets/grey.png';
 import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
+import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
 import StatModifications from '../../features/subclass/StatModifications';
 import { Grid, Paper } from '@mui/material';
+import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
+import { SharedLoadoutDto } from '../../features/loadouts/types';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -95,7 +118,6 @@ export const Dashboard: React.FC = () => {
   );
 
   const selectedCharacter = useSelector((state: RootState) => state.profile.selectedCharacter);
-  const [dataLoading, setDataLoading] = useState<boolean>(true);
   const [generatingPermutations, setGeneratingPermutations] = useState(false);
   const [subclasses, setSubclasses] = useState<
     { [key: number]: SubclassConfig | undefined } | undefined
@@ -105,8 +127,9 @@ export const Dashboard: React.FC = () => {
   const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<SubclassConfig | null>(
     null
   );
-  const [showArmorCustomization, setShowArmorCustomization] = useState(false);
+  const [showLoadoutCustomization, setShowLoadoutCustomization] = useState(false);
   const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
+  const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -116,42 +139,161 @@ export const Dashboard: React.FC = () => {
       const profileData = await getProfileData();
       dispatch(updateProfileData(profileData));
 
-      if (profileData.characters.length > 0) {
-        dispatch(updateSelectedCharacter(profileData.characters[0]));
+      let targetCharacter = profileData.characters[0];
+      let sharedExotic: ManifestExoticArmor | undefined = undefined;
+
+      // if navigated here using a share link
+      const sharedLoadoutLink = localStorage.getItem('lastShared');
+
+      if (sharedLoadoutLink !== '' && sharedLoadoutLink !== null) {
+        const sharedLoadoutDto = decodeLoadout(sharedLoadoutLink!);
+        setSharedLoadoutDto(sharedLoadoutDto);
+
+        const sharedClassCharacter = profileData.characters.find(
+          (character: Character) => character.class === sharedLoadoutDto.characterClass
+        );
+
+        if (sharedClassCharacter) {
+          targetCharacter = sharedClassCharacter;
+        } else {
+          console.log('Missing required character class');
+        }
+
+        sharedExotic = await db.manifestExoticArmorCollection
+          .where('itemHash')
+          .equals(Number(sharedLoadoutDto.selectedExoticItemHash))
+          .first();
+
+        if (sharedExotic === undefined || sharedExotic?.isOwned === false) {
+          console.log('You do not own required exotic');
+        }
       }
+
+      dispatch(updateSelectedCharacter(targetCharacter));
+
+      if (sharedExotic)
+        dispatch(
+          updateSelectedExoticItemHash({
+            itemHash: sharedExotic.itemHash,
+            slot: sharedExotic.slot as armor,
+          })
+        );
     };
 
     updateProfile().catch(console.error);
-
-    setDataLoading(false);
   }, []);
 
   useEffect(() => {
+    const initSharedSubclass = async (
+      sharedLoadoutDto: SharedLoadoutDto,
+      selectedCharacter: Character
+    ) => {
+      const damageType = sharedLoadoutDto.subclass.damageType;
+      if (Object.keys(selectedCharacter.subclasses).includes(String(damageType))) {
+        setSelectedSubclass(selectedCharacter.subclasses[damageType]!);
+        setLastNonPrismaticSubclass(selectedCharacter.subclasses[damageType]!);
+
+        // set subclass abilities
+        dispatch(
+          updateSubclass({
+            subclass: selectedCharacter.subclasses[damageType],
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'SUPERS',
+            mods: await db.manifestSubclassModDef
+              .where('itemHash')
+              .equals(sharedLoadoutDto.subclass.super)
+              .toArray(),
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'MOVMENT_ABILITIES',
+            mods: await db.manifestSubclassModDef
+              .where('itemHash')
+              .equals(sharedLoadoutDto.subclass.movementAbility)
+              .toArray(),
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'MELEE_ABILITY',
+            mods: await db.manifestSubclassModDef
+              .where('itemHash')
+              .equals(sharedLoadoutDto.subclass.meleeAbility)
+              .toArray(),
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'CLASS_ABILITIES',
+            mods: await db.manifestSubclassModDef
+              .where('itemHash')
+              .equals(sharedLoadoutDto.subclass.classAbility)
+              .toArray(),
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'GRENADES',
+            mods: await db.manifestSubclassModDef
+              .where('itemHash')
+              .equals(sharedLoadoutDto.subclass.grenade)
+              .toArray(),
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'ASPECTS',
+            mods: await db.manifestSubclassAspectsDef
+              .where('itemHash')
+              .anyOf(sharedLoadoutDto.subclass.aspects)
+              .toArray(),
+          })
+        );
+        dispatch(
+          updateSubclassMods({
+            category: 'FRAGMENTS',
+            mods: await db.manifestSubclassFragmentsDef
+              .where('itemHash')
+              .anyOf(sharedLoadoutDto.subclass.fragments)
+              .toArray(),
+          })
+        );
+      }
+    };
+
     if (selectedCharacter) {
       dispatch(resetLoadout());
       dispatch(updateLoadoutCharacter(selectedCharacter));
 
       setSubclasses(selectedCharacter.subclasses);
 
-      const keys = Object.keys(selectedCharacter.subclasses);
+      if (sharedLoadoutDto) {
+        initSharedSubclass(sharedLoadoutDto, selectedCharacter).catch(console.error);
+      } else {
+        const keys = Object.keys(selectedCharacter.subclasses);
 
-      for (let i = 0; i < keys.length; i++) {
-        if (
-          selectedCharacter.subclasses[Number(keys[i])] !== undefined &&
-          selectedCharacter.subclasses[Number(keys[i])]!.damageType !== DAMAGE_TYPE.KINETIC
-        ) {
-          setSelectedSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
-          setLastNonPrismaticSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
-          dispatch(
-            updateSubclass({
-              subclass: selectedCharacter.subclasses[Number(keys[i])],
-            })
-          );
-          break;
+        for (let i = 0; i < keys.length; i++) {
+          if (
+            selectedCharacter.subclasses[Number(keys[i])] !== undefined &&
+            selectedCharacter.subclasses[Number(keys[i])]!.damageType !== DAMAGE_TYPE.KINETIC
+          ) {
+            setSelectedSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
+            setLastNonPrismaticSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
+            dispatch(
+              updateSubclass({
+                subclass: selectedCharacter.subclasses[Number(keys[i])],
+              })
+            );
+            break;
+          }
         }
       }
     }
-  }, [selectedCharacter, dispatch]);
+  }, [selectedCharacter, sharedLoadoutDto, dispatch]);
 
   const permutations = useMemo(() => {
     if (selectedCharacter && selectedExotic !== undefined) {
@@ -168,14 +310,60 @@ export const Dashboard: React.FC = () => {
   }, [selectedCharacter, selectedExotic, selectedExoticClassCombo]);
 
   const filteredPermutations = useMemo(() => {
-    if (permutations && selectedValues) {
+    let filtered: FilteredPermutation[] | null = null;
+
+    if (permutations && sharedLoadoutDto) {
+      const decodedLoadoutData: DecodedLoadoutData = {
+        selectedExoticItemHash: sharedLoadoutDto.selectedExoticItemHash,
+        selectedValues: {
+          mobility: sharedLoadoutDto.selectedValues.mobility || 0,
+          resilience: sharedLoadoutDto.selectedValues.resilience || 0,
+          recovery: sharedLoadoutDto.selectedValues.recovery || 0,
+          discipline: sharedLoadoutDto.selectedValues.discipline || 0,
+          intellect: sharedLoadoutDto.selectedValues.intellect || 0,
+          strength: sharedLoadoutDto.selectedValues.strength || 0,
+        },
+        statPriority: sharedLoadoutDto.statPriority as StatName[],
+        characterClass: sharedLoadoutDto.characterClass as CharacterClass,
+      };
       setGeneratingPermutations(true);
-      const filtered = filterPermutations(permutations, selectedValues);
-      setGeneratingPermutations(false);
-      return filtered;
+      const sharedLoadoutPermutation = filterFromSharedLoadout(decodedLoadoutData, permutations);
+      filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
+    } else if (permutations && selectedValues) {
+      setGeneratingPermutations(true);
+      filtered = filterPermutations(permutations, selectedValues);
     }
-    return null;
-  }, [permutations, selectedValues]);
+
+    setGeneratingPermutations(false);
+
+    return filtered;
+  }, [permutations, selectedValues, sharedLoadoutDto]);
+
+  useEffect(() => {
+    if (filteredPermutations && sharedLoadoutDto) {
+      openLoadoutCustomization(filteredPermutations[0]).catch(console.error);
+      localStorage.removeItem('lastShared');
+    }
+  }, [filteredPermutations, sharedLoadoutDto]);
+
+  async function openLoadoutCustomization(filteredPermutation: FilteredPermutation) {
+    dispatch(resetLoadoutArmorMods());
+    dispatch(updateLoadoutArmor(filteredPermutation.permutation));
+    let requiredMods: { mod: ManifestArmorStatMod; equipped: boolean }[] = [];
+
+    for (const [stat, costs] of Object.entries(filteredPermutation.modsArray)) {
+      for (const cost of costs) {
+        const mod = await db.manifestArmorStatModDef
+          .where(stat + 'Mod')
+          .equals(cost)
+          .first();
+        if (mod !== undefined) requiredMods.push({ mod: mod, equipped: false });
+      }
+    }
+
+    dispatch(updateRequiredStatMods(requiredMods));
+    setShowLoadoutCustomization(true);
+  }
 
   const handleCharacterClick = (character: Character) => {
     dispatch(updateSelectedCharacter(character));
@@ -209,33 +397,24 @@ export const Dashboard: React.FC = () => {
     setShowAbilitiesModification(true);
   };
 
-  const handleBackClick = () => {
-    setShowAbilitiesModification(false);
-  };
-
-  const handlePermutationClick = () => {
-    setShowArmorCustomization(true);
-  };
-
-  const handleLoadoutCustomizationBackClick = () => {
-    setShowArmorCustomization(false);
-  };
-
-  return !dataLoading ? (
+  return (
     <PageContainer>
       {showAbilitiesModification && customizingSubclass ? (
         <SubclassCustomizationWrapper
-          onBackClick={handleBackClick}
+          onBackClick={() => setShowAbilitiesModification(false)}
           subclass={customizingSubclass}
           screenshot={customizingSubclass.subclass.screenshot}
         />
-      ) : showArmorCustomization ? (
+      ) : showLoadoutCustomization ? (
         <LoadoutCustomization
-          onBackClick={handleLoadoutCustomizationBackClick}
+          onBackClick={() => {
+            setShowLoadoutCustomization(false);
+            setSharedLoadoutDto(undefined);
+          }}
           screenshot={selectedSubclass?.subclass.screenshot || ''}
           subclass={selectedSubclass!}
         />
-      ) : (
+      ) : sharedLoadoutDto === undefined && selectedCharacter && selectedSubclass ? (
         <>
           <HeaderWrapper>
             <HeaderComponent
@@ -275,7 +454,7 @@ export const Dashboard: React.FC = () => {
                 ) : filteredPermutations ? (
                   <StatsTable
                     permutations={filteredPermutations}
-                    onPermutationClick={handlePermutationClick}
+                    onPermutationClick={openLoadoutCustomization}
                   />
                 ) : (
                   <p>Loading....</p>
@@ -284,10 +463,10 @@ export const Dashboard: React.FC = () => {
             </Grid>
           </ContentContainer>
         </>
+      ) : (
+        <div>loading...</div>
       )}
     </PageContainer>
-  ) : (
-    <div>loading...</div>
   );
 };
 
