@@ -13,13 +13,30 @@ const StatModificationsContainer = styled(Box)(({ theme }) => ({
   border: '1px solid rgba(255, 255, 255, 0.3)',
 }));
 
-const StatModificationText = styled('div')(({ theme }) => ({
+const StatModificationItem = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
   fontFamily: 'Helvetica, Arial, sans-serif',
   fontWeight: 'bold',
   fontSize: '1rem',
   marginBottom: theme.spacing(0.5),
   textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
 }));
+
+const StatIcon = styled('img')({
+  width: '20px',
+  height: '20px',
+  marginRight: '8px',
+});
+
+const statIcons: Record<string, string> = {
+  mobility: 'src/assets/mob.png',
+  resilience: 'src/assets/res.png',
+  recovery: 'src/assets/rec.png',
+  discipline: 'src/assets/disc.png',
+  intellect: 'src/assets/int.png',
+  strength: 'src/assets/str.png',
+};
 
 const selectFragmentStatModifications = createSelector(
   (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments,
@@ -51,10 +68,17 @@ const StatModifications: React.FC = () => {
         const color = value > 0 ? 'green' : 'red';
         const sign = value > 0 ? '+' : '';
         return (
-          <StatModificationText key={`${stat}-${index}`} style={{ color }}>
-            {stat.charAt(0).toUpperCase() + stat.slice(1)}: {sign}
-            {value} ({name})
-          </StatModificationText>
+          <StatModificationItem key={`${stat}-${index}`}>
+            <StatIcon
+              src={statIcons[stat]}
+              alt={stat}
+              style={{ filter: `drop-shadow(0 0 2px ${color})` }}
+            />
+            <span style={{ color }}>
+              {sign}
+              {value} {name}
+            </span>
+          </StatModificationItem>
         );
       })}
     </StatModificationsContainer>

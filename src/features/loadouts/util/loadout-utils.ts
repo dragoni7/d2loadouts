@@ -19,9 +19,6 @@ import {
   ManifestPlug,
   ManifestStatPlug,
 } from '../../../types/manifest-types';
-import { filterPermutations } from '../../armor-optimization/filter-permutations';
-import { generatePermutations } from '../../armor-optimization/generate-permutations';
-import { DecodedLoadoutInfo } from '../components/findMatchingArmorSet';
 import { EquipResult, setState } from '../types';
 import { ArmorEquipper } from './armor-equipper';
 import { SubclassEquipper } from './subclass-equipper';
