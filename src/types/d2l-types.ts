@@ -86,6 +86,14 @@ export type Plug = {
   socketIndex?: number;
 };
 
+export type DestinyLoadout = {
+  colorHash: number;
+  iconHash: number;
+  nameHash: number;
+  armor: number[];
+  subclass: number;
+};
+
 export type Loadout = {
   helmet: DestinyArmor;
   gauntlets: DestinyArmor;
