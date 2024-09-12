@@ -466,7 +466,7 @@ export const Dashboard: React.FC = () => {
                     selectedExoticItemHash={selectedExotic.itemHash}
                   />
                 </Grid>
-                <Grid item md={8}>
+                <Grid item md={8} lg={6}>
                   <StatModifications />
                 </Grid>
               </Grid>

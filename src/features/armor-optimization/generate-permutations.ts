@@ -5,7 +5,7 @@ import {
   DestinyArmor,
   ArmorBySlot,
   ExoticClassCombo,
-  FragmentStatModifications
+  FragmentStatModifications,
 } from '../../types/d2l-types';
 
 export function generatePermutations(
@@ -21,7 +21,7 @@ export function generatePermutations(
     recovery: 0,
     discipline: 0,
     intellect: 0,
-    strength: 0
+    strength: 0,
   }
 ): DestinyArmor[][] {
   const { helmet, arms, legs, chest, classItem } = armorClass;
@@ -61,7 +61,9 @@ export function generatePermutations(
         filteredHelmet = helmet.filter((item) => !item.exotic);
         filteredArms = arms.filter((item) => !item.exotic);
         filteredLegs = legs.filter((item) => !item.exotic);
-        filteredChest = chest.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+        filteredChest = chest.filter(
+          (item) => Number(item.itemHash) === selectedExoticItem.itemHash
+        );
         filteredClass = classItem.filter((item) => !item.exotic);
         break;
       case ARMOR.CLASS_ARMOR:
@@ -87,6 +89,13 @@ export function generatePermutations(
   for (const item of filteredClass) {
     if (masterworkedClassArmor !== undefined && artificeMasterworkedClassArmor !== undefined) break;
 
+    if (
+      (selectedExoticItem.slot === null ||
+        selectedExoticItem.slot !== (ARMOR.CLASS_ARMOR as armor)) &&
+      item.exotic === true
+    )
+      continue;
+
     if (item.masterwork === true) {
       masterworkedClassArmor = item;
 
@@ -110,7 +119,7 @@ export function generatePermutations(
           recovery: sum.recovery + item.recovery,
           discipline: sum.discipline + item.discipline,
           intellect: sum.intellect + item.intellect,
-          strength: sum.strength + item.strength
+          strength: sum.strength + item.strength,
         }),
         { ...fragmentStatModifications } // Start with fragment modifications
       );
@@ -133,26 +142,42 @@ export function generatePermutations(
           recovery: sum.recovery + item.recovery,
           discipline: sum.discipline + item.discipline,
           intellect: sum.intellect + item.intellect,
-          strength: sum.strength + item.strength
+          strength: sum.strength + item.strength,
         }),
         { ...fragmentStatModifications } // Start with fragment modifications
       );
 
       const totalSum = Object.values(totalStats).reduce((a, b) => a + b, 0);
 
-      const baseStats = modifiedPermutation.reduce((sum, item) => 
-        sum + item.mobility + item.resilience + item.recovery + 
-        item.discipline + item.intellect + item.strength, 0);
+      const baseStats = modifiedPermutation.reduce(
+        (sum, item) =>
+          sum +
+          item.mobility +
+          item.resilience +
+          item.recovery +
+          item.discipline +
+          item.intellect +
+          item.strength,
+        0
+      );
 
       if (heap.size() < 30000) {
         heap.push(modifiedPermutation);
       } else {
         const smallest = heap.peek();
         if (smallest) {
-          const smallestTotalSum = smallest.reduce((sum, item) => 
-            sum + item.mobility + item.resilience + item.recovery + 
-            item.discipline + item.intellect + item.strength, 0) + 
-            Object.values(fragmentStatModifications).reduce((a, b) => a + b, 0);
+          const smallestTotalSum =
+            smallest.reduce(
+              (sum, item) =>
+                sum +
+                item.mobility +
+                item.resilience +
+                item.recovery +
+                item.discipline +
+                item.intellect +
+                item.strength,
+              0
+            ) + Object.values(fragmentStatModifications).reduce((a, b) => a + b, 0);
           if (totalSum > smallestTotalSum) {
             heap.pop();
             heap.push(modifiedPermutation);
