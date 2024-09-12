@@ -257,7 +257,7 @@ const ShareLoadout: React.FC = () => {
       characterClass: selectedCharacterClass || null,
     };
     const encodedData = encodeLoadout(dataToShare);
-    const shareableLink = `${window.location.origin}/?d=${encodedData}`;
+    const shareableLink = `https://d2loadouts.com/?d=${encodedData}`;
     setShareLink(shareableLink);
     console.log('Generated link:', shareableLink);
   };
