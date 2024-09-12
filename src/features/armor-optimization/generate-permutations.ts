@@ -5,16 +5,8 @@ import {
   DestinyArmor,
   ArmorBySlot,
   ExoticClassCombo,
+  FragmentStatModifications
 } from '../../types/d2l-types';
-
-export interface FragmentStatModifications {
-  mobility: number;
-  resilience: number;
-  recovery: number;
-  discipline: number;
-  intellect: number;
-  strength: number;
-}
 
 export function generatePermutations(
   armorClass: ArmorBySlot,
@@ -32,8 +24,6 @@ export function generatePermutations(
     strength: 0
   }
 ): DestinyArmor[][] {
-  console.log('Starting generatePermutations with fragment modifications:', fragmentStatModifications);
-
   const { helmet, arms, legs, chest, classItem } = armorClass;
 
   let filteredHelmet = helmet;
@@ -154,25 +144,6 @@ export function generatePermutations(
         sum + item.mobility + item.resilience + item.recovery + 
         item.discipline + item.intellect + item.strength, 0);
 
-      console.log('Generated permutation:', { 
-        baseStats,
-        totalStats, 
-        totalSum,
-        fragmentModifications: fragmentStatModifications,
-        permutation: modifiedPermutation.map(item => ({ 
-          itemHash: item.itemHash, 
-          exotic: item.exotic,
-          stats: {
-            mobility: item.mobility,
-            resilience: item.resilience,
-            recovery: item.recovery,
-            discipline: item.discipline,
-            intellect: item.intellect,
-            strength: item.strength
-          }
-        }))
-      });
-
       if (heap.size() < 30000) {
         heap.push(modifiedPermutation);
       } else {
@@ -185,7 +156,6 @@ export function generatePermutations(
           if (totalSum > smallestTotalSum) {
             heap.pop();
             heap.push(modifiedPermutation);
-            console.log('Replaced permutation in heap. New total sum:', totalSum);
           }
         }
       }
@@ -207,6 +177,5 @@ export function generatePermutations(
 
   generate([], 0, 0);
 
-  console.log('Finished generating permutations. Total permutations:', heap.size());
   return heap.toArray();
 }

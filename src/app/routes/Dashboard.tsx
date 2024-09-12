@@ -2,10 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Container, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
-import {
-  FragmentStatModifications,
-  generatePermutations,
-} from '../../features/armor-optimization/generate-permutations';
+import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
 import {
   filterFromSharedLoadout,
   filterPermutations,
@@ -23,6 +20,7 @@ import {
   DecodedLoadoutData,
   DestinyArmor,
   FilteredPermutation,
+  FragmentStatModifications,
   StatName,
   SubclassConfig,
 } from '../../types/d2l-types';
