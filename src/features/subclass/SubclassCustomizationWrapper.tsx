@@ -42,9 +42,11 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
           Back
         </TransparentButton>
       </Box>
-      <StatModifications />
       <Box sx={{ marginTop: '15vh' }}>
         <AbilitiesModification subclass={subclass} />
+      </Box>
+      <Box position="absolute" bottom={16} left={16} zIndex={1000}>
+        <StatModifications />
       </Box>
     </Box>
   );

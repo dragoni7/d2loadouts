@@ -5,13 +5,8 @@ import { Box, Container } from '@mui/system';
 import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/subclass-constants';
 import { RootState } from '../../store';
 import { db } from '../../store/db';
-import { updateSubclass, updateSubclassMods } from '../../store/LoadoutReducer';
-import {
-  ManifestSubclass,
-  ManifestPlug,
-  ManifestAspect,
-  ManifestStatPlug,
-} from '../../types/manifest-types';
+import { updateSubclassMods } from '../../store/LoadoutReducer';
+import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../types/manifest-types';
 import { DamageType, SubclassConfig } from '../../types/d2l-types';
 import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../lib/bungie_api/constants';
 

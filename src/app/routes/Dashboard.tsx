@@ -61,32 +61,13 @@ const PageContainer = styled(Box)(({ theme }) => ({
 
 const ContentContainer = styled(Box)(({ theme }) => ({
   flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
+  width: '100vw',
   overflowY: 'auto',
   backgroundImage: `url(${greyBackground})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   padding: theme.spacing(3),
-  paddingTop: '120px',
-}));
-
-const LeftRightColumn = styled(Grid)(({ theme }) => ({
-  width: '40%',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  [theme.breakpoints.down('md')]: {
-    width: '100%',
-  },
-}));
-
-const MiddleColumn = styled(Grid)(({ theme }) => ({
-  width: '20%',
-  [theme.breakpoints.down('md')]: {
-    width: '100%',
-  },
+  paddingTop: '200px',
 }));
 
 const HeaderWrapper = styled(Box)({
@@ -465,14 +446,8 @@ export const Dashboard: React.FC = () => {
             />
           </HeaderWrapper>
           <ContentContainer>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <ExoticSelector
-                  selectedCharacter={selectedCharacter!}
-                  selectedExoticItemHash={selectedExotic.itemHash}
-                />
-              </Grid>
-              <LeftRightColumn item xs={12} md={5}>
+            <Grid container spacing={3} justifyContent={'center'} alignItems={'flex-start'}>
+              <Grid item md={4.5}>
                 <SingleDiamondButton
                   subclasses={subclasses}
                   selectedSubclass={selectedSubclass}
@@ -482,11 +457,20 @@ export const Dashboard: React.FC = () => {
                 <NumberBoxesContainer>
                   <NumberBoxes />
                 </NumberBoxesContainer>
-              </LeftRightColumn>
-              <MiddleColumn item xs={12} md={2}>
-                <StatModifications />
-              </MiddleColumn>
-              <LeftRightColumn item xs={12} md={5}>
+              </Grid>
+
+              <Grid container item md={3} justifyContent={'center'} alignItems={'flex-start'}>
+                <Grid item md={12}>
+                  <ExoticSelector
+                    selectedCharacter={selectedCharacter!}
+                    selectedExoticItemHash={selectedExotic.itemHash}
+                  />
+                </Grid>
+                <Grid item md={8}>
+                  <StatModifications />
+                </Grid>
+              </Grid>
+              <Grid item md={4.5}>
                 {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (
@@ -497,7 +481,7 @@ export const Dashboard: React.FC = () => {
                 ) : (
                   <p>Loading....</p>
                 )}
-              </LeftRightColumn>
+              </Grid>
             </Grid>
           </ContentContainer>
         </>
