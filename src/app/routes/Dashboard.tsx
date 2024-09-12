@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Container, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
@@ -39,7 +38,6 @@ import {
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
-import greyBackground from '/assets/grey.png';
 import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
@@ -48,66 +46,9 @@ import {
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
 import StatModifications from '../../features/subclass/StatModifications';
-import { Grid, Paper } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
-
-const PageContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100vh',
-  overflow: 'hidden',
-}));
-
-const ContentContainer = styled(Box)(({ theme }) => ({
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  overflowY: 'auto',
-  backgroundImage: `url(${greyBackground})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  padding: theme.spacing(3),
-  paddingTop: '120px',
-}));
-
-const LeftRightColumn = styled(Grid)(({ theme }) => ({
-  width: '40%',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  [theme.breakpoints.down('md')]: {
-    width: '100%',
-  },
-}));
-
-const MiddleColumn = styled(Grid)(({ theme }) => ({
-  width: '20%',
-  [theme.breakpoints.down('md')]: {
-    width: '100%',
-  },
-}));
-
-const HeaderWrapper = styled(Box)({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  zIndex: 1100,
-});
-
-const NumberBoxesContainer = styled(Box)(({ theme }) => ({
-  marginTop: theme.spacing(4),
-  marginLeft: theme.spacing(25),
-  backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  backdropFilter: 'blur(5px)',
-  borderRadius: 0,
-  padding: theme.spacing(2),
-  alignSelf: 'flex-start',
-  width: 'auto',
-  maxWidth: '100%',
-}));
+import './Dashboard.css';
 
 export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -436,7 +377,7 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <PageContainer>
+    <div className="dashboard">
       {showAbilitiesModification && customizingSubclass ? (
         <SubclassCustomizationWrapper
           onBackClick={() => setShowAbilitiesModification(false)}
@@ -454,7 +395,7 @@ export const Dashboard: React.FC = () => {
         />
       ) : sharedLoadoutDto === undefined && selectedCharacter && selectedSubclass ? (
         <>
-          <HeaderWrapper>
+          <div className="dashboard-header">
             <HeaderComponent
               emblemUrl={selectedCharacter?.emblem?.secondarySpecial || ''}
               overlayUrl={selectedCharacter?.emblem?.secondaryOverlay || ''}
@@ -463,48 +404,50 @@ export const Dashboard: React.FC = () => {
               selectedCharacter={selectedCharacter!}
               onCharacterClick={handleCharacterClick}
             />
-          </HeaderWrapper>
-          <ContentContainer>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
+          </div>
+          <div className="dashboard-content">
+            <div className="content-wrapper">
+              <div className="exotic-selector-wrapper">
                 <ExoticSelector
                   selectedCharacter={selectedCharacter!}
                   selectedExoticItemHash={selectedExotic.itemHash}
                 />
-              </Grid>
-              <LeftRightColumn item xs={12} md={5}>
-                <SingleDiamondButton
-                  subclasses={subclasses}
-                  selectedSubclass={selectedSubclass}
-                  onSubclassSelect={handleSubclassSelect}
-                  onSubclassRightClick={handleSubclassRightClick}
-                />
-                <NumberBoxesContainer>
-                  <NumberBoxes />
-                </NumberBoxesContainer>
-              </LeftRightColumn>
-              <MiddleColumn item xs={12} md={2}>
-                <StatModifications />
-              </MiddleColumn>
-              <LeftRightColumn item xs={12} md={5}>
-                {generatingPermutations ? (
-                  <p>Loading...</p>
-                ) : filteredPermutations ? (
-                  <StatsTable
-                    permutations={filteredPermutations}
-                    onPermutationClick={openLoadoutCustomization}
+              </div>
+              <div className="dashboard-grid">
+                <div className="dashboard-column left-column">
+                  <SingleDiamondButton
+                    subclasses={subclasses}
+                    selectedSubclass={selectedSubclass}
+                    onSubclassSelect={handleSubclassSelect}
+                    onSubclassRightClick={handleSubclassRightClick}
                   />
-                ) : (
-                  <p>Loading....</p>
-                )}
-              </LeftRightColumn>
-            </Grid>
-          </ContentContainer>
+                  <div className="number-boxes-container">
+                    <NumberBoxes />
+                  </div>
+                </div>
+                <div className="dashboard-column middle-column">
+                  <StatModifications />
+                </div>
+                <div className="dashboard-column right-column">
+                  {generatingPermutations ? (
+                    <p>Loading...</p>
+                  ) : filteredPermutations ? (
+                    <StatsTable
+                      permutations={filteredPermutations}
+                      onPermutationClick={openLoadoutCustomization}
+                    />
+                  ) : (
+                    <p>Loading....</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         </>
       ) : (
         <div>loading...</div>
       )}
-    </PageContainer>
+    </div>
   );
 };
 
