@@ -175,6 +175,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     fetchModIcons();
   }, []);
 
+
   const statIcons: Record<StatName, string> = {
     mobility: 'src/assets/mob.png',
     resilience: 'src/assets/res.png',

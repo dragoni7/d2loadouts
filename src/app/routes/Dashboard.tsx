@@ -39,7 +39,7 @@ import {
 import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
-import greyBackground from '../../assets/grey.png';
+import greyBackground from '/assets/grey.png';
 import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';

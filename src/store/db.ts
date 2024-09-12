@@ -11,6 +11,9 @@ import {
   ManifestAspect,
   ManifestStatPlug,
   ManifestEntry,
+  ManifestLoadoutColor,
+  ManifestLoadoutIcon,
+  ManifestLoadoutName,
 } from '../types/manifest-types';
 
 const db = new Dexie('manifestDb') as Dexie & {
@@ -25,6 +28,9 @@ const db = new Dexie('manifestDb') as Dexie & {
   manifestSubclassAspectsDef: EntityTable<ManifestAspect, 'itemHash'>;
   manifestSubclassFragmentsDef: EntityTable<ManifestStatPlug, 'itemHash'>;
   manifestSubclass: EntityTable<ManifestSubclass, 'itemHash'>;
+  manifestLoadoutColorDef: EntityTable<ManifestLoadoutColor, 'hash'>;
+  manifestLoadoutIconDef: EntityTable<ManifestLoadoutIcon, 'hash'>;
+  manifestLoadoutNameDef: EntityTable<ManifestLoadoutName, 'hash'>;
 };
 
 db.version(1).stores({
@@ -43,6 +49,9 @@ db.version(1).stores({
     'itemHash, name, icon, secondaryIcon, category, perks, isOwned, mobilityMod, resilienceMod, recoveryMod, disciplineMod, intellectMod, strengthMod',
   manifestSubclass:
     'itemHash, name, icon, secondaryIcon, screenshot, flavorText, damageType, class, isOwned',
+  manifestLoadoutColorDef: 'hash, imagePath, index',
+  manifestLoadoutIconDef: 'hash, imagePath, index',
+  manifestLoadoutNameDef: 'hash, name, index',
 });
 
 export { db };

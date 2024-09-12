@@ -7,6 +7,7 @@ import EquipLoadout from '../features/loadouts/components/EquipLoadout';
 import AbilitiesModification from '../features/subclass/AbilitiesModification';
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
+import SaveLoadout from '../features/loadouts/components/SaveLoadout';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;

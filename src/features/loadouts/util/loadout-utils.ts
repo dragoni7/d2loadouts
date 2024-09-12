@@ -1,14 +1,9 @@
 import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
-import { db } from '../../../store/db';
 import {
-  armor,
   armorMods,
-  Character,
   DestinyArmor,
-  FilteredPermutation,
   Loadout,
-  StatName,
   Subclass,
   SubclassConfig,
 } from '../../../types/d2l-types';
