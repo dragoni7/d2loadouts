@@ -38,6 +38,7 @@ export async function getProfileData(): Promise<ProfileData> {
     const characterEquipment = response.data.Response.characterEquipment.data;
     const characterData = response.data.Response.characters.data;
     const profileCollectibles = response.data.Response.profileCollectibles.data.collectibles;
+    const characterLoadouts = response.data.Response.characterLoadouts.data;
 
     for (const key in characterData) {
       const characterClass = getCharacterClass(characterData[key].classHash);
@@ -54,7 +55,19 @@ export async function getProfileData(): Promise<ProfileData> {
         },
         subclasses: {},
         exoticClassCombos: [],
+        loadouts: [],
       };
+
+      // gather character's loadouts
+      for (const loadout of characterLoadouts[character.id].loadouts) {
+        character.loadouts.push({
+          colorHash: loadout.colorHash,
+          iconHash: loadout.iconHash,
+          nameHash: loadout.nameHash,
+          armor: loadout.items.slice(3, 8),
+          subclass: loadout.items[8],
+        });
+      }
 
       // iterate character's equipped items
       for (const item of characterEquipment[key].items) {

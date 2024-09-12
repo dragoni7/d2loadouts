@@ -297,6 +297,57 @@ export async function updateManifest() {
           }
         }
       }
+
+      const loadoutColorComponent =
+        response.data.Response.jsonWorldComponentContentPaths.en['DestinyLoadoutColorDefinition'];
+
+      const loadoutColorResponse = await getManifestComponentRequest(loadoutColorComponent);
+
+      if (loadoutColorResponse) {
+        for (const hash in loadoutColorResponse.data) {
+          const current = loadoutColorResponse.data[hash];
+
+          await db.manifestLoadoutColorDef.add({
+            imagePath: urlPrefix + current.colorImagePath,
+            hash: current.hash,
+            index: current.index,
+          });
+        }
+      }
+
+      const loadoutIconComponent =
+        response.data.Response.jsonWorldComponentContentPaths.en['DestinyLoadoutIconDefinition'];
+
+      const loadoutIconResponse = await getManifestComponentRequest(loadoutIconComponent);
+
+      if (loadoutIconResponse) {
+        for (const hash in loadoutIconResponse.data) {
+          const current = loadoutIconResponse.data[hash];
+
+          await db.manifestLoadoutIconDef.add({
+            imagePath: urlPrefix + current.iconImagePath,
+            hash: current.hash,
+            index: current.index,
+          });
+        }
+      }
+
+      const loadoutNameComponent =
+        response.data.Response.jsonWorldComponentContentPaths.en['DestinyLoadoutNameDefinition'];
+
+      const loadoutNameResponse = await getManifestComponentRequest(loadoutNameComponent);
+
+      if (loadoutNameResponse) {
+        for (const hash in loadoutNameResponse.data) {
+          const current = loadoutNameResponse.data[hash];
+
+          await db.manifestLoadoutNameDef.add({
+            name: current.name,
+            hash: current.hash,
+            index: current.index,
+          });
+        }
+      }
     }
   } else {
     throw new Error('Error retrieving manifest');

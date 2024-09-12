@@ -86,6 +86,14 @@ export type Plug = {
   socketIndex?: number;
 };
 
+export type DestinyLoadout = {
+  colorHash: number;
+  iconHash: number;
+  nameHash: number;
+  armor: { itemInstanceId: string; plugItemHashes: number[] }[];
+  subclass: { itemInstanceId: string; plugItemHashes: number[] };
+};
+
 export type Loadout = {
   helmet: DestinyArmor;
   gauntlets: DestinyArmor;
@@ -122,6 +130,7 @@ export type Character = {
   armor: ArmorBySlot;
   subclasses: { [key: number]: SubclassConfig | undefined };
   exoticClassCombos: ExoticClassCombo[];
+  loadouts: DestinyLoadout[];
 };
 
 export type Emblem = {
