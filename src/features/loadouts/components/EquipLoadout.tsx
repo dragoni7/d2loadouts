@@ -22,6 +22,7 @@ import LoadingBorder from './LoadingBorder';
 import FadeIn from './FadeIn';
 import { equipLoadout } from '../util/loadout-utils';
 import { TransitionProps } from '@mui/material/transitions';
+import SaveLoadout from './SaveLoadout';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -268,7 +269,7 @@ const EquipLoadout: React.FC = () => {
                   </Grid>
                   <Grid item md={4}>
                     <FadeIn delay={600}>
-                      <Button>Save in-game</Button>
+                      <SaveLoadout />
                     </FadeIn>
                   </Grid>
                 </>

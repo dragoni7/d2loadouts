@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ManifestArmorStatMod } from '../../../types/manifest-types';
 import { Tooltip, styled } from '@mui/material';
 import { autoEquipStatMod } from '../mod-utils';
