@@ -175,14 +175,13 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     fetchModIcons();
   }, []);
 
-
   const statIcons: Record<StatName, string> = {
-    mobility: 'src/assets/mob.png',
-    resilience: 'src/assets/res.png',
-    recovery: 'src/assets/rec.png',
-    discipline: 'src/assets/disc.png',
-    intellect: 'src/assets/int.png',
-    strength: 'src/assets/str.png',
+    mobility: 'assets/mob.png',
+    resilience: 'assets/res.png',
+    recovery: 'assets/rec.png',
+    discipline: 'assets/disc.png',
+    intellect: 'assets/int.png',
+    strength: 'assets/str.png',
   };
 
   const formatArmorStats = (armor: DestinyArmor) => {
