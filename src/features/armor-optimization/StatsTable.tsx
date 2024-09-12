@@ -3,11 +3,12 @@ import { styled } from '@mui/material/styles';
 import { Box, Card, Grid, Typography, IconButton, Tooltip } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { FilteredPermutation, DestinyArmor } from '../../types/d2l-types';
-import { useDispatch } from 'react-redux';
+import { FilteredPermutation, DestinyArmor, StatName } from '../../types/d2l-types';
+import { useSelector } from 'react-redux';
 import ArmorIcon from '../../components/ArmorIcon';
 import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/constants';
 import { db } from '../../store/db';
+import { RootState } from '../../store';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
@@ -22,7 +23,7 @@ const StatsTableContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   position: 'relative',
   marginTop: theme.spacing(-1),
-  gap: theme.spacing(1), // Add gap between children
+  gap: theme.spacing(1),
 }));
 
 const CardContainer = styled(Box)(({ theme }) => ({
@@ -32,7 +33,7 @@ const CardContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   height: '100%',
   width: '440px',
-  padding: theme.spacing(0, 1), // Add horizontal padding
+  padding: theme.spacing(0, 1),
 }));
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -66,9 +67,11 @@ const ModsRow = styled(Grid)(({ theme }) => ({
   justifyContent: 'center',
   width: '100%',
 }));
+
 const StatValue = styled(Typography)({
   color: 'white',
 });
+
 const StatContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -114,19 +117,43 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 4;
 
+  const subclassConfig = useSelector(
+    (state: RootState) => state.loadoutConfig.loadout.subclassConfig
+  );
+
+  const fragmentStatModifications = useMemo(() => {
+    const modifications: { [key in StatName]: number } = {
+      mobility: 0,
+      resilience: 0,
+      recovery: 0,
+      discipline: 0,
+      intellect: 0,
+      strength: 0,
+    };
+
+    subclassConfig.fragments.forEach((fragment) => {
+      if (fragment.mobilityMod) modifications.mobility += fragment.mobilityMod;
+      if (fragment.resilienceMod) modifications.resilience += fragment.resilienceMod;
+      if (fragment.recoveryMod) modifications.recovery += fragment.recoveryMod;
+      if (fragment.disciplineMod) modifications.discipline += fragment.disciplineMod;
+      if (fragment.intellectMod) modifications.intellect += fragment.intellectMod;
+      if (fragment.strengthMod) modifications.strength += fragment.strengthMod;
+    });
+
+    return modifications;
+  }, [subclassConfig.fragments]);
+
   const paginatedData = useMemo(() => {
     const start = currentPage * itemsPerPage;
     const end = start + itemsPerPage;
     return permutations.slice(start, end);
   }, [currentPage, permutations]);
 
-  const calculateTotal = (
-    perm: FilteredPermutation,
-    stat: keyof FilteredPermutation['modsArray']
-  ) => {
+  const calculateTotal = (perm: FilteredPermutation, stat: StatName) => {
     const baseSum = perm.permutation.reduce((sum, item) => sum + (item[stat] || 0), 0);
     const modSum = perm.modsArray[stat]?.reduce((sum, mod) => sum + mod, 0) || 0;
-    return baseSum + modSum;
+    const fragmentMod = fragmentStatModifications[stat] || 0;
+    return baseSum + modSum + fragmentMod;
   };
 
   const [modIcons, setModIcons] = useState<Record<string, string>>({});
@@ -148,13 +175,14 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     fetchModIcons();
   }, []);
 
-  const statIcons: Record<keyof FilteredPermutation['modsArray'], string> = {
-    mobility: '/assets/mob.png',
-    resilience: '/assets/res.png',
-    recovery: '/assets/rec.png',
-    discipline: '/assets/disc.png',
-    intellect: '/assets/int.png',
-    strength: '/assets/str.png',
+
+  const statIcons: Record<StatName, string> = {
+    mobility: 'src/assets/mob.png',
+    resilience: 'src/assets/res.png',
+    recovery: 'src/assets/rec.png',
+    discipline: 'src/assets/disc.png',
+    intellect: 'src/assets/int.png',
+    strength: 'src/assets/str.png',
   };
 
   const formatArmorStats = (armor: DestinyArmor) => {
@@ -192,19 +220,17 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
               ))}
             </ArmorRow>
             <StatsRow container spacing={1}>
-              {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) => (
+              {(STATS as StatName[]).map((stat) => (
                 <Grid item key={stat}>
                   <StatContainer>
                     <StatIcon src={statIcons[stat]} alt={stat} />
-                    <StatValue variant="body2">
-                      {calculateTotal(perm, stat as keyof FilteredPermutation['modsArray'])}
-                    </StatValue>
+                    <StatValue variant="body2">{calculateTotal(perm, stat)}</StatValue>
                   </StatContainer>
                 </Grid>
               ))}
             </StatsRow>
             <ModsRow container spacing={1}>
-              {(STATS as (keyof FilteredPermutation['modsArray'])[]).map((stat) =>
+              {(STATS as StatName[]).map((stat) =>
                 perm.modsArray[stat].map((mod, idx) => (
                   <Grid item key={`${stat}-${idx}`}>
                     <ModIcon

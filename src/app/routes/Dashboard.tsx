@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { styled } from '@mui/system';
+import { Box, Container, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
@@ -20,6 +20,7 @@ import {
   DecodedLoadoutData,
   DestinyArmor,
   FilteredPermutation,
+  FragmentStatModifications,
   StatName,
   SubclassConfig,
 } from '../../types/d2l-types';
@@ -46,87 +47,67 @@ import {
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
+import StatModifications from '../../features/subclass/StatModifications';
+import { Grid, Paper } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 
-const PageContainer = styled('div')({
+const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   height: '100vh',
   overflow: 'hidden',
-});
+}));
 
-const Container = styled('div')({
+const ContentContainer = styled(Box)(({ theme }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  padding: '20px',
-  width: '100vw',
-  boxSizing: 'border-box',
+  width: '100%',
   overflowY: 'auto',
   backgroundImage: `url(${greyBackground})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  marginTop: '110px',
-  '::-webkit-scrollbar': {
-    width: '10px',
-  },
-  '::-webkit-scrollbar-track': {
-    background: 'none',
-  },
-  '::-webkit-scrollbar-thumb': {
-    background: 'grey',
-    borderRadius: '0',
-  },
-});
+  padding: theme.spacing(3),
+  paddingTop: '120px',
+}));
 
-const BottomPane = styled('div')({
-  display: 'flex',
-  width: '100%',
-  padding: '10px',
-  boxSizing: 'border-box',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap',
-});
-
-const LeftPane = styled('div')({
+const LeftRightColumn = styled(Grid)(({ theme }) => ({
+  width: '40%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  width: '100%',
-  maxWidth: '600px',
-  padding: '10px',
-  boxSizing: 'border-box',
-  marginTop: '-80px',
-  margin: '0 auto',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+  },
+}));
+
+const MiddleColumn = styled(Grid)(({ theme }) => ({
+  width: '20%',
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+  },
+}));
+
+const HeaderWrapper = styled(Box)({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  zIndex: 1100,
 });
 
-const RightPane = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  width: '100%',
-  maxWidth: '800px',
-  padding: '5px',
-  boxSizing: 'border-box',
-  margin: '0 auto',
-});
-
-const DiamondButtonWrapper = styled('div')({
-  marginTop: '50px',
-  marginBottom: '80px',
-  marginRight: '40px',
-  alignSelf: 'flex-end',
-});
-
-const NumberBoxesWrapper = styled('div')({
-  marginBottom: '20px',
-});
-
-const NewComponentWrapper = styled('div')({
-  marginBottom: '20px',
-});
+const NumberBoxesContainer = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+  marginLeft: theme.spacing(25),
+  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  backdropFilter: 'blur(5px)',
+  borderRadius: 0,
+  padding: theme.spacing(2),
+  alignSelf: 'flex-start',
+  width: 'auto',
+  maxWidth: '100%',
+}));
 
 export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -138,6 +119,9 @@ export const Dashboard: React.FC = () => {
   );
 
   const selectedCharacter = useSelector((state: RootState) => state.profile.selectedCharacter);
+  const fragments = useSelector(
+    (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
+  );
   const [generatingPermutations, setGeneratingPermutations] = useState(false);
   const [subclasses, setSubclasses] = useState<
     { [key: number]: SubclassConfig | undefined } | undefined
@@ -150,6 +134,30 @@ export const Dashboard: React.FC = () => {
   const [showLoadoutCustomization, setShowLoadoutCustomization] = useState(false);
   const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
   const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
+
+  const fragmentStatModifications = useMemo(() => {
+    return fragments.reduce(
+      (acc, fragment) => {
+        if (fragment.itemHash !== 0) {
+          acc.mobility += fragment.mobilityMod || 0;
+          acc.resilience += fragment.resilienceMod || 0;
+          acc.recovery += fragment.recoveryMod || 0;
+          acc.discipline += fragment.disciplineMod || 0;
+          acc.intellect += fragment.intellectMod || 0;
+          acc.strength += fragment.strengthMod || 0;
+        }
+        return acc;
+      },
+      {
+        mobility: 0,
+        resilience: 0,
+        recovery: 0,
+        discipline: 0,
+        intellect: 0,
+        strength: 0,
+      } as FragmentStatModifications
+    );
+  }, [fragments]);
 
   useEffect(() => {
     const updateProfile = async () => {
@@ -321,13 +329,19 @@ export const Dashboard: React.FC = () => {
         return generatePermutations(
           selectedCharacter.armor,
           selectedExotic,
-          selectedExoticClassCombo
+          selectedExoticClassCombo,
+          fragmentStatModifications
         );
 
-      return generatePermutations(selectedCharacter.armor, selectedExotic);
+      return generatePermutations(
+        selectedCharacter.armor,
+        selectedExotic,
+        undefined,
+        fragmentStatModifications
+      );
     }
     return null;
-  }, [selectedCharacter, selectedExotic, selectedExoticClassCombo]);
+  }, [selectedCharacter, selectedExotic, selectedExoticClassCombo, fragmentStatModifications]);
 
   const filteredPermutations = useMemo(() => {
     let filtered: FilteredPermutation[] | null = null;
@@ -347,17 +361,21 @@ export const Dashboard: React.FC = () => {
         characterClass: sharedLoadoutDto.characterClass as CharacterClass,
       };
       setGeneratingPermutations(true);
-      const sharedLoadoutPermutation = filterFromSharedLoadout(decodedLoadoutData, permutations);
+      const sharedLoadoutPermutation = filterFromSharedLoadout(
+        decodedLoadoutData,
+        permutations,
+        fragmentStatModifications
+      );
       filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
     } else if (permutations && selectedValues) {
       setGeneratingPermutations(true);
-      filtered = filterPermutations(permutations, selectedValues);
+      filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
     }
 
     setGeneratingPermutations(false);
 
     return filtered;
-  }, [permutations, selectedValues, sharedLoadoutDto]);
+  }, [permutations, selectedValues, sharedLoadoutDto, fragmentStatModifications]);
 
   useEffect(() => {
     if (filteredPermutations && sharedLoadoutDto) {
@@ -436,39 +454,39 @@ export const Dashboard: React.FC = () => {
         />
       ) : sharedLoadoutDto === undefined && selectedCharacter && selectedSubclass ? (
         <>
-          {selectedCharacter?.emblem?.secondarySpecial && (
+          <HeaderWrapper>
             <HeaderComponent
-              emblemUrl={selectedCharacter.emblem.secondarySpecial}
-              overlayUrl={selectedCharacter.emblem.secondaryOverlay || ''}
+              emblemUrl={selectedCharacter?.emblem?.secondarySpecial || ''}
+              overlayUrl={selectedCharacter?.emblem?.secondaryOverlay || ''}
               displayName={membership.bungieGlobalDisplayName}
               characters={characters}
-              selectedCharacter={selectedCharacter}
+              selectedCharacter={selectedCharacter!}
               onCharacterClick={handleCharacterClick}
             />
-          )}
-          <Container>
-            <NewComponentWrapper>
-              <ExoticSelector
-                selectedCharacter={selectedCharacter!}
-                selectedExoticItemHash={selectedExotic.itemHash}
-              />
-            </NewComponentWrapper>
-            <BottomPane>
-              <LeftPane>
-                <DiamondButtonWrapper>
-                  <SingleDiamondButton
-                    subclasses={subclasses}
-                    selectedSubclass={selectedSubclass}
-                    onSubclassSelect={handleSubclassSelect}
-                    onSubclassRightClick={handleSubclassRightClick}
-                  />
-                </DiamondButtonWrapper>
-                <NumberBoxesWrapper>
+          </HeaderWrapper>
+          <ContentContainer>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <ExoticSelector
+                  selectedCharacter={selectedCharacter!}
+                  selectedExoticItemHash={selectedExotic.itemHash}
+                />
+              </Grid>
+              <LeftRightColumn item xs={12} md={5}>
+                <SingleDiamondButton
+                  subclasses={subclasses}
+                  selectedSubclass={selectedSubclass}
+                  onSubclassSelect={handleSubclassSelect}
+                  onSubclassRightClick={handleSubclassRightClick}
+                />
+                <NumberBoxesContainer>
                   <NumberBoxes />
-                </NumberBoxesWrapper>
-              </LeftPane>
-              <RightPane>
-                <h1 style={{ fontSize: '16px' }}>Armour Combinations</h1>
+                </NumberBoxesContainer>
+              </LeftRightColumn>
+              <MiddleColumn item xs={12} md={2}>
+                <StatModifications />
+              </MiddleColumn>
+              <LeftRightColumn item xs={12} md={5}>
                 {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (
@@ -479,9 +497,9 @@ export const Dashboard: React.FC = () => {
                 ) : (
                   <p>Loading....</p>
                 )}
-              </RightPane>
-            </BottomPane>
-          </Container>
+              </LeftRightColumn>
+            </Grid>
+          </ContentContainer>
         </>
       ) : (
         <div>loading...</div>

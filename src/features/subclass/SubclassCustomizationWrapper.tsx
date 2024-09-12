@@ -1,9 +1,9 @@
 import React from 'react';
 import AbilitiesModification from './AbilitiesModification';
+import StatModifications from './StatModifications';
 import './SubclassCustomizationWrapper.css';
 import { Button, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { ManifestSubclass } from '../../types/manifest-types';
 import { SubclassConfig } from '../../types/d2l-types';
 
 interface SubclassCustomizationWrapperProps {
@@ -42,6 +42,7 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
           Back
         </TransparentButton>
       </Box>
+      <StatModifications />
       <Box sx={{ marginTop: '15vh' }}>
         <AbilitiesModification subclass={subclass} />
       </Box>
