@@ -184,7 +184,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
                   }}
                 >
                   <img
-                    src={`src/assets/subclass-icons/${damageType}.png`}
+                    src={`/assets/subclass-icons/${damageType}.png`}
                     alt={String(damageType)}
                     className="diamond-icon"
                     style={{ filter: damageType in subclasses ? 'none' : 'grayscale(100%)' }}
