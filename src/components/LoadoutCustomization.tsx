@@ -8,6 +8,7 @@ import AbilitiesModification from '../features/subclass/AbilitiesModification';
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
 import SaveLoadout from '../features/loadouts/components/SaveLoadout';
+import TotalStatsDisplay from '../features/subclass/TotalStatsDisplay';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;
@@ -100,8 +101,17 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
         <Grid item md={1}>
           <AbilitiesModification subclass={subclass} />
         </Grid>
-        <Grid item md={1} sx={{ textAlign: 'center' }}>
-          FREE SPACE FOR SOMETHING
+        <Grid
+          item
+          md={1}
+          sx={{
+            textAlign: 'center',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <TotalStatsDisplay />
         </Grid>
         <Grid item md={1} sx={{ textAlign: 'center' }}>
           <EquipLoadout />
