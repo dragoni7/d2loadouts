@@ -119,10 +119,6 @@ export interface DecodedLoadoutData {
   characterClass: CharacterClass;
 }
 
-export type ProfileData = {
-  characters: Character[];
-};
-
 export type Character = {
   id: number;
   class: CharacterClass;

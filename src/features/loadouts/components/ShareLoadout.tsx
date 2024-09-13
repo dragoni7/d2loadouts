@@ -158,8 +158,7 @@ const selectLoadoutState = createSelector(
 );
 
 const selectSelectedCharacterClass = createSelector(
-  (state: RootState) =>
-    state.profile.profileData.characters[state.dashboard.selectedCharacter].class,
+  (state: RootState) => state.profile.characters[state.dashboard.selectedCharacter].class,
   (characterClass) => characterClass as CharacterClass | undefined
 );
 

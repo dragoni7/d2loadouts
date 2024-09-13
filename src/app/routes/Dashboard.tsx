@@ -12,7 +12,6 @@ import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
-import { updateProfileData } from '../../store/ProfileReducer';
 import {
   armor,
   Character,
@@ -52,6 +51,7 @@ import StatModifications from '../../features/subclass/StatModifications';
 import { Grid, Paper } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
+import { updateProfileCharacters } from '../../store/ProfileReducer';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -95,7 +95,7 @@ export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
-  const characters = useSelector((state: RootState) => state.profile.profileData.characters);
+  const characters = useSelector((state: RootState) => state.profile.characters);
   const { selectedValues, selectedExotic, selectedExoticClassCombo } = useSelector(
     (state: RootState) => state.dashboard
   );
@@ -147,7 +147,7 @@ export const Dashboard: React.FC = () => {
       const destinyMembership = await getDestinyMembershipId();
       dispatch(updateMembership(destinyMembership));
       const profileData = await getProfileData();
-      dispatch(updateProfileData(profileData));
+      dispatch(updateProfileCharacters(profileData));
 
       let sharedExotic: ManifestExoticArmor | undefined = undefined;
 
@@ -158,7 +158,7 @@ export const Dashboard: React.FC = () => {
         const sharedLoadoutDto = decodeLoadout(sharedLoadoutLink!);
         setSharedLoadoutDto(sharedLoadoutDto);
 
-        const sharedClassCharacterIndex = profileData.characters.findIndex(
+        const sharedClassCharacterIndex = profileData.findIndex(
           (character: Character) => character.class === sharedLoadoutDto.characterClass
         );
 

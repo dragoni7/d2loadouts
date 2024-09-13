@@ -39,9 +39,7 @@ export default function SaveLoadout() {
   const [identifiersSet, setIdentifiersSet] = useState<boolean>(false);
 
   const loadoutIdentifiers = useLoadoutIdentifiers();
-  const loadouts = useSelector(
-    (state: RootState) => state.profile.profileData.characters[0].loadouts
-  );
+  const selectedCharacter = useSelector((state: RootState) => state.dashboard.selectedCharacter);
 
   function handleBackClick() {
     setLoadoutDrawerOpen(false);
@@ -131,14 +129,11 @@ export default function SaveLoadout() {
       <Grid item md={12}>
         SELECT SLOT TO OVERWRITE
       </Grid>
-      {loadouts?.map((loadout, index) => (
+      {store.getState().profile.characters[selectedCharacter].loadouts?.map((loadout, index) => (
         <Grid item md={6}>
           <LoadoutSlot
             onClick={async () => {
-              const characterId =
-                store.getState().profile.profileData.characters[
-                  store.getState().dashboard.selectedCharacter
-                ]?.id;
+              const characterId = store.getState().profile.characters[selectedCharacter]?.id;
 
               if (characterId && loadoutColor && loadoutIcon && loadoutName)
                 await snapShotLoadoutRequest(

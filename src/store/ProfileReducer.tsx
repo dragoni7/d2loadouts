@@ -1,26 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProfileData } from '../types/d2l-types';
+import { Character } from '../types/d2l-types';
 
 export interface ProfileInitialState {
-  profileData: ProfileData;
+  characters: Character[];
 }
 
 const initialState: ProfileInitialState = {
-  profileData: {
-    characters: [],
-  },
+  characters: [],
 };
 
 export const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-    updateProfileData: (state, action: PayloadAction<ProfileData>) => {
-      state.profileData = action.payload;
+    updateProfileCharacters: (state, action: PayloadAction<Character[]>) => {
+      state.characters = action.payload;
     },
   },
 });
 
-export const { updateProfileData } = profileSlice.actions;
+export const { updateProfileCharacters } = profileSlice.actions;
 
 export default profileSlice.reducer;

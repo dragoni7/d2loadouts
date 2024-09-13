@@ -19,15 +19,12 @@ import {
   DamageType,
   DestinyArmor,
   Emblem,
-  ProfileData,
   Subclass,
 } from '../../types/d2l-types';
 import { getCharacterClass, modReverseDict } from './util';
 
-export async function getProfileData(): Promise<ProfileData> {
-  const profile: ProfileData = {
-    characters: [],
-  };
+export async function getProfileData(): Promise<Character[]> {
+  const profileCharacters: Character[] = [];
 
   const response = await getProfileDataRequest();
 
@@ -241,7 +238,7 @@ export async function getProfileData(): Promise<ProfileData> {
         }
       }
 
-      profile.characters.push(character);
+      profileCharacters.push(character);
     }
 
     // iterate profile inventory
@@ -294,7 +291,7 @@ export async function getProfileData(): Promise<ProfileData> {
           destinyArmor.icon = armorDef.icon;
         }
 
-        let target = profile.characters.filter((c) => c.class === destinyArmor.class);
+        let target = profileCharacters.filter((c) => c.class === destinyArmor.class);
 
         for (const character of target) {
           switch (destinyArmor.type) {
@@ -386,7 +383,7 @@ export async function getProfileData(): Promise<ProfileData> {
     // iterate character collectibles
     // use any character's collectibles since it shares
     const characterCollectibles =
-      response.data.Response.characterCollectibles.data[profile.characters[0].id].collectibles;
+      response.data.Response.characterCollectibles.data[profileCharacters[0].id].collectibles;
 
     for (const collectible in characterCollectibles) {
       const exoticCollectable = await db.manifestExoticArmorCollection
@@ -408,7 +405,7 @@ export async function getProfileData(): Promise<ProfileData> {
     console.log('Could not get response');
   }
 
-  return profile;
+  return profileCharacters;
 }
 
 async function buildSubclassConfig(item: any, character: Character, itemComponents: any) {
