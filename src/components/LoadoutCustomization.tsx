@@ -1,13 +1,15 @@
 import React from 'react';
 import './LoadoutCustomization.css';
-import { Button, Box, Container, Grid } from '@mui/material';
+import { Button, Box, Container, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ModCustomization from '../features/armor-mods/components/ModCustomization';
 import EquipLoadout from '../features/loadouts/components/EquipLoadout';
 import AbilitiesModification from '../features/subclass/AbilitiesModification';
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
-import { SubclassConfig } from '../types/d2l-types';
+import { SubclassConfig, StatName } from '../types/d2l-types';
 import SaveLoadout from '../features/loadouts/components/SaveLoadout';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;
@@ -28,11 +30,43 @@ const TransparentButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const StatContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  marginRight: theme.spacing(2),
+}));
+
+const StatIcon = styled('img')({
+  width: 24,
+  height: 24,
+  marginRight: 8,
+});
+
+const StatValue = styled(Typography)({
+  color: 'white',
+  fontSize: '1.2rem',
+  fontWeight: 'bold',
+});
+
 const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
   onBackClick,
   screenshot,
   subclass,
 }) => {
+  const selectedPermutationStats = useSelector(
+    (state: RootState) => state.dashboard.selectedPermutationStats
+  );
+
+  const statIcons: Record<StatName, string> = {
+    mobility: 'assets/mob.png',
+    resilience: 'assets/res.png',
+    recovery: 'assets/rec.png',
+    discipline: 'assets/disc.png',
+    intellect: 'assets/int.png',
+    strength: 'assets/str.png',
+  };
+
   return (
     <Box
       sx={{
@@ -101,7 +135,14 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
           <AbilitiesModification subclass={subclass} />
         </Grid>
         <Grid item md={1} sx={{ textAlign: 'center' }}>
-          FREE SPACE FOR SOMETHING
+          <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2 }}>
+            {Object.entries(selectedPermutationStats).map(([stat, value]) => (
+              <StatContainer key={stat}>
+                <StatIcon src={statIcons[stat as StatName]} alt={stat} />
+                <StatValue>{value}</StatValue>
+              </StatContainer>
+            ))}
+          </Box>
         </Grid>
         <Grid item md={1} sx={{ textAlign: 'center' }}>
           <EquipLoadout />
