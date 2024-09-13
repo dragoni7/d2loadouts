@@ -80,7 +80,7 @@ export function generatePermutations(
     }
   }
 
-  const armorTypes = [filteredHelmet, filteredArms, filteredLegs, filteredChest];
+  const armorTypes = [filteredHelmet, filteredArms, filteredChest, filteredLegs];
 
   // Find best class armor to use for permutation
   let masterworkedClassArmor = undefined;
