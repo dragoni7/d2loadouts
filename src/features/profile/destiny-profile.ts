@@ -21,6 +21,7 @@ import {
   Emblem,
   Subclass,
 } from '../../types/d2l-types';
+import { getCharacterLoadouts } from './character-utils';
 import { getCharacterClass, modReverseDict } from './util';
 
 export async function getProfileData(): Promise<Character[]> {
@@ -56,15 +57,7 @@ export async function getProfileData(): Promise<Character[]> {
       };
 
       // gather character's loadouts
-      for (const loadout of characterLoadouts[character.id].loadouts) {
-        character.loadouts.push({
-          colorHash: loadout.colorHash,
-          iconHash: loadout.iconHash,
-          nameHash: loadout.nameHash,
-          armor: loadout.items.slice(3, 8),
-          subclass: loadout.items[8],
-        });
-      }
+      character.loadouts = getCharacterLoadouts(characterLoadouts[character.id].loadouts);
 
       // iterate character's equipped items
       for (const item of characterEquipment[key].items) {

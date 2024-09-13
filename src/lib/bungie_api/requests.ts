@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { getBungieMembershipId, getTokens } from '../../store/TokensStore';
 import { _get, _post } from './bungie-api-client';
-import { API_CREDENTIALS } from './constants';
+import { API_COMPONENTS, API_CREDENTIALS } from './constants';
 import { store } from '../../store';
 import { Plug } from '../../types/d2l-types';
 
@@ -16,12 +16,27 @@ export function getDestinyMembershipsRequest(): Promise<AxiosResponse<any, any>>
   });
 }
 
-export function getProfileDataRequest(): Promise<AxiosResponse<any, any>> {
+export function getProfileDataRequest(
+  components: number[] = [
+    API_COMPONENTS.PROFILE_INVENTORIES,
+    API_COMPONENTS.CHARACTERS,
+    API_COMPONENTS.CHARACTER_INVENTORIES,
+    API_COMPONENTS.ITEM_INSTANCES,
+    API_COMPONENTS.CHARACTER_EQUIPMENT,
+    API_COMPONENTS.CHARACTER_LOADOUTS,
+    API_COMPONENTS.ITEM_PERKS,
+    API_COMPONENTS.ITEM_STATS,
+    API_COMPONENTS.ITEM_SOCKETS,
+    API_COMPONENTS.COLLECTIBLES,
+  ]
+): Promise<AxiosResponse<any, any>> {
   const accessToken = getTokens()?.accessToken.value;
   const destinyMembership = store.getState().destinyMembership.membership;
 
   return _get(
-    `/Platform/Destiny2/${destinyMembership.membershipType}/Profile/${destinyMembership.membershipId}/?components=102,200,201,300,205,206,302,304,305,800`,
+    `/Platform/Destiny2/${destinyMembership.membershipType}/Profile/${
+      destinyMembership.membershipId
+    }/?components=${components.join(',')}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
