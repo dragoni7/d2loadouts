@@ -9,6 +9,8 @@ import ArmorIcon from '../../components/ArmorIcon';
 import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/constants';
 import { db } from '../../store/db';
 import { RootState } from '../../store';
+import { useDispatch } from 'react-redux';
+import { updateSelectedPermutationStats } from '../../store/DashboardReducer';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
@@ -183,6 +185,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     intellect: 'assets/int.png',
     strength: 'assets/str.png',
   };
+  const dispatch = useDispatch();
 
   const formatArmorStats = (armor: DestinyArmor) => {
     return STATS.map((stat) => {
@@ -205,6 +208,15 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
             key={index}
             onClick={async () => {
               await onPermutationClick(perm);
+              const totalStats = {
+                mobility: calculateTotal(perm, 'mobility'),
+                resilience: calculateTotal(perm, 'resilience'),
+                recovery: calculateTotal(perm, 'recovery'),
+                discipline: calculateTotal(perm, 'discipline'),
+                intellect: calculateTotal(perm, 'intellect'),
+                strength: calculateTotal(perm, 'strength'),
+              };
+              dispatch(updateSelectedPermutationStats(totalStats));
             }}
           >
             <ArmorRow container spacing={1}>
