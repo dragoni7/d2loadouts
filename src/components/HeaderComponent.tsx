@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@mui/system';
 import { Character } from '../types/d2l-types';
 import { useDispatch } from 'react-redux';
-import { updateSelectedCharacter } from '../store/ProfileReducer';
+import { updateSelectedCharacter } from '../store/DashboardReducer';
 
 interface HeaderComponentProps {
   emblemUrl: string;
@@ -10,7 +10,7 @@ interface HeaderComponentProps {
   displayName: string;
   characters: Character[];
   selectedCharacter: Character | null;
-  onCharacterClick: (character: Character) => void;
+  onCharacterClick: (index: number) => void;
 }
 
 const Header = styled('div')<{ emblemUrl: string }>(({ emblemUrl }) => ({
@@ -79,9 +79,9 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const handleCharacterClick = (character: Character) => {
-    onCharacterClick(character);
-    dispatch(updateSelectedCharacter(character));
+  const handleCharacterClick = (index: number) => {
+    onCharacterClick(index);
+    dispatch(updateSelectedCharacter(index));
   };
 
   return (
@@ -89,13 +89,13 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({
       <OverlayImage src={overlayUrl} alt="Overlay" />
       <DisplayName>{displayName}</DisplayName>
       <ButtonContainer>
-        {characters.map((character) => (
+        {[0, 1, 2].map((index) => (
           <CharacterText
-            key={character.id}
-            isSelected={selectedCharacter?.id === character.id}
-            onClick={() => handleCharacterClick(character)}
+            key={index}
+            isSelected={selectedCharacter?.id === index}
+            onClick={() => handleCharacterClick(index)}
           >
-            {character.class}
+            {characters[index].class}
           </CharacterText>
         ))}
       </ButtonContainer>

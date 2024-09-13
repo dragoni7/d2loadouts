@@ -18,9 +18,9 @@ import {
   ManifestLoadoutIcon,
   ManifestLoadoutName,
 } from '../../../types/manifest-types';
-import useSelectedCharacterLoadouts from '../hooks/use-selected-character-loadouts';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
-import { store } from '../../../store';
+import { RootState, store } from '../../../store';
+import { useSelector } from 'react-redux';
 
 const LoadoutSlot = styled('img')(({ theme }) => ({
   backgroundSize: 'cover',
@@ -39,7 +39,9 @@ export default function SaveLoadout() {
   const [identifiersSet, setIdentifiersSet] = useState<boolean>(false);
 
   const loadoutIdentifiers = useLoadoutIdentifiers();
-  const loadouts = useSelectedCharacterLoadouts();
+  const loadouts = useSelector(
+    (state: RootState) => state.profile.profileData.characters[0].loadouts
+  );
 
   function handleBackClick() {
     setLoadoutDrawerOpen(false);
@@ -133,7 +135,10 @@ export default function SaveLoadout() {
         <Grid item md={6}>
           <LoadoutSlot
             onClick={async () => {
-              const characterId = store.getState().profile.selectedCharacter?.id;
+              const characterId =
+                store.getState().profile.profileData.characters[
+                  store.getState().dashboard.selectedCharacter
+                ]?.id;
 
               if (characterId && loadoutColor && loadoutIcon && loadoutName)
                 await snapShotLoadoutRequest(

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Container, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
+import { AppDispatch, RootState, store } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
 import {
   filterFromSharedLoadout,
@@ -12,7 +12,7 @@ import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import { getProfileData } from '../../features/profile/destiny-profile';
-import { updateProfileData, updateSelectedCharacter } from '../../store/ProfileReducer';
+import { updateProfileData } from '../../store/ProfileReducer';
 import {
   armor,
   Character,
@@ -44,6 +44,7 @@ import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
+  updateSelectedCharacter,
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
@@ -99,7 +100,7 @@ export const Dashboard: React.FC = () => {
     (state: RootState) => state.dashboard
   );
 
-  const selectedCharacter = useSelector((state: RootState) => state.profile.selectedCharacter);
+  const selectedCharacter = useSelector((state: RootState) => state.dashboard.selectedCharacter);
   const fragments = useSelector(
     (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
   );
@@ -148,7 +149,6 @@ export const Dashboard: React.FC = () => {
       const profileData = await getProfileData();
       dispatch(updateProfileData(profileData));
 
-      let targetCharacter = profileData.characters[0];
       let sharedExotic: ManifestExoticArmor | undefined = undefined;
 
       // if navigated here using a share link
@@ -158,14 +158,15 @@ export const Dashboard: React.FC = () => {
         const sharedLoadoutDto = decodeLoadout(sharedLoadoutLink!);
         setSharedLoadoutDto(sharedLoadoutDto);
 
-        const sharedClassCharacter = profileData.characters.find(
+        const sharedClassCharacterIndex = profileData.characters.findIndex(
           (character: Character) => character.class === sharedLoadoutDto.characterClass
         );
 
-        if (sharedClassCharacter) {
-          targetCharacter = sharedClassCharacter;
+        if (sharedClassCharacterIndex !== -1) {
+          dispatch(updateSelectedCharacter(sharedClassCharacterIndex));
         } else {
           console.log('Missing required character class');
+          dispatch(updateSelectedCharacter(0));
         }
 
         sharedExotic = await db.manifestExoticArmorCollection
@@ -177,8 +178,6 @@ export const Dashboard: React.FC = () => {
           console.log('You do not own required exotic');
         }
       }
-
-      dispatch(updateSelectedCharacter(targetCharacter));
 
       if (sharedExotic)
         dispatch(
@@ -274,27 +273,28 @@ export const Dashboard: React.FC = () => {
       }
     };
 
-    if (selectedCharacter) {
+    if (characters[selectedCharacter]) {
       dispatch(resetLoadout());
-      dispatch(updateLoadoutCharacter(selectedCharacter));
+      dispatch(updateLoadoutCharacter(characters[selectedCharacter]));
 
-      setSubclasses(selectedCharacter.subclasses);
+      setSubclasses(characters[selectedCharacter].subclasses);
 
       if (sharedLoadoutDto) {
-        initSharedSubclass(sharedLoadoutDto, selectedCharacter).catch(console.error);
+        initSharedSubclass(sharedLoadoutDto, characters[selectedCharacter]).catch(console.error);
       } else {
-        const keys = Object.keys(selectedCharacter.subclasses);
+        const keys = Object.keys(characters[selectedCharacter].subclasses);
 
         for (let i = 0; i < keys.length; i++) {
           if (
-            selectedCharacter.subclasses[Number(keys[i])] !== undefined &&
-            selectedCharacter.subclasses[Number(keys[i])]!.damageType !== DAMAGE_TYPE.KINETIC
+            characters[selectedCharacter].subclasses[Number(keys[i])] !== undefined &&
+            characters[selectedCharacter].subclasses[Number(keys[i])]!.damageType !==
+              DAMAGE_TYPE.KINETIC
           ) {
-            setSelectedSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
-            setLastNonPrismaticSubclass(selectedCharacter.subclasses[Number(keys[i])]!);
+            setSelectedSubclass(characters[selectedCharacter].subclasses[Number(keys[i])]!);
+            setLastNonPrismaticSubclass(characters[selectedCharacter].subclasses[Number(keys[i])]!);
             dispatch(
               updateSubclass({
-                subclass: selectedCharacter.subclasses[Number(keys[i])],
+                subclass: characters[selectedCharacter].subclasses[Number(keys[i])],
               })
             );
             break;
@@ -302,27 +302,33 @@ export const Dashboard: React.FC = () => {
         }
       }
     }
-  }, [selectedCharacter, sharedLoadoutDto, dispatch]);
+  }, [selectedCharacter, characters, sharedLoadoutDto, dispatch]);
 
   const permutations = useMemo(() => {
-    if (selectedCharacter && selectedExotic !== undefined) {
+    if (characters[selectedCharacter] && selectedExotic !== undefined) {
       if (selectedExoticClassCombo)
         return generatePermutations(
-          selectedCharacter.armor,
+          characters[selectedCharacter].armor,
           selectedExotic,
           selectedExoticClassCombo,
           fragmentStatModifications
         );
 
       return generatePermutations(
-        selectedCharacter.armor,
+        characters[selectedCharacter].armor,
         selectedExotic,
         undefined,
         fragmentStatModifications
       );
     }
     return null;
-  }, [selectedCharacter, selectedExotic, selectedExoticClassCombo, fragmentStatModifications]);
+  }, [
+    selectedCharacter,
+    characters,
+    selectedExotic,
+    selectedExoticClassCombo,
+    fragmentStatModifications,
+  ]);
 
   const filteredPermutations = useMemo(() => {
     let filtered: FilteredPermutation[] | null = null;
@@ -384,8 +390,8 @@ export const Dashboard: React.FC = () => {
     setShowLoadoutCustomization(true);
   }
 
-  const handleCharacterClick = (character: Character) => {
-    dispatch(updateSelectedCharacter(character));
+  const handleCharacterClick = (index: number) => {
+    dispatch(updateSelectedCharacter(index));
     dispatch(updateSelectedExoticItemHash({ itemHash: null, slot: null }));
     dispatch(updateSelectedExoticClassCombo(null));
   };
@@ -402,7 +408,7 @@ export const Dashboard: React.FC = () => {
     if (selectedCharacter) {
       dispatch(
         updateSubclass({
-          subclass: selectedCharacter.subclasses[subclass.damageType],
+          subclass: characters[selectedCharacter].subclasses[subclass.damageType],
         })
       );
     }
@@ -433,15 +439,15 @@ export const Dashboard: React.FC = () => {
           screenshot={selectedSubclass?.subclass.screenshot || ''}
           subclass={selectedSubclass!}
         />
-      ) : sharedLoadoutDto === undefined && selectedCharacter && selectedSubclass ? (
+      ) : sharedLoadoutDto === undefined && selectedSubclass ? (
         <>
           <HeaderWrapper>
             <HeaderComponent
-              emblemUrl={selectedCharacter?.emblem?.secondarySpecial || ''}
-              overlayUrl={selectedCharacter?.emblem?.secondaryOverlay || ''}
+              emblemUrl={characters[selectedCharacter]?.emblem?.secondarySpecial || ''}
+              overlayUrl={characters[selectedCharacter]?.emblem?.secondaryOverlay || ''}
               displayName={membership.bungieGlobalDisplayName}
               characters={characters}
-              selectedCharacter={selectedCharacter!}
+              selectedCharacter={characters[selectedCharacter]!}
               onCharacterClick={handleCharacterClick}
             />
           </HeaderWrapper>
@@ -462,7 +468,7 @@ export const Dashboard: React.FC = () => {
               <Grid container item md={3} justifyContent={'center'} alignItems={'flex-start'}>
                 <Grid item md={12}>
                   <ExoticSelector
-                    selectedCharacter={selectedCharacter!}
+                    selectedCharacter={characters[selectedCharacter]!}
                     selectedExoticItemHash={selectedExotic.itemHash}
                   />
                 </Grid>

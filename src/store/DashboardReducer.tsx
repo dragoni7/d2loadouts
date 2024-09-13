@@ -5,12 +5,14 @@ interface DashboardState {
   selectedValues: { [key: string]: number };
   selectedExotic: { itemHash: number | null; slot: armor | null };
   selectedExoticClassCombo: ExoticClassCombo | null;
+  selectedCharacter: number;
 }
 
 const initialState: DashboardState = {
   selectedValues: {},
   selectedExotic: { itemHash: null, slot: null },
   selectedExoticClassCombo: null,
+  selectedCharacter: 0,
 };
 
 const dashboardSlice = createSlice({
@@ -29,6 +31,9 @@ const dashboardSlice = createSlice({
     updateSelectedExoticClassCombo: (state, action: PayloadAction<ExoticClassCombo | null>) => {
       state.selectedExoticClassCombo = action.payload;
     },
+    updateSelectedCharacter: (state, action: PayloadAction<number>) => {
+      state.selectedCharacter = action.payload;
+    },
   },
 });
 
@@ -36,6 +41,7 @@ export const {
   updateSelectedValues,
   updateSelectedExoticItemHash,
   updateSelectedExoticClassCombo,
+  updateSelectedCharacter,
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
