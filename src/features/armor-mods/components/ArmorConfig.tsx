@@ -6,7 +6,15 @@ import { armorMods, DestinyArmor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
 import { getModsBySlot } from '../mod-utils';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import { Alert, Grid, Fade, Snackbar, SnackbarCloseReason } from '@mui/material';
+import {
+  Alert,
+  Grid,
+  Fade,
+  Snackbar,
+  SnackbarCloseReason,
+  LinearProgress,
+  CircularProgress,
+} from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState, store } from '../../../store';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
@@ -153,54 +161,64 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
             }}
           />
         </Grid>
-        <Grid item md={1}>
-          <ArmorModSelector
-            selected={selectedMods[0]}
-            mods={statMods}
-            onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-              onSelectMod(mod, 0);
-            }}
-          />
-        </Grid>
-        <Grid item md={1}>
-          <ArmorModSelector
-            selected={selectedMods[1]}
-            mods={armorMods}
-            onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-              onSelectMod(mod, 1);
-            }}
-          />
-        </Grid>
-        <Grid item md={1}>
-          <ArmorModSelector
-            selected={selectedMods[2]}
-            mods={armorMods}
-            onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-              onSelectMod(mod, 2);
-            }}
-          />
-        </Grid>
-        <Grid item md={1}>
-          <ArmorModSelector
-            selected={selectedMods[3]}
-            mods={armorMods}
-            onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-              onSelectMod(mod, 3);
-            }}
-          />
-        </Grid>
-        {armor.artifice === true ? (
-          <Grid item md={1}>
-            <ArmorModSelector
-              selected={selectedMods[4]}
-              mods={artificeMods}
-              onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-                onSelectMod(mod, 4);
-              }}
-            />
-          </Grid>
+        {selectedMods ? (
+          <>
+            <Grid item md={1}>
+              <ArmorModSelector
+                selected={selectedMods[0]}
+                mods={statMods}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
+                  onSelectMod(mod, 0);
+                }}
+              />
+            </Grid>
+            <Grid item md={1}>
+              <ArmorModSelector
+                selected={selectedMods[1]}
+                mods={armorMods}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
+                  onSelectMod(mod, 1);
+                }}
+              />
+            </Grid>
+            <Grid item md={1}>
+              <ArmorModSelector
+                selected={selectedMods[2]}
+                mods={armorMods}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
+                  onSelectMod(mod, 2);
+                }}
+              />
+            </Grid>
+            <Grid item md={1}>
+              <ArmorModSelector
+                selected={selectedMods[3]}
+                mods={armorMods}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
+                  onSelectMod(mod, 3);
+                }}
+              />
+            </Grid>
+            {armor.artifice === true ? (
+              <Grid item md={1}>
+                <ArmorModSelector
+                  selected={selectedMods[4]}
+                  mods={artificeMods}
+                  onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
+                    onSelectMod(mod, 4);
+                  }}
+                />
+              </Grid>
+            ) : (
+              <Grid item md={1} />
+            )}
+          </>
         ) : (
-          <Grid item md={1} />
+          [...Array(5).keys()].map((i) => (
+            <Grid item md={1}>
+              <CircularProgress />
+            </Grid>
+          ))
         )}
       </Grid>
       <Snackbar

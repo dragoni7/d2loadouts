@@ -43,6 +43,7 @@ import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
+  resetDashboard,
   updateSelectedCharacter,
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
@@ -100,7 +101,9 @@ export const Dashboard: React.FC = () => {
     (state: RootState) => state.dashboard
   );
 
-  const selectedCharacter = useSelector((state: RootState) => state.dashboard.selectedCharacter);
+  const selectedCharacterIndex = useSelector(
+    (state: RootState) => state.dashboard.selectedCharacter
+  );
   const fragments = useSelector(
     (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
   );
@@ -140,56 +143,6 @@ export const Dashboard: React.FC = () => {
       } as FragmentStatModifications
     );
   }, [fragments]);
-
-  useEffect(() => {
-    const updateProfile = async () => {
-      await updateManifest();
-      const destinyMembership = await getDestinyMembershipId();
-      dispatch(updateMembership(destinyMembership));
-      const profileData = await getProfileData();
-      dispatch(updateProfileCharacters(profileData));
-
-      let sharedExotic: ManifestExoticArmor | undefined = undefined;
-
-      // if navigated here using a share link
-      const sharedLoadoutLink = localStorage.getItem('lastShared');
-
-      if (sharedLoadoutLink !== '' && sharedLoadoutLink !== null) {
-        const sharedLoadoutDto = decodeLoadout(sharedLoadoutLink!);
-        setSharedLoadoutDto(sharedLoadoutDto);
-
-        const sharedClassCharacterIndex = profileData.findIndex(
-          (character: Character) => character.class === sharedLoadoutDto.characterClass
-        );
-
-        if (sharedClassCharacterIndex !== -1) {
-          dispatch(updateSelectedCharacter(sharedClassCharacterIndex));
-        } else {
-          console.log('Missing required character class');
-          dispatch(updateSelectedCharacter(0));
-        }
-
-        sharedExotic = await db.manifestExoticArmorCollection
-          .where('itemHash')
-          .equals(Number(sharedLoadoutDto.selectedExoticItemHash))
-          .first();
-
-        if (sharedExotic === undefined || sharedExotic?.isOwned === false) {
-          console.log('You do not own required exotic');
-        }
-      }
-
-      if (sharedExotic)
-        dispatch(
-          updateSelectedExoticItemHash({
-            itemHash: sharedExotic.itemHash,
-            slot: sharedExotic.slot as armor,
-          })
-        );
-    };
-
-    updateProfile().catch(console.error);
-  }, []);
 
   useEffect(() => {
     const initSharedSubclass = async (
@@ -273,49 +226,98 @@ export const Dashboard: React.FC = () => {
       }
     };
 
-    if (characters[selectedCharacter]) {
-      dispatch(resetLoadout());
-      dispatch(updateLoadoutCharacter(characters[selectedCharacter]));
+    const updateProfile = async () => {
+      await updateManifest();
+      const destinyMembership = await getDestinyMembershipId();
+      dispatch(updateMembership(destinyMembership));
+      const profileCharacters = await getProfileData();
+      dispatch(updateProfileCharacters(profileCharacters));
 
-      setSubclasses(characters[selectedCharacter].subclasses);
+      let sharedExotic: ManifestExoticArmor | undefined = undefined;
 
-      if (sharedLoadoutDto) {
-        initSharedSubclass(sharedLoadoutDto, characters[selectedCharacter]).catch(console.error);
+      let targetCharacterIndex = 0;
+
+      // if navigated here using a share link
+      const sharedLoadoutLink = localStorage.getItem('lastShared');
+
+      if (sharedLoadoutLink !== '' && sharedLoadoutLink !== null) {
+        const sharedLoadoutDto = decodeLoadout(sharedLoadoutLink!);
+        setSharedLoadoutDto(sharedLoadoutDto);
+
+        targetCharacterIndex = profileCharacters.findIndex(
+          (character: Character) => character.class === sharedLoadoutDto.characterClass
+        );
+
+        if (targetCharacterIndex !== -1) {
+          await initSharedSubclass(sharedLoadoutDto, profileCharacters[targetCharacterIndex]);
+        } else {
+          console.log('Missing required character class');
+        }
+
+        sharedExotic = await db.manifestExoticArmorCollection
+          .where('itemHash')
+          .equals(Number(sharedLoadoutDto.selectedExoticItemHash))
+          .first();
+
+        if (sharedExotic === undefined || sharedExotic?.isOwned === false) {
+          console.log('You do not own required exotic');
+        } else {
+          dispatch(
+            updateSelectedExoticItemHash({
+              itemHash: sharedExotic.itemHash,
+              slot: sharedExotic.slot as armor,
+            })
+          );
+        }
       } else {
-        const keys = Object.keys(characters[selectedCharacter].subclasses);
+        const keys = Object.keys(profileCharacters[targetCharacterIndex].subclasses);
 
         for (let i = 0; i < keys.length; i++) {
           if (
-            characters[selectedCharacter].subclasses[Number(keys[i])] !== undefined &&
-            characters[selectedCharacter].subclasses[Number(keys[i])]!.damageType !==
+            profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])] !== undefined &&
+            profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])]!.damageType !==
               DAMAGE_TYPE.KINETIC
           ) {
-            setSelectedSubclass(characters[selectedCharacter].subclasses[Number(keys[i])]!);
-            setLastNonPrismaticSubclass(characters[selectedCharacter].subclasses[Number(keys[i])]!);
+            setSelectedSubclass(
+              profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])]!
+            );
+            setLastNonPrismaticSubclass(
+              profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])]!
+            );
             dispatch(
               updateSubclass({
-                subclass: characters[selectedCharacter].subclasses[Number(keys[i])],
+                subclass: profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])],
               })
             );
             break;
           }
         }
       }
-    }
-  }, [selectedCharacter, characters, sharedLoadoutDto, dispatch]);
+
+      targetCharacterIndex = targetCharacterIndex === -1 ? 0 : targetCharacterIndex;
+
+      dispatch(updateSelectedCharacter(targetCharacterIndex));
+
+      setSubclasses(profileCharacters[targetCharacterIndex].subclasses);
+
+      dispatch(updateLoadoutCharacter(profileCharacters[targetCharacterIndex]));
+    };
+
+    updateProfile().catch(console.error);
+  }, []);
 
   const permutations = useMemo(() => {
-    if (characters[selectedCharacter] && selectedExotic !== undefined) {
+    if (characters[selectedCharacterIndex] && selectedExotic !== undefined) {
       if (selectedExoticClassCombo)
         return generatePermutations(
-          characters[selectedCharacter].armor,
+          characters[selectedCharacterIndex].armor,
           selectedExotic,
           selectedExoticClassCombo,
           fragmentStatModifications
         );
 
       return generatePermutations(
-        characters[selectedCharacter].armor,
+        characters[selectedCharacterIndex].armor,
         selectedExotic,
         undefined,
         fragmentStatModifications
@@ -323,7 +325,7 @@ export const Dashboard: React.FC = () => {
     }
     return null;
   }, [
-    selectedCharacter,
+    selectedCharacterIndex,
     characters,
     selectedExotic,
     selectedExoticClassCombo,
@@ -391,9 +393,13 @@ export const Dashboard: React.FC = () => {
   }
 
   const handleCharacterClick = (index: number) => {
+    if (index === selectedCharacterIndex) return;
+
+    dispatch(resetDashboard());
     dispatch(updateSelectedCharacter(index));
-    dispatch(updateSelectedExoticItemHash({ itemHash: null, slot: null }));
-    dispatch(updateSelectedExoticClassCombo(null));
+    dispatch(resetLoadout());
+    dispatch(updateLoadoutCharacter(characters[index]));
+    setSubclasses(characters[index].subclasses);
   };
 
   const handleSubclassSelect = (subclass: SubclassConfig) => {
@@ -405,10 +411,10 @@ export const Dashboard: React.FC = () => {
       })
     );
 
-    if (selectedCharacter) {
+    if (selectedCharacterIndex) {
       dispatch(
         updateSubclass({
-          subclass: characters[selectedCharacter].subclasses[subclass.damageType],
+          subclass: characters[selectedCharacterIndex].subclasses[subclass.damageType],
         })
       );
     }
@@ -443,11 +449,11 @@ export const Dashboard: React.FC = () => {
         <>
           <HeaderWrapper>
             <HeaderComponent
-              emblemUrl={characters[selectedCharacter]?.emblem?.secondarySpecial || ''}
-              overlayUrl={characters[selectedCharacter]?.emblem?.secondaryOverlay || ''}
+              emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
+              overlayUrl={characters[selectedCharacterIndex]?.emblem?.secondaryOverlay || ''}
               displayName={membership.bungieGlobalDisplayName}
               characters={characters}
-              selectedCharacter={characters[selectedCharacter]!}
+              selectedCharacter={characters[selectedCharacterIndex]!}
               onCharacterClick={handleCharacterClick}
             />
           </HeaderWrapper>
@@ -468,7 +474,7 @@ export const Dashboard: React.FC = () => {
               <Grid container item md={3} justifyContent={'center'} alignItems={'flex-start'}>
                 <Grid item md={12}>
                   <ExoticSelector
-                    selectedCharacter={characters[selectedCharacter]!}
+                    selectedCharacter={characters[selectedCharacterIndex]!}
                     selectedExoticItemHash={selectedExotic.itemHash}
                   />
                 </Grid>

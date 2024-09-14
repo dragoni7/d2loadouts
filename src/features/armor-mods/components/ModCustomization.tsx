@@ -23,7 +23,7 @@ const StyledSubTitle = styled(Typography)(({ theme }) => ({
 }));
 
 const ModCustomization: React.FC = () => {
-  const currentConfig = store.getState().loadoutConfig.loadout;
+  const currentConfig = useSelector((state: RootState) => state.loadoutConfig.loadout);
   const statMods: (ManifestArmorMod | ManifestArmorStatMod)[] = useStatMods();
   const artificeMods: (ManifestArmorMod | ManifestArmorStatMod)[] = useArtificeMods();
   const requiredMods = useSelector(

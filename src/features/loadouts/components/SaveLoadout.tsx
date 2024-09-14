@@ -18,9 +18,13 @@ import {
   ManifestLoadoutIcon,
   ManifestLoadoutName,
 } from '../../../types/manifest-types';
-import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
+import { getProfileDataRequest, snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
 import { RootState, store } from '../../../store';
 import { useSelector } from 'react-redux';
+import { API_COMPONENTS } from '../../../lib/bungie_api/constants';
+import { useDispatch } from 'react-redux';
+import { updateCharacterLoadouts } from '../../../store/ProfileReducer';
+import { getCharacterLoadoutsFromResponse } from '../../../util/api-utils';
 
 const LoadoutSlot = styled('img')(({ theme }) => ({
   backgroundSize: 'cover',
@@ -40,6 +44,8 @@ export default function SaveLoadout() {
 
   const loadoutIdentifiers = useLoadoutIdentifiers();
   const selectedCharacter = useSelector((state: RootState) => state.dashboard.selectedCharacter);
+
+  const dispatch = useDispatch();
 
   function handleBackClick() {
     setLoadoutDrawerOpen(false);
@@ -135,7 +141,7 @@ export default function SaveLoadout() {
             onClick={async () => {
               const characterId = store.getState().profile.characters[selectedCharacter]?.id;
 
-              if (characterId && loadoutColor && loadoutIcon && loadoutName)
+              if (characterId && loadoutColor && loadoutIcon && loadoutName) {
                 await snapShotLoadoutRequest(
                   String(characterId),
                   loadoutColor?.hash,
@@ -144,8 +150,23 @@ export default function SaveLoadout() {
                   loadoutName?.hash
                 );
 
-              setIdentifiersSet(false);
-              setLoadoutDrawerOpen(false);
+                setIdentifiersSet(false);
+                setLoadoutDrawerOpen(false);
+
+                const loadoutsResponse = await getProfileDataRequest([
+                  API_COMPONENTS.CHARACTERS,
+                  API_COMPONENTS.CHARACTER_LOADOUTS,
+                ]);
+
+                if (loadoutsResponse) {
+                  dispatch(
+                    updateCharacterLoadouts({
+                      loadouts: getCharacterLoadoutsFromResponse(loadoutsResponse, characterId),
+                      index: selectedCharacter,
+                    })
+                  );
+                }
+              }
             }}
             src={
               loadoutIdentifiers.loadoutIcons.find((icon) => icon.hash === loadout.iconHash)

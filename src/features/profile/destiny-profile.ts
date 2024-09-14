@@ -21,7 +21,7 @@ import {
   Emblem,
   Subclass,
 } from '../../types/d2l-types';
-import { getCharacterLoadouts } from './character-utils';
+import { getCharacterLoadoutsFromResponse } from '../../util/api-utils';
 import { getCharacterClass, modReverseDict } from './util';
 
 export async function getProfileData(): Promise<Character[]> {
@@ -57,7 +57,7 @@ export async function getProfileData(): Promise<Character[]> {
       };
 
       // gather character's loadouts
-      character.loadouts = getCharacterLoadouts(characterLoadouts[character.id].loadouts);
+      character.loadouts = getCharacterLoadoutsFromResponse(response, character.id);
 
       // iterate character's equipped items
       for (const item of characterEquipment[key].items) {

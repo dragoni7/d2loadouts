@@ -34,6 +34,7 @@ const dashboardSlice = createSlice({
     updateSelectedCharacter: (state, action: PayloadAction<number>) => {
       state.selectedCharacter = action.payload;
     },
+    resetDashboard: () => initialState,
   },
 });
 
@@ -42,6 +43,7 @@ export const {
   updateSelectedExoticItemHash,
   updateSelectedExoticClassCombo,
   updateSelectedCharacter,
+  resetDashboard,
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
