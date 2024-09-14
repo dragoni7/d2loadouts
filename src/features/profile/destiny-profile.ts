@@ -428,6 +428,7 @@ async function buildSubclassConfig(item: any, character: Character, itemComponen
       icon: subclass.icon,
       screenshot: subclass.screenshot,
       isOwned: subclass.isOwned,
+      secondaryIcon: subclass.secondaryIcon
     };
 
     character.subclasses[subclass.damageType] = {
