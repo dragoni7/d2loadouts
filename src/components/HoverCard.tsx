@@ -24,11 +24,11 @@ interface HoverCardProps {
 const HoverCardContainer = styled('div')(({ theme }) => ({
   position: 'absolute',
   top: '-100%',
-  left: '100%',
+  right: '100%',
   zIndex: 1600,
   padding: theme.spacing(1.5),
   backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  borderRadius: theme.shape.borderRadius,
+  borderRadius: '0px',
   boxShadow: theme.shadows[10],
   width: '250px',
   pointerEvents: 'none',
