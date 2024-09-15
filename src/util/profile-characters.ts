@@ -451,6 +451,7 @@ async function buildSubclassConfig(item: any, itemComponents: any): Promise<Subc
       icon: subclass.icon,
       screenshot: subclass.screenshot,
       isOwned: subclass.isOwned,
+      secondaryIcon: subclass.secondaryIcon
     };
 
     const subclassConfig: SubclassConfig = {

@@ -6,9 +6,15 @@ import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/subclass-constants';
 import { RootState } from '../../store';
 import { db } from '../../store/db';
 import { updateSubclassMods } from '../../store/LoadoutReducer';
-import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../types/manifest-types';
+import {
+  ManifestPlug,
+  ManifestAspect,
+  ManifestStatPlug,
+  ManifestSubclass,
+} from '../../types/manifest-types';
 import { DamageType, SubclassConfig } from '../../types/d2l-types';
 import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../lib/bungie_api/constants';
+import HoverCard from '../../components/HoverCard';
 
 interface AbilitiesModificationProps {
   subclass: SubclassConfig;
@@ -325,19 +331,21 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             onMouseEnter={(e) => handleMouseEnter(e, slotId)}
             onMouseLeave={handleMouseLeave}
           >
-            <SlotComponent
-              style={{
-                backgroundImage: currentMod ? `url(${currentMod.icon})` : 'none',
-                opacity: isDisabled ? 0.5 : 1,
-                pointerEvents: isDisabled ? 'none' : 'auto',
-              }}
-            >
-              {isEmptyMod && (
-                <Typography variant="caption" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                  {isDisabled ? 'Locked' : 'Empty'}
-                </Typography>
-              )}
-            </SlotComponent>
+            <HoverCard item={currentMod}>
+              <SlotComponent
+                style={{
+                  backgroundImage: currentMod ? `url(${currentMod.icon})` : 'none',
+                  opacity: isDisabled ? 0.5 : 1,
+                  pointerEvents: isDisabled ? 'none' : 'auto',
+                }}
+              >
+                {isEmptyMod && (
+                  <Typography variant="caption" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                    {isDisabled ? 'Locked' : 'Empty'}
+                  </Typography>
+                )}
+              </SlotComponent>
+            </HoverCard>
             {isHovered && !isDisabled && (
               <SubmenuContainer
                 style={{
@@ -346,12 +354,13 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
                 }}
               >
                 {mods[category]?.map((mod) => (
-                  <OptionButton
-                    key={mod.itemHash}
-                    onClick={() => handleModSelect(category, mod, index)}
-                    style={{ backgroundImage: `url(${mod.icon})` }}
-                    title={mod.name}
-                  />
+                  <HoverCard item={mod} key={mod.itemHash}>
+                    <OptionButton
+                      onClick={() => handleModSelect(category, mod, index)}
+                      style={{ backgroundImage: `url(${mod.icon})` }}
+                      title={mod.name}
+                    />
+                  </HoverCard>
                 ))}
               </SubmenuContainer>
             )}
@@ -430,4 +439,5 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
     </Container>
   );
 };
+
 export default AbilitiesModification;
