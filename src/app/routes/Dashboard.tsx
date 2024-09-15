@@ -53,6 +53,7 @@ import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
 import { getProfileData } from '../../util/profile-characters';
+import RefreshCharacters from '../../components/RefreshCharacters';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -447,6 +448,7 @@ export const Dashboard: React.FC = () => {
         />
       ) : sharedLoadoutDto === undefined && selectedSubclass ? (
         <>
+          <RefreshCharacters />
           <HeaderWrapper>
             <HeaderComponent
               emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
