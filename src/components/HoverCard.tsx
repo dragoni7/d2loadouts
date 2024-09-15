@@ -95,7 +95,16 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
 
       fullData = await db.manifestSubclassFragmentsDef.where('itemHash').equals(itemHash).first();
       if (fullData) {
-        setHoverData({ ...fullData, type: 'fragment' });
+        // Fetch the description from manifestSandboxPerkDef
+        const sandboxPerk = await db.manifestSandboxPerkDef
+          .where('name')
+          .equals(fullData.name)
+          .first();
+        setHoverData({
+          ...fullData,
+          type: 'fragment',
+          description: sandboxPerk ? sandboxPerk.description : 'No description available',
+        });
         return;
       }
 
@@ -127,27 +136,25 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
         return <HoverCardDescription>{hoverData.flavorText}</HoverCardDescription>;
 
       case 'fragment':
-        const modValues = [
-          { name: 'Mobility', value: hoverData.mobilityMod },
-          { name: 'Resilience', value: hoverData.resilienceMod },
-          { name: 'Recovery', value: hoverData.recoveryMod },
-          { name: 'Discipline', value: hoverData.disciplineMod },
-          { name: 'Intellect', value: hoverData.intellectMod },
-          { name: 'Strength', value: hoverData.strengthMod },
-        ];
-
-        const nonZeroMods = modValues.filter((mod) => mod.value !== 0);
-
-        if (nonZeroMods.length > 0) {
-          return (
+        return (
+          <>
+            <HoverCardDescription>{hoverData.description}</HoverCardDescription>
             <HoverCardStatsList>
-              {nonZeroMods.map((mod, index) => (
-                <li key={index}>{`${mod.name}: ${mod.value > 0 ? '+' : ''}${mod.value}`}</li>
-              ))}
+              {[
+                { name: 'Mobility', value: hoverData.mobilityMod },
+                { name: 'Resilience', value: hoverData.resilienceMod },
+                { name: 'Recovery', value: hoverData.recoveryMod },
+                { name: 'Discipline', value: hoverData.disciplineMod },
+                { name: 'Intellect', value: hoverData.intellectMod },
+                { name: 'Strength', value: hoverData.strengthMod },
+              ]
+                .filter((mod) => mod.value !== 0)
+                .map((mod, index) => (
+                  <li key={index}>{`${mod.name}: ${mod.value > 0 ? '+' : ''}${mod.value}`}</li>
+                ))}
             </HoverCardStatsList>
-          );
-        }
-        return <HoverCardDescription></HoverCardDescription>;
+          </>
+        );
 
       default:
         return <HoverCardDescription></HoverCardDescription>;
