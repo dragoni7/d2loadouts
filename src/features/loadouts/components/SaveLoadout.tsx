@@ -24,7 +24,7 @@ import { useSelector } from 'react-redux';
 import { API_COMPONENTS } from '../../../lib/bungie_api/constants';
 import { useDispatch } from 'react-redux';
 import { updateCharacterLoadouts } from '../../../store/ProfileReducer';
-import { getCharacterLoadoutsFromResponse } from '../../../util/api-utils';
+import { getCharacterLoadoutsFromResponse } from '../../../util/profile-characters';
 
 const LoadoutSlot = styled('img')(({ theme }) => ({
   backgroundSize: 'cover',
@@ -162,7 +162,7 @@ export default function SaveLoadout() {
                   dispatch(
                     updateCharacterLoadouts({
                       loadouts: getCharacterLoadoutsFromResponse(loadoutsResponse, characterId),
-                      index: selectedCharacter,
+                      characterIndex: selectedCharacter,
                     })
                   );
                 }

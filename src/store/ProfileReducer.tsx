@@ -17,15 +17,23 @@ export const profileSlice = createSlice({
       state.characters = action.payload;
     },
 
+    updateCharacter: (
+      state,
+      action: PayloadAction<{ character: Character; characterIndex: number }>
+    ) => {
+      state.characters[action.payload.characterIndex] = action.payload.character;
+    },
+
     updateCharacterLoadouts: (
       state,
-      action: PayloadAction<{ loadouts: DestinyLoadout[]; index: number }>
+      action: PayloadAction<{ loadouts: DestinyLoadout[]; characterIndex: number }>
     ) => {
-      state.characters[action.payload.index].loadouts = action.payload.loadouts;
+      state.characters[action.payload.characterIndex].loadouts = action.payload.loadouts;
     },
   },
 });
 
-export const { updateProfileCharacters, updateCharacterLoadouts } = profileSlice.actions;
+export const { updateProfileCharacters, updateCharacter, updateCharacterLoadouts } =
+  profileSlice.actions;
 
 export default profileSlice.reducer;

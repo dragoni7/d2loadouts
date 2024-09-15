@@ -23,6 +23,8 @@ import FadeIn from './FadeIn';
 import { equipLoadout } from '../util/loadout-utils';
 import { TransitionProps } from '@mui/material/transitions';
 import SaveLoadout from './SaveLoadout';
+import { refreshProfileCharacters } from '../../../util/profile-characters';
+import { useDispatch } from 'react-redux';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -80,6 +82,8 @@ const EquipLoadout: React.FC = () => {
   const [equipping, setEquipping] = useState<boolean>(false);
   const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
   async function handleEquipLoadout() {
     const loadout = store.getState().loadoutConfig.loadout;
 
@@ -97,6 +101,10 @@ const EquipLoadout: React.FC = () => {
       setEquipping(true);
 
       await equipLoadout(loadout, setProcessing, setEquipStep, setResults);
+
+      setEquipStep('Refreshing');
+
+      refreshProfileCharacters(dispatch);
 
       setEquipStep('Finished');
       setEquipping(false);
@@ -147,7 +155,7 @@ const EquipLoadout: React.FC = () => {
           elevation={5}
           sx={{
             width: '100%',
-            height: '87%',
+            height: '90%',
             backgroundColor: 'rgba(40,40,40,0.8)',
             borderTop: '8px solid rgba(100,100,100,1.0)',
             borderRadius: '0',

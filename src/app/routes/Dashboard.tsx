@@ -11,7 +11,6 @@ import SingleDiamondButton from '../../components/SingleDiamondButton';
 import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
-import { getProfileData } from '../../features/profile/destiny-profile';
 import {
   armor,
   Character,
@@ -53,6 +52,7 @@ import { Grid, Paper } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
+import { getProfileData } from '../../util/profile-characters';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
