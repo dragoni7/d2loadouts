@@ -18,16 +18,8 @@ export async function updateManifest() {
   if (response.data.Response) {
     const currentVersion = localStorage.getItem('manifestVersion');
 
-    if (!currentVersion || currentVersion !== response.data.Response.version) {
-      await db.manifestArmorDef.clear();
-      await db.manifestArmorModDef.clear();
-      await db.manifestArmorStatModDef.clear();
-      await db.manifestEmblemDef.clear();
-      await db.manifestExoticArmorCollection.clear();
-      await db.manifestSubclass.clear();
-      await db.manifestSubclassModDef.clear();
-      await db.manifestSubclassFragmentsDef.clear();
-      await db.manifestSubclassAspectsDef.clear();
+    if (currentVersion === null || currentVersion !== response.data.Response.version) {
+      await db.delete({ disableAutoOpen: false });
       localStorage.setItem('manifestVersion', response.data.Response.version);
 
       const itemInventoryComponent =
