@@ -227,7 +227,7 @@ export const Dashboard: React.FC = () => {
       }
     };
 
-    const updateProfile = async () => {
+    const updateData = async () => {
       await updateManifest();
       const destinyMembership = await getDestinyMembershipId();
       dispatch(updateMembership(destinyMembership));
@@ -304,7 +304,7 @@ export const Dashboard: React.FC = () => {
       dispatch(updateLoadoutCharacter(profileCharacters[targetCharacterIndex]));
     };
 
-    updateProfile().catch(console.error);
+    updateData().catch(console.error);
   }, []);
 
   const permutations = useMemo(() => {

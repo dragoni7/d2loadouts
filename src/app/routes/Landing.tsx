@@ -7,6 +7,7 @@ import { Container, Grid, Paper, Box, Typography } from '@mui/material';
 import pyramidBackground from '/assets/pyramid.jpg';
 import FeatureSlider from '../../components/FeatureSlider';
 import { useScramble } from 'use-scramble';
+import { handleVersionUpdate } from '../../util/version-check';
 
 export const LandingRoute: React.FC = () => {
   const navigate = useNavigate();
@@ -21,9 +22,12 @@ export const LandingRoute: React.FC = () => {
   });
 
   useEffect(() => {
+    // version check
+    handleVersionUpdate();
     // if navigated with share link, store the data before authenticating
     if (window.location.href.includes('d='))
       localStorage.setItem('lastShared', window.location.href.split('d=')[1]);
+
     setTimeout(async () => {
       if (isAuthenticated()) {
         console.log('Already authenticated');

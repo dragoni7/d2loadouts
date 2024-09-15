@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { isTokenExpired } from './token-services';
 import { getTokens } from '../../store/TokensStore';
 import { API_CREDENTIALS } from './constants';
+import { handleVersionUpdate } from '../../util/version-check';
 
 /**
  * Navigates to the Bungie OAuth url
@@ -31,6 +32,7 @@ export function isAuthenticated(): boolean {
  * Restricts rendering of children if not authenticated
  */
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  handleVersionUpdate();
   if (!isAuthenticated()) {
     return <Navigate to={'/'} replace />;
   }
