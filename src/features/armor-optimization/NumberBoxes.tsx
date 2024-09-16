@@ -17,8 +17,8 @@ interface NumberBoxProps {
 const NumberBox = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
 })<NumberBoxProps>(({ isSelected, theme }) => ({
-  width: '30px',
-  height: '30px',
+  width: '40px',
+  height: '40px',
   fontSize: 16,
   [theme.breakpoints.between('lg', 'xl')]: {
     width: '50px',
