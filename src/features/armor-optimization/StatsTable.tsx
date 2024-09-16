@@ -156,7 +156,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
 
   useEffect(() => {
     if (large) {
-      setItemsPerPage(6);
+      setItemsPerPage(5);
     } else {
       setItemsPerPage(4);
     }

@@ -7,7 +7,6 @@ import EquipLoadout from '../features/loadouts/components/EquipLoadout';
 import AbilitiesModification from '../features/subclass/AbilitiesModification';
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
-import SaveLoadout from '../features/loadouts/components/SaveLoadout';
 import TotalStatsDisplay from '../features/subclass/TotalStatsDisplay';
 
 interface LoadoutCustomizationProps {
@@ -38,9 +37,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
     <Box
       sx={{
         width: '100vw',
-        display: 'flex',
-        flexGrow: 1,
-        position: 'relative',
+        height: '100vh',
         overflow: 'auto',
         '&::before': {
           content: '""',
@@ -83,7 +80,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
         }}
       />
 
-      <Grid container columns={2} sx={{ position: 'relative', zIndex: 3 }}>
+      <Grid container columns={2} sx={{ position: 'relative', zIndex: 3, height: '100%' }}>
         <Grid item md={1}>
           <TransparentButton
             onClick={onBackClick}
@@ -113,7 +110,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
         >
           <TotalStatsDisplay />
         </Grid>
-        <Grid item md={1} sx={{ textAlign: 'center' }}>
+        <Grid item md={1} sx={{ textAlign: 'center', alignContent: 'end', paddingBottom: '6px' }}>
           <EquipLoadout />
           <ShareLoadout />
         </Grid>
