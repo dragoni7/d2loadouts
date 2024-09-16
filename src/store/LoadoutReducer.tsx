@@ -155,8 +155,8 @@ export const loadoutConfigSlice = createSlice({
     updateLoadoutArmor: (state, action: PayloadAction<DestinyArmor[]>) => {
       state.loadout.helmet = action.payload[0];
       state.loadout.gauntlets = action.payload[1];
-      state.loadout.legArmor = action.payload[2];
-      state.loadout.chestArmor = action.payload[3];
+      state.loadout.chestArmor = action.payload[2];
+      state.loadout.legArmor = action.payload[3];
       state.loadout.classArmor = action.payload[4];
     },
     updateLoadoutArmorMods: (
