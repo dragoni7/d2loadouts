@@ -59,14 +59,6 @@ const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundPosition: 'center',
 }));
 
-const NumberBoxesContainer = styled(Box)(({ theme }) => ({
-  marginTop: theme.spacing(4),
-  marginLeft: theme.spacing(25),
-  backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  backdropFilter: 'blur(5px)',
-  borderRadius: 0,
-}));
-
 export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -446,9 +438,7 @@ export const Dashboard: React.FC = () => {
                   />
                 </Grid>
                 <Grid item>
-                  <NumberBoxesContainer>
-                    <NumberBoxes />
-                  </NumberBoxesContainer>
+                  <NumberBoxes />
                 </Grid>
               </Grid>
               <Grid

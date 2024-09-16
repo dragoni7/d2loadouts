@@ -54,10 +54,22 @@
   height: 100%;
 }
 
-.button-1 { top: 0; left: 60px; }
-.button-2 { top: 60px; left: 0; }
-.button-3 { top: 60px; left: 120px; }
-.button-4 { top: 120px; left: 60px; }
+.button-1 {
+  top: 0;
+  left: 60px;
+}
+.button-2 {
+  top: 60px;
+  left: 0;
+}
+.button-3 {
+  top: 60px;
+  left: 120px;
+}
+.button-4 {
+  top: 120px;
+  left: 60px;
+}
 
 .single-diamond-button {
   width: 160px;

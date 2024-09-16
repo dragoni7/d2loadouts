@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Grid, ButtonBase } from '@mui/material';
+import { Box, Grid, ButtonBase, Stack } from '@mui/material';
 import { STATS } from '../../lib/bungie_api/constants';
 import { updateSelectedValues } from '../../store/DashboardReducer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,12 +9,6 @@ import { RootState } from '../../store';
 const StatRow = styled(Grid)(({ theme }) => ({
   marginBottom: theme.spacing(1),
 }));
-
-const NumberBoxContainer = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-});
 
 interface NumberBoxProps {
   isSelected: boolean;
@@ -25,9 +19,11 @@ const NumberBox = styled(ButtonBase, {
 })<NumberBoxProps>(({ isSelected, theme }) => ({
   width: '30px',
   height: '30px',
+  fontSize: 16,
   [theme.breakpoints.between('lg', 'xl')]: {
     width: '50px',
     height: '50px',
+    fontSize: 20,
   },
   textAlign: 'center',
   border: `1px solid ${isSelected ? '#bdab6d' : 'rgba(255, 255, 255, 0.5)'}`,
@@ -35,7 +31,6 @@ const NumberBox = styled(ButtonBase, {
   backgroundColor: isSelected ? 'rgba(189, 171, 109, 0.2)' : 'transparent',
   color: isSelected ? '#bdab6d' : 'white',
   cursor: 'pointer',
-  fontSize: 16,
   '&:hover': {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
@@ -44,7 +39,6 @@ const NumberBox = styled(ButtonBase, {
 const StatIcon = styled('img')({
   width: '50%',
   height: '50%',
-  marginRight: 12,
 });
 
 const statIcons: Record<string, string> = {
@@ -69,14 +63,24 @@ const NumberBoxes: React.FC = () => {
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        padding: 1,
+        marginLeft: 10,
+        marginRight: 10,
+        marginTop: 2,
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(5px)',
+        borderRadius: 0,
+      }}
+    >
       {STATS.map((stat) => (
         <StatRow key={stat} container alignItems="center" spacing={1}>
-          <Grid item>
+          <Grid item md={2}>
             <StatIcon src={statIcons[stat.toLowerCase()]} alt={stat} />
           </Grid>
-          <Grid item xs>
-            <NumberBoxContainer>
+          <Grid item md={10}>
+            <Stack direction="row">
               {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => (
                 <NumberBox
                   key={number}
@@ -86,7 +90,7 @@ const NumberBoxes: React.FC = () => {
                   {number / 10}
                 </NumberBox>
               ))}
-            </NumberBoxContainer>
+            </Stack>
           </Grid>
         </StatRow>
       ))}
