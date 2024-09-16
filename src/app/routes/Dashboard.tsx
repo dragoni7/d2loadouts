@@ -52,6 +52,7 @@ import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
 import { getProfileData } from '../../util/profile-characters';
 import RefreshCharacters from '../../components/RefreshCharacters';
+import LogoutButton from '../../features/auth/LogoutButton';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${greyBackground})`,
@@ -423,6 +424,7 @@ export const Dashboard: React.FC = () => {
             onCharacterClick={handleCharacterClick}
           />
           <RefreshCharacters />
+          <LogoutButton />
           <Grid
             container
             sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '130px' }}

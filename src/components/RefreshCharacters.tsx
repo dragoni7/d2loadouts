@@ -19,7 +19,7 @@ export default function RefreshCharacters() {
       sx={{
         position: 'absolute',
         top: '1%',
-        right: '1%',
+        right: '3%',
         zIndex: 9999,
         mixBlendMode: 'difference',
       }}
@@ -32,8 +32,6 @@ export default function RefreshCharacters() {
             onClick={onRefreshClick}
             sx={{
               borderRadius: 4,
-              mixBlendMode: 'difference',
-              ':hover': { mixBlendMode: 'difference' },
             }}
           >
             <Refresh color="inherit" fontSize="large" />
