@@ -1,6 +1,15 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Card, Grid, Typography, IconButton, Tooltip } from '@mui/material';
+import {
+  Box,
+  Card,
+  Grid,
+  Typography,
+  IconButton,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { FilteredPermutation, DestinyArmor, StatName } from '../../types/d2l-types';
@@ -115,7 +124,9 @@ const TableFooter = styled(Typography)(({ theme }) => ({
 
 const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClick }) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 4;
+  const theme = useTheme();
+  const large = useMediaQuery(theme.breakpoints.between('lg', 'xl'));
+  const [itemsPerPage, setItemsPerPage] = useState<number>(4);
 
   const subclassConfig = useSelector(
     (state: RootState) => state.loadoutConfig.loadout.subclassConfig
@@ -143,11 +154,19 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     return modifications;
   }, [subclassConfig.fragments]);
 
+  useEffect(() => {
+    if (large) {
+      setItemsPerPage(6);
+    } else {
+      setItemsPerPage(4);
+    }
+  }, [large]);
+
   const paginatedData = useMemo(() => {
     const start = currentPage * itemsPerPage;
     const end = start + itemsPerPage;
     return permutations.slice(start, end);
-  }, [currentPage, permutations]);
+  }, [currentPage, permutations, itemsPerPage]);
 
   const calculateTotal = (perm: FilteredPermutation, stat: StatName) => {
     const baseSum = perm.permutation.reduce((sum, item) => sum + (item[stat] || 0), 0);

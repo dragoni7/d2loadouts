@@ -16,7 +16,13 @@ export default function RefreshCharacters() {
 
   return (
     <Box
-      sx={{ position: 'fixed', top: '1%', right: '1%', zIndex: 9999, mixBlendMode: 'difference' }}
+      sx={{
+        position: 'absolute',
+        top: '1%',
+        right: '1%',
+        zIndex: 9999,
+        mixBlendMode: 'difference',
+      }}
     >
       {refreshing ? (
         <CircularProgress color="inherit" />

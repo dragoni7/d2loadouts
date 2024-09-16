@@ -22,25 +22,28 @@ interface NumberBoxProps {
 
 const NumberBox = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
-})<NumberBoxProps>(({ isSelected }) => ({
-  width: 32, // Increased size
-  height: 32, // Increased size
-  lineHeight: '32px',
+})<NumberBoxProps>(({ isSelected, theme }) => ({
+  width: '30px',
+  height: '30px',
+  [theme.breakpoints.between('lg', 'xl')]: {
+    width: '50px',
+    height: '50px',
+  },
   textAlign: 'center',
   border: `1px solid ${isSelected ? '#bdab6d' : 'rgba(255, 255, 255, 0.5)'}`,
-  margin: '0 2px', // Increased margin between boxes
+  margin: '0 2px',
   backgroundColor: isSelected ? 'rgba(189, 171, 109, 0.2)' : 'transparent',
   color: isSelected ? '#bdab6d' : 'white',
   cursor: 'pointer',
-  fontSize: 14, // Increased font size
+  fontSize: 16,
   '&:hover': {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 }));
 
 const StatIcon = styled('img')({
-  width: 24,
-  height: 24,
+  width: '50%',
+  height: '50%',
   marginRight: 12,
 });
 
