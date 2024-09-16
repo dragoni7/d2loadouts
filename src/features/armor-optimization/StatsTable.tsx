@@ -41,7 +41,7 @@ const CardContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   height: '100%',
-  width: '440px',
+  width: '70%',
   padding: theme.spacing(0, 1),
 }));
 
@@ -226,20 +226,20 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
               await onPermutationClick(perm);
             }}
           >
-            <ArmorRow container spacing={1}>
+            <ArmorRow container spacing={0}>
               {perm.permutation.map((item, idx) => (
-                <Grid item key={idx}>
+                <Grid item md={2} key={idx}>
                   <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
                     <Box>
-                      <ArmorIcon armor={item} size={64} />
+                      <ArmorIcon armor={item} />
                     </Box>
                   </Tooltip>
                 </Grid>
               ))}
             </ArmorRow>
-            <StatsRow container spacing={1}>
+            <StatsRow container spacing={1} alignItems="center" justifyContent="center">
               {(STATS as StatName[]).map((stat) => (
-                <Grid item key={stat}>
+                <Grid item md={1} key={stat}>
                   <StatContainer>
                     <StatIcon src={statIcons[stat]} alt={stat} />
                     <StatValue variant="body2">{calculateTotal(perm, stat)}</StatValue>
@@ -250,7 +250,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
             <ModsRow container spacing={1}>
               {(STATS as StatName[]).map((stat) =>
                 perm.modsArray[stat].map((mod, idx) => (
-                  <Grid item key={`${stat}-${idx}`}>
+                  <Grid item md={1} key={`${stat}-${idx}`}>
                     <ModIcon
                       src={modIcons[stat.toLowerCase() + '_mod'] || ''}
                       alt={mod.toString()}
