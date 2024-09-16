@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Container, styled } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState, store } from '../../store';
+import { AppDispatch, RootState } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
 import {
   filterFromSharedLoadout,
@@ -16,7 +16,6 @@ import {
   Character,
   CharacterClass,
   DecodedLoadoutData,
-  DestinyArmor,
   FilteredPermutation,
   FragmentStatModifications,
   StatName,
@@ -44,42 +43,21 @@ import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
   resetDashboard,
   updateSelectedCharacter,
-  updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
 import StatModifications from '../../features/subclass/StatModifications';
-import { Grid, Paper } from '@mui/material';
+import { Grid } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
 import { getProfileData } from '../../util/profile-characters';
 import RefreshCharacters from '../../components/RefreshCharacters';
 
-const PageContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100vh',
-  overflow: 'hidden',
-}));
-
-const ContentContainer = styled(Box)(({ theme }) => ({
-  flex: 1,
-  width: '100vw',
-  overflowY: 'auto',
+const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${greyBackground})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  padding: theme.spacing(3),
-  paddingTop: '200px',
 }));
-
-const HeaderWrapper = styled(Box)({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  zIndex: 1100,
-});
 
 const NumberBoxesContainer = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(4),
@@ -87,10 +65,6 @@ const NumberBoxesContainer = styled(Box)(({ theme }) => ({
   backgroundColor: 'rgba(0, 0, 0, 0.1)',
   backdropFilter: 'blur(5px)',
   borderRadius: 0,
-  padding: theme.spacing(2),
-  alignSelf: 'flex-start',
-  width: 'auto',
-  maxWidth: '100%',
 }));
 
 export const Dashboard: React.FC = () => {
@@ -430,7 +404,7 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <PageContainer>
+    <>
       {showAbilitiesModification && customizingSubclass ? (
         <SubclassCustomizationWrapper
           onBackClick={() => setShowAbilitiesModification(false)}
@@ -448,43 +422,56 @@ export const Dashboard: React.FC = () => {
         />
       ) : sharedLoadoutDto === undefined && selectedSubclass ? (
         <>
+          <HeaderComponent
+            emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
+            overlayUrl={characters[selectedCharacterIndex]?.emblem?.secondaryOverlay || ''}
+            displayName={membership.bungieGlobalDisplayName}
+            characters={characters}
+            selectedCharacter={characters[selectedCharacterIndex]!}
+            onCharacterClick={handleCharacterClick}
+          />
           <RefreshCharacters />
-          <HeaderWrapper>
-            <HeaderComponent
-              emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
-              overlayUrl={characters[selectedCharacterIndex]?.emblem?.secondaryOverlay || ''}
-              displayName={membership.bungieGlobalDisplayName}
-              characters={characters}
-              selectedCharacter={characters[selectedCharacterIndex]!}
-              onCharacterClick={handleCharacterClick}
-            />
-          </HeaderWrapper>
-          <ContentContainer>
-            <Grid container spacing={3} justifyContent={'center'} alignItems={'flex-start'}>
-              <Grid item md={4.5}>
-                <SingleDiamondButton
-                  subclasses={subclasses}
-                  selectedSubclass={selectedSubclass}
-                  onSubclassSelect={handleSubclassSelect}
-                  onSubclassRightClick={handleSubclassRightClick}
-                />
-                <NumberBoxesContainer>
-                  <NumberBoxes />
-                </NumberBoxesContainer>
+          <Grid
+            container
+            sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '130px' }}
+          >
+            <DashboardContent item container md={12}>
+              <Grid item container direction="column" md={4.5} spacing={6} sx={{ marginTop: '3%' }}>
+                <Grid item>
+                  <SingleDiamondButton
+                    subclasses={subclasses}
+                    selectedSubclass={selectedSubclass}
+                    onSubclassSelect={handleSubclassSelect}
+                    onSubclassRightClick={handleSubclassRightClick}
+                  />
+                </Grid>
+                <Grid item>
+                  <NumberBoxesContainer>
+                    <NumberBoxes />
+                  </NumberBoxesContainer>
+                </Grid>
               </Grid>
-
-              <Grid container item md={3} justifyContent={'center'} alignItems={'flex-start'}>
-                <Grid item md={12}>
+              <Grid
+                container
+                item
+                md={3}
+                spacing={3}
+                direction="column"
+                justifyContent={'flex-start'}
+                alignItems={'center'}
+                sx={{ marginTop: '3%' }}
+              >
+                <Grid item>
                   <ExoticSelector
                     selectedCharacter={characters[selectedCharacterIndex]!}
                     selectedExoticItemHash={selectedExotic.itemHash}
                   />
                 </Grid>
-                <Grid item md={8} lg={6}>
+                <Grid item>
                   <StatModifications />
                 </Grid>
               </Grid>
-              <Grid item md={4.5}>
+              <Grid item md={4.5} sx={{ marginTop: '3%' }}>
                 {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (
@@ -496,13 +483,13 @@ export const Dashboard: React.FC = () => {
                   <p>Loading....</p>
                 )}
               </Grid>
-            </Grid>
-          </ContentContainer>
+            </DashboardContent>
+          </Grid>
         </>
       ) : (
         <div>loading...</div>
       )}
-    </PageContainer>
+    </>
   );
 };
 

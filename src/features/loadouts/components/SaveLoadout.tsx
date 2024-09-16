@@ -191,7 +191,7 @@ export default function SaveLoadout() {
     <>
       <Button onClick={() => setLoadoutDrawerOpen(true)}>SAVE IN-GAME</Button>
       <Drawer open={loadoutDrawerOpen} anchor="right">
-        <Box sx={{ width: '24vw' }}>
+        <Box sx={{ width: '18vw' }}>
           {identifiersSet ? SelectLoadoutSlotDrawer : SetIdentifiersDrawer}
         </Box>
       </Drawer>
