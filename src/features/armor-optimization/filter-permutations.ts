@@ -1,9 +1,10 @@
+import { STATS } from '../../lib/bungie_api/constants';
 import {
   DecodedLoadoutData,
   DestinyArmor,
   FilteredPermutation,
   StatName,
-  FragmentStatModifications
+  FragmentStatModifications,
 } from '../../types/d2l-types';
 import { precalculatedModCombinations } from './precalculatedModCombinations';
 
@@ -33,8 +34,9 @@ export const filterPermutations = (
     const statDeficits: Record<string, number> = {};
     for (const stat in thresholds) {
       const key = stat.toLowerCase() as keyof DestinyArmor & keyof FragmentStatModifications;
-      const totalStat = permutation.reduce((sum, item) => sum + ((item[key] as number) || 0), 0) + 
-                        fragmentStatModifications[key];
+      const totalStat =
+        permutation.reduce((sum, item) => sum + ((item[key] as number) || 0), 0) +
+        fragmentStatModifications[key];
       statDeficits[stat] = Math.max(0, thresholds[stat] - totalStat);
     }
 
@@ -85,8 +87,17 @@ export const filterPermutations = (
     }
   }
 
-  return results;
+  return results.sort((p1, p2) => calculateTotalCost(p1) - calculateTotalCost(p2));
 };
+
+function calculateTotalCost(perm: FilteredPermutation): number {
+  let total = 0;
+  (STATS as StatName[]).map((stat) => {
+    total += perm.modsArray[stat].reduce((prev, curr) => prev + curr, 0);
+  });
+
+  return total;
+}
 
 export function filterFromSharedLoadout(
   decodedLoadout: DecodedLoadoutData,
@@ -108,7 +119,11 @@ export function filterFromSharedLoadout(
 
     let found = false;
     while (!found) {
-      const filteredPermutations = filterPermutations(permutations, currentThresholds, fragmentStatModifications);
+      const filteredPermutations = filterPermutations(
+        permutations,
+        currentThresholds,
+        fragmentStatModifications
+      );
 
       if (filteredPermutations.length > 0) {
         found = true;
