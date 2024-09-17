@@ -18,6 +18,7 @@ import {
   DecodedLoadoutData,
   FilteredPermutation,
   FragmentStatModifications,
+  StatModifiers,
   StatName,
   SubclassConfig,
 } from '../../types/d2l-types';
@@ -53,6 +54,8 @@ import { updateProfileCharacters } from '../../store/ProfileReducer';
 import { getProfileData } from '../../util/profile-characters';
 import RefreshCharacters from '../../components/RefreshCharacters';
 import LogoutButton from '../../features/auth/LogoutButton';
+import useArtificeMods from '../../hooks/use-artifice-mods';
+import useStatMods from '../../hooks/use-stat-mods';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${greyBackground})`,
@@ -87,6 +90,9 @@ export const Dashboard: React.FC = () => {
   const [showLoadoutCustomization, setShowLoadoutCustomization] = useState(false);
   const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
   const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
+
+  const statMods = useStatMods();
+  const artificeMods = useArtificeMods();
 
   const fragmentStatModifications = useMemo(() => {
     return fragments.reduce(
@@ -336,23 +342,24 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (filteredPermutations && sharedLoadoutDto) {
-      openLoadoutCustomization(filteredPermutations[0]).catch(console.error);
+      openLoadoutCustomization(filteredPermutations[0]);
       localStorage.removeItem('lastShared');
     }
   }, [filteredPermutations, sharedLoadoutDto]);
 
-  async function openLoadoutCustomization(filteredPermutation: FilteredPermutation) {
+  function openLoadoutCustomization(filteredPermutation: FilteredPermutation) {
     dispatch(resetLoadoutArmorMods());
     dispatch(updateLoadoutArmor(filteredPermutation.permutation));
+    const allStatMods = statMods.concat(artificeMods);
     let requiredMods: { mod: ManifestArmorStatMod; equipped: boolean }[] = [];
 
     for (const [stat, costs] of Object.entries(filteredPermutation.modsArray)) {
       for (const cost of costs) {
-        const mod = await db.manifestArmorStatModDef
-          .where(stat + 'Mod')
-          .equals(cost)
-          .first();
-        if (mod !== undefined) requiredMods.push({ mod: mod, equipped: false });
+        const matchedStatMod = allStatMods.find(
+          (mod) => mod[(stat + 'Mod') as StatModifiers] === cost
+        );
+        if (matchedStatMod !== undefined)
+          requiredMods.push({ mod: matchedStatMod, equipped: false });
       }
     }
 
@@ -430,7 +437,7 @@ export const Dashboard: React.FC = () => {
             sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '130px' }}
           >
             <DashboardContent item container md={12}>
-              <Grid item container direction="column" md={4.5} spacing={6} sx={{ marginTop: '3%' }}>
+              <Grid item container direction="column" md={4.5} spacing={6} sx={{ marginTop: '2%' }}>
                 <Grid item>
                   <SingleDiamondButton
                     subclasses={subclasses}
@@ -451,7 +458,7 @@ export const Dashboard: React.FC = () => {
                 direction="column"
                 justifyContent={'flex-start'}
                 alignItems={'center'}
-                sx={{ marginTop: '3%' }}
+                sx={{ marginTop: '1%' }}
               >
                 <Grid item>
                   <ExoticSelector
@@ -463,7 +470,7 @@ export const Dashboard: React.FC = () => {
                   <StatModifications />
                 </Grid>
               </Grid>
-              <Grid item md={4.5} sx={{ marginTop: '3%' }}>
+              <Grid item md={4.5} sx={{ marginTop: '1%' }}>
                 {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (

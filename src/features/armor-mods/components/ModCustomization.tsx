@@ -1,8 +1,8 @@
 import { RootState, store } from '../../../store';
 import ArmorConfig from './ArmorConfig';
 import { Grid, Stack, styled, Typography } from '@mui/material';
-import useArtificeMods from '../hooks/use-artifice-mods';
-import useStatMods from '../hooks/use-stat-mods';
+import useArtificeMods from '../../../hooks/use-artifice-mods';
+import useStatMods from '../../../hooks/use-stat-mods';
 import RequiredMod from './RequiredMod';
 import { useSelector } from 'react-redux';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';

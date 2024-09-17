@@ -9,41 +9,22 @@ import {
   Tooltip,
   useMediaQuery,
   useTheme,
+  Stack,
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { FilteredPermutation, DestinyArmor, StatName } from '../../types/d2l-types';
+import { FilteredPermutation, DestinyArmor, StatName, StatModifiers } from '../../types/d2l-types';
 import { useSelector } from 'react-redux';
 import ArmorIcon from '../../components/ArmorIcon';
-import { STAT_MOD_HASHES, STATS } from '../../lib/bungie_api/constants';
-import { db } from '../../store/db';
+import { STATS } from '../../lib/bungie_api/constants';
 import { RootState } from '../../store';
+import useStatMods from '../../hooks/use-stat-mods';
+import useArtificeMods from '../../hooks/use-artifice-mods';
 
 interface StatsTableProps {
   permutations: FilteredPermutation[];
   onPermutationClick: (filteredPermutation: FilteredPermutation) => void;
 }
-
-const StatsTableContainer = styled(Box)(({ theme }) => ({
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'stretch',
-  justifyContent: 'center',
-  position: 'relative',
-  marginTop: theme.spacing(-1),
-  gap: theme.spacing(1),
-}));
-
-const CardContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100%',
-  width: '70%',
-  padding: theme.spacing(0, 1),
-}));
 
 const StyledCard = styled(Card)(({ theme }) => ({
   borderTop: '5px solid',
@@ -51,30 +32,24 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderImageSlice: 1,
   borderRadius: 0,
   padding: theme.spacing(1),
-  margin: theme.spacing(0.5, 0),
-  width: '100%',
+  height: '22vh',
+  [theme.breakpoints.between('lg', 'xl')]: {
+    height: '19vh',
+  },
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   backdropFilter: 'blur(10px)',
-  display: 'flex',
-  flexDirection: 'column',
   alignItems: 'center',
 }));
 
 const ArmorRow = styled(Grid)(({ theme }) => ({
   justifyContent: 'center',
-  marginBottom: theme.spacing(1),
   width: '100%',
 }));
 
 const StatsRow = styled(Grid)(({ theme }) => ({
   justifyContent: 'center',
   width: '100%',
-  marginBottom: theme.spacing(1),
-}));
-
-const ModsRow = styled(Grid)(({ theme }) => ({
-  justifyContent: 'center',
-  width: '100%',
+  marginBottom: theme.spacing(0.5),
 }));
 
 const StatValue = styled(Typography)({
@@ -85,7 +60,6 @@ const StatContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  margin: theme.spacing(0, 0.5),
 }));
 
 const StatIcon = styled('img')({
@@ -93,15 +67,8 @@ const StatIcon = styled('img')({
   height: 24,
 });
 
-const ModIcon = styled('img')({
-  width: 32,
-  height: 32,
-  margin: '0 2px',
-});
-
 const ArrowButton = styled(IconButton)(({ theme }) => ({
-  height: 'auto',
-  width: '30px',
+  height: '100%',
   color: theme.palette.common.white,
   backgroundColor: 'rgba(0, 0, 0, 0.3)',
   borderRadius: 0,
@@ -115,8 +82,7 @@ const ArrowButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const TableFooter = styled(Typography)(({ theme }) => ({
-  padding: theme.spacing(1),
+const PageCount = styled(Typography)(({ theme }) => ({
   width: '100%',
   color: theme.palette.common.white,
   textAlign: 'center',
@@ -127,6 +93,8 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.between('lg', 'xl'));
   const [itemsPerPage, setItemsPerPage] = useState<number>(4);
+  const statMods = useStatMods();
+  const artificeMods = useArtificeMods();
 
   const subclassConfig = useSelector(
     (state: RootState) => state.loadoutConfig.loadout.subclassConfig
@@ -175,25 +143,6 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     return baseSum + modSum + fragmentMod;
   };
 
-  const [modIcons, setModIcons] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    const fetchModIcons = async () => {
-      const iconMap: Record<string, string> = {};
-
-      for (const [stat, hash] of Object.entries(STAT_MOD_HASHES)) {
-        const mod = await db.manifestArmorStatModDef.where('itemHash').equals(hash).first();
-        if (mod) {
-          iconMap[stat.toLowerCase()] = mod.icon;
-        }
-      }
-
-      setModIcons(iconMap);
-    };
-
-    fetchModIcons();
-  }, []);
-
   const statIcons: Record<StatName, string> = {
     mobility: 'assets/mob.png',
     resilience: 'assets/res.png',
@@ -210,72 +159,136 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
     }).join('\n');
   };
 
+  function renderStatModCount(perm: FilteredPermutation, stat: StatName, modAmount: number) {
+    const matchedStatMod =
+      modAmount !== 3
+        ? statMods.find((mod) => mod[(stat + 'Mod') as StatModifiers] === modAmount)
+        : artificeMods.find((mod) => mod[(stat + 'Mod') as StatModifiers] === modAmount);
+
+    return perm.modsArray[stat].find((mod) => mod === modAmount) ? (
+      <Stack sx={{ width: '2.5vw' }} spacing={0}>
+        <Tooltip title={matchedStatMod?.name} placement="top">
+          <img src={matchedStatMod?.icon} alt={matchedStatMod?.name} />
+        </Tooltip>
+
+        <Grid
+          container
+          rowSpacing={1}
+          columnSpacing={0}
+          justifyContent="space-evenly"
+          sx={{ paddingTop: 0.5 }}
+        >
+          {perm.modsArray[stat]
+            .filter((mod) => mod === modAmount)
+            .map((mod) => (
+              <Grid item md={4} display="flex" justifyContent="center" alignItems="center">
+                <Box
+                  sx={{
+                    backgroundColor: 'white',
+                    opacity: 0.3,
+                    width: '1.2vh',
+                    height: '1.2vh',
+                  }}
+                />
+              </Grid>
+            ))}
+        </Grid>
+      </Stack>
+    ) : (
+      false
+    );
+  }
+
   return (
-    <StatsTableContainer>
-      <ArrowButton
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-        disabled={currentPage === 0}
-      >
-        <ChevronLeftIcon />
-      </ArrowButton>
-      <CardContainer>
-        {paginatedData.map((perm, index) => (
-          <StyledCard
-            key={index}
-            onClick={async () => {
-              await onPermutationClick(perm);
-            }}
-          >
-            <ArmorRow container spacing={0}>
-              {perm.permutation.map((item, idx) => (
-                <Grid item md={2} key={idx}>
-                  <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
-                    <Box>
-                      <ArmorIcon armor={item} />
-                    </Box>
-                  </Tooltip>
-                </Grid>
-              ))}
-            </ArmorRow>
-            <StatsRow container spacing={1} alignItems="center" justifyContent="center">
-              {(STATS as StatName[]).map((stat) => (
-                <Grid item md={1} key={stat}>
-                  <StatContainer>
-                    <StatIcon src={statIcons[stat]} alt={stat} />
-                    <StatValue variant="body2">{calculateTotal(perm, stat)}</StatValue>
-                  </StatContainer>
-                </Grid>
-              ))}
-            </StatsRow>
-            <ModsRow container spacing={1}>
-              {(STATS as StatName[]).map((stat) =>
-                perm.modsArray[stat].map((mod, idx) => (
-                  <Grid item md={1} key={`${stat}-${idx}`}>
-                    <ModIcon
-                      src={modIcons[stat.toLowerCase() + '_mod'] || ''}
-                      alt={mod.toString()}
-                    />
-                  </Grid>
-                ))
-              )}
-            </ModsRow>
-          </StyledCard>
-        ))}
-        <TableFooter>
+    <Grid
+      container
+      justifyContent="center"
+      spacing={2}
+      sx={{
+        marginTop: theme.spacing(-1),
+        gap: theme.spacing(1),
+        height: '100%',
+        width: '100%',
+      }}
+    >
+      <Grid item md={12}>
+        <PageCount>
           Page {currentPage + 1} of {Math.ceil(permutations.length / itemsPerPage)}
-        </TableFooter>
-      </CardContainer>
-      <ArrowButton
-        onClick={() =>
-          setCurrentPage((prev) =>
-            Math.min(prev + 1, Math.ceil(permutations.length / itemsPerPage) - 1)
-          )
-        }
-        disabled={currentPage === Math.ceil(permutations.length / itemsPerPage) - 1}
-      >
-        <ChevronRightIcon />
-      </ArrowButton>
-    </StatsTableContainer>
+        </PageCount>
+      </Grid>
+      <Grid item md={1}>
+        <ArrowButton
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+          disabled={currentPage === 0}
+        >
+          <ChevronLeftIcon />
+        </ArrowButton>
+      </Grid>
+      <Grid item md={9}>
+        <Stack spacing={1}>
+          {paginatedData.map((perm, index) => (
+            <StyledCard
+              key={index}
+              onClick={async () => {
+                onPermutationClick(perm);
+              }}
+            >
+              <ArmorRow container spacing={0}>
+                {perm.permutation.map((item, idx) => (
+                  <Grid item md={2} key={idx}>
+                    <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
+                      <Box>
+                        <ArmorIcon armor={item} />
+                      </Box>
+                    </Tooltip>
+                  </Grid>
+                ))}
+              </ArmorRow>
+              <StatsRow container spacing={1} alignItems="center" justifyContent="center">
+                {(STATS as StatName[]).map((stat) => (
+                  <Grid item md={1} key={stat}>
+                    <StatContainer>
+                      <StatIcon src={statIcons[stat]} alt={stat} />
+                      <StatValue variant="body2">{calculateTotal(perm, stat)}</StatValue>
+                    </StatContainer>
+                  </Grid>
+                ))}
+              </StatsRow>
+              <Stack direction="row" alignItems="start" justifyContent="center" spacing={0.5}>
+                {(STATS as StatName[]).map((stat) =>
+                  perm.modsArray[stat].length !== 0 ? (
+                    <>
+                      {renderStatModCount(perm, stat, 10)}
+                      {renderStatModCount(perm, stat, 5)}
+                      {renderStatModCount(perm, stat, 3)}
+                    </>
+                  ) : (
+                    false
+                  )
+                )}
+              </Stack>
+            </StyledCard>
+          ))}
+        </Stack>
+      </Grid>
+      <Grid item md={1}>
+        <ArrowButton
+          onClick={() =>
+            setCurrentPage((prev) =>
+              Math.min(prev + 1, Math.ceil(permutations.length / itemsPerPage) - 1)
+            )
+          }
+          disabled={currentPage === Math.ceil(permutations.length / itemsPerPage) - 1}
+        >
+          <ChevronRightIcon />
+        </ArrowButton>
+      </Grid>
+      <Grid item md={12}>
+        <PageCount>
+          Page {currentPage + 1} of {Math.ceil(permutations.length / itemsPerPage)}
+        </PageCount>
+      </Grid>
+    </Grid>
   );
 };
 
