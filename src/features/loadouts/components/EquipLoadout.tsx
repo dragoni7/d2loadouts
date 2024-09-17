@@ -25,6 +25,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import SaveLoadout from './SaveLoadout';
 import { refreshProfileCharacters } from '../../../util/profile-characters';
 import { useDispatch } from 'react-redux';
+import { D2LButton } from '../../../components/D2LButton';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -47,22 +48,6 @@ const LoadoutDialog = styled(Dialog)(({ theme }) => ({
     backgroundColor: 'rgba(130,130,130,1.0)',
     color: 'white',
   },
-}));
-
-const TransparentButton = styled(Button)(({ theme }) => ({
-  background: 'rgba(0, 0, 0, 0.4)',
-  backdropFilter: 'blur(10px)',
-  color: 'white',
-  padding: theme.spacing(1, 2),
-  fontFamily: 'Helvetica, Arial, sans-serif',
-  '&:hover': {
-    background: 'rgba(0, 0, 0, 0.7)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 1)',
-  },
-  borderRadius: 0,
-  border: '1px solid rgba(255, 255, 255, 0.5)',
-  transition: 'all 0.3s ease',
 }));
 
 const Transition = React.forwardRef(function Transition(
@@ -131,7 +116,7 @@ const EquipLoadout: React.FC = () => {
 
   return (
     <>
-      <TransparentButton onClick={onButtonClick}>Equip Loadout</TransparentButton>
+      <D2LButton onClick={onButtonClick}>Equip Loadout</D2LButton>
       <LoadoutDialog
         open={alertOpen}
         onClose={() => setAlertOpen(false)}

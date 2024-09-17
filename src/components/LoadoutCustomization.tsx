@@ -1,5 +1,4 @@
 import React from 'react';
-import './LoadoutCustomization.css';
 import { Button, Box, Container, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ModCustomization from '../features/armor-mods/components/ModCustomization';
@@ -8,25 +7,13 @@ import AbilitiesModification from '../features/subclass/AbilitiesModification';
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
 import TotalStatsDisplay from '../features/subclass/TotalStatsDisplay';
+import { BackButton } from './BackButton';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;
   screenshot: string;
   subclass: SubclassConfig;
 }
-
-const TransparentButton = styled(Button)(({ theme }) => ({
-  zIndex: 1000,
-  background: 'transparent',
-  color: 'white',
-  padding: theme.spacing(1, 2),
-  '&:hover': {
-    background: 'rgba(255, 255, 255, 0.1)',
-  },
-  '& .MuiButton-startIcon': {
-    marginRight: theme.spacing(1),
-  },
-}));
 
 const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
   onBackClick,
@@ -82,12 +69,12 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
 
       <Grid container columns={2} sx={{ position: 'relative', zIndex: 3, height: '100%' }}>
         <Grid item md={1}>
-          <TransparentButton
+          <BackButton
             onClick={onBackClick}
             startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}
           >
             Back
-          </TransparentButton>
+          </BackButton>
         </Grid>
         <Grid item md={1} />
         <Grid item md={1}>
