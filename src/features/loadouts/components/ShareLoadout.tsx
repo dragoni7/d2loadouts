@@ -22,12 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { styled } from '@mui/material/styles';
-import {
-  CharacterClass,
-  DecodedLoadoutData,
-  FilteredPermutation,
-  StatName,
-} from '../../../types/d2l-types';
+import { CharacterClass, StatName } from '../../../types/d2l-types';
 import { SharedLoadoutDto } from '../types';
 import { D2LButton } from '../../../components/D2LButton';
 

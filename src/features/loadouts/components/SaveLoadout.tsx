@@ -25,6 +25,7 @@ import { API_COMPONENTS } from '../../../lib/bungie_api/constants';
 import { useDispatch } from 'react-redux';
 import { updateCharacterLoadouts } from '../../../store/ProfileReducer';
 import { getCharacterLoadoutsFromResponse } from '../../../util/profile-characters';
+import { D2LButton } from '../../../components/D2LButton';
 
 const LoadoutSlot = styled('img')(({ theme }) => ({
   backgroundSize: 'cover',
@@ -55,7 +56,15 @@ export default function SaveLoadout() {
   }
 
   const SetIdentifiersDrawer = (
-    <Grid container alignItems="center" textAlign="center" rowGap={3} paddingX={4} paddingY={3}>
+    <Grid
+      container
+      alignItems="center"
+      textAlign="center"
+      rowGap={3}
+      paddingX={4}
+      paddingY={3}
+      spacing={3}
+    >
       <Grid item md={12}>
         SET IDENTIFIERS
       </Grid>
@@ -117,21 +126,29 @@ export default function SaveLoadout() {
         </FormControl>
       </Grid>
       <Grid item md={6}>
-        <Button onClick={handleBackClick}>BACK</Button>
+        <D2LButton onClick={handleBackClick}>BACK</D2LButton>
       </Grid>
       <Grid item md={6}>
-        <Button
-          disabled={loadoutName === null && loadoutColor === null && loadoutIcon === null}
+        <D2LButton
+          disabled={loadoutName === null || loadoutColor === null || loadoutIcon === null}
           onClick={() => setIdentifiersSet(true)}
         >
           NEXT
-        </Button>
+        </D2LButton>
       </Grid>
     </Grid>
   );
 
   const SelectLoadoutSlotDrawer = (
-    <Grid container alignItems="center" textAlign="center" rowGap={2} paddingX={4} paddingY={3}>
+    <Grid
+      container
+      alignItems="center"
+      textAlign="center"
+      rowGap={2}
+      paddingX={4}
+      paddingY={3}
+      spacing={3}
+    >
       <Grid item md={12}>
         SELECT SLOT TO OVERWRITE
       </Grid>
@@ -182,16 +199,16 @@ export default function SaveLoadout() {
         </Grid>
       ))}
       <Grid item md={6}>
-        <Button onClick={() => setIdentifiersSet(false)}>BACK</Button>
+        <D2LButton onClick={() => setIdentifiersSet(false)}>BACK</D2LButton>
       </Grid>
     </Grid>
   );
 
   return (
     <>
-      <Button onClick={() => setLoadoutDrawerOpen(true)}>SAVE IN-GAME</Button>
-      <Drawer open={loadoutDrawerOpen} anchor="right">
-        <Box sx={{ width: '18vw' }}>
+      <D2LButton onClick={() => setLoadoutDrawerOpen(true)}>SAVE IN-GAME</D2LButton>
+      <Drawer open={loadoutDrawerOpen} anchor="right" sx={{ backdropFilter: 'blur(6px)' }}>
+        <Box sx={{ width: '18vw', height: '100%' }}>
           {identifiersSet ? SelectLoadoutSlotDrawer : SetIdentifiersDrawer}
         </Box>
       </Drawer>

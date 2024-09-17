@@ -131,11 +131,18 @@ const EquipLoadout: React.FC = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogContinue}>CONTINUE</Button>
-          <Button onClick={() => setAlertOpen(false)}>GO BACK</Button>
+          <D2LButton onClick={onDialogContinue}>CONTINUE</D2LButton>
+          <D2LButton onClick={() => setAlertOpen(false)}>GO BACK</D2LButton>
         </DialogActions>
       </LoadoutDialog>
-      <Backdrop open={open} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Backdrop
+        open={open}
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backdropFilter: 'blur(5px)',
+        }}
+      >
         <Paper
           elevation={5}
           sx={{
@@ -231,19 +238,17 @@ const EquipLoadout: React.FC = () => {
               item
               container
               md={12}
-              textAlign="center"
-              alignItems="flex-end"
-              justifyContent="space-betwen"
               height="7%"
+              alignItems="center"
               sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
             >
               {equipping ? (
                 ''
               ) : (
                 <>
-                  <Grid item md={4}>
+                  <Grid item md={6}>
                     <FadeIn delay={200}>
-                      <Button
+                      <D2LButton
                         onClick={() => {
                           setOpen(false);
                           setResults([]);
@@ -252,15 +257,10 @@ const EquipLoadout: React.FC = () => {
                         }}
                       >
                         Back
-                      </Button>
+                      </D2LButton>
                     </FadeIn>
                   </Grid>
-                  <Grid item md={4}>
-                    <FadeIn delay={400}>
-                      <Button>Share</Button>
-                    </FadeIn>
-                  </Grid>
-                  <Grid item md={4}>
+                  <Grid item md={6}>
                     <FadeIn delay={600}>
                       <SaveLoadout />
                     </FadeIn>
