@@ -11,17 +11,6 @@ import { useDispatch } from 'react-redux';
 import { ManifestExoticArmor } from '../../../types/manifest-types';
 import { ARMOR } from '../../../lib/bungie_api/constants';
 
-const NewComponentContainer = styled('div')({
-  backgroundColor: 'transparent',
-  padding: '20px',
-  borderRadius: '10px',
-  color: 'white',
-  textAlign: 'center',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
 const ExoticIcon = styled('img')<{ isOwned: boolean; isSelected: boolean }>(
   ({ isOwned, isSelected }) => ({
     width: isSelected ? '91px' : '50px',
@@ -211,7 +200,7 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
   };
 
   return (
-    <NewComponentContainer>
+    <>
       {!selectedExotic ? (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <SelectExotic>Select Exotic</SelectExotic>
@@ -360,7 +349,7 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
           </ArrowButton>
         </div>
       )}
-    </NewComponentContainer>
+    </>
   );
 };
 

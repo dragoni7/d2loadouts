@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSpring, animated, config, to } from 'react-spring';
-import './SingleDiamondButton.css';
-import { ManifestSubclass } from '../types/manifest-types';
+import './SubclassSelector.css';
 import { SubclassConfig } from '../types/d2l-types';
 import { DAMAGE_TYPE } from '../lib/bungie_api/constants';
-import { damp } from 'three/src/math/MathUtils';
 
 interface SingleDiamondButtonProps {
   subclasses: { [key: number]: SubclassConfig | undefined } | undefined;
@@ -265,7 +263,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
               />
             </div>
           ) : (
-            <div></div>
+            false
           )}
         </>
       )}

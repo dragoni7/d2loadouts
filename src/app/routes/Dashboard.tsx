@@ -7,7 +7,7 @@ import {
   filterFromSharedLoadout,
   filterPermutations,
 } from '../../features/armor-optimization/filter-permutations';
-import SingleDiamondButton from '../../components/SingleDiamondButton';
+import SingleDiamondButton from '../../components/SubclassSelector';
 import NumberBoxes from '../../features/armor-optimization/components/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
@@ -434,10 +434,15 @@ export const Dashboard: React.FC = () => {
           <LogoutButton />
           <Grid
             container
-            sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '130px' }}
+            sx={{
+              width: '100vw',
+              height: '100vh',
+              overflowY: 'auto',
+              paddingTop: '130px',
+            }}
           >
-            <DashboardContent item container md={12}>
-              <Grid item container direction="column" md={4.5} spacing={6} sx={{ marginTop: '2%' }}>
+            <DashboardContent item container md={12} justifyContent="space-evenly">
+              <Grid item container direction="column" md={4} spacing={6} sx={{ marginTop: '2%' }}>
                 <Grid item>
                   <SingleDiamondButton
                     subclasses={subclasses}
@@ -453,7 +458,7 @@ export const Dashboard: React.FC = () => {
               <Grid
                 container
                 item
-                md={3}
+                md={4}
                 spacing={3}
                 direction="column"
                 justifyContent={'flex-start'}
@@ -470,7 +475,7 @@ export const Dashboard: React.FC = () => {
                   <StatModifications />
                 </Grid>
               </Grid>
-              <Grid item md={4.5} sx={{ marginTop: '1%' }}>
+              <Grid item md={4} sx={{ marginTop: '1%' }}>
                 {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (
