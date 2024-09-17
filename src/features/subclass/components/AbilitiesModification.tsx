@@ -2,19 +2,19 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Paper, Button, Typography, styled, CircularProgress } from '@mui/material';
 import { Box, Container } from '@mui/system';
-import { PLUG_CATEGORY_HASH } from '../../lib/bungie_api/subclass-constants';
-import { RootState } from '../../store';
-import { db } from '../../store/db';
-import { updateSubclassMods } from '../../store/LoadoutReducer';
+import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/subclass-constants';
+import { RootState } from '../../../store';
+import { db } from '../../../store/db';
+import { updateSubclassMods } from '../../../store/LoadoutReducer';
 import {
   ManifestPlug,
   ManifestAspect,
   ManifestStatPlug,
   ManifestSubclass,
-} from '../../types/manifest-types';
-import { DamageType, SubclassConfig } from '../../types/d2l-types';
-import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../lib/bungie_api/constants';
-import HoverCard from '../../components/HoverCard';
+} from '../../../types/manifest-types';
+import { DamageType, SubclassConfig } from '../../../types/d2l-types';
+import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../../lib/bungie_api/constants';
+import HoverCard from '../../../components/HoverCard';
 
 interface AbilitiesModificationProps {
   subclass: SubclassConfig;

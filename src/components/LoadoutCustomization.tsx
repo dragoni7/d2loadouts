@@ -1,13 +1,12 @@
 import React from 'react';
-import { Button, Box, Container, Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Box, Container, Grid } from '@mui/material';
 import ModCustomization from '../features/armor-mods/components/ModCustomization';
 import EquipLoadout from '../features/loadouts/components/EquipLoadout';
-import AbilitiesModification from '../features/subclass/AbilitiesModification';
+import AbilitiesModification from '../features/subclass/components/AbilitiesModification';
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
-import TotalStatsDisplay from '../features/subclass/TotalStatsDisplay';
 import { BackButton } from './BackButton';
+import TotalStatsDisplay from '../features/subclass/components/TotalStatsDisplay';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;

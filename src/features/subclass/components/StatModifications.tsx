@@ -2,8 +2,9 @@ import React from 'react';
 import { Box, styled } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
-import { ManifestStatPlug } from '../../types/manifest-types';
+import { RootState } from '../../../store';
+import { ManifestStatPlug } from '../../../types/manifest-types';
+import { statIcons } from '../../../util/constants';
 
 const StatModificationsContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -28,15 +29,6 @@ const StatIcon = styled('img')({
   height: '20px',
   marginRight: '8px',
 });
-
-const statIcons: Record<string, string> = {
-  mobility: 'assets/mob.png',
-  resilience: 'assets/res.png',
-  recovery: 'assets/rec.png',
-  discipline: 'assets/disc.png',
-  intellect: 'assets/int.png',
-  strength: 'assets/str.png',
-};
 
 const selectFragmentStatModifications = createSelector(
   (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments,

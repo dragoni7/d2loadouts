@@ -8,7 +8,7 @@ import {
   filterPermutations,
 } from '../../features/armor-optimization/filter-permutations';
 import SingleDiamondButton from '../../components/SingleDiamondButton';
-import NumberBoxes from '../../features/armor-optimization/NumberBoxes';
+import NumberBoxes from '../../features/armor-optimization/components/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import {
@@ -22,7 +22,7 @@ import {
   StatName,
   SubclassConfig,
 } from '../../types/d2l-types';
-import PermutationsList from '../../features/armor-optimization/PermutationsList';
+import PermutationsList from '../../features/armor-optimization/components/PermutationsList';
 import HeaderComponent from '../../components/HeaderComponent';
 import { db } from '../../store/db';
 import {
@@ -34,11 +34,11 @@ import {
   updateSubclass,
   updateSubclassMods,
 } from '../../store/LoadoutReducer';
-import SubclassCustomizationWrapper from '../../features/subclass/SubclassCustomizationWrapper';
+import SubclassCustomizationWrapper from '../../features/subclass/components/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
 import greyBackground from '/assets/grey.png';
-import ExoticSelector from '../../features/armor-optimization/ExoticSelector';
+import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
@@ -46,16 +46,16 @@ import {
   updateSelectedCharacter,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
-import StatModifications from '../../features/subclass/StatModifications';
 import { Grid } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
 import { getProfileData } from '../../util/profile-characters';
 import RefreshCharacters from '../../components/RefreshCharacters';
-import LogoutButton from '../../features/auth/LogoutButton';
+import LogoutButton from '../../features/auth/components/LogoutButton';
 import useArtificeMods from '../../hooks/use-artifice-mods';
 import useStatMods from '../../hooks/use-stat-mods';
+import StatModifications from '../../features/subclass/components/StatModifications';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${greyBackground})`,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { authenticate } from '../../lib/bungie_api/authorization';
+import { authenticate } from '../../../lib/bungie_api/authorization';
 import { Button } from '@mui/material';
 
 const BungieLogin: React.FC = () => {

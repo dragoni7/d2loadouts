@@ -13,13 +13,18 @@ import {
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { FilteredPermutation, DestinyArmor, StatName, StatModifiers } from '../../types/d2l-types';
+import {
+  FilteredPermutation,
+  DestinyArmor,
+  StatName,
+  StatModifiers,
+} from '../../../types/d2l-types';
 import { useSelector } from 'react-redux';
-import ArmorIcon from '../../components/ArmorIcon';
-import { STATS } from '../../lib/bungie_api/constants';
-import { RootState } from '../../store';
-import useStatMods from '../../hooks/use-stat-mods';
-import useArtificeMods from '../../hooks/use-artifice-mods';
+import ArmorIcon from '../../../components/ArmorIcon';
+import { STATS } from '../../../lib/bungie_api/constants';
+import { RootState } from '../../../store';
+import useStatMods from '../../../hooks/use-stat-mods';
+import useArtificeMods from '../../../hooks/use-artifice-mods';
 
 interface PermutationsListProps {
   permutations: FilteredPermutation[];

@@ -25,6 +25,7 @@ import { styled } from '@mui/material/styles';
 import { CharacterClass, StatName } from '../../../types/d2l-types';
 import { SharedLoadoutDto } from '../types';
 import { D2LButton } from '../../../components/D2LButton';
+import { statIcons } from '../../../util/constants';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -113,15 +114,6 @@ const ArrowContainer = styled(Box)(({ theme }) => ({
   marginLeft: theme.spacing(2),
   width: '24px',
 }));
-
-const statIcons: Record<StatName, string> = {
-  mobility: '/assets/mob.png',
-  resilience: '/assets/res.png',
-  recovery: '/assets/rec.png',
-  discipline: '/assets/disc.png',
-  intellect: '/assets/int.png',
-  strength: '/assets/str.png',
-};
 
 const selectLoadoutState = createSelector(
   (state: RootState) => state.loadoutConfig.loadout,

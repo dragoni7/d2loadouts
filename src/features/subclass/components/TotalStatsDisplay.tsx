@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import { Box, Typography, Grid } from '@mui/material';
-import { RootState } from '../../store';
-import { StatName, DestinyArmor } from '../../types/d2l-types';
-import { STATS } from '../../lib/bungie_api/constants';
-import { ManifestArmorStatMod, ManifestStatPlug } from '../../types/manifest-types';
+import { STATS } from '../../../lib/bungie_api/constants';
+import { RootState } from '../../../store';
+import { StatName, DestinyArmor } from '../../../types/d2l-types';
+import { ManifestArmorStatMod, ManifestStatPlug } from '../../../types/manifest-types';
 
 const StatsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',

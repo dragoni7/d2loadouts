@@ -1,10 +1,10 @@
 import React from 'react';
 import AbilitiesModification from './AbilitiesModification';
-import StatModifications from './StatModifications';
 import './SubclassCustomizationWrapper.css';
 import { Box } from '@mui/material';
-import { SubclassConfig } from '../../types/d2l-types';
-import { BackButton } from '../../components/BackButton';
+import { SubclassConfig } from '../../../types/d2l-types';
+import { BackButton } from '../../../components/BackButton';
+import StatModifications from './StatModifications';
 
 interface SubclassCustomizationWrapperProps {
   onBackClick: () => void;

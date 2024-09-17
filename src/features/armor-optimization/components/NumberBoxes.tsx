@@ -1,10 +1,11 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Grid, ButtonBase, Stack } from '@mui/material';
-import { STATS } from '../../lib/bungie_api/constants';
-import { updateSelectedValues } from '../../store/DashboardReducer';
+import { STATS } from '../../../lib/bungie_api/constants';
+import { updateSelectedValues } from '../../../store/DashboardReducer';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../../../store';
+import { statIcons } from '../../../util/constants';
 
 const StatRow = styled(Grid)(({ theme }) => ({
   marginBottom: theme.spacing(1),
@@ -40,15 +41,6 @@ const StatIcon = styled('img')({
   width: '50%',
   height: '50%',
 });
-
-const statIcons: Record<string, string> = {
-  mobility: '/assets/mob.png',
-  resilience: '/assets/res.png',
-  recovery: '/assets/rec.png',
-  discipline: '/assets/disc.png',
-  intellect: '/assets/int.png',
-  strength: '/assets/str.png',
-};
 
 const NumberBoxes: React.FC = () => {
   const dispatch = useDispatch();

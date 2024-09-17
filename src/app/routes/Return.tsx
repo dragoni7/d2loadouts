@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { handleAuthReturn } from '../../features/auth/AuthReturn';
+import { handleAuthReturn } from '../../features/auth/components/AuthReturn';
 
 /**
  * Bungie OAuth redirects here
