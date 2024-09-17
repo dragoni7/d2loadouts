@@ -66,6 +66,14 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({
   const elementRef = useRef<HTMLDivElement>(null);
   const modsPerPage = 18; // 3 rows * 6 columns
 
+  useEffect(() => {
+    const element = elementRef.current;
+
+    if (element) {
+      setTop(element.getBoundingClientRect().top);
+    }
+  });
+
   const handlePrevious = () => {
     setStartIndex(Math.max(0, startIndex - modsPerPage));
   };
@@ -144,27 +152,26 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({
                     onMouseEnter={() => setHoveredMod(mod)}
                     onMouseLeave={() => setHoveredMod(null)}
                   />
+                  {hoveredMod === mod && isModDisabled(mod) && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: -25,
+                        left: -140,
+                        width: '150%',
+                        backgroundColor: 'red',
+                        color: 'white',
+                        padding: '4px',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        zIndex: 1601,
+                      }}
+                    >
+                      {renderHoverMessage(mod)}
+                    </Box>
+                  )}
                 </HoverCard>
-                {hoveredMod === mod && isModDisabled(mod) && (
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      bottom: '100%',
-                      left: 0,
-
-                      width: '100%',
-                      backgroundColor: 'red',
-                      color: 'white',
-                      padding: '4px',
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      zIndex: 1601,
-                    }}
-                  >
-                    {renderHoverMessage(mod)}
-                  </Box>
-                )}
               </Box>
             ))}
           </Box>
