@@ -1,21 +1,12 @@
 import { useState, useEffect, SyntheticEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods, updateRequiredStatMods } from '../../../store/LoadoutReducer';
 import { armorMods, DestinyArmor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
 import { getModsBySlot } from '../mod-utils';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import {
-  Alert,
-  Grid,
-  Fade,
-  Snackbar,
-  SnackbarCloseReason,
-  LinearProgress,
-  CircularProgress,
-} from '@mui/material';
-import { useSelector } from 'react-redux';
+import { Alert, Grid, Fade, Snackbar, SnackbarCloseReason, CircularProgress } from '@mui/material';
 import { RootState, store } from '../../../store';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 
@@ -52,9 +43,14 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
     );
   };
 
-  const onSelectMod = async (mod: ManifestArmorMod | ManifestArmorStatMod, slot: number) => {
-    let totalCost = mod.energyCost;
+  const calculateAvailableEnergy = (currentSlot: number) => {
+    const totalEnergyCost = selectedMods.reduce((total, mod, index) => {
+      return index !== currentSlot ? total + mod.energyCost : total;
+    }, 0);
+    return 10 - totalEnergyCost; // Assuming max energy is 10
+  };
 
+  const onSelectMod = async (mod: ManifestArmorMod | ManifestArmorStatMod, slot: number) => {
     if (selectedMods[slot].itemHash === mod.itemHash) return;
 
     if (!mod.isOwned) {
@@ -73,21 +69,13 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
       return;
     }
 
-    for (const key in selectedMods) {
-      if (Number(key) !== slot) {
-        let statEnergyCost = armorMods.find(
-          (mod) => mod.itemHash === selectedMods[key].itemHash
-        )?.energyCost;
-        let armorEnergyCost = statMods.find(
-          (mod) => mod.itemHash === selectedMods[key].itemHash
-        )?.energyCost;
-
-        totalCost += statEnergyCost ? statEnergyCost : armorEnergyCost ? armorEnergyCost : 0;
-      }
-
-      if (totalCost > 10) {
-        return;
-      }
+    const availableEnergy = calculateAvailableEnergy(slot);
+    if (mod.energyCost > availableEnergy) {
+      setSnackPack((prev) => [
+        ...prev,
+        { message: 'Not enough energy to equip ' + mod.name, key: new Date().getTime() },
+      ]);
+      return;
     }
 
     dispatch(
@@ -114,7 +102,6 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
 
   function handleSnackbarClose(event: SyntheticEvent | Event, reason?: SnackbarCloseReason) {
     if (reason === 'clickaway') return;
-
     setSnackbarOpen(false);
   }
 
@@ -167,36 +154,32 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
               <ArmorModSelector
                 selected={selectedMods[0]}
                 mods={statMods}
-                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-                  onSelectMod(mod, 0);
-                }}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 0)}
+                availableEnergy={calculateAvailableEnergy(0)}
               />
             </Grid>
             <Grid item md={1}>
               <ArmorModSelector
                 selected={selectedMods[1]}
                 mods={armorMods}
-                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-                  onSelectMod(mod, 1);
-                }}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 1)}
+                availableEnergy={calculateAvailableEnergy(1)}
               />
             </Grid>
             <Grid item md={1}>
               <ArmorModSelector
                 selected={selectedMods[2]}
                 mods={armorMods}
-                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-                  onSelectMod(mod, 2);
-                }}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 2)}
+                availableEnergy={calculateAvailableEnergy(2)}
               />
             </Grid>
             <Grid item md={1}>
               <ArmorModSelector
                 selected={selectedMods[3]}
                 mods={armorMods}
-                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-                  onSelectMod(mod, 3);
-                }}
+                onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 3)}
+                availableEnergy={calculateAvailableEnergy(3)}
               />
             </Grid>
             {armor.artifice === true ? (
@@ -204,9 +187,10 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
                 <ArmorModSelector
                   selected={selectedMods[4]}
                   mods={artificeMods}
-                  onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => {
-                    onSelectMod(mod, 4);
-                  }}
+                  onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) =>
+                    onSelectMod(mod, 4)
+                  }
+                  availableEnergy={calculateAvailableEnergy(4)}
                 />
               </Grid>
             ) : (
@@ -215,7 +199,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
           </>
         ) : (
           [...Array(5).keys()].map((i) => (
-            <Grid item md={1}>
+            <Grid item md={1} key={i}>
               <CircularProgress />
             </Grid>
           ))
