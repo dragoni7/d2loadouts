@@ -6,6 +6,8 @@ import {
   ManifestAspect,
   ManifestStatPlug,
   ManifestPlug,
+  ManifestArmorMod,
+  ManifestArmorStatMod,
 } from '../types/manifest-types';
 
 type HoverCardItem =
@@ -13,6 +15,8 @@ type HoverCardItem =
   | ManifestAspect
   | ManifestStatPlug
   | ManifestPlug
+  | ManifestArmorMod
+  | ManifestArmorStatMod
   | undefined
   | null;
 
@@ -27,19 +31,19 @@ const HoverCardContainer = styled('div')(({ theme }) => ({
   right: '100%',
   zIndex: 1600,
   padding: theme.spacing(1.5),
-  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  backgroundColor: 'rgba(0, 0, 0, 0.9)',
   borderRadius: '0px',
   boxShadow: theme.shadows[10],
-  width: '250px',
+  width: '300px',
   pointerEvents: 'none',
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(1),
-  fontFamily: 'Helvetica, Arial, sans-serif',
+  fontFamily: 'Arial, sans-serif',
 }));
 
 const HoverCardTitle = styled(Typography)({
-  fontFamily: 'Helvetica, Arial, sans-serif',
+  fontFamily: 'Arial, sans-serif',
   fontWeight: 'bold',
   fontSize: '16px',
   textAlign: 'center',
@@ -54,7 +58,7 @@ const HoverCardIcon = styled('img')({
 });
 
 const HoverCardDescription = styled(Typography)({
-  fontFamily: 'Helvetica, Arial, sans-serif',
+  fontFamily: 'Arial, sans-serif',
   fontSize: '14px',
   color: '#cccccc',
 });
@@ -73,6 +77,64 @@ const EnergyCapacitySquare = styled('div')(({ theme }) => ({
   opacity: 0.3,
   marginRight: '2px',
 }));
+
+const ModHoverCardHeader = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  marginBottom: '8px',
+});
+
+const ModHoverCardTitleRow = styled(Box)({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+
+const ModHoverCardIcon = styled('img')({
+  width: '32px',
+  height: '32px',
+  marginRight: '8px',
+});
+
+const ModHoverCardTitle = styled(Typography)({
+  fontFamily: 'Arial, sans-serif',
+  fontWeight: 'bold',
+  fontSize: '18px',
+  color: '#ffffff',
+  flexGrow: 1,
+});
+
+const EnergyCostChip = styled(Box)(({ theme }) => ({
+  color: '#ffffff',
+  padding: '2px 6px',
+  fontSize: '24px',
+  fontWeight: 'bold',
+}));
+
+const ModTypeLabel = styled(Typography)({
+  fontSize: '12px',
+  color: '#aaaaaa',
+  marginTop: '4px',
+});
+
+const Divider = styled('div')({
+  width: '100%',
+  height: '1px',
+  background:
+    'linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0))',
+  margin: '8px 0',
+});
+
+const ModDescriptionContainer = styled(Box)({
+  display: 'flex',
+  alignItems: 'flex-start',
+});
+
+const ModDescription = styled(Typography)({
+  fontSize: '14px',
+  color: '#cccccc',
+  flexGrow: 1,
+});
 
 const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
   const [hoverData, setHoverData] = useState<any | null>(null);
@@ -103,7 +165,6 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
 
       fullData = await db.manifestSubclassFragmentsDef.where('itemHash').equals(itemHash).first();
       if (fullData) {
-        // Fetch the description from manifestSandboxPerkDef
         const sandboxPerk = await db.manifestSandboxPerkDef
           .where('name')
           .equals(fullData.name)
@@ -119,6 +180,34 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
       fullData = await db.manifestSubclassModDef.where('itemHash').equals(itemHash).first();
       if (fullData) {
         setHoverData({ ...fullData, type: 'ability' });
+        return;
+      }
+
+      fullData = await db.manifestArmorModDef.where('itemHash').equals(itemHash).first();
+      if (fullData) {
+        const sandboxPerk =
+          fullData.perks && fullData.perks.length > 0
+            ? await db.manifestSandboxPerkDef.where('itemHash').equals(fullData.perks[0]).first()
+            : null;
+        setHoverData({
+          ...fullData,
+          type: 'armorMod',
+          description: sandboxPerk ? sandboxPerk.description : 'No description available',
+        });
+        return;
+      }
+
+      fullData = await db.manifestArmorStatModDef.where('itemHash').equals(itemHash).first();
+      if (fullData) {
+        const sandboxPerk =
+          fullData.perks && fullData.perks.length > 0
+            ? await db.manifestSandboxPerkDef.where('itemHash').equals(fullData.perks[0]).first()
+            : null;
+        setHoverData({
+          ...fullData,
+          type: 'armorStatMod',
+          description: sandboxPerk ? sandboxPerk.description : 'No description available',
+        });
         return;
       }
 
@@ -139,6 +228,25 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
           <EnergyCapacitySquare key={index} />
         ))}
       </Box>
+    );
+  };
+
+  const renderModContent = (data: any) => {
+    return (
+      <>
+        <ModHoverCardHeader>
+          <ModHoverCardTitleRow>
+            <ModHoverCardTitle>{data.name}</ModHoverCardTitle>
+            <EnergyCostChip>{data.energyCost}</EnergyCostChip>
+          </ModHoverCardTitleRow>
+          <ModTypeLabel>{data.type === 'armorMod' ? 'Armor Mod' : 'Armor Stat Mod'}</ModTypeLabel>
+        </ModHoverCardHeader>
+        <Divider />
+        <ModDescriptionContainer>
+          <ModHoverCardIcon src={data.icon} alt={data.name} />
+          <ModDescription>{data.description}</ModDescription>
+        </ModDescriptionContainer>
+      </>
     );
   };
 
@@ -179,6 +287,10 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
           </>
         );
 
+      case 'armorMod':
+      case 'armorStatMod':
+        return renderModContent(hoverData);
+
       default:
         return <HoverCardDescription></HoverCardDescription>;
     }
@@ -193,9 +305,15 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
       {children}
       {hoverData && (
         <HoverCardContainer>
-          <HoverCardTitle variant="h6">{hoverData.name}</HoverCardTitle>
-          <HoverCardIcon src={hoverData.secondaryIcon || hoverData.icon} alt={hoverData.name} />
-          {renderDescription()}
+          {hoverData.type === 'armorMod' || hoverData.type === 'armorStatMod' ? (
+            renderDescription()
+          ) : (
+            <>
+              <HoverCardTitle variant="h6">{hoverData.name}</HoverCardTitle>
+              <HoverCardIcon src={hoverData.secondaryIcon || hoverData.icon} alt={hoverData.name} />
+              {renderDescription()}
+            </>
+          )}
         </HoverCardContainer>
       )}
     </div>
