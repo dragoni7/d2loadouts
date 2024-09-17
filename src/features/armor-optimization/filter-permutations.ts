@@ -1,3 +1,4 @@
+import { generatedModCombos } from '../../generated/generated-mod-combos';
 import { STATS } from '../../lib/bungie_api/constants';
 import {
   DecodedLoadoutData,
@@ -6,7 +7,6 @@ import {
   StatName,
   FragmentStatModifications,
 } from '../../types/d2l-types';
-import { precalculatedModCombinations } from './precalculatedModCombinations';
 
 interface SelectedThresholds {
   [key: string]: number;
@@ -56,7 +56,7 @@ export const filterPermutations = (
         return tryModCombination(statIndex + 1, artificeUsed, regularModsUsed);
       }
 
-      const combinations = precalculatedModCombinations[deficit] || [];
+      const combinations = generatedModCombos[deficit] || [];
       for (const [artifice, minor, major] of combinations) {
         if (artifice <= artificeCount - artificeUsed && minor + major <= 5 - regularModsUsed) {
           modsArray[stat.toLowerCase() as keyof FilteredPermutation['modsArray']] = [

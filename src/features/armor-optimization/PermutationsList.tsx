@@ -39,6 +39,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   backdropFilter: 'blur(10px)',
   alignItems: 'center',
+  justifyContent: 'center',
 }));
 
 const ArmorRow = styled(Grid)(({ theme }) => ({
@@ -236,39 +237,41 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
                 onPermutationClick(perm);
               }}
             >
-              <ArmorRow container spacing={0}>
-                {perm.permutation.map((item, idx) => (
-                  <Grid item md={2} key={idx}>
-                    <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
-                      <Box>
-                        <ArmorIcon armor={item} />
-                      </Box>
-                    </Tooltip>
-                  </Grid>
-                ))}
-              </ArmorRow>
-              <StatsRow container spacing={1} alignItems="center" justifyContent="center">
-                {(STATS as StatName[]).map((stat) => (
-                  <Grid item md={1} key={stat}>
-                    <StatContainer>
-                      <StatIcon src={statIcons[stat]} alt={stat} />
-                      <StatValue variant="body2">{calculateTotal(perm, stat)}</StatValue>
-                    </StatContainer>
-                  </Grid>
-                ))}
-              </StatsRow>
-              <Stack direction="row" alignItems="start" justifyContent="center" spacing={0.5}>
-                {(STATS as StatName[]).map((stat) =>
-                  perm.modsArray[stat].length !== 0 ? (
-                    <>
-                      {renderStatModCount(perm, stat, 10)}
-                      {renderStatModCount(perm, stat, 5)}
-                      {renderStatModCount(perm, stat, 3)}
-                    </>
-                  ) : (
-                    false
-                  )
-                )}
+              <Stack justifyContent="center" alignItems="center" height="100%">
+                <ArmorRow container spacing={0}>
+                  {perm.permutation.map((item, idx) => (
+                    <Grid item md={2} key={idx}>
+                      <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
+                        <Box>
+                          <ArmorIcon armor={item} />
+                        </Box>
+                      </Tooltip>
+                    </Grid>
+                  ))}
+                </ArmorRow>
+                <StatsRow container spacing={1} alignItems="center" justifyContent="center">
+                  {(STATS as StatName[]).map((stat) => (
+                    <Grid item md={1} key={stat}>
+                      <StatContainer>
+                        <StatIcon src={statIcons[stat]} alt={stat} />
+                        <StatValue variant="body2">{calculateTotal(perm, stat)}</StatValue>
+                      </StatContainer>
+                    </Grid>
+                  ))}
+                </StatsRow>
+                <Stack direction="row" alignItems="start" justifyContent="center" spacing={0.5}>
+                  {(STATS as StatName[]).map((stat) =>
+                    perm.modsArray[stat].length !== 0 ? (
+                      <>
+                        {renderStatModCount(perm, stat, 10)}
+                        {renderStatModCount(perm, stat, 5)}
+                        {renderStatModCount(perm, stat, 3)}
+                      </>
+                    ) : (
+                      false
+                    )
+                  )}
+                </Stack>
               </Stack>
             </StyledCard>
           ))}
