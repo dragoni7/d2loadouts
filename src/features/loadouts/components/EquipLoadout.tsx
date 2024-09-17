@@ -25,6 +25,7 @@ import { TransitionProps } from '@mui/material/transitions';
 import SaveLoadout from './SaveLoadout';
 import { refreshProfileCharacters } from '../../../util/profile-characters';
 import { useDispatch } from 'react-redux';
+import { D2LButton } from '../../../components/D2LButton';
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   paddingBottom: theme.spacing(1),
@@ -47,22 +48,6 @@ const LoadoutDialog = styled(Dialog)(({ theme }) => ({
     backgroundColor: 'rgba(130,130,130,1.0)',
     color: 'white',
   },
-}));
-
-const TransparentButton = styled(Button)(({ theme }) => ({
-  background: 'rgba(0, 0, 0, 0.4)',
-  backdropFilter: 'blur(10px)',
-  color: 'white',
-  padding: theme.spacing(1, 2),
-  fontFamily: 'Helvetica, Arial, sans-serif',
-  '&:hover': {
-    background: 'rgba(0, 0, 0, 0.7)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 1)',
-  },
-  borderRadius: 0,
-  border: '1px solid rgba(255, 255, 255, 0.5)',
-  transition: 'all 0.3s ease',
 }));
 
 const Transition = React.forwardRef(function Transition(
@@ -131,7 +116,7 @@ const EquipLoadout: React.FC = () => {
 
   return (
     <>
-      <TransparentButton onClick={onButtonClick}>Equip Loadout</TransparentButton>
+      <D2LButton onClick={onButtonClick}>Equip Loadout</D2LButton>
       <LoadoutDialog
         open={alertOpen}
         onClose={() => setAlertOpen(false)}
@@ -146,11 +131,18 @@ const EquipLoadout: React.FC = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onDialogContinue}>CONTINUE</Button>
-          <Button onClick={() => setAlertOpen(false)}>GO BACK</Button>
+          <D2LButton onClick={onDialogContinue}>CONTINUE</D2LButton>
+          <D2LButton onClick={() => setAlertOpen(false)}>GO BACK</D2LButton>
         </DialogActions>
       </LoadoutDialog>
-      <Backdrop open={open} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Backdrop
+        open={open}
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backdropFilter: 'blur(5px)',
+        }}
+      >
         <Paper
           elevation={5}
           sx={{
@@ -246,19 +238,17 @@ const EquipLoadout: React.FC = () => {
               item
               container
               md={12}
-              textAlign="center"
-              alignItems="flex-end"
-              justifyContent="space-betwen"
               height="7%"
+              alignItems="center"
               sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
             >
               {equipping ? (
                 ''
               ) : (
                 <>
-                  <Grid item md={4}>
+                  <Grid item md={6}>
                     <FadeIn delay={200}>
-                      <Button
+                      <D2LButton
                         onClick={() => {
                           setOpen(false);
                           setResults([]);
@@ -267,15 +257,10 @@ const EquipLoadout: React.FC = () => {
                         }}
                       >
                         Back
-                      </Button>
+                      </D2LButton>
                     </FadeIn>
                   </Grid>
-                  <Grid item md={4}>
-                    <FadeIn delay={400}>
-                      <Button>Share</Button>
-                    </FadeIn>
-                  </Grid>
-                  <Grid item md={4}>
+                  <Grid item md={6}>
                     <FadeIn delay={600}>
                       <SaveLoadout />
                     </FadeIn>

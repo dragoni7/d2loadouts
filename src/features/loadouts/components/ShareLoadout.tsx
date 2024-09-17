@@ -22,13 +22,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { styled } from '@mui/material/styles';
-import {
-  CharacterClass,
-  DecodedLoadoutData,
-  FilteredPermutation,
-  StatName,
-} from '../../../types/d2l-types';
+import { CharacterClass, StatName } from '../../../types/d2l-types';
 import { SharedLoadoutDto } from '../types';
+import { D2LButton } from '../../../components/D2LButton';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -38,22 +34,6 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     fontFamily: 'Helvetica, Arial, sans-serif',
     borderRadius: 0,
   },
-}));
-
-const TransparentButton = styled(Button)(({ theme }) => ({
-  background: 'rgba(0, 0, 0, 0.4)',
-  backdropFilter: 'blur(10px)',
-  color: 'white',
-  padding: theme.spacing(1, 2),
-  fontFamily: 'Helvetica, Arial, sans-serif',
-  '&:hover': {
-    background: 'rgba(0, 0, 0, 0.7)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 1)',
-  },
-  borderRadius: 0,
-  border: '1px solid rgba(255, 255, 255, 0.5)',
-  transition: 'all 0.3s ease',
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -270,7 +250,7 @@ const ShareLoadout: React.FC = () => {
 
   return (
     <>
-      <TransparentButton onClick={handleOpen}>Share Loadout</TransparentButton>
+      <D2LButton onClick={handleOpen}>Share Loadout</D2LButton>
       <StyledDialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
           Share Loadout
@@ -297,7 +277,7 @@ const ShareLoadout: React.FC = () => {
             />
           </Box>
           <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-            <TransparentButton onClick={generateShareLink}>Generate Share Link</TransparentButton>
+            <D2LButton onClick={generateShareLink}>Generate Share Link</D2LButton>
           </Box>
           {shareLink && (
             <Box sx={{ mb: 2 }}>
@@ -310,15 +290,15 @@ const ShareLoadout: React.FC = () => {
                 }}
               />
               <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center' }}>
-                <TransparentButton onClick={copyToClipboard} sx={{ mr: 1 }}>
+                <D2LButton onClick={copyToClipboard} sx={{ mr: 1 }}>
                   Copy Link
-                </TransparentButton>
+                </D2LButton>
               </Box>
             </Box>
           )}
         </DialogContent>
         <DialogActions>
-          <TransparentButton onClick={handleClose}>Close</TransparentButton>
+          <D2LButton onClick={handleClose}>Close</D2LButton>
         </DialogActions>
       </StyledDialog>
     </>
