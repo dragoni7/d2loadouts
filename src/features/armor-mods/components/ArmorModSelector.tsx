@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/system';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import { Tooltip, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import HoverCard from '../../../components/HoverCard';
 
 interface ModSelectorProps {
   selected: ManifestArmorMod | ManifestArmorStatMod;
@@ -78,7 +79,7 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
             }}
           >
             {mods.slice(startIndex, startIndex + modsPerPage).map((mod) => (
-              <Tooltip key={mod.itemHash} title={mod.name} placement="top" disableInteractive>
+              <HoverCard key={mod.itemHash} item={mod}>
                 <Box
                   className="submenu-item"
                   sx={{
@@ -92,7 +93,7 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({ selected, mods, onSelect
                   }}
                   onClick={() => onSelectMod(mod)}
                 />
-              </Tooltip>
+              </HoverCard>
             ))}
           </Box>
           <IconButton
