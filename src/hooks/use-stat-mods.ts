@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ManifestArmorStatMod } from '../../../types/manifest-types';
-import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
-import { db } from '../../../store/db';
+import { ManifestArmorStatMod } from '../types/manifest-types';
+import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/constants';
+import { db } from '../store/db';
 
 export default function useStatMods() {
   const [statMods, setStatMods] = useState<ManifestArmorStatMod[]>([]);

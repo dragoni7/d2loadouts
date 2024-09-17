@@ -20,6 +20,14 @@ export type StatName =
   | 'intellect'
   | 'strength';
 
+export type StatModifiers =
+  | 'resilienceMod'
+  | 'recoveryMod'
+  | 'mobilityMod'
+  | 'disciplineMod'
+  | 'intellectMod'
+  | 'strengthMod';
+
 export type armor =
   | ARMOR.HELMET
   | ARMOR.GAUNTLETS
