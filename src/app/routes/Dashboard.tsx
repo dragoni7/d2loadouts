@@ -22,7 +22,7 @@ import {
   StatName,
   SubclassConfig,
 } from '../../types/d2l-types';
-import StatsTable from '../../features/armor-optimization/StatsTable';
+import PermutationsList from '../../features/armor-optimization/PermutationsList';
 import HeaderComponent from '../../components/HeaderComponent';
 import { db } from '../../store/db';
 import {
@@ -474,7 +474,7 @@ export const Dashboard: React.FC = () => {
                 {generatingPermutations ? (
                   <p>Loading...</p>
                 ) : filteredPermutations ? (
-                  <StatsTable
+                  <PermutationsList
                     permutations={filteredPermutations}
                     onPermutationClick={openLoadoutCustomization}
                   />

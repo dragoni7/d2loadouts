@@ -21,7 +21,7 @@ import { RootState } from '../../store';
 import useStatMods from '../../hooks/use-stat-mods';
 import useArtificeMods from '../../hooks/use-artifice-mods';
 
-interface StatsTableProps {
+interface PermutationsListProps {
   permutations: FilteredPermutation[];
   onPermutationClick: (filteredPermutation: FilteredPermutation) => void;
 }
@@ -32,9 +32,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderImageSlice: 1,
   borderRadius: 0,
   padding: theme.spacing(1),
-  height: '22vh',
+  height: '21.5vh',
   [theme.breakpoints.between('lg', 'xl')]: {
-    height: '19vh',
+    height: '18.5vh',
   },
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   backdropFilter: 'blur(10px)',
@@ -88,7 +88,10 @@ const PageCount = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
 }));
 
-const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClick }) => {
+const PermutationsList: React.FC<PermutationsListProps> = ({
+  permutations,
+  onPermutationClick,
+}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const theme = useTheme();
   const large = useMediaQuery(theme.breakpoints.between('lg', 'xl'));
@@ -173,9 +176,9 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
 
         <Grid
           container
-          rowSpacing={1}
+          rowSpacing={0.5}
           columnSpacing={0}
-          justifyContent="space-evenly"
+          justifyContent="center"
           sx={{ paddingTop: 0.5 }}
         >
           {perm.modsArray[stat]
@@ -292,4 +295,4 @@ const StatsTable: React.FC<StatsTableProps> = ({ permutations, onPermutationClic
   );
 };
 
-export default StatsTable;
+export default PermutationsList;
