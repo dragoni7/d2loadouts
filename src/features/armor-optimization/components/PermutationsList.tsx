@@ -45,6 +45,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
   backdropFilter: 'blur(10px)',
   alignItems: 'center',
   justifyContent: 'center',
+  ':hover': {
+    cursor: 'pointer',
+  },
 }));
 
 const ArmorRow = styled(Grid)(({ theme }) => ({
