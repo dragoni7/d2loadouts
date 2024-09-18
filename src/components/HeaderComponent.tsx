@@ -27,6 +27,7 @@ const Header = styled('div')<{ emblemUrl: string }>(({ emblemUrl }) => ({
   padding: '0 20px',
   boxSizing: 'border-box',
   zIndex: 1000,
+  font: 'Helvetica',
 }));
 
 const OverlayImage = styled('img')({
@@ -46,28 +47,70 @@ const DisplayName = styled('div')({
   fontWeight: 'bold',
 });
 
-const ButtonContainer = styled('div')({
+const BottomContainer = styled('div')({
   position: 'absolute',
-  bottom: '0px',
-  left: '50%',
-  transform: 'translateX(-50%)',
+  bottom: '0',
+  left: 0,
+  right: 0,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'flex-end',
+});
+
+const ButtonContainer = styled('div')({
   display: 'flex',
   gap: '20px',
 });
 
-const CharacterText = styled('div')<{ isSelected: boolean }>(({ isSelected }) => ({
+const sharedTextStyles = {
   fontSize: '24px',
   cursor: 'pointer',
-  color: isSelected ? 'white' : 'rgba(255, 255, 255, 0.6)',
-  opacity: isSelected ? 1 : 0.6,
-  borderBottom: isSelected ? '4px solid white' : 'none',
   paddingBottom: '5px',
-  transition: 'opacity 0.3s',
-  textTransform: 'capitalize',
+  transition: 'opacity 0.3s, transform 0.3s',
+  position: 'relative' as const,
   '&:hover': {
     opacity: 1,
+    transform: 'translateY(-2px)',
+  },
+};
+
+const CharacterText = styled('div')<{ isSelected: boolean }>(({ isSelected }) => ({
+  ...sharedTextStyles,
+  color: isSelected ? 'white' : 'rgba(255, 255, 255, 0.6)',
+  opacity: isSelected ? 1 : 0.6,
+  textTransform: 'capitalize',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: '4px',
+    backgroundColor: 'white',
+    transform: isSelected ? 'scaleX(1)' : 'scaleX(0)',
+    transition: 'transform 0.3s',
   },
 }));
+
+const LinksContainer = styled('div')({
+  position: 'absolute',
+  right: '20px',
+  bottom: '-2px',
+  display: 'flex',
+  gap: '20px',
+  alignItems: 'flex-end',
+});
+
+const StyledLink = styled('a')({
+  ...sharedTextStyles,
+  color: 'rgba(255, 255, 255, 0.6)',
+  textDecoration: 'none',
+  opacity: 0.6,
+  '&:hover': {
+    ...sharedTextStyles['&:hover'],
+    color: 'white',
+  },
+});
 
 const HeaderComponent: React.FC<HeaderComponentProps> = ({
   emblemUrl,
@@ -88,17 +131,31 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({
     <Header emblemUrl={emblemUrl}>
       <OverlayImage src={overlayUrl} alt="Overlay" />
       <DisplayName>{displayName}</DisplayName>
-      <ButtonContainer>
-        {[0, 1, 2].map((index) => (
-          <CharacterText
-            key={index}
-            isSelected={selectedCharacter?.id === index}
-            onClick={() => handleCharacterClick(index)}
-          >
-            {characters[index].class}
-          </CharacterText>
-        ))}
-      </ButtonContainer>
+      <BottomContainer>
+        <ButtonContainer>
+          {characters.map((character, index) => (
+            <CharacterText
+              key={index}
+              isSelected={selectedCharacter?.id === character.id}
+              onClick={() => handleCharacterClick(index)}
+            >
+              {character.class}
+            </CharacterText>
+          ))}
+        </ButtonContainer>
+      </BottomContainer>
+      <LinksContainer>
+        <StyledLink
+          href="https://buymeacoffee.com/d2loadouts"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Coffee
+        </StyledLink>
+        <StyledLink href="https://patreon.com/d2loadouts" target="_blank" rel="noopener noreferrer">
+          Patreon
+        </StyledLink>
+      </LinksContainer>
     </Header>
   );
 };
