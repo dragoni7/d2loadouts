@@ -56,6 +56,7 @@ import LogoutButton from '../../features/auth/components/LogoutButton';
 import useArtificeMods from '../../hooks/use-artifice-mods';
 import useStatMods from '../../hooks/use-stat-mods';
 import StatModifications from '../../features/subclass/components/StatModifications';
+import Footer from '../../components/Footer';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${greyBackground})`,
@@ -487,6 +488,9 @@ export const Dashboard: React.FC = () => {
                   <p>Loading....</p>
                 )}
               </Grid>
+              <Footer
+                emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
+              />
             </DashboardContent>
           </Grid>
         </>
