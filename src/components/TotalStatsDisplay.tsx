@@ -2,10 +2,11 @@ import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import { Box, Typography, Grid } from '@mui/material';
-import { STATS } from '../../../lib/bungie_api/constants';
-import { RootState } from '../../../store';
-import { StatName, DestinyArmor } from '../../../types/d2l-types';
-import { ManifestArmorStatMod, ManifestStatPlug } from '../../../types/manifest-types';
+import { ARMOR_ARRAY, STATS } from '../lib/bungie_api/constants';
+import { RootState } from '../store';
+import { StatName, DestinyArmor, armorMods } from '../types/d2l-types';
+import { ManifestArmorMod, ManifestArmorStatMod, ManifestStatPlug } from '../types/manifest-types';
+import { statIcons } from '../util/constants';
 
 const StatsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -35,15 +36,6 @@ const StatValue = styled(Typography)({
   fontWeight: 'bold',
 });
 
-const statIcons: Record<StatName, string> = {
-  mobility: 'assets/mob.png',
-  resilience: 'assets/res.png',
-  recovery: 'assets/rec.png',
-  discipline: 'assets/disc.png',
-  intellect: 'assets/int.png',
-  strength: 'assets/str.png',
-};
-
 function isStatsMod(mod: unknown): mod is ManifestArmorStatMod {
   return (
     typeof mod === 'object' &&
@@ -70,36 +62,21 @@ const TotalStatsDisplay: React.FC = () => {
       strength: 0,
     };
 
-    // Sum up armor stats
-    const armorPieces: DestinyArmor[] = [
-      loadout.helmet,
-      loadout.gauntlets,
-      loadout.chestArmor,
-      loadout.legArmor,
-      loadout.classArmor,
-    ];
-    armorPieces.forEach((armor) => {
+    // add stats from armor + mods
+    ARMOR_ARRAY.forEach((armor) => {
       (STATS as StatName[]).forEach((stat) => {
-        stats[stat] += Number(armor[stat]) || 0;
+        stats[stat] +=
+          loadout[armor][stat] +
+          (Number(
+            loadout[(armor + 'Mods') as armorMods][0][`${stat}Mod` as keyof ManifestStatPlug]
+          ) |
+            0) +
+          (loadout[armor].artifice
+            ? Number(
+                loadout[(armor + 'Mods') as armorMods][4][`${stat}Mod` as keyof ManifestStatPlug]
+              ) | 0
+            : 0);
       });
-    });
-
-    // Add stats from armor mods in slot 0
-    const armorMods = [
-      loadout.helmetMods[0],
-      loadout.gauntletsMods[0],
-      loadout.chestArmorMods[0],
-      loadout.legArmorMods[0],
-      loadout.classArmorMods[0],
-    ];
-
-    armorMods.forEach((mod) => {
-      if (isStatsMod(mod)) {
-        (STATS as StatName[]).forEach((stat) => {
-          const modStat = `${stat}Mod` as keyof ManifestStatPlug;
-          stats[stat] += Number(mod[modStat]) || 0;
-        });
-      }
     });
 
     // Add stats from fragments

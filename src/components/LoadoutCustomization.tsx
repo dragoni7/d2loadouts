@@ -6,7 +6,7 @@ import AbilitiesModification from '../features/subclass/components/AbilitiesModi
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
 import { BackButton } from './BackButton';
-import TotalStatsDisplay from '../features/subclass/components/TotalStatsDisplay';
+import TotalStatsDisplay from './TotalStatsDisplay';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;

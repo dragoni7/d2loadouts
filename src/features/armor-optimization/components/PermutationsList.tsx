@@ -136,9 +136,9 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
 
   useEffect(() => {
     if (large) {
-      setItemsPerPage(5);
-    } else {
       setItemsPerPage(4);
+    } else {
+      setItemsPerPage(3);
     }
   }, [large]);
 
