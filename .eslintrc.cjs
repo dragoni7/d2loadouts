@@ -1,21 +1,140 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react/jsx-runtime',
-    'plugin:react-hooks/recommended',
-  ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
-  rules: {
-    'react/jsx-no-target-blank': 'off',
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
+  env: {
+    node: true,
+    es6: true,
   },
-}
+  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+  ignorePatterns: ['node_modules/*', 'certs', 'public/mockServiceWorker.js', 'generators/*'],
+  extends: ['eslint:recommended'],
+  plugins: ['check-file'],
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      settings: {
+        react: { version: 'detect' },
+        'import/resolver': {
+          typescript: {},
+        },
+      },
+      env: {
+        browser: true,
+        node: true,
+        es6: true,
+      },
+      extends: [
+        'eslint:recommended',
+        'plugin:import/errors',
+        'plugin:import/warnings',
+        'plugin:import/typescript',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react/recommended',
+        'plugin:react-hooks/recommended',
+        'plugin:jsx-a11y/recommended',
+        'plugin:prettier/recommended',
+        'plugin:testing-library/react',
+        'plugin:jest-dom/recommended',
+        'plugin:vitest/legacy-recommended',
+      ],
+      rules: {
+        'import/no-restricted-paths': [
+          'error',
+          {
+            zones: [
+              // disables cross-feature imports:
+              // eg. src/features/discussions should not import from src/features/comments, etc.
+              {
+                target: './src/features/armor-mods',
+                from: './src/features',
+                except: ['./armor-mods'],
+              },
+              {
+                target: './src/features/armor-optimization',
+                from: './src/features',
+                except: ['./armor-optimization'],
+              },
+              {
+                target: './src/features/auth',
+                from: './src/features',
+                except: ['./auth'],
+              },
+              {
+                target: './src/features/membership',
+                from: './src/features',
+                except: ['./membership'],
+              },
+              {
+                target: './src/features/subclass',
+                from: './src/features',
+                except: ['./subclass'],
+              },
+              {
+                target: './src/features/loadouts',
+                from: './src/features',
+                except: ['./loadouts'],
+              },
+              // enforce unidirectional codebase:
+
+              // e.g. src/app can import from src/features but not the other way around
+              {
+                target: './src/features',
+                from: './src/app',
+              },
+
+              // e.g src/features and src/app can import from these shared modules but not the other way around
+              {
+                target: [
+                  './src/components',
+                  './src/hooks',
+                  './src/lib',
+                  './src/types',
+                  './src/utils',
+                  './src/styled',
+                  './src/stored',
+                  './src/generated',
+                ],
+                from: ['./src/features', './src/app'],
+              },
+            ],
+          },
+        ],
+        'import/no-cycle': 'error',
+        'linebreak-style': ['error', 'unix'],
+        'react/prop-types': 'off',
+        'import/order': [
+          'error',
+          {
+            groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object'],
+            'newlines-between': 'always',
+            alphabetize: { order: 'asc', caseInsensitive: true },
+          },
+        ],
+        'import/default': 'off',
+        'import/no-named-as-default-member': 'off',
+        'import/no-named-as-default': 'off',
+        'react/react-in-jsx-scope': 'off',
+        'jsx-a11y/anchor-is-valid': 'off',
+        '@typescript-eslint/no-unused-vars': ['error'],
+        '@typescript-eslint/explicit-function-return-type': ['off'],
+        '@typescript-eslint/explicit-module-boundary-types': ['off'],
+        '@typescript-eslint/no-empty-function': ['off'],
+        '@typescript-eslint/no-explicit-any': ['off'],
+        'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+        'check-file/filename-naming-convention': [
+          'error',
+          {
+            ignoreMiddleExtensions: true,
+          },
+        ],
+      },
+    },
+    {
+      plugins: ['check-file'],
+      files: ['src/**/!(__tests__)/*'],
+      rules: {
+        'check-file/folder-naming-convention': ['error'],
+      },
+    },
+  ],
+};

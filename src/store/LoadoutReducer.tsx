@@ -145,6 +145,9 @@ const initialState: InitialState = {
   },
 };
 
+/**
+ * States related to loadout configuration
+ */
 export const loadoutConfigSlice = createSlice({
   name: 'loadoutConfig',
   initialState,

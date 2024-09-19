@@ -8,6 +8,9 @@ const initialState: InitialState = {
   membership: { membershipId: '', membershipType: 0, bungieGlobalDisplayName: '' },
 };
 
+/**
+ * States related to user membership
+ */
 export const membershipSlice = createSlice({
   name: 'destinyMembership',
   initialState,

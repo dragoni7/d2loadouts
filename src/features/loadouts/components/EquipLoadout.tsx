@@ -27,13 +27,6 @@ import { refreshProfileCharacters } from '../../../util/profile-characters';
 import { useDispatch } from 'react-redux';
 import { D2LButton } from '../../../components/D2LButton';
 
-const StyledTitle = styled(Typography)(({ theme }) => ({
-  paddingBottom: theme.spacing(1),
-  marginBottom: theme.spacing(2),
-  fontSize: '28px',
-  fontWeight: 'bold',
-}));
-
 const LoadoutDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(1),
@@ -168,7 +161,16 @@ const EquipLoadout: React.FC = () => {
                 ''
               ) : (
                 <FadeIn>
-                  <StyledTitle>{equipStep.toUpperCase()}</StyledTitle>
+                  <Typography
+                    sx={{
+                      paddingBottom: 1,
+                      marginBottom: 2,
+                      fontSize: '28px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {equipStep.toUpperCase()}
+                  </Typography>
                 </FadeIn>
               )}
             </Grid>

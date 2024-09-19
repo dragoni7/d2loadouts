@@ -7,10 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { statIcons } from '../../../util/constants';
 
-const StatRow = styled(Grid)(({ theme }) => ({
-  marginBottom: theme.spacing(1),
-}));
-
 interface NumberBoxProps {
   isSelected: boolean;
 }
@@ -37,11 +33,6 @@ const NumberBox = styled(ButtonBase, {
   },
 }));
 
-const StatIcon = styled('img')({
-  width: '50%',
-  height: '50%',
-});
-
 const NumberBoxes: React.FC = () => {
   const dispatch = useDispatch();
   const selectedValues = useSelector((state: RootState) => state.dashboard.selectedValues);
@@ -67,9 +58,9 @@ const NumberBoxes: React.FC = () => {
       }}
     >
       {STATS.map((stat) => (
-        <StatRow key={stat} container alignItems="center" spacing={1}>
+        <Grid key={stat} container alignItems="center" spacing={1} marginBottom={1}>
           <Grid item md={2}>
-            <StatIcon src={statIcons[stat.toLowerCase()]} alt={stat} />
+            <img width="50%" height="50%" src={statIcons[stat.toLowerCase()]} alt={stat} />
           </Grid>
           <Grid item md={10}>
             <Stack direction="row">
@@ -84,7 +75,7 @@ const NumberBoxes: React.FC = () => {
               ))}
             </Stack>
           </Grid>
-        </StatRow>
+        </Grid>
       ))}
     </Box>
   );

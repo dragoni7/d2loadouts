@@ -9,6 +9,9 @@ const initialState: ProfileInitialState = {
   characters: [],
 };
 
+/**
+ * States related to user profile data
+ */
 export const profileSlice = createSlice({
   name: 'profile',
   initialState,

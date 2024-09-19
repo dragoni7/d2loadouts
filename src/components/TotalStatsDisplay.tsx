@@ -1,53 +1,11 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { styled } from '@mui/material/styles';
 import { Box, Typography, Grid } from '@mui/material';
 import { ARMOR_ARRAY, STATS } from '../lib/bungie_api/constants';
 import { RootState } from '../store';
-import { StatName, DestinyArmor, armorMods } from '../types/d2l-types';
-import { ManifestArmorMod, ManifestArmorStatMod, ManifestStatPlug } from '../types/manifest-types';
+import { StatName, armorMods } from '../types/d2l-types';
+import { ManifestStatPlug } from '../types/manifest-types';
 import { statIcons } from '../util/constants';
-
-const StatsContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: theme.spacing(1),
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  backdropFilter: 'blur(10px)',
-  borderRadius: '0px',
-}));
-
-const StatItem = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  margin: theme.spacing(0, 1),
-}));
-
-const StatIcon = styled('img')({
-  width: 24,
-  height: 24,
-});
-
-const StatValue = styled(Typography)({
-  color: 'white',
-  fontWeight: 'bold',
-});
-
-function isStatsMod(mod: unknown): mod is ManifestArmorStatMod {
-  return (
-    typeof mod === 'object' &&
-    mod !== null &&
-    ('mobilityMod' in mod ||
-      'resilienceMod' in mod ||
-      'recoveryMod' in mod ||
-      'disciplineMod' in mod ||
-      'intellectMod' in mod ||
-      'strengthMod' in mod)
-  );
-}
 
 const TotalStatsDisplay: React.FC = () => {
   const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout);
@@ -91,18 +49,29 @@ const TotalStatsDisplay: React.FC = () => {
   }, [loadout]);
 
   return (
-    <StatsContainer>
+    <Box
+      alignItems="center"
+      justifyContent="center"
+      padding={1}
+      sx={{
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '0px',
+      }}
+    >
       <Grid container spacing={1} justifyContent="center">
         {(STATS as StatName[]).map((stat) => (
           <Grid item key={stat}>
-            <StatItem>
-              <StatIcon src={statIcons[stat]} alt={stat} />
-              <StatValue variant="body2">{totalStats[stat]}</StatValue>
-            </StatItem>
+            <Box alignItems="center" margin={1}>
+              <img width={24} height={24} src={statIcons[stat]} alt={stat} />
+              <Typography color="white" fontWeight="bold" variant="body2">
+                {totalStats[stat]}
+              </Typography>
+            </Box>
           </Grid>
         ))}
       </Grid>
-    </StatsContainer>
+    </Box>
   );
 };
 

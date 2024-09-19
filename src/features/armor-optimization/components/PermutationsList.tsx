@@ -50,32 +50,6 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const ArmorRow = styled(Grid)(({ theme }) => ({
-  justifyContent: 'center',
-  width: '100%',
-}));
-
-const StatsRow = styled(Grid)(({ theme }) => ({
-  justifyContent: 'center',
-  width: '100%',
-  marginBottom: theme.spacing(0.5),
-}));
-
-const StatValue = styled(Typography)({
-  color: 'white',
-});
-
-const StatContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-}));
-
-const StatIcon = styled('img')({
-  width: 24,
-  height: 24,
-});
-
 const ArrowButton = styled(IconButton)(({ theme }) => ({
   height: '100%',
   color: theme.palette.common.white,
@@ -246,7 +220,7 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
               }}
             >
               <Stack justifyContent="center" alignItems="center" height="100%">
-                <ArmorRow container spacing={0}>
+                <Grid container spacing={0} sx={{ justifyContent: 'center', width: '100%' }}>
                   {perm.permutation.map((item, idx) => (
                     <Grid item md={2} key={idx}>
                       <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
@@ -256,17 +230,25 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
                       </Tooltip>
                     </Grid>
                   ))}
-                </ArmorRow>
-                <StatsRow container spacing={1} alignItems="center" justifyContent="center">
+                </Grid>
+                <Grid
+                  container
+                  spacing={1}
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{ justifyContent: 'center', width: '100%', marginBottom: theme.spacing(0.5) }}
+                >
                   {(STATS as StatName[]).map((stat) => (
                     <Grid item md={1} key={stat}>
-                      <StatContainer>
-                        <StatIcon src={statIcons[stat]} alt={stat} />
-                        <StatValue variant="body2">{calculateTotal(perm, stat)}</StatValue>
-                      </StatContainer>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <img width={24} height={24} src={statIcons[stat]} alt={stat} />
+                        <Typography color="white" variant="body2">
+                          {calculateTotal(perm, stat)}
+                        </Typography>
+                      </Box>
                     </Grid>
                   ))}
-                </StatsRow>
+                </Grid>
                 <Stack direction="row" alignItems="start" justifyContent="center" spacing={0.5}>
                   {(STATS as StatName[]).map((stat) =>
                     perm.modsArray[stat].length !== 0 ? (

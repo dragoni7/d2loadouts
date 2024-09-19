@@ -33,6 +33,7 @@ const db = new Dexie('manifestDb') as Dexie & {
   manifestLoadoutNameDef: EntityTable<ManifestLoadoutName, 'hash'>;
 };
 
+// local database with manifest data
 db.version(1).stores({
   manifestSandboxPerkDef: 'itemHash, name, description, icon',
   manifestArmorDef: 'itemHash, name, icon, isExotic, class, slot',

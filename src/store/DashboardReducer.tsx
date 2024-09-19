@@ -15,6 +15,9 @@ const initialState: DashboardState = {
   selectedCharacter: 0,
 };
 
+/**
+ * States related to the app dashboard
+ */
 const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState,
