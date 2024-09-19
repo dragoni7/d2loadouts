@@ -99,12 +99,12 @@ export const Dashboard: React.FC = () => {
     return fragments.reduce(
       (acc, fragment) => {
         if (fragment.itemHash !== 0) {
-          acc.mobility += fragment.mobilityMod || 0;
-          acc.resilience += fragment.resilienceMod || 0;
-          acc.recovery += fragment.recoveryMod || 0;
-          acc.discipline += fragment.disciplineMod || 0;
-          acc.intellect += fragment.intellectMod || 0;
-          acc.strength += fragment.strengthMod || 0;
+          acc.mobility += fragment.mobilityMod;
+          acc.resilience += fragment.resilienceMod;
+          acc.recovery += fragment.recoveryMod;
+          acc.discipline += fragment.disciplineMod;
+          acc.intellect += fragment.intellectMod;
+          acc.strength += fragment.strengthMod;
         }
         return acc;
       },
@@ -324,7 +324,7 @@ export const Dashboard: React.FC = () => {
         statPriority: sharedLoadoutDto.statPriority as StatName[],
         characterClass: sharedLoadoutDto.characterClass as CharacterClass,
       };
-      setGeneratingPermutations(true);
+
       const sharedLoadoutPermutation = filterFromSharedLoadout(
         decodedLoadoutData,
         permutations,
@@ -332,7 +332,6 @@ export const Dashboard: React.FC = () => {
       );
       filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
     } else if (permutations && selectedValues) {
-      setGeneratingPermutations(true);
       filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
     }
 
