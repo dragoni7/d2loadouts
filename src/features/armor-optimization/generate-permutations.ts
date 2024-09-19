@@ -7,7 +7,11 @@ import {
   ExoticClassCombo,
   FragmentStatModifications,
 } from '../../types/d2l-types';
-
+/**
+ * This function generates all possible permutations of armor based on class, selected exotic item (if any), 
+ * and fragment modifications. It tracks and stores the top 30,000 permutations in a max heap based on the total stats. 
+ * The function returns a sorted array of permutations of type DestinyArmor[].
+ */
 export function generatePermutations(
   armorClass: ArmorBySlot,
   selectedExoticItem: { itemHash: number | null; slot: armor | null } = {
