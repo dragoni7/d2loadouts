@@ -13,12 +13,7 @@ import {
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import {
-  FilteredPermutation,
-  DestinyArmor,
-  StatName,
-  StatModifiers,
-} from '../../../types/d2l-types';
+import { FilteredPermutation, Armor, StatName, StatModifiers } from '../../../types/d2l-types';
 import { useSelector } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { STATS } from '../../../lib/bungie_api/constants';
@@ -138,9 +133,9 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
     strength: 'assets/str.png',
   };
 
-  const formatArmorStats = (armor: DestinyArmor) => {
+  const formatArmorStats = (armor: Armor) => {
     return STATS.map((stat) => {
-      const statKey = stat as keyof DestinyArmor;
+      const statKey = stat as keyof Armor;
       return `${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${armor[statKey] || 0}`;
     }).join('\n');
   };

@@ -1,12 +1,6 @@
 import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
-import {
-  armorMods,
-  DestinyArmor,
-  Loadout,
-  Subclass,
-  SubclassConfig,
-} from '../../../types/d2l-types';
+import { ArmorModKeys, Armor, Loadout, Subclass, SubclassConfig } from '../../../types/d2l-types';
 import {
   ManifestArmorMod,
   ManifestArmorStatMod,
@@ -50,13 +44,7 @@ export async function equipLoadout(
   setResults: setState
 ) {
   const armorEquipper = new ArmorEquipper();
-  const tempEquipped: (
-    | DestinyArmor
-    | Subclass
-    | ManifestPlug
-    | ManifestAspect
-    | ManifestStatPlug
-  )[] = [];
+  const tempEquipped: (Armor | Subclass | ManifestPlug | ManifestAspect | ManifestStatPlug)[] = [];
   const tempResults: EquipResult[][] = [];
 
   await armorEquipper.setCharacter(loadout.characterId);
@@ -101,7 +89,7 @@ async function processArmor(
   i: number,
   loadout: Loadout,
   equipper: ArmorEquipper,
-  tempEquipped: (DestinyArmor | Subclass | ManifestPlug | ManifestAspect | ManifestStatPlug)[],
+  tempEquipped: (Armor | Subclass | ManifestPlug | ManifestAspect | ManifestStatPlug)[],
   tempResults: EquipResult[][],
   setProcessing: setState,
   setEquipStep: setState,
@@ -109,7 +97,7 @@ async function processArmor(
 ) {
   for (let j = i; j < ARMOR_ARRAY.length; j++) {
     const armor = loadout[ARMOR_ARRAY[j]];
-    const mods = (armor.type + 'Mods') as armorMods;
+    const mods = (armor.type + 'Mods') as ArmorModKeys;
 
     if (armor.exotic && armor.exotic === true) {
       await processArmor(
@@ -169,7 +157,7 @@ function sortMods(mods: {
 async function processSubclass(
   subclassConfig: SubclassConfig,
   equipper: SubclassEquipper,
-  tempEquipped: (DestinyArmor | Subclass | ManifestPlug | ManifestAspect | ManifestStatPlug)[],
+  tempEquipped: (Armor | Subclass | ManifestPlug | ManifestAspect | ManifestStatPlug)[],
   tempResults: EquipResult[][],
   setProcessing: setState,
   setEquipStep: setState,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSpring, animated } from 'react-spring';
 import { styled } from '@mui/system';
-import { DestinyArmor } from '../../../types/d2l-types';
+import { Armor } from '../../../types/d2l-types';
 
 const DefaultIconContainer = styled(animated.img)({
   padding: '2px',
@@ -11,7 +11,7 @@ const DefaultIconContainer = styled(animated.img)({
 });
 
 interface LoadingBorderProps {
-  armor: DestinyArmor;
+  armor: Armor;
   size?: number;
 }
 

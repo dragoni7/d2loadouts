@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Box, Typography, Grid } from '@mui/material';
 import { ARMOR_ARRAY, STATS } from '../lib/bungie_api/constants';
 import { RootState } from '../store';
-import { StatName, armorMods } from '../types/d2l-types';
+import { StatName, ArmorModKeys } from '../types/d2l-types';
 import { ManifestStatPlug } from '../types/manifest-types';
 import { statIcons } from '../util/constants';
 
@@ -26,12 +26,12 @@ const TotalStatsDisplay: React.FC = () => {
         stats[stat] +=
           loadout[armor][stat] +
           (Number(
-            loadout[(armor + 'Mods') as armorMods][0][`${stat}Mod` as keyof ManifestStatPlug]
+            loadout[(armor + 'Mods') as ArmorModKeys][0][`${stat}Mod` as keyof ManifestStatPlug]
           ) |
             0) +
           (loadout[armor].artifice
             ? Number(
-                loadout[(armor + 'Mods') as armorMods][4][`${stat}Mod` as keyof ManifestStatPlug]
+                loadout[(armor + 'Mods') as ArmorModKeys][4][`${stat}Mod` as keyof ManifestStatPlug]
               ) | 0
             : 0);
       });

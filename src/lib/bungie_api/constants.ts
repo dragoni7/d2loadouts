@@ -1,4 +1,4 @@
-import { armor } from '../../types/d2l-types';
+import { ArmorSlot } from '../../types/d2l-types';
 import {
   ManifestPlug,
   ManifestAspect,
@@ -92,7 +92,7 @@ export enum ARMOR {
   CLASS_ARMOR = 'classArmor',
 }
 
-export const ARMOR_ARRAY: armor[] = [
+export const ARMOR_ARRAY: ArmorSlot[] = [
   ARMOR.HELMET,
   ARMOR.GAUNTLETS,
   ARMOR.CHEST_ARMOR,

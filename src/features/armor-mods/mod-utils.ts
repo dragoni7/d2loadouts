@@ -7,7 +7,7 @@ import {
 } from '../../lib/bungie_api/constants';
 import { store } from '../../store';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../types/manifest-types';
-import { armorMods } from '../../types/d2l-types';
+import { ArmorModKeys } from '../../types/d2l-types';
 import { Dispatch, UnknownAction } from 'redux';
 import { updateLoadoutArmorMods, updateRequiredStatMods } from '../../store/LoadoutReducer';
 
@@ -48,7 +48,7 @@ export function autoEquipStatMod(
   for (const armor of ARMOR_ARRAY) {
     if (slot === 4 && store.getState().loadoutConfig.loadout[armor].artifice === false) continue;
 
-    const armorMod = (armor + 'Mods') as armorMods;
+    const armorMod = (armor + 'Mods') as ArmorModKeys;
 
     const mods = store.getState().loadoutConfig.loadout[armorMod];
 

@@ -5,7 +5,7 @@ import {
   insertSocketPlugFreeRequest,
   transferItemRequest,
 } from '../../../lib/bungie_api/requests';
-import { DestinyArmor } from '../../../types/d2l-types';
+import { Armor } from '../../../types/d2l-types';
 import { ManifestArmorStatMod, ManifestArmorMod } from '../../../types/manifest-types';
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
@@ -71,7 +71,7 @@ export class ArmorEquipper extends Equipper {
    * Equips an armor piece on the set character, transferring items between vault and character if necessary
    * @param armor the armor to equip
    */
-  public async equipArmor(armor: DestinyArmor): Promise<void> {
+  public async equipArmor(armor: Armor): Promise<void> {
     const result = {
       status: STATUS.SUCCESS,
       message: '',

@@ -28,21 +28,21 @@ export type StatModifiers =
   | 'intellectMod'
   | 'strengthMod';
 
-export type armor =
+export type ArmorSlot =
   | ARMOR.HELMET
   | ARMOR.GAUNTLETS
   | ARMOR.CHEST_ARMOR
   | ARMOR.LEG_ARMOR
   | ARMOR.CLASS_ARMOR;
 
-export type armorMods =
+export type ArmorModKeys =
   | 'helmetMods'
   | 'gauntletsMods'
   | 'chestArmorMods'
   | 'legArmorMods'
   | 'classArmorMods';
 
-export type DestinyArmor = {
+export type Armor = {
   intellect: number;
   discipline: number;
   resilience: number;
@@ -69,11 +69,11 @@ export type ExoticClassCombo = {
 };
 
 export interface ArmorBySlot {
-  helmet: DestinyArmor[];
-  arms: DestinyArmor[];
-  legs: DestinyArmor[];
-  chest: DestinyArmor[];
-  classItem: DestinyArmor[];
+  helmet: Armor[];
+  arms: Armor[];
+  legs: Armor[];
+  chest: Armor[];
+  classItem: Armor[];
 }
 
 export type SubclassConfig = {
@@ -103,11 +103,11 @@ export type DestinyLoadout = {
 };
 
 export type Loadout = {
-  helmet: DestinyArmor;
-  gauntlets: DestinyArmor;
-  chestArmor: DestinyArmor;
-  legArmor: DestinyArmor;
-  classArmor: DestinyArmor;
+  helmet: Armor;
+  gauntlets: Armor;
+  chestArmor: Armor;
+  legArmor: Armor;
+  classArmor: Armor;
   requiredStatMods: { mod: ManifestArmorStatMod; equipped: boolean }[];
   helmetMods: [
     ManifestArmorStatMod,
@@ -183,7 +183,7 @@ export interface Subclass extends ManifestSubclass {
 }
 
 export interface FilteredPermutation {
-  permutation: DestinyArmor[];
+  permutation: Armor[];
   modsArray: {
     mobility: number[];
     resilience: number[];

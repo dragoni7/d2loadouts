@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Autocomplete, TextField, Popper } from '@mui/material';
 import { db } from '../../../store/db';
-import { armor, Character, ExoticClassCombo } from '../../../types/d2l-types';
+import { ArmorSlot, Character, ExoticClassCombo } from '../../../types/d2l-types';
 import {
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
@@ -103,7 +103,7 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
     dispatch(
       updateSelectedExoticItemHash({
         itemHash: newValue ? newValue.itemHash : null,
-        slot: newValue?.slot as armor,
+        slot: newValue?.slot as ArmorSlot,
       })
     );
   };

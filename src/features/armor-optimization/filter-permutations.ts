@@ -2,15 +2,15 @@ import { generatedModCombos } from '../../generated/generated-mod-combos';
 import { STATS } from '../../lib/bungie_api/constants';
 import {
   DecodedLoadoutData,
-  DestinyArmor,
+  Armor,
   FilteredPermutation,
   StatName,
   FragmentStatModifications,
 } from '../../types/d2l-types';
 
 /**
- * Finds the stat deficit by considering the total armor in each permutation and the fragment modifications. 
- * Then, it tries pre-calculated mod combinations to meet the required threshold. 
+ * Finds the stat deficit by considering the total armor in each permutation and the fragment modifications.
+ * Then, it tries pre-calculated mod combinations to meet the required threshold.
  * It returns a sorted, filtered permutation array based on the lowest number of mods used.
  */
 
@@ -19,7 +19,7 @@ interface SelectedThresholds {
 }
 
 export const filterPermutations = (
-  permutations: DestinyArmor[][],
+  permutations: Armor[][],
   thresholds: SelectedThresholds,
   fragmentStatModifications: FragmentStatModifications
 ): FilteredPermutation[] => {
@@ -39,7 +39,7 @@ export const filterPermutations = (
 
     const statDeficits: Record<string, number> = {};
     for (const stat in thresholds) {
-      const key = stat.toLowerCase() as keyof DestinyArmor & keyof FragmentStatModifications;
+      const key = stat.toLowerCase() as keyof Armor & keyof FragmentStatModifications;
       const totalStat =
         permutation.reduce((sum, item) => sum + ((item[key] as number) || 0), 0) +
         fragmentStatModifications[key];
@@ -108,13 +108,13 @@ function calculateTotalCost(perm: FilteredPermutation): number {
 /**
  * The algorithm for the ShareLoadout link to find optimal armor from the receiving user's armor pool.
  * It starts with the highest priority stat at its maximum threshold and decrements
- * the threshold until a permutation is found. This allows us to find the best or closest 
+ * the threshold until a permutation is found. This allows us to find the best or closest
  * possible armor from the receiving user's armor pool.
  */
 
 export function filterFromSharedLoadout(
   decodedLoadout: DecodedLoadoutData,
-  permutations: DestinyArmor[][],
+  permutations: Armor[][],
   fragmentStatModifications: FragmentStatModifications
 ): FilteredPermutation | null {
   let currentThresholds: { [K in StatName]: number } = {

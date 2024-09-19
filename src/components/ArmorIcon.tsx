@@ -1,8 +1,8 @@
 import { styled } from '@mui/material';
-import { DestinyArmor } from '../types/d2l-types';
+import { Armor } from '../types/d2l-types';
 
 interface ArmorIconProps {
-  armor: DestinyArmor;
+  armor: Armor;
   size?: number | string;
 }
 

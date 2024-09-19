@@ -16,11 +16,11 @@ import {
 import { getProfileDataRequest } from '../lib/bungie_api/requests';
 import { db } from '../store/db';
 import {
-  armor,
+  ArmorSlot,
   Character,
   CharacterClass,
   DamageType,
-  DestinyArmor,
+  Armor,
   DestinyLoadout,
   Emblem,
   Subclass,
@@ -70,7 +70,7 @@ export async function getProfileData(): Promise<Character[]> {
         const stats = itemComponents.stats.data[item.itemInstanceId].stats;
         const sockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
 
-        const destinyArmor: DestinyArmor = {
+        const destinyArmor: Armor = {
           intellect: stats[STAT_HASH.INTELLECT]?.value || 0,
           discipline: stats[STAT_HASH.DISCIPLINE]?.value || 0,
           resilience: stats[STAT_HASH.RESILIENCE]?.value || 0,
@@ -600,13 +600,13 @@ async function buildDestinyArmor(
   itemComponents: any,
   item: any,
   characterClass: CharacterClass,
-  armorSlot: armor
-): Promise<DestinyArmor> {
+  armorSlot: ArmorSlot
+): Promise<Armor> {
   const itemInstance = itemComponents.instances.data[item.itemInstanceId];
   const stats = itemComponents.stats.data[item.itemInstanceId].stats;
   const sockets = itemComponents.sockets.data[item.itemInstanceId]?.sockets;
 
-  const destinyArmor: DestinyArmor = {
+  const destinyArmor: Armor = {
     intellect: stats[STAT_HASH.INTELLECT]?.value || 0,
     discipline: stats[STAT_HASH.DISCIPLINE]?.value || 0,
     resilience: stats[STAT_HASH.RESILIENCE]?.value || 0,
@@ -648,7 +648,7 @@ async function buildDestinyArmor(
  * @param sockets armor's sockets
  * @param destinyArmor the armor
  */
-export function stripModStats(sockets: any, destinyArmor: DestinyArmor) {
+export function stripModStats(sockets: any, destinyArmor: Armor) {
   if (sockets) {
     for (const key in modReverseDict) {
       if (sockets.some((mod: any) => mod.plugHash === Number(key))) {
@@ -663,7 +663,7 @@ export function stripModStats(sockets: any, destinyArmor: DestinyArmor) {
  * @param sockets armor's sockets
  * @param destinyArmor the armor
  */
-export function setArtificeState(sockets: any, destinyArmor: DestinyArmor) {
+export function setArtificeState(sockets: any, destinyArmor: Armor) {
   if (sockets) {
     destinyArmor.artifice = sockets.some(
       (mod: any) =>
@@ -676,40 +676,30 @@ export function setArtificeState(sockets: any, destinyArmor: DestinyArmor) {
 /**
  * Dictionary for reversing armor mod stat modifications
  */
-const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
-  [STAT_MOD_HASHES.INTELLECT_MOD]: (armor: DestinyArmor) =>
-    (armor.intellect = armor.intellect - 10),
-  [STAT_MOD_HASHES.MINOR_INTELLECT_MOD]: (armor: DestinyArmor) =>
-    (armor.intellect = armor.intellect - 5),
-  [STAT_MOD_HASHES.ARTIFICE_INTELLECT_MOD]: (armor: DestinyArmor) =>
+const modReverseDict: { [key: number]: (armor: Armor) => void } = {
+  [STAT_MOD_HASHES.INTELLECT_MOD]: (armor: Armor) => (armor.intellect = armor.intellect - 10),
+  [STAT_MOD_HASHES.MINOR_INTELLECT_MOD]: (armor: Armor) => (armor.intellect = armor.intellect - 5),
+  [STAT_MOD_HASHES.ARTIFICE_INTELLECT_MOD]: (armor: Armor) =>
     (armor.intellect = armor.intellect - 3),
-  [STAT_MOD_HASHES.RESILIENCE_MOD]: (armor: DestinyArmor) =>
-    (armor.resilience = armor.resilience - 10),
-  [STAT_MOD_HASHES.MINOR_RESILIENCE_MOD]: (armor: DestinyArmor) =>
+  [STAT_MOD_HASHES.RESILIENCE_MOD]: (armor: Armor) => (armor.resilience = armor.resilience - 10),
+  [STAT_MOD_HASHES.MINOR_RESILIENCE_MOD]: (armor: Armor) =>
     (armor.resilience = armor.resilience - 5),
-  [STAT_MOD_HASHES.ARTIFICE_RESILIENCE_MOD]: (armor: DestinyArmor) =>
+  [STAT_MOD_HASHES.ARTIFICE_RESILIENCE_MOD]: (armor: Armor) =>
     (armor.resilience = armor.resilience - 3),
-  [STAT_MOD_HASHES.DISCIPLINE_MOD]: (armor: DestinyArmor) =>
-    (armor.discipline = armor.discipline - 10),
-  [STAT_MOD_HASHES.MINOR_DISCIPLINE_MOD]: (armor: DestinyArmor) =>
+  [STAT_MOD_HASHES.DISCIPLINE_MOD]: (armor: Armor) => (armor.discipline = armor.discipline - 10),
+  [STAT_MOD_HASHES.MINOR_DISCIPLINE_MOD]: (armor: Armor) =>
     (armor.discipline = armor.discipline - 5),
-  [STAT_MOD_HASHES.ARTIFICE_DISCIPLINE_MOD]: (armor: DestinyArmor) =>
+  [STAT_MOD_HASHES.ARTIFICE_DISCIPLINE_MOD]: (armor: Armor) =>
     (armor.discipline = armor.discipline - 3),
-  [STAT_MOD_HASHES.RECOVERY_MOD]: (armor: DestinyArmor) => (armor.recovery = armor.recovery - 10),
-  [STAT_MOD_HASHES.MINOR_RECOVERY_MOD]: (armor: DestinyArmor) =>
-    (armor.recovery = armor.recovery - 5),
-  [STAT_MOD_HASHES.ARTIFICE_RECOVERY_MOD]: (armor: DestinyArmor) =>
-    (armor.recovery = armor.recovery - 3),
-  [STAT_MOD_HASHES.MOBILITY_MOD]: (armor: DestinyArmor) => (armor.mobility = armor.mobility - 10),
-  [STAT_MOD_HASHES.MINOR_MOBILITY_MOD]: (armor: DestinyArmor) =>
-    (armor.mobility = armor.mobility - 5),
-  [STAT_MOD_HASHES.ARTIFICE_MOBILITY_MOD]: (armor: DestinyArmor) =>
-    (armor.mobility = armor.mobility - 3),
-  [STAT_MOD_HASHES.STRENGTH_MOD]: (armor: DestinyArmor) => (armor.strength = armor.strength - 10),
-  [STAT_MOD_HASHES.MINOR_STRENGTH_MOD]: (armor: DestinyArmor) =>
-    (armor.strength = armor.strength - 5),
-  [STAT_MOD_HASHES.ARTIFICE_STRENGTH_MOD]: (armor: DestinyArmor) =>
-    (armor.strength = armor.strength - 3),
+  [STAT_MOD_HASHES.RECOVERY_MOD]: (armor: Armor) => (armor.recovery = armor.recovery - 10),
+  [STAT_MOD_HASHES.MINOR_RECOVERY_MOD]: (armor: Armor) => (armor.recovery = armor.recovery - 5),
+  [STAT_MOD_HASHES.ARTIFICE_RECOVERY_MOD]: (armor: Armor) => (armor.recovery = armor.recovery - 3),
+  [STAT_MOD_HASHES.MOBILITY_MOD]: (armor: Armor) => (armor.mobility = armor.mobility - 10),
+  [STAT_MOD_HASHES.MINOR_MOBILITY_MOD]: (armor: Armor) => (armor.mobility = armor.mobility - 5),
+  [STAT_MOD_HASHES.ARTIFICE_MOBILITY_MOD]: (armor: Armor) => (armor.mobility = armor.mobility - 3),
+  [STAT_MOD_HASHES.STRENGTH_MOD]: (armor: Armor) => (armor.strength = armor.strength - 10),
+  [STAT_MOD_HASHES.MINOR_STRENGTH_MOD]: (armor: Armor) => (armor.strength = armor.strength - 5),
+  [STAT_MOD_HASHES.ARTIFICE_STRENGTH_MOD]: (armor: Armor) => (armor.strength = armor.strength - 3),
 };
 
 /**

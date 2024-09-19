@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   Character,
   DamageType,
-  DestinyArmor,
+  Armor,
   Loadout,
   Subclass,
   SubclassConfig,
@@ -155,7 +155,7 @@ export const loadoutConfigSlice = createSlice({
     updateLoadoutConfig: (state, action: PayloadAction<Loadout>) => {
       state.loadout = action.payload;
     },
-    updateLoadoutArmor: (state, action: PayloadAction<DestinyArmor[]>) => {
+    updateLoadoutArmor: (state, action: PayloadAction<Armor[]>) => {
       state.loadout.helmet = action.payload[0];
       state.loadout.gauntlets = action.payload[1];
       state.loadout.chestArmor = action.payload[2];

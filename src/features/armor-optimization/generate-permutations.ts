@@ -1,20 +1,20 @@
 import { ARMOR } from '../../lib/bungie_api/constants';
 import MaxHeap from 'heap-js';
 import {
-  armor,
-  DestinyArmor,
+  ArmorSlot,
+  Armor,
   ArmorBySlot,
   ExoticClassCombo,
   FragmentStatModifications,
 } from '../../types/d2l-types';
 /**
- * This function generates all possible permutations of armor based on class, selected exotic item (if any), 
- * and fragment modifications. It tracks and stores the top 30,000 permutations in a max heap based on the total stats. 
+ * This function generates all possible permutations of armor based on class, selected exotic item (if any),
+ * and fragment modifications. It tracks and stores the top 30,000 permutations in a max heap based on the total stats.
  * The function returns a sorted array of permutations of type DestinyArmor[].
  */
 export function generatePermutations(
   armorClass: ArmorBySlot,
-  selectedExoticItem: { itemHash: number | null; slot: armor | null } = {
+  selectedExoticItem: { itemHash: number | null; slot: ArmorSlot | null } = {
     itemHash: null,
     slot: null,
   },
@@ -27,7 +27,7 @@ export function generatePermutations(
     intellect: 0,
     strength: 0,
   }
-): DestinyArmor[][] {
+): Armor[][] {
   const { helmet, arms, legs, chest, classItem } = armorClass;
 
   let filteredHelmet = helmet;
@@ -95,7 +95,7 @@ export function generatePermutations(
 
     if (
       (selectedExoticItem.slot === null ||
-        selectedExoticItem.slot !== (ARMOR.CLASS_ARMOR as armor)) &&
+        selectedExoticItem.slot !== (ARMOR.CLASS_ARMOR as ArmorSlot)) &&
       item.exotic === true
     )
       continue;
@@ -107,15 +107,15 @@ export function generatePermutations(
     }
   }
 
-  const bestClassArmor: DestinyArmor =
+  const bestClassArmor: Armor =
     artificeMasterworkedClassArmor === undefined
       ? masterworkedClassArmor === undefined
         ? filteredClass[0]
         : masterworkedClassArmor
       : artificeMasterworkedClassArmor;
 
-  const heap = new MaxHeap<DestinyArmor[]>((a: DestinyArmor[], b: DestinyArmor[]) => {
-    const getTotalStats = (permutation: DestinyArmor[]) => {
+  const heap = new MaxHeap<Armor[]>((a: Armor[], b: Armor[]) => {
+    const getTotalStats = (permutation: Armor[]) => {
       const totalStats = permutation.reduce(
         (sum, item) => ({
           mobility: sum.mobility + item.mobility,
@@ -132,11 +132,7 @@ export function generatePermutations(
     return getTotalStats(b) - getTotalStats(a);
   });
 
-  const generate = (
-    currentPermutation: DestinyArmor[],
-    currentTypeIndex: number,
-    exoticCount: number
-  ) => {
+  const generate = (currentPermutation: Armor[], currentTypeIndex: number, exoticCount: number) => {
     if (currentTypeIndex === armorTypes.length) {
       const modifiedPermutation = [...currentPermutation, bestClassArmor];
       const totalStats = modifiedPermutation.reduce(

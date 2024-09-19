@@ -12,7 +12,7 @@ import NumberBoxes from '../../features/armor-optimization/components/NumberBoxe
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { updateMembership } from '../../store/MembershipReducer';
 import {
-  armor,
+  ArmorSlot,
   Character,
   CharacterClass,
   DecodedLoadoutData,
@@ -37,7 +37,7 @@ import {
 import SubclassCustomizationWrapper from '../../features/subclass/components/SubclassCustomizationWrapper';
 import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
-import greyBackground from '/assets/grey.png';
+import background from '/assets/background.png';
 import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
 import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
@@ -51,15 +51,13 @@ import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
 import { getProfileData } from '../../util/profile-characters';
-import RefreshCharacters from '../../components/RefreshCharacters';
-import LogoutButton from '../../features/auth/components/LogoutButton';
 import useArtificeMods from '../../hooks/use-artifice-mods';
 import useStatMods from '../../hooks/use-stat-mods';
 import StatModifications from '../../features/subclass/components/StatModifications';
 import Footer from '../../components/Footer';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
-  backgroundImage: `url(${greyBackground})`,
+  backgroundImage: `url(${background})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
 }));
@@ -240,7 +238,7 @@ export const Dashboard: React.FC = () => {
           dispatch(
             updateSelectedExoticItemHash({
               itemHash: sharedExotic.itemHash,
-              slot: sharedExotic.slot as armor,
+              slot: sharedExotic.slot as ArmorSlot,
             })
           );
         }
@@ -358,8 +356,26 @@ export const Dashboard: React.FC = () => {
         const matchedStatMod = allStatMods.find(
           (mod) => mod[(stat + 'Mod') as StatModifiers] === cost
         );
-        if (matchedStatMod !== undefined)
-          requiredMods.push({ mod: Object.create(matchedStatMod), equipped: false });
+        if (matchedStatMod !== undefined) {
+          requiredMods.push({
+            mod: {
+              energyCost: matchedStatMod.energyCost,
+              collectibleHash: matchedStatMod.collectibleHash,
+              mobilityMod: matchedStatMod.mobilityMod,
+              resilienceMod: matchedStatMod.resilienceMod,
+              recoveryMod: matchedStatMod.recoveryMod,
+              disciplineMod: matchedStatMod.disciplineMod,
+              intellectMod: matchedStatMod.intellectMod,
+              strengthMod: matchedStatMod.strengthMod,
+              category: matchedStatMod.category,
+              isOwned: matchedStatMod.isOwned,
+              itemHash: matchedStatMod.itemHash,
+              name: matchedStatMod.name,
+              icon: matchedStatMod.icon,
+            },
+            equipped: false,
+          });
+        }
       }
     }
 

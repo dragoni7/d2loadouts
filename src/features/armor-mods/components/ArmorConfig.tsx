@@ -2,7 +2,7 @@ import { useState, useEffect, SyntheticEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods, updateRequiredStatMods } from '../../../store/LoadoutReducer';
-import { armorMods, DestinyArmor } from '../../../types/d2l-types';
+import { ArmorModKeys, Armor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
 import { calculateAvailableEnergy, getModsBySlot } from '../mod-utils';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
@@ -11,7 +11,7 @@ import { RootState, store } from '../../../store';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/constants';
 
 interface ArmorConfigProps {
-  armor: DestinyArmor;
+  armor: Armor;
   statMods: (ManifestArmorMod | ManifestArmorStatMod)[];
   artificeMods: (ManifestArmorMod | ManifestArmorStatMod)[];
 }
@@ -27,7 +27,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
   const [messageInfo, setMessageInfo] = useState<SnackbarMessage | undefined>(undefined);
   const [armorMods, setArmorMods] = useState<(ManifestArmorMod | ManifestArmorStatMod)[]>([]);
   const selectedMods: (ManifestArmorMod | ManifestArmorStatMod)[] = useSelector(
-    (state: RootState) => state.loadoutConfig.loadout[(armor.type + 'Mods') as armorMods]
+    (state: RootState) => state.loadoutConfig.loadout[(armor.type + 'Mods') as ArmorModKeys]
   );
   const dispatch = useDispatch();
 

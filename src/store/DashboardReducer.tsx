@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { armor, ExoticClassCombo } from '../types/d2l-types';
+import { ArmorSlot, ExoticClassCombo } from '../types/d2l-types';
 
 interface DashboardState {
   selectedValues: { [key: string]: number };
-  selectedExotic: { itemHash: number | null; slot: armor | null };
+  selectedExotic: { itemHash: number | null; slot: ArmorSlot | null };
   selectedExoticClassCombo: ExoticClassCombo | null;
   selectedCharacter: number;
 }
@@ -27,7 +27,7 @@ const dashboardSlice = createSlice({
     },
     updateSelectedExoticItemHash: (
       state,
-      action: PayloadAction<{ itemHash: number | null; slot: armor | null }>
+      action: PayloadAction<{ itemHash: number | null; slot: ArmorSlot | null }>
     ) => {
       state.selectedExotic = action.payload;
     },
