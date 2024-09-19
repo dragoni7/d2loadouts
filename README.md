@@ -25,66 +25,66 @@ Search the exisiting issues and closed issues. If the bug doesnt exist, report t
 
 ## Character Selection
 
-![Character Selection](./assets/Char_Select.gif)
+![Character Selection](./public/assets/Char_Select.gif)
 
 This is how you can select a character in D2loadout.
 
 ## Find Optimal Armor Combination
 
-![Optimal Armor Combination](./assets/Optimal_armor.gif)
+![Optimal Armor Combination](./public/assets/Optimal_armor.gif)
 
 Use the optimal armor combination feature to find the best gear for your build.
 
 ## Select Exotic
 
-![Exotic Selection](./assets/Exotic_select.gif)
+![Exotic Selection](./public/assets/Exotic_select.gif)
 
 Select the desired exotic to fit your build.
 
 ## Exotic Class Item Search
 
-![Exotic Class Item Search](./assets/Exotic_class_item.gif)
+![Exotic Class Item Search](./public/assets/Exotic_class_item.gif)
 
 Search for exotic class items efficiently.
 
 ## Subclass Modification
 
-![Subclass Modification](./assets/Subclass_mod.gif)
+![Subclass Modification](./public/assets/Subclass_mod.gif)
 
 Customize your subclass abilities.
 
 ## Select Optimal Build
 
-![Select Optimal Build](./assets/select_optimal_build.gif)
+![Select Optimal Build](./public/assets/select_optimal_build.gif)
 
 Find the optimal build using your selected armor, weapons, and mods.
 
 ## Equip Armor Mods
 
-![Equip Armor Mods](./assets/armor_customization.gif)
+![Equip Armor Mods](./public/assets/armor_customization.gif)
 
 Easily equip armor mods to boost your stats.
 
 ## Equip Loadout
 
-![Equip Loadout](./assets/equiploadout.gif)
+![Equip Loadout](./public/assets/equiploadout.gif)
 
 Equip your loadout with just a few clicks.
 
 ## Save in Game
 
-![Save Loadout](./assets/saveloadout.gif)
+![Save Loadout](./public/assets/saveloadout.gif)
 
 Save your loadout in-game and use it later.
 
 ## Share Loadout
 
-![Share Loadout](./assets/shareloadout.gif)
+![Share Loadout](./public/assets/shareloadout.gif)
 
 Easily share your loadout with your friends.
 
 ## How to Use Loadout Link
 
-![How to Use Loadout Link](./assets/use_shareloadout_link.png)
+![How to Use Loadout Link](./public/assets/use_shareloadout_link.png)
 
 Learn how to use and share your loadout link.
