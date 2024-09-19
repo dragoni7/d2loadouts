@@ -12,6 +12,10 @@ import {
   HeaderStyledLink,
   Header,
 } from '../styled';
+import LogoutButton from '@/features/auth/components/LogoutButton';
+import RefreshCharacters from './RefreshCharacters';
+import { Tooltip } from '@mui/material';
+import CoffeeButton from './CoffeeButton';
 
 interface HeaderComponentProps {
   emblemUrl: string;
@@ -54,22 +58,6 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({
           ))}
         </HeaderButtonContainer>
       </HeaderBottomContainer>
-      <HeaderLinksContainer>
-        <HeaderStyledLink
-          href="https://buymeacoffee.com/d2loadouts"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Coffee
-        </HeaderStyledLink>
-        <HeaderStyledLink
-          href="https://patreon.com/d2loadouts"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Patreon
-        </HeaderStyledLink>
-      </HeaderLinksContainer>
     </Header>
   );
 };

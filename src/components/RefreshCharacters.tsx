@@ -17,10 +17,6 @@ export default function RefreshCharacters() {
   return (
     <Box
       sx={{
-        position: 'absolute',
-        top: '1%',
-        right: '3%',
-        zIndex: 9999,
         mixBlendMode: 'difference',
       }}
     >
@@ -32,9 +28,10 @@ export default function RefreshCharacters() {
             onClick={onRefreshClick}
             sx={{
               borderRadius: 4,
+              mixBlendMode: 'difference',
             }}
           >
-            <Refresh color="inherit" fontSize="large" />
+            <Refresh color="inherit" />
           </IconButton>
         </Tooltip>
       )}

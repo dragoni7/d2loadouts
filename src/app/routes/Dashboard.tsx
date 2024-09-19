@@ -430,8 +430,7 @@ export const Dashboard: React.FC = () => {
             selectedCharacter={characters[selectedCharacterIndex]!}
             onCharacterClick={handleCharacterClick}
           />
-          <RefreshCharacters />
-          <LogoutButton />
+
           <Grid
             container
             sx={{
