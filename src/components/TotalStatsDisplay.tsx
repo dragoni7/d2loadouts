@@ -2,15 +2,11 @@ import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import { Box, Typography, Grid } from '@mui/material';
-import { ARMOR_ARRAY, STATS } from '../../../lib/bungie_api/constants';
-import { RootState } from '../../../store';
-import { StatName, DestinyArmor, armorMods } from '../../../types/d2l-types';
-import {
-  ManifestArmorMod,
-  ManifestArmorStatMod,
-  ManifestStatPlug,
-} from '../../../types/manifest-types';
-import { statIcons } from '../../../util/constants';
+import { ARMOR_ARRAY, STATS } from '../lib/bungie_api/constants';
+import { RootState } from '../store';
+import { StatName, DestinyArmor, armorMods } from '../types/d2l-types';
+import { ManifestArmorMod, ManifestArmorStatMod, ManifestStatPlug } from '../types/manifest-types';
+import { statIcons } from '../util/constants';
 
 const StatsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
