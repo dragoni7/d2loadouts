@@ -360,7 +360,7 @@ export const Dashboard: React.FC = () => {
           (mod) => mod[(stat + 'Mod') as StatModifiers] === cost
         );
         if (matchedStatMod !== undefined)
-          requiredMods.push({ mod: matchedStatMod, equipped: false });
+          requiredMods.push({ mod: Object.create(matchedStatMod), equipped: false });
       }
     }
 
