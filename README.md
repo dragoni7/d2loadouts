@@ -8,9 +8,6 @@ Search the existing issues and closed issues. If the bug doesn't exist, report t
 
 ## Table of Contents: User Section
 
-<details>
-  <summary>Click to expand User Table of Contents</summary>
-
 - [Character Selection](#character-selection)
 - [Find Optimal Armor Combination](#find-optimal-armor-combination)
 - [Select Exotic](#select-exotic)
@@ -23,12 +20,7 @@ Search the existing issues and closed issues. If the bug doesn't exist, report t
 - [Share Loadout](#share-loadout)
 - [How to Use Loadout Link](#how-to-use-loadout-link)
 
-</details>
-
 ## Table of Contents: Developer Section
-
-<details>
-  <summary>Click to expand Developer Table of Contents</summary>
 
 - [License](#license)
 
