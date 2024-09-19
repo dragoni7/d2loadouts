@@ -18,6 +18,14 @@ import { EquipResult, setState } from '../types';
 import { ArmorEquipper } from './armor-equipper';
 import { SubclassEquipper } from './subclass-equipper';
 
+/**
+ * Saves a loadout from equipped items to Destiny 2
+ * @param characterId character for the loadout
+ * @param colorHash loadout color identifier hash
+ * @param iconHash loadout icon identifier hash
+ * @param loadoutIndex loadout index to replace
+ * @param nameHash loadout name identifierhash
+ */
 export async function createInGameLoadout(
   characterId: string,
   colorHash: number,
@@ -28,6 +36,13 @@ export async function createInGameLoadout(
   await snapShotLoadoutRequest(characterId, colorHash, iconHash, loadoutIndex, nameHash);
 }
 
+/**
+ * Equips a loadout, handling armor first then subclass, setting state as it goes.
+ * @param loadout the loadout to equip
+ * @param setProcessing the setState for processing object
+ * @param setEquipStep the setState for equipping item
+ * @param setResults the setState for results
+ */
 export async function equipLoadout(
   loadout: Loadout,
   setProcessing: setState,
@@ -71,6 +86,17 @@ export async function equipLoadout(
   );
 }
 
+/**
+ * Equips armor piece and it's mods, processing exotics last
+ * @param i armor index
+ * @param loadout loadout to equip
+ * @param equipper armor equipper to use
+ * @param tempEquipped temp equipped array
+ * @param tempResults temp results array
+ * @param setProcessing the setState for processing object
+ * @param setEquipStep the setState for equipping item
+ * @param setResults the setState for results
+ */
 async function processArmor(
   i: number,
   loadout: Loadout,
@@ -119,12 +145,27 @@ async function processArmor(
   }
 }
 
+/**
+ * Sorts a mod dicationary
+ * @param mods mods to sort
+ * @returns sorted mods array
+ */
 function sortMods(mods: {
   [key: number]: ManifestArmorMod | ManifestArmorStatMod;
 }): [string, ManifestArmorMod | ManifestArmorStatMod][] {
   return Object.entries(mods).sort(([, a], [, b]) => b.energyCost - a.energyCost);
 }
 
+/**
+ * Equips subclass config
+ * @param subclassConfig subclass config to equip
+ * @param equipper subclass equipper to use
+ * @param tempEquipped temp equipped array
+ * @param tempResults temp results array
+ * @param setProcessing the setState for processing object
+ * @param setEquipStep the setState for equipping item
+ * @param setResults the setState for results
+ */
 async function processSubclass(
   subclassConfig: SubclassConfig,
   equipper: SubclassEquipper,

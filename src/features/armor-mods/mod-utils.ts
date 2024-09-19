@@ -11,6 +11,10 @@ import { armorMods } from '../../types/d2l-types';
 import { Dispatch, UnknownAction } from 'redux';
 import { updateLoadoutArmorMods, updateRequiredStatMods } from '../../store/LoadoutReducer';
 
+/**
+ * Get armor mods by armor slot
+ * @returns armor mods array
+ */
 export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
   const slotMods = await db.manifestArmorModDef
     .where('category')
@@ -32,6 +36,9 @@ export async function getModsBySlot(slot: string): Promise<ManifestArmorMod[]> {
   return slotMods;
 }
 
+/**
+ * Auto equips a mod into the loadout config
+ */
 export function autoEquipStatMod(
   mod: ManifestArmorStatMod,
   dispatch: Dispatch<UnknownAction>
@@ -64,4 +71,17 @@ export function autoEquipStatMod(
   }
 
   return false;
+}
+
+/**
+ * Calculates the available energy out of 10 with equipped mods.
+ */
+export function calculateAvailableEnergy(
+  currentSlot: number,
+  selectedMods: (ManifestArmorMod | ManifestArmorStatMod)[]
+): number {
+  const totalEnergyCost = selectedMods.reduce((total, mod, index) => {
+    return index !== currentSlot ? total + mod.energyCost : total;
+  }, 0);
+  return 10 - totalEnergyCost; // Assuming max energy is 10
 }

@@ -10,6 +10,9 @@ import { ManifestArmorStatMod, ManifestArmorMod } from '../../../types/manifest-
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
 
+/**
+ * Builder for equipping armor and mods and creating equip result array
+ */
 export class ArmorEquipper extends Equipper {
   private inventorySlots: { [key: string]: any[] };
 
@@ -64,6 +67,10 @@ export class ArmorEquipper extends Equipper {
     }
   }
 
+  /**
+   * Equips an armor piece on the set character, transferring items between vault and character if necessary
+   * @param armor the armor to equip
+   */
   public async equipArmor(armor: DestinyArmor): Promise<void> {
     const result = {
       status: STATUS.SUCCESS,
@@ -121,6 +128,10 @@ export class ArmorEquipper extends Equipper {
     this.result.push(result);
   }
 
+  /**
+   * Equips armor mods onto an armor piece
+   * @param mods mods to equip
+   */
   public async equipArmorMods(
     mods: [string, ManifestArmorMod | ManifestArmorStatMod][]
   ): Promise<void> {

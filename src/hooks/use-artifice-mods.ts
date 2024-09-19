@@ -3,6 +3,9 @@ import { PLUG_CATEGORY_HASH } from '../lib/bungie_api/constants';
 import { db } from '../store/db';
 import { ManifestArmorStatMod } from '../types/manifest-types';
 
+/**
+ * Uses artifice mods found in the local database
+ */
 export default function useArtificeMods() {
   const [artificeMods, setArtificeMods] = useState<ManifestArmorStatMod[]>([]);
 

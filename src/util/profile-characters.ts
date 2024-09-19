@@ -28,12 +28,20 @@ import {
 } from '../types/d2l-types';
 import { updateProfileCharacters } from '../store/ProfileReducer';
 
+/**
+ * Updates the character data
+ * @param dispatch
+ */
 export async function refreshProfileCharacters(dispatch: Dispatch) {
   const profileCharacters = await getProfileData();
 
   dispatch(updateProfileCharacters(profileCharacters));
 }
 
+/**
+ * Gets the logged in user's character data from profile
+ * @returns the logged in user's characters
+ */
 export async function getProfileData(): Promise<Character[]> {
   const profileCharacters: Character[] = [];
 
@@ -216,6 +224,12 @@ export async function getProfileData(): Promise<Character[]> {
   return profileCharacters;
 }
 
+/**
+ * Gets a character's loadouts
+ * @param loadoutResponse loadout api call response
+ * @param characterId character to get loadouts from
+ * @returns loadouts array
+ */
 export function getCharacterLoadoutsFromResponse(
   loadoutResponse: any,
   characterId: number
@@ -236,6 +250,12 @@ export function getCharacterLoadoutsFromResponse(
   return loadouts;
 }
 
+/**
+ * Initializes a character from api profile response
+ * @param profileResponse bungie api profile response
+ * @param key character key
+ * @returns the created character
+ */
 async function initCharacterFromResponse(profileResponse: any, key: string): Promise<Character> {
   const itemComponents = profileResponse.data.Response.itemComponents;
   const characterInventories = profileResponse.data.Response.characterInventories.data;
@@ -434,6 +454,12 @@ async function initCharacterFromResponse(profileResponse: any, key: string): Pro
   return character;
 }
 
+/**
+ * Creates a subclass config from api response
+ * @param item subclass
+ * @param itemComponents itemComponents api response
+ * @returns a new subclass config or null
+ */
 async function buildSubclassConfig(item: any, itemComponents: any): Promise<SubclassConfig | null> {
   const subclassQuery = db.manifestSubclass.where('itemHash').equals(item.itemHash);
 
@@ -451,7 +477,7 @@ async function buildSubclassConfig(item: any, itemComponents: any): Promise<Subc
       icon: subclass.icon,
       screenshot: subclass.screenshot,
       isOwned: subclass.isOwned,
-      secondaryIcon: subclass.secondaryIcon
+      secondaryIcon: subclass.secondaryIcon,
     };
 
     const subclassConfig: SubclassConfig = {
@@ -562,6 +588,14 @@ async function buildSubclassConfig(item: any, itemComponents: any): Promise<Subc
   return null;
 }
 
+/**
+ * Creates an armor object with relevant information from api call
+ * @param itemComponents api call response
+ * @param item api response armor
+ * @param characterClass character class for the armor
+ * @param armorSlot the armor's slot
+ * @returns newly created armor
+ */
 async function buildDestinyArmor(
   itemComponents: any,
   item: any,
@@ -609,6 +643,11 @@ async function buildDestinyArmor(
   return destinyArmor;
 }
 
+/**
+ * Removes stat modifications from mods on a armor piece
+ * @param sockets armor's sockets
+ * @param destinyArmor the armor
+ */
 export function stripModStats(sockets: any, destinyArmor: DestinyArmor) {
   if (sockets) {
     for (const key in modReverseDict) {
@@ -619,6 +658,11 @@ export function stripModStats(sockets: any, destinyArmor: DestinyArmor) {
   }
 }
 
+/**
+ * Determins if an armor piece is artifice or not
+ * @param sockets armor's sockets
+ * @param destinyArmor the armor
+ */
 export function setArtificeState(sockets: any, destinyArmor: DestinyArmor) {
   if (sockets) {
     destinyArmor.artifice = sockets.some(
@@ -629,6 +673,9 @@ export function setArtificeState(sockets: any, destinyArmor: DestinyArmor) {
   }
 }
 
+/**
+ * Dictionary for reversing armor mod stat modifications
+ */
 const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
   [STAT_MOD_HASHES.INTELLECT_MOD]: (armor: DestinyArmor) =>
     (armor.intellect = armor.intellect - 10),
@@ -665,6 +712,11 @@ const modReverseDict: { [key: number]: (armor: DestinyArmor) => void } = {
     (armor.strength = armor.strength - 3),
 };
 
+/**
+ * Gets a string character class from a class hash
+ * @param classHash character class hash
+ * @returns character class string
+ */
 function getCharacterClass(classHash: number) {
   switch (classHash) {
     case CLASS_HASH.TITAN: {
