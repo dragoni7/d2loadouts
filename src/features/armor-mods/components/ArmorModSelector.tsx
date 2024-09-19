@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box } from '@mui/system';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import { Tooltip, IconButton, styled } from '@mui/material';
+import { IconButton, styled } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import HoverCard from '../../../components/HoverCard';

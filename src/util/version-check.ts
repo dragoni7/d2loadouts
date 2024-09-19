@@ -1,5 +1,8 @@
 import packageJson from '../../package.json';
 
+/**
+ * Clears the local storage on app version update
+ */
 export function handleVersionUpdate() {
   const storedVersion = localStorage.getItem('version');
   if (packageJson.version !== storedVersion || storedVersion === null) {

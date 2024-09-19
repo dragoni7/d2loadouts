@@ -5,7 +5,14 @@ import { ManifestAspect, ManifestPlug, ManifestStatPlug } from '../../../types/m
 import { STATUS } from '../constants';
 import { Equipper } from './equipper';
 
+/**
+ * Builder for equipping subclasses and mods and creating equip result array
+ */
 export class SubclassEquipper extends Equipper {
+  /**
+   * Equips a subclass
+   * @param subclass subclass to equip
+   */
   public async equipSubclass(subclass: Subclass) {
     const result = {
       status: STATUS.SUCCESS,
@@ -27,6 +34,11 @@ export class SubclassEquipper extends Equipper {
     this.result.push(result);
   }
 
+  /**
+   * Equips an ability into a subclass
+   * @param ability subclass ability to equip
+   * @param socketArrayIndex index of ability
+   */
   public async equipSubclassAbility(ability: ManifestPlug, socketArrayIndex: number) {
     const subclass = this.result[0].subject;
 
@@ -60,6 +72,11 @@ export class SubclassEquipper extends Equipper {
     this.result.push(result);
   }
 
+  /**
+   * Equips a subclass aspect
+   * @param aspect aspect to equip
+   * @param socketArrayIndex aspect index
+   */
   public async equipSubclassAspect(aspect: ManifestAspect, socketArrayIndex: number) {
     const subclass = this.result[0].subject;
 
@@ -93,6 +110,11 @@ export class SubclassEquipper extends Equipper {
     this.result.push(result);
   }
 
+  /**
+   * Equips a subclass fragment
+   * @param fragment fragment to equip
+   * @param socketArrayIndex fragment index
+   */
   public async equipSubclassFragments(fragment: ManifestStatPlug, socketArrayIndex: number) {
     const subclass = this.result[0].subject;
 

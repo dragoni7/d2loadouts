@@ -4,7 +4,7 @@ import ArmorIcon from '../../../components/ArmorIcon';
 import { updateLoadoutArmorMods, updateRequiredStatMods } from '../../../store/LoadoutReducer';
 import { armorMods, DestinyArmor } from '../../../types/d2l-types';
 import ArmorModSelector from './ArmorModSelector';
-import { getModsBySlot } from '../mod-utils';
+import { calculateAvailableEnergy, getModsBySlot } from '../mod-utils';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { Alert, Grid, Fade, Snackbar, SnackbarCloseReason, CircularProgress } from '@mui/material';
 import { RootState, store } from '../../../store';
@@ -43,13 +43,6 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
     );
   };
 
-  const calculateAvailableEnergy = (currentSlot: number) => {
-    const totalEnergyCost = selectedMods.reduce((total, mod, index) => {
-      return index !== currentSlot ? total + mod.energyCost : total;
-    }, 0);
-    return 10 - totalEnergyCost; // Assuming max energy is 10
-  };
-
   const onSelectMod = async (mod: ManifestArmorMod | ManifestArmorStatMod, slot: number) => {
     if (selectedMods[slot].itemHash === mod.itemHash) return;
 
@@ -69,7 +62,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
       return;
     }
 
-    const availableEnergy = calculateAvailableEnergy(slot);
+    const availableEnergy = calculateAvailableEnergy(slot, selectedMods);
     if (mod.energyCost > availableEnergy) {
       setSnackPack((prev) => [
         ...prev,
@@ -155,7 +148,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
                 selected={selectedMods[0]}
                 mods={statMods}
                 onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 0)}
-                availableEnergy={calculateAvailableEnergy(0)}
+                availableEnergy={calculateAvailableEnergy(0, selectedMods)}
               />
             </Grid>
             <Grid item md={1}>
@@ -163,7 +156,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
                 selected={selectedMods[1]}
                 mods={armorMods}
                 onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 1)}
-                availableEnergy={calculateAvailableEnergy(1)}
+                availableEnergy={calculateAvailableEnergy(1, selectedMods)}
               />
             </Grid>
             <Grid item md={1}>
@@ -171,7 +164,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
                 selected={selectedMods[2]}
                 mods={armorMods}
                 onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 2)}
-                availableEnergy={calculateAvailableEnergy(2)}
+                availableEnergy={calculateAvailableEnergy(2, selectedMods)}
               />
             </Grid>
             <Grid item md={1}>
@@ -179,7 +172,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
                 selected={selectedMods[3]}
                 mods={armorMods}
                 onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) => onSelectMod(mod, 3)}
-                availableEnergy={calculateAvailableEnergy(3)}
+                availableEnergy={calculateAvailableEnergy(3, selectedMods)}
               />
             </Grid>
             {armor.artifice === true ? (
@@ -190,7 +183,7 @@ const ArmorConfig: React.FC<ArmorConfigProps> = ({ armor, statMods, artificeMods
                   onSelectMod={(mod: ManifestArmorMod | ManifestArmorStatMod) =>
                     onSelectMod(mod, 4)
                   }
-                  availableEnergy={calculateAvailableEnergy(4)}
+                  availableEnergy={calculateAvailableEnergy(4, selectedMods)}
                 />
               </Grid>
             ) : (

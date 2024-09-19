@@ -153,18 +153,6 @@ export function generatePermutations(
 
       const totalSum = Object.values(totalStats).reduce((a, b) => a + b, 0);
 
-      const baseStats = modifiedPermutation.reduce(
-        (sum, item) =>
-          sum +
-          item.mobility +
-          item.resilience +
-          item.recovery +
-          item.discipline +
-          item.intellect +
-          item.strength,
-        0
-      );
-
       if (heap.size() < 30000) {
         heap.push(modifiedPermutation);
       } else {

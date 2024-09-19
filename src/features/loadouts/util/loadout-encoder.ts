@@ -1,37 +1,6 @@
 import { CharacterClass } from '../../../types/d2l-types';
 import { SharedLoadoutDto } from '../types';
 
-/**
- * This file provides functions to encode and decode `LoadoutData` objects
- * into compact, URL-safe strings and back. It uses a custom base64-like
- * character set for encoding numbers, ensuring the result is URL-safe.
- *
- * Functions:
- * - `encodeNumber(num)`: Encodes a number into a custom base64 string.
- * - `decodeNumber(str)`: Decodes a custom base64 string back into a number.
- * - `encodeLoadout(loadout)`: Converts a `LoadoutData` object into a compact string.
- * - `decodeLoadout(encoded)`: Reconstructs a `LoadoutData` object from an encoded string.
- *
- * Example:
- * Given the number 1234, `encodeNumber(1234)` returns "JI".
- * Decoding "JI" with `decodeNumber("JI")` returns 1234.
- *
- * Encoding a simple `LoadoutData` object:
- * ```
- * const loadout = {
- *   mods: { helmet: [1], gauntlets: [2], chest: [3], legs: [4] },
- *   subclass: { super: 5, aspects: [6], fragments: [7], classAbility: 8,
- *              meleeAbility: 9, movementAbility: 10, grenade: 11 },
- *   selectedExoticItemHash: '12',
- *   selectedValues: { mobility: 13, resilience: 14 },
- *   statPriority: ['mobility', 'resilience'],
- *   characterClass: 'Titan'
- * };
- * ```
- * `encodeLoadout(loadout)` might return: "1|2|3|4~5|6|7|8|9|A|B~C~mob:D,res:E~mobres~Titan".
- * Decoding this string with `decodeLoadout` returns the original `LoadoutData` object.
- */
-
 // We'll use a custom base64 encoding to make the strings URL-safe
 const base64Chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_';
 

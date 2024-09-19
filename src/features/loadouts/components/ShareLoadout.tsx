@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../../../store/index';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/index';
 import { createSelector } from '@reduxjs/toolkit';
-import { encodeLoadout, decodeLoadout } from '../util/loadout-encoder';
+import { encodeLoadout } from '../util/loadout-encoder';
 import {
-  Button,
   TextField,
   Box,
-  List,
   ListItem,
   ListItemIcon,
   ListItemText,
@@ -26,6 +24,7 @@ import { CharacterClass, StatName } from '../../../types/d2l-types';
 import { SharedLoadoutDto } from '../types';
 import { D2LButton } from '../../../components/D2LButton';
 import { statIcons } from '../../../util/constants';
+import { copyToClipBoard } from '../../../util/app-utils';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -183,6 +182,7 @@ const StatPriorityList: React.FC<{
     </StatListContainer>
   );
 });
+
 const ShareLoadout: React.FC = () => {
   const loadoutState = useSelector(selectLoadoutState);
   const selectedCharacterClass = useSelector(selectSelectedCharacterClass);
@@ -231,13 +231,6 @@ const ShareLoadout: React.FC = () => {
     const encodedData = encodeLoadout(dataToShare);
     const shareableLink = `https://d2loadouts.com/?d=${encodedData}`;
     setShareLink(shareableLink);
-    console.log('Generated link:', shareableLink);
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareLink).then(() => {
-      alert('Link copied to clipboard!');
-    });
   };
 
   return (
@@ -282,7 +275,7 @@ const ShareLoadout: React.FC = () => {
                 }}
               />
               <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center' }}>
-                <D2LButton onClick={copyToClipboard} sx={{ mr: 1 }}>
+                <D2LButton onClick={() => copyToClipBoard(shareLink)} sx={{ mr: 1 }}>
                   Copy Link
                 </D2LButton>
               </Box>
