@@ -142,7 +142,7 @@ This feature makes sharing loadouts seamless and removes the hassle of sharing b
 <details>
   <summary>Click to expand How to Use Loadout Link</summary>
 
-![How to Use Loadout Link](./public/assets/use_shareloadout_link.png)
+![How to Use Loadout Link](./public/assets/use_shareloadout link.png)
 
 When you receive a loadout link, simply click on it. This will automatically take you to D2loadouts, where it will find an armor set that matches the shared link. If you have better armor, it will find a better build. If you have worse armor, it will find armor as close as possible to the shared link, prioritizing the most important stats. After the page loads, it will take you to the armor modification screen where you can make final tweaks or just equip the shared loadout!
 
