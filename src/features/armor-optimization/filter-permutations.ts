@@ -8,6 +8,12 @@ import {
   FragmentStatModifications,
 } from '../../types/d2l-types';
 
+/**
+ * Finds the stat deficit by considering the total armor in each permutation and the fragment modifications. 
+ * Then, it tries pre-calculated mod combinations to meet the required threshold. 
+ * It returns a sorted, filtered permutation array based on the lowest number of mods used.
+ */
+
 interface SelectedThresholds {
   [key: string]: number;
 }
@@ -98,6 +104,13 @@ function calculateTotalCost(perm: FilteredPermutation): number {
 
   return total;
 }
+
+/**
+ * The algorithm for the ShareLoadout link to find optimal armor from the receiving user's armor pool.
+ * It starts with the highest priority stat at its maximum threshold and decrements
+ * the threshold until a permutation is found. This allows us to find the best or closest 
+ * possible armor from the receiving user's armor pool.
+ */
 
 export function filterFromSharedLoadout(
   decodedLoadout: DecodedLoadoutData,

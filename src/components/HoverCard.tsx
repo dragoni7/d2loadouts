@@ -210,8 +210,6 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
         });
         return;
       }
-
-      console.log('Item not found in any table');
     } catch (error) {
       console.error('Error fetching item data:', error);
     }
