@@ -109,11 +109,41 @@ export type Loadout = {
   legArmor: DestinyArmor;
   classArmor: DestinyArmor;
   requiredStatMods: { mod: ManifestArmorStatMod; equipped: boolean }[];
-  helmetMods: (ManifestArmorMod | ManifestArmorStatMod)[];
-  gauntletsMods: (ManifestArmorMod | ManifestArmorStatMod)[];
-  chestArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
-  legArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
-  classArmorMods: (ManifestArmorMod | ManifestArmorStatMod)[];
+  helmetMods: [
+    ManifestArmorStatMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorStatMod
+  ];
+  gauntletsMods: [
+    ManifestArmorStatMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorStatMod
+  ];
+  chestArmorMods: [
+    ManifestArmorStatMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorStatMod
+  ];
+  legArmorMods: [
+    ManifestArmorStatMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorStatMod
+  ];
+  classArmorMods: [
+    ManifestArmorStatMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorMod,
+    ManifestArmorStatMod
+  ];
   characterId: number;
   subclassConfig: SubclassConfig;
 };
