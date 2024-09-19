@@ -13,10 +13,6 @@ export default function LogoutButton() {
   return (
     <Box
       sx={{
-        position: 'absolute',
-        top: '1%',
-        right: '0',
-        zIndex: 9999,
         mixBlendMode: 'difference',
       }}
     >
@@ -25,9 +21,10 @@ export default function LogoutButton() {
           onClick={onLogoutClick}
           sx={{
             borderRadius: 4,
+            mixBlendMode: 'difference',
           }}
         >
-          <Logout color="inherit" fontSize="large" />
+          <Logout color="inherit" />
         </IconButton>
       </Tooltip>
     </Box>

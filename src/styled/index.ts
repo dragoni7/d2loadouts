@@ -83,17 +83,18 @@ export const HeaderCharacterText = styled('div')<{ isSelected: boolean }>(({ isS
 export const HeaderLinksContainer = styled('div')({
   position: 'absolute',
   right: '20px',
-  bottom: '-2px',
+  top: '6%',
   display: 'flex',
-  gap: '20px',
+  gap: '12px',
   alignItems: 'flex-end',
 });
 
 export const HeaderStyledLink = styled('a')({
   ...sharedTextStyles,
-  color: 'rgba(255, 255, 255, 0.6)',
+  color: 'rgba(255, 255, 255, 0.9)',
   textDecoration: 'none',
   opacity: 0.6,
+  mixBlendMode: 'difference',
   '&:hover': {
     ...sharedTextStyles['&:hover'],
     color: 'white',
