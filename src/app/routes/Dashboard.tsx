@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { styled } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
@@ -504,14 +504,18 @@ export const Dashboard: React.FC = () => {
               </Grid>
               <Grid item md={4} sx={{ marginTop: '1%' }}>
                 {generatingPermutations ? (
-                  <p>Loading...</p>
+                  <Box display="flex" justifyContent="center" alignItems="center">
+                    <CircularProgress size={24} />
+                  </Box>
                 ) : filteredPermutations ? (
                   <PermutationsList
                     permutations={filteredPermutations}
                     onPermutationClick={openLoadoutCustomization}
                   />
                 ) : (
-                  <p>Loading....</p>
+                  <Box display="flex" justifyContent="center" alignItems="center">
+                    <CircularProgress size={24} />
+                  </Box>
                 )}
               </Grid>
               <Footer
