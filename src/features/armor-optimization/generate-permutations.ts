@@ -117,7 +117,7 @@ export function generatePermutations(
 
   const heap = new MaxHeap<Armor[]>((a: Armor[], b: Armor[]) => {
     const getTotalStats = (permutation: Armor[]) => {
-      const totalStats = reduceStats(permutation, assumeMasterworked, fragmentStatModifications);
+      const totalStats = reduceStats(permutation, fragmentStatModifications);
       return Object.values(totalStats).reduce((a, b) => a + b, 0);
     };
     return getTotalStats(b) - getTotalStats(a);
@@ -127,11 +127,7 @@ export function generatePermutations(
     if (currentTypeIndex === armorTypes.length) {
       const modifiedPermutation = [...currentPermutation, bestClassArmor];
 
-      const totalStats = reduceStats(
-        modifiedPermutation,
-        assumeMasterworked,
-        fragmentStatModifications
-      );
+      const totalStats = reduceStats(modifiedPermutation, fragmentStatModifications);
 
       const totalSum = Object.values(totalStats).reduce((a, b) => a + b, 0);
 
@@ -142,19 +138,13 @@ export function generatePermutations(
         if (smallest) {
           const smallestTotalSum =
             smallest.reduce((sum, item) => {
-              const extra = assumeMasterworked && !item.masterwork ? 2 : 0;
               return (
                 sum +
                 item.mobility +
-                extra +
                 item.resilience +
-                extra +
                 item.recovery +
-                extra +
                 item.discipline +
-                extra +
                 item.intellect +
-                extra +
                 item.strength
               );
             }, 0) + Object.values(fragmentStatModifications).reduce((a, b) => a + b, 0);
@@ -187,7 +177,6 @@ export function generatePermutations(
 
 function reduceStats(
   permutation: Armor[],
-  assumeMasterworked: boolean,
   fragmentStatModifications: FragmentStatModifications
 ): {
   mobility: number;
@@ -199,15 +188,13 @@ function reduceStats(
 } {
   return permutation.reduce(
     (sum, item) => {
-      const extra = assumeMasterworked && !item.masterwork ? 2 : 0;
-
       return {
-        mobility: sum.mobility + item.mobility + extra,
-        resilience: sum.resilience + item.resilience + extra,
-        recovery: sum.recovery + item.recovery + extra,
-        discipline: sum.discipline + item.discipline + extra,
-        intellect: sum.intellect + item.intellect + extra,
-        strength: sum.strength + item.strength + extra,
+        mobility: sum.mobility + item.mobility,
+        resilience: sum.resilience + item.resilience,
+        recovery: sum.recovery + item.recovery,
+        discipline: sum.discipline + item.discipline,
+        intellect: sum.intellect + item.intellect,
+        strength: sum.strength + item.strength,
       };
     },
     { ...fragmentStatModifications } // Start with fragment modifications
