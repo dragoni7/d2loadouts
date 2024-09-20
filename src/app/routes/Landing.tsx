@@ -3,11 +3,24 @@ import { useNavigate } from 'react-router';
 import BungieLogin from '../../features/auth/components/BungieLogin';
 import { regenerateTokens } from '../../lib/bungie_api/token-services';
 import { isAuthenticated } from '../../lib/bungie_api/authorization';
-import { Container, Grid, Paper, Box, Typography } from '@mui/material';
+import { Container, Grid, Paper, Box, Typography, styled, CircularProgress } from '@mui/material';
 import pyramidBackground from '/assets/pyramid.jpg';
 import FeatureSlider from '../../components/FeatureSlider';
 import { useScramble } from 'use-scramble';
 import { handleVersionUpdate } from '../../util/version-check';
+
+const LoadingScreen = styled(Box)(({ theme }) => ({
+  height: '100vh',
+  width: '100vw',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundImage: `url(${pyramidBackground})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+}));
 
 export const LandingRoute: React.FC = () => {
   const navigate = useNavigate();
@@ -49,7 +62,14 @@ export const LandingRoute: React.FC = () => {
   }, [hidden, replay]);
 
   if (hidden) {
-    return <div>Loading...</div>;
+    return (
+      <LoadingScreen>
+        <CircularProgress size={60} thickness={4} />
+        <Typography variant="h5" sx={{ mt: 2, color: 'white' }}>
+          Loading D2Loadouts...
+        </Typography>
+      </LoadingScreen>
+    );
   }
 
   return (

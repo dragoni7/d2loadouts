@@ -1,10 +1,10 @@
 # D2loadouts.com
 
-D2loadout is a Destiny 2 application that allows players to seamlessly create, optimize, equip, save, and share their builds. The goal of D2loadout is to remove the hassle of using multiple tools to achieve their build goals or to use their favorite streamers' loadouts. The table of contents includes a section for users and a section for developers. The user section covers all the features and what you can do with D2loadout. Join our Discord for requesting features and more updates!
+D2loadout is a Destiny 2 application that allows players to seamlessly create, optimize, equip, save, and share their builds. The goal of D2loadout is to remove the hassle of using multiple tools to achieve their build goals or use their favorite streamers' loadouts. The table of contents includes a section for users and a section for developers. The user section covers all the features and what you can do with D2loadout. Join our Discord to request features and stay updated!
 
 # Reporting Bugs
 
-Search the existing issues and closed issues. If the bug doesn't exist, report the bug and show us how to replicate it if possible.
+Please search the existing issues and closed issues before reporting a bug. If the bug doesn't exist, report the issue and include steps to replicate it if possible.
 
 ## Table of Contents: User Section
 
@@ -24,8 +24,6 @@ Search the existing issues and closed issues. If the bug doesn't exist, report t
 
 - [License](#license)
 
-</details>
-
 ## Character Selection
 
 <details>
@@ -33,7 +31,7 @@ Search the existing issues and closed issues. If the bug doesn't exist, report t
 
 ![Character Selection](./public/assets/Char_Select.gif)
 
-This is how you can select a character in D2loadout.
+D2loadout allows you to access your character and their respective inventories. Your characters will appear in the header component.
 
 </details>
 
@@ -44,7 +42,7 @@ This is how you can select a character in D2loadout.
 
 ![Optimal Armor Combination](./public/assets/Optimal_armor.gif)
 
-Use the optimal armor combination feature to find the best gear for your build.
+This feature allows you to select your desired stats. The tool triggers an algorithm that returns the best possible armor combination to fulfill those stats. It also accounts for the bonuses and penalties from selected fragments to provide an accurate armor combination.
 
 </details>
 
@@ -55,7 +53,7 @@ Use the optimal armor combination feature to find the best gear for your build.
 
 ![Exotic Selection](./public/assets/Exotic_select.gif)
 
-Select the desired exotic to fit your build.
+The exotic selection feature allows you to search for or find the exotic needed for your build. Use the search bar or scroll to find the desired exotic. If the exotic is not owned, it will be greyed out.
 
 </details>
 
@@ -66,7 +64,7 @@ Select the desired exotic to fit your build.
 
 ![Exotic Class Item Search](./public/assets/Exotic_class_item.gif)
 
-Search for exotic class items efficiently.
+The exotic selector feature also allows you to search or select a specific roll of an exotic class item in your inventory. When you select the class item, the dropdown will update with all your owned class items. When selected, the class item will be used for combinations and later when you equip your loadout.
 
 </details>
 
@@ -77,7 +75,7 @@ Search for exotic class items efficiently.
 
 ![Subclass Modification](./public/assets/Subclass_mod.gif)
 
-Customize your subclass abilities.
+We designed the user interface to resemble the in-game interface to make the tool more familiar to players. Like in the game, you can select your desired supers, aspects, fragments, etc. The feature dynamically adjusts to provide the correct number of fragment slots and includes the bonuses and penalties from these fragments in the armor combination.
 
 </details>
 
@@ -88,7 +86,7 @@ Customize your subclass abilities.
 
 ![Select Optimal Build](./public/assets/select_optimal_build.gif)
 
-Find the optimal build using your selected armor, weapons, and mods.
+This list includes the top 30,000 armor combinations based on the best total stat tier. It automatically sorts the combinations based on the lowest number of mods used. The cards include the armor pieces, total stats, mods used, and their counts. To select a desired combination, simply click on the combination you like. This will transfer you to the armor modification page, and the selected mods will automatically transfer to the armor customization page.
 
 </details>
 
@@ -99,7 +97,7 @@ Find the optimal build using your selected armor, weapons, and mods.
 
 ![Equip Armor Mods](./public/assets/armor_customization.gif)
 
-Easily equip armor mods to boost your stats.
+This feature allows you to equip armor mods and modify your abilities into the selected armor combination. At the top, the required mods needed to reach the desired stats are highlighted in red. You can simply click on the mods to auto-equip them, or you can manually modify or omit any stat mods if they interfere with the rest of your build.
 
 </details>
 
@@ -110,7 +108,7 @@ Easily equip armor mods to boost your stats.
 
 ![Equip Loadout](./public/assets/equiploadout.gif)
 
-Equip your loadout with just a few clicks.
+After modifying your armor mods and abilities, click on the "Equip Loadout" button to equip your loadout. If your inventory is full or your armor pieces are in the vault, don’t worry! This feature will automatically pull armor from the vault and move items around to ensure your build is equipped. After you click "Equip Loadout," an animation will indicate which slot is being modified, followed by feedback showing the success or failure of equipping armor pieces, mods, and abilities.
 
 </details>
 
@@ -121,7 +119,7 @@ Equip your loadout with just a few clicks.
 
 ![Save Loadout](./public/assets/saveloadout.gif)
 
-Save your loadout in-game and use it later.
+After equipping your loadout, you can save it in the game. This feature allows you to select the name, icon, and color for your saved loadout. It will override existing loadouts if you choose, or you can save it in an empty slot.
 
 </details>
 
@@ -132,7 +130,10 @@ Save your loadout in-game and use it later.
 
 ![Share Loadout](./public/assets/shareloadout.gif)
 
-Easily share your loadout with your friends.
+This feature makes sharing loadouts seamless and removes the hassle of sharing builds with friends, clanmates, or followers.
+
+1. Rank the stats based on priority. For example, if the build requires 100 resilience but mobility doesn't matter, set resilience as the top priority and mobility as the lowest. This allows us to find the ideal armor pieces from the receiving user's armor pool, so they don’t have to manually find armor for their build.
+2. Once you've ranked the stats based on priority, generate the link and share it with others!
 
 </details>
 
@@ -141,8 +142,8 @@ Easily share your loadout with your friends.
 <details>
   <summary>Click to expand How to Use Loadout Link</summary>
 
-![How to Use Loadout Link](./public/assets/use_shareloadout_link.png)
+![How to Use Loadout Link](./public/assets/use_shareloadout link.png)
 
-Learn how to use and share your loadout link.
+When you receive a loadout link, simply click on it. This will automatically take you to D2loadouts, where it will find an armor set that matches the shared link. If you have better armor, it will find a better build. If you have worse armor, it will find armor as close as possible to the shared link, prioritizing the most important stats. After the page loads, it will take you to the armor modification screen where you can make final tweaks or just equip the shared loadout!
 
 </details>
