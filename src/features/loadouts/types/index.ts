@@ -15,8 +15,9 @@ export type SharedLoadoutDto = {
   mods: {
     helmet: number[];
     gauntlets: number[];
-    chest: number[];
-    legs: number[];
+    chestArmor: number[];
+    legArmor: number[];
+    classArmor: number[];
   };
   subclass: {
     damageType: number;

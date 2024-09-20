@@ -19,7 +19,7 @@ import { EquipResult } from '../types';
 import { STATUS } from '../constants';
 import React from 'react';
 import LoadingBorder from './LoadingBorder';
-import FadeIn from './FadeIn';
+import FadeIn from '../../../components/FadeIn';
 import { equipLoadout } from '../util/loadout-utils';
 import { TransitionProps } from '@mui/material/transitions';
 import SaveLoadout from './SaveLoadout';

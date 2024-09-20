@@ -26,6 +26,7 @@ import {
   HoverCardTitle,
   HoverCardIcon,
 } from '../styled';
+import FadeIn from './FadeIn';
 
 type HoverCardItem =
   | ManifestSubclass
@@ -210,17 +211,22 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
     >
       {children}
       {hoverData && (
-        <HoverCardContainer>
-          {hoverData.type === 'armorMod' || hoverData.type === 'armorStatMod' ? (
-            renderDescription()
-          ) : (
-            <>
-              <HoverCardTitle variant="h6">{hoverData.name}</HoverCardTitle>
-              <HoverCardIcon src={hoverData.secondaryIcon || hoverData.icon} alt={hoverData.name} />
-              {renderDescription()}
-            </>
-          )}
-        </HoverCardContainer>
+        <FadeIn duration={160}>
+          <HoverCardContainer>
+            {hoverData.type === 'armorMod' || hoverData.type === 'armorStatMod' ? (
+              renderDescription()
+            ) : (
+              <>
+                <HoverCardTitle variant="h6">{hoverData.name}</HoverCardTitle>
+                <HoverCardIcon
+                  src={hoverData.secondaryIcon || hoverData.icon}
+                  alt={hoverData.name}
+                />
+                {renderDescription()}
+              </>
+            )}
+          </HoverCardContainer>
+        </FadeIn>
       )}
     </div>
   );
