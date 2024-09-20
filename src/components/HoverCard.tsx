@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { styled, Typography, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import { db } from '../store/db';
 import {
   ManifestSubclass,
