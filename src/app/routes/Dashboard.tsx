@@ -46,7 +46,7 @@ import {
   updateSelectedCharacter,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
-import { Grid } from '@mui/material';
+import { CircularProgress, Grid, Typography } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
@@ -57,6 +57,18 @@ import StatModifications from '../../features/subclass/components/StatModificati
 import Footer from '../../components/Footer';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
+  backgroundImage: `url(${background})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+}));
+
+const LoadingScreen = styled(Grid)(({ theme }) => ({
+  height: '100vh',
+  width: '100vw',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
   backgroundImage: `url(${background})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
@@ -509,7 +521,12 @@ export const Dashboard: React.FC = () => {
           </Grid>
         </>
       ) : (
-        <div>loading...</div>
+        <LoadingScreen container>
+          <CircularProgress size={60} thickness={4} />
+          <Typography variant="h5" sx={{ mt: 2, color: 'white' }}>
+            Loading Dashboard...
+          </Typography>
+        </LoadingScreen>
       )}
     </>
   );
