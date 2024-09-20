@@ -449,6 +449,59 @@ export const Dashboard: React.FC = () => {
     setShowAbilitiesModification(true);
   };
 
+  const calculateMaxReachableValues = useMemo(() => {
+    if (!permutations) return null;
+
+    const stats: StatName[] = [
+      'mobility',
+      'resilience',
+      'recovery',
+      'discipline',
+      'intellect',
+      'strength',
+    ];
+
+    const maxValues: { [key in StatName]: number } = {
+      mobility: 0,
+      resilience: 0,
+      recovery: 0,
+      discipline: 0,
+      intellect: 0,
+      strength: 0,
+    };
+
+    stats.forEach((stat) => {
+      let value = 100;
+      let permutationsFound = false;
+
+      while (value >= 0 && !permutationsFound) {
+        const testSelectedValues = {
+          ...selectedValues,
+          [stat]: value,
+        };
+
+        const filtered = filterPermutations(
+          permutations,
+          testSelectedValues,
+          fragmentStatModifications
+        );
+
+        if (filtered && filtered.length > 0) {
+          permutationsFound = true;
+          maxValues[stat] = value;
+        } else {
+          value -= 10;
+        }
+      }
+
+      if (!permutationsFound) {
+        maxValues[stat] = 0;
+      }
+    });
+
+    return maxValues;
+  }, [permutations, fragmentStatModifications, selectedValues]);
+
   return (
     <>
       {showAbilitiesModification && customizingSubclass ? (
@@ -497,7 +550,7 @@ export const Dashboard: React.FC = () => {
                   />
                 </Grid>
                 <Grid item md={1}>
-                  <NumberBoxes />
+                  <NumberBoxes maxReachableValues={calculateMaxReachableValues} />
                 </Grid>
               </Grid>
               <Grid
