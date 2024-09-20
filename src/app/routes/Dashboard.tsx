@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { styled } from '@mui/system';
+import { Box, styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
 import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
@@ -46,7 +46,7 @@ import {
   updateSelectedCharacter,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
-import { Grid } from '@mui/material';
+import { CircularProgress, Grid, Typography } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
@@ -57,6 +57,18 @@ import StatModifications from '../../features/subclass/components/StatModificati
 import Footer from '../../components/Footer';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
+  backgroundImage: `url(${background})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+}));
+
+const LoadingScreen = styled(Grid)(({ theme }) => ({
+  height: '100vh',
+  width: '100vw',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
   backgroundImage: `url(${background})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
@@ -492,14 +504,18 @@ export const Dashboard: React.FC = () => {
               </Grid>
               <Grid item md={4} sx={{ marginTop: '1%' }}>
                 {generatingPermutations ? (
-                  <p>Loading...</p>
+                  <Box display="flex" justifyContent="center" alignItems="center">
+                    <CircularProgress size={24} />
+                  </Box>
                 ) : filteredPermutations ? (
                   <PermutationsList
                     permutations={filteredPermutations}
                     onPermutationClick={openLoadoutCustomization}
                   />
                 ) : (
-                  <p>Loading....</p>
+                  <Box display="flex" justifyContent="center" alignItems="center">
+                    <CircularProgress size={24} />
+                  </Box>
                 )}
               </Grid>
               <Footer
@@ -509,7 +525,12 @@ export const Dashboard: React.FC = () => {
           </Grid>
         </>
       ) : (
-        <div>loading...</div>
+        <LoadingScreen container>
+          <CircularProgress size={60} thickness={4} />
+          <Typography variant="h5" sx={{ mt: 2, color: 'white' }}>
+            Loading Dashboard...
+          </Typography>
+        </LoadingScreen>
       )}
     </>
   );
