@@ -29,6 +29,7 @@ import {
   resetLoadout,
   resetLoadoutArmorMods,
   updateLoadoutArmor,
+  updateLoadoutArmorMods,
   updateLoadoutCharacter,
   updateRequiredStatMods,
   updateSubclass,
@@ -39,14 +40,14 @@ import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
 import background from '/assets/background.png';
 import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
-import { DAMAGE_TYPE } from '../../lib/bungie_api/constants';
+import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
   resetDashboard,
   updateSelectedCharacter,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
-import { CircularProgress, Box, Grid, Typography } from '@mui/material';
+import { CircularProgress, Box, Grid, Typography, Container } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
@@ -55,6 +56,8 @@ import useArtificeMods from '../../hooks/use-artifice-mods';
 import useStatMods from '../../hooks/use-stat-mods';
 import StatModifications from '../../features/subclass/components/StatModifications';
 import Footer from '../../components/Footer';
+import { equipSharedMods } from '@/features/loadouts/util/loadout-utils';
+import FadeIn from '@/components/FadeIn';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${background})`,
@@ -62,13 +65,14 @@ const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundPosition: 'center',
 }));
 
-const LoadingScreen = styled(Grid)(({ theme }) => ({
+const LoadingScreen = styled(Box)(({ theme }) => ({
   height: '100vh',
   width: '100vw',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
+  textAlign: 'center',
   backgroundImage: `url(${background})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
@@ -89,7 +93,7 @@ export const Dashboard: React.FC = () => {
   const fragments = useSelector(
     (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
   );
-  const [generatingPermutations, setGeneratingPermutations] = useState(false);
+
   const [subclasses, setSubclasses] = useState<
     { [key: number]: SubclassConfig | undefined } | undefined
   >(undefined);
@@ -101,6 +105,7 @@ export const Dashboard: React.FC = () => {
   const [showLoadoutCustomization, setShowLoadoutCustomization] = useState(false);
   const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
   const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
+  const [loadingMessage, setLoadingMessage] = useState<String>('Loading...');
 
   const statMods = useStatMods();
   const artificeMods = useArtificeMods();
@@ -212,9 +217,11 @@ export const Dashboard: React.FC = () => {
     };
 
     const updateData = async () => {
+      setLoadingMessage('Loading Destiny Data...');
       await updateManifest();
       const destinyMembership = await getDestinyMembershipId();
       dispatch(updateMembership(destinyMembership));
+      setLoadingMessage('Loading Character Data...');
       const profileCharacters = await getProfileData();
       dispatch(updateProfileCharacters(profileCharacters));
 
@@ -226,8 +233,11 @@ export const Dashboard: React.FC = () => {
       const sharedLoadoutLink = localStorage.getItem('lastShared');
 
       if (sharedLoadoutLink !== '' && sharedLoadoutLink !== null) {
+        setLoadingMessage('Finding Best Loadout From Share Link...');
         const sharedLoadoutDto = decodeLoadout(sharedLoadoutLink!);
         setSharedLoadoutDto(sharedLoadoutDto);
+
+        await equipSharedMods(sharedLoadoutDto, dispatch).catch(console.error);
 
         targetCharacterIndex = profileCharacters.findIndex(
           (character: Character) => character.class === sharedLoadoutDto.characterClass
@@ -254,6 +264,8 @@ export const Dashboard: React.FC = () => {
             })
           );
         }
+
+        setSharedLoadoutDto(undefined);
       } else {
         const keys = Object.keys(profileCharacters[targetCharacterIndex].subclasses);
 
@@ -345,21 +357,24 @@ export const Dashboard: React.FC = () => {
       filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
     }
 
-    setGeneratingPermutations(false);
-
     return filtered;
   }, [permutations, selectedValues, sharedLoadoutDto, fragmentStatModifications]);
 
   useEffect(() => {
     if (filteredPermutations && sharedLoadoutDto) {
-      openLoadoutCustomization(filteredPermutations[0]);
+      openLoadoutCustomization(filteredPermutations[0], false).catch(console.error);
       localStorage.removeItem('lastShared');
     }
   }, [filteredPermutations, sharedLoadoutDto]);
 
-  function openLoadoutCustomization(filteredPermutation: FilteredPermutation) {
-    dispatch(resetLoadoutArmorMods());
+  async function openLoadoutCustomization(
+    filteredPermutation: FilteredPermutation,
+    clearMods: boolean = true
+  ) {
+    if (clearMods) dispatch(resetLoadoutArmorMods());
+
     dispatch(updateLoadoutArmor(filteredPermutation.permutation));
+
     const allStatMods = statMods.concat(artificeMods);
     let requiredMods: { mod: ManifestArmorStatMod; equipped: boolean }[] = [];
 
@@ -392,6 +407,7 @@ export const Dashboard: React.FC = () => {
     }
 
     dispatch(updateRequiredStatMods(requiredMods));
+
     setShowLoadoutCustomization(true);
   }
 
@@ -505,95 +521,102 @@ export const Dashboard: React.FC = () => {
   return (
     <>
       {showAbilitiesModification && customizingSubclass ? (
-        <SubclassCustomizationWrapper
-          onBackClick={() => setShowAbilitiesModification(false)}
-          subclass={customizingSubclass}
-          screenshot={customizingSubclass.subclass.screenshot}
-        />
-      ) : showLoadoutCustomization ? (
-        <LoadoutCustomization
-          onBackClick={() => {
-            setShowLoadoutCustomization(false);
-            setSharedLoadoutDto(undefined);
-          }}
-          screenshot={selectedSubclass?.subclass.screenshot || ''}
-          subclass={selectedSubclass!}
-        />
+        <FadeIn duration={160}>
+          <SubclassCustomizationWrapper
+            onBackClick={() => setShowAbilitiesModification(false)}
+            subclass={customizingSubclass}
+            screenshot={customizingSubclass.subclass.screenshot}
+          />
+        </FadeIn>
+      ) : showLoadoutCustomization && sharedLoadoutDto === undefined ? (
+        <FadeIn duration={160}>
+          <LoadoutCustomization
+            onBackClick={() => {
+              setShowLoadoutCustomization(false);
+            }}
+            screenshot={selectedSubclass?.subclass.screenshot || ''}
+            subclass={selectedSubclass!}
+          />
+        </FadeIn>
       ) : sharedLoadoutDto === undefined && selectedSubclass ? (
         <>
-          <HeaderComponent
-            emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
-            overlayUrl={characters[selectedCharacterIndex]?.emblem?.secondaryOverlay || ''}
-            displayName={membership.bungieGlobalDisplayName}
-            characters={characters}
-            selectedCharacter={characters[selectedCharacterIndex]!}
-            onCharacterClick={handleCharacterClick}
-          />
+          <FadeIn duration={200}>
+            <HeaderComponent
+              emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
+              overlayUrl={characters[selectedCharacterIndex]?.emblem?.secondaryOverlay || ''}
+              displayName={membership.bungieGlobalDisplayName}
+              characters={characters}
+              selectedCharacter={characters[selectedCharacterIndex]!}
+              onCharacterClick={handleCharacterClick}
+            />
+          </FadeIn>
 
-          <Grid
-            container
-            sx={{
-              width: '100vw',
-              height: '100vh',
-              overflowY: 'auto',
-              paddingTop: '120px',
-            }}
-          >
-            <DashboardContent item container md={12} justifyContent="space-evenly">
-              <Grid item container direction="column" md={4} spacing={3} sx={{ marginTop: '2%' }}>
-                <Grid item md={1}>
-                  <SingleDiamondButton
-                    subclasses={subclasses}
-                    selectedSubclass={selectedSubclass}
-                    onSubclassSelect={handleSubclassSelect}
-                    onSubclassRightClick={handleSubclassRightClick}
-                  />
+          <FadeIn duration={300}>
+            <Grid
+              container
+              sx={{
+                width: '100vw',
+                height: '100vh',
+                overflowY: 'auto',
+                paddingTop: '120px',
+              }}
+            >
+              <DashboardContent item container md={12} justifyContent="space-evenly">
+                <Grid item container direction="column" md={4} spacing={3} sx={{ marginTop: '2%' }}>
+                  <Grid item md={1}>
+                    <SingleDiamondButton
+                      subclasses={subclasses}
+                      selectedSubclass={selectedSubclass}
+                      onSubclassSelect={handleSubclassSelect}
+                      onSubclassRightClick={handleSubclassRightClick}
+                    />
+                  </Grid>
+                  <Grid item md={1}>
+                    <NumberBoxes maxReachableValues={calculateMaxReachableValues} />
+                  </Grid>
                 </Grid>
-                <Grid item md={1}>
-                  <NumberBoxes maxReachableValues={calculateMaxReachableValues} />
+                <Grid
+                  item
+                  container
+                  md={4}
+                  spacing={3}
+                  direction="column"
+                  justifyContent={'start'}
+                  alignItems={'center'}
+                  sx={{ marginTop: '1%' }}
+                >
+                  <Grid item height="32vh">
+                    <ExoticSelector
+                      selectedCharacter={characters[selectedCharacterIndex]!}
+                      selectedExoticItemHash={selectedExotic.itemHash}
+                    />
+                  </Grid>
+                  <Grid item alignSelf="flex-start">
+                    <StatModifications />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid
-                item
-                container
-                md={4}
-                spacing={3}
-                direction="column"
-                justifyContent={'start'}
-                alignItems={'center'}
-                sx={{ marginTop: '1%' }}
-              >
-                <Grid item height="32vh">
-                  <ExoticSelector
-                    selectedCharacter={characters[selectedCharacterIndex]!}
-                    selectedExoticItemHash={selectedExotic.itemHash}
-                  />
+                <Grid item md={4} sx={{ marginTop: '1%' }}>
+                  {filteredPermutations ? (
+                    <PermutationsList
+                      permutations={filteredPermutations}
+                      onPermutationClick={openLoadoutCustomization}
+                    />
+                  ) : (
+                    false
+                  )}
                 </Grid>
-                <Grid item alignSelf="flex-start">
-                  <StatModifications />
-                </Grid>
-              </Grid>
-              <Grid item md={4} sx={{ marginTop: '1%' }}>
-                {filteredPermutations ? (
-                  <PermutationsList
-                    permutations={filteredPermutations}
-                    onPermutationClick={openLoadoutCustomization}
-                  />
-                ) : (
-                  false
-                )}
-              </Grid>
-              <Footer
-                emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
-              />
-            </DashboardContent>
-          </Grid>
+                <Footer
+                  emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
+                />
+              </DashboardContent>
+            </Grid>
+          </FadeIn>
         </>
       ) : (
-        <LoadingScreen container>
+        <LoadingScreen>
           <CircularProgress size={60} thickness={4} />
           <Typography variant="h5" sx={{ mt: 2, color: 'white' }}>
-            Loading Dashboard...
+            {loadingMessage}
           </Typography>
         </LoadingScreen>
       )}

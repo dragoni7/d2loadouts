@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { styled, Typography, Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box } from '@mui/material';
 import { db } from '../store/db';
 import {
   ManifestSubclass,
@@ -26,6 +26,7 @@ import {
   HoverCardTitle,
   HoverCardIcon,
 } from '../styled';
+import FadeIn from './FadeIn';
 
 type HoverCardItem =
   | ManifestSubclass
@@ -44,15 +45,14 @@ interface HoverCardProps {
 
 const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
   const [hoverData, setHoverData] = useState<any | null>(null);
+  const [hovered, setHovered] = useState<boolean>(false);
 
-  const handleMouseEnter = async () => {
+  async function getItemData() {
     if (!item) {
-      console.log('No item provided');
       return;
     }
 
     const itemHash = item.itemHash;
-    console.log('Hovering over item with itemHash:', itemHash);
 
     try {
       let fullData;
@@ -119,11 +119,11 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
     } catch (error) {
       console.error('Error fetching item data:', error);
     }
-  };
+  }
 
-  const handleMouseLeave = () => {
-    setHoverData(null);
-  };
+  useEffect(() => {
+    getItemData().catch(console.error);
+  }, []);
 
   const renderEnergyCapacity = (capacity: number) => {
     return (
@@ -204,23 +204,28 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
 
   return (
     <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseOver={() => setHovered(true)}
+      onMouseOut={() => setHovered(false)}
       style={{ position: 'relative' }}
     >
       {children}
-      {hoverData && (
-        <HoverCardContainer>
-          {hoverData.type === 'armorMod' || hoverData.type === 'armorStatMod' ? (
-            renderDescription()
-          ) : (
-            <>
-              <HoverCardTitle variant="h6">{hoverData.name}</HoverCardTitle>
-              <HoverCardIcon src={hoverData.secondaryIcon || hoverData.icon} alt={hoverData.name} />
-              {renderDescription()}
-            </>
-          )}
-        </HoverCardContainer>
+      {hovered && hoverData && (
+        <FadeIn duration={160}>
+          <HoverCardContainer>
+            {hoverData.type === 'armorMod' || hoverData.type === 'armorStatMod' ? (
+              renderDescription()
+            ) : (
+              <>
+                <HoverCardTitle variant="h6">{hoverData.name}</HoverCardTitle>
+                <HoverCardIcon
+                  src={hoverData.secondaryIcon || hoverData.icon}
+                  alt={hoverData.name}
+                />
+                {renderDescription()}
+              </>
+            )}
+          </HoverCardContainer>
+        </FadeIn>
       )}
     </div>
   );

@@ -81,8 +81,9 @@ export function decodeLoadout(encoded: string): SharedLoadoutDto {
   const mods = {
     helmet: encodedMods.split('|')[0].split(',').map(decodeNumber),
     gauntlets: encodedMods.split('|')[1].split(',').map(decodeNumber),
-    chest: encodedMods.split('|')[2].split(',').map(decodeNumber),
-    legs: encodedMods.split('|')[3].split(',').map(decodeNumber),
+    chestArmor: encodedMods.split('|')[2].split(',').map(decodeNumber),
+    legArmor: encodedMods.split('|')[3].split(',').map(decodeNumber),
+    classArmor: encodedMods.split('|')[4].split(',').map(decodeNumber),
   };
 
   const subclassParts = encodedSubclass.split('|');

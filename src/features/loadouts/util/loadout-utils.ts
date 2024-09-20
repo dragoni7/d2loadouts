@@ -1,3 +1,5 @@
+import { db } from '@/store/db';
+import { updateLoadoutArmorMods } from '@/store/LoadoutReducer';
 import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import { snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
 import { ArmorModKeys, Armor, Loadout, Subclass, SubclassConfig } from '../../../types/d2l-types';
@@ -8,9 +10,10 @@ import {
   ManifestPlug,
   ManifestStatPlug,
 } from '../../../types/manifest-types';
-import { EquipResult, setState } from '../types';
+import { EquipResult, setState, SharedLoadoutDto } from '../types';
 import { ArmorEquipper } from './armor-equipper';
 import { SubclassEquipper } from './subclass-equipper';
+import { Dispatch } from 'redux';
 
 /**
  * Saves a loadout from equipped items to Destiny 2
@@ -210,4 +213,30 @@ async function processSubclass(
   const result = equipper.getResult();
   tempResults.push(result);
   setResults(tempResults);
+}
+
+/**
+ * Equips mods from a shared loadout into the loadout config
+ * @param sharedLoadoutDto the shared loadout
+ * @param dispatch dispatch
+ */
+export async function equipSharedMods(sharedLoadoutDto: SharedLoadoutDto, dispatch: Dispatch) {
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < ARMOR_ARRAY.length; j++) {
+      const hash = sharedLoadoutDto.mods[ARMOR_ARRAY[j]][i];
+
+      // only equip non stat mods
+      // stat mods should be equipped by the user according to the calculated permutation
+      const armorMod = await db.manifestArmorModDef.where('itemHash').equals(hash).first();
+      if (armorMod) {
+        dispatch(
+          updateLoadoutArmorMods({
+            armorType: ARMOR_ARRAY[j],
+            slot: i,
+            plug: armorMod,
+          })
+        );
+      }
+    }
+  }
 }

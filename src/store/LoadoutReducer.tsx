@@ -1,12 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  Character,
-  DamageType,
-  Armor,
-  Loadout,
-  Subclass,
-  SubclassConfig,
-} from '../types/d2l-types';
+import { Character, Armor, Loadout, SubclassConfig } from '../types/d2l-types';
 import {
   EMPTY_ASPECT,
   EMPTY_FRAGMENT,

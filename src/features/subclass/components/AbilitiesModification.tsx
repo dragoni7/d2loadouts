@@ -6,12 +6,7 @@ import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/subclass-constants';
 import { RootState } from '../../../store';
 import { db } from '../../../store/db';
 import { updateSubclassMods } from '../../../store/LoadoutReducer';
-import {
-  ManifestPlug,
-  ManifestAspect,
-  ManifestStatPlug,
-  ManifestSubclass,
-} from '../../../types/manifest-types';
+import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../../types/manifest-types';
 import { DamageType, SubclassConfig } from '../../../types/d2l-types';
 import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../../lib/bungie_api/constants';
 import HoverCard from '../../../components/HoverCard';
@@ -52,7 +47,7 @@ const SubmenuContainer = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1.5),
   backgroundColor: 'rgba(255, 255, 255, 0.1)',
   backdropFilter: 'blur(10px)',
-  maxWidth: '550px',
+  maxWidth: '850px',
   boxShadow: theme.shadows[10],
   display: 'flex',
   flexWrap: 'wrap',
@@ -69,14 +64,6 @@ const OptionButton = styled(Button)(({ theme }) => ({
   borderRadius: 0,
   margin: theme.spacing(0.25),
 }));
-
-const BlurredBackground = styled('div')({
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  backdropFilter: 'blur(4px)',
-  borderRadius: '4px',
-  padding: '8px',
-  marginBottom: '16px',
-});
 
 const SuperModSlot = styled('div')(({ theme }) => ({
   width: 250,

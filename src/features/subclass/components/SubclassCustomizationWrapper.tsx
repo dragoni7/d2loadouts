@@ -18,16 +18,13 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
   screenshot,
 }) => {
   return (
-    <Box
-      className="subclass-customization-wrapper"
-      style={{ backgroundImage: `url(${screenshot})` }}
-    >
+    <Box className="subclass-customization-wrapper" sx={{ backgroundImage: `url(${screenshot})` }}>
       <Box position="absolute" top={16} left={16} zIndex={1000}>
         <BackButton onClick={onBackClick} startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}>
           Back
         </BackButton>
       </Box>
-      <Box sx={{ marginTop: '15vh' }}>
+      <Box sx={{ marginTop: '5vh' }}>
         <AbilitiesModification subclass={subclass} />
       </Box>
       <Box position="absolute" bottom={16} left={16} zIndex={1000}>
