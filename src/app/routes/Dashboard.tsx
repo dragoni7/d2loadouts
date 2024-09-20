@@ -329,6 +329,7 @@ export const Dashboard: React.FC = () => {
           selectedExotic,
           selectedExoticClassCombo,
           assumeMasterworked,
+          assumeExoticArtifice,
           fragmentStatModifications
         );
 
@@ -337,6 +338,7 @@ export const Dashboard: React.FC = () => {
         selectedExotic,
         undefined,
         assumeMasterworked,
+        assumeExoticArtifice,
         fragmentStatModifications
       );
     }
@@ -623,11 +625,21 @@ export const Dashboard: React.FC = () => {
                       }}
                     >
                       <FormControlLabel
-                        control={<Switch onChange={() => dispatch(updateAssumeMasterwork())} />}
+                        control={
+                          <Switch
+                            checked={assumeMasterworked}
+                            onChange={() => dispatch(updateAssumeMasterwork())}
+                          />
+                        }
                         label="Assume Armor Masterworked"
                       />
                       <FormControlLabel
-                        control={<Switch onChange={() => dispatch(updateAssumeExoticArtifice())} />}
+                        control={
+                          <Switch
+                            checked={assumeExoticArtifice}
+                            onChange={() => dispatch(updateAssumeExoticArtifice())}
+                          />
+                        }
                         label="Assume Exotics are Artifice"
                       />
                     </FormGroup>

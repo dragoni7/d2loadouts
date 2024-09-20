@@ -1,5 +1,5 @@
 import { ARMOR } from '../../lib/bungie_api/constants';
-import MaxHeap from 'heap-js';
+import { Heap } from 'heap-js';
 import {
   ArmorSlot,
   Armor,
@@ -20,6 +20,7 @@ export function generatePermutations(
   },
   selectedExoticClassCombo?: ExoticClassCombo,
   assumeMasterworked: boolean = false,
+  exoticsArtifice: boolean = false,
   fragmentStatModifications: FragmentStatModifications = {
     mobility: 0,
     resilience: 0,
@@ -29,7 +30,10 @@ export function generatePermutations(
     strength: 0,
   }
 ): Armor[][] {
-  const { helmet, arms, legs, chest, classItem } = armorClass;
+  const { helmet, arms, legs, chest, classItem } =
+    assumeMasterworked || exoticsArtifice
+      ? createFilteredArmorCollection(armorClass, assumeMasterworked, exoticsArtifice)
+      : armorClass;
 
   let filteredHelmet = helmet;
   let filteredArms = arms;
@@ -115,12 +119,12 @@ export function generatePermutations(
         : masterworkedClassArmor
       : artificeMasterworkedClassArmor;
 
-  const heap = new MaxHeap<Armor[]>((a: Armor[], b: Armor[]) => {
+  const heap = new Heap<Armor[]>((a: Armor[], b: Armor[]) => {
     const getTotalStats = (permutation: Armor[]) => {
       const totalStats = reduceStats(permutation, fragmentStatModifications);
       return Object.values(totalStats).reduce((a, b) => a + b, 0);
     };
-    return getTotalStats(b) - getTotalStats(a);
+    return getTotalStats(a) - getTotalStats(b);
   });
 
   const generate = (currentPermutation: Armor[], currentTypeIndex: number, exoticCount: number) => {
@@ -128,29 +132,28 @@ export function generatePermutations(
       const modifiedPermutation = [...currentPermutation, bestClassArmor];
 
       const totalStats = reduceStats(modifiedPermutation, fragmentStatModifications);
-
-      const totalSum = Object.values(totalStats).reduce((a, b) => a + b, 0);
+      const totalSum = Object.values(totalStats).reduce(
+        (a, b) => Math.floor(a / 10) * 10 + Math.floor(b / 10) * 10,
+        0
+      );
 
       if (heap.size() < 30000) {
         heap.push(modifiedPermutation);
+        console.log('Pushed:' + totalSum);
       } else {
         const smallest = heap.peek();
+
         if (smallest) {
-          const smallestTotalSum =
-            smallest.reduce((sum, item) => {
-              return (
-                sum +
-                item.mobility +
-                item.resilience +
-                item.recovery +
-                item.discipline +
-                item.intellect +
-                item.strength
-              );
-            }, 0) + Object.values(fragmentStatModifications).reduce((a, b) => a + b, 0);
+          const smallestTotalStats = reduceStats(smallest, fragmentStatModifications);
+          const smallestTotalSum = Object.values(smallestTotalStats).reduce(
+            (a, b) => Math.floor(a / 10) * 10 + Math.floor(b / 10) * 10,
+            0
+          );
+
           if (totalSum > smallestTotalSum) {
             heap.pop();
             heap.push(modifiedPermutation);
+            console.log('Popping: ' + smallestTotalSum + ' then pushing: ' + totalSum);
           }
         }
       }
@@ -199,4 +202,79 @@ function reduceStats(
     },
     { ...fragmentStatModifications } // Start with fragment modifications
   );
+}
+
+function createFilteredArmorCollection(
+  armorClass: ArmorBySlot,
+  allMasterworked: boolean,
+  exoticsArtifice: boolean
+): ArmorBySlot {
+  let modified: ArmorBySlot = structuredClone(armorClass);
+
+  modified.helmet.forEach((armor) => {
+    if (!armor.masterwork && allMasterworked) {
+      armor.mobility += 2;
+      armor.recovery += 2;
+      armor.resilience += 2;
+      armor.discipline += 2;
+      armor.intellect += 2;
+      armor.strength += 2;
+    }
+
+    if (armor.exotic && exoticsArtifice) armor.artifice = true;
+  });
+
+  modified.arms.forEach((armor) => {
+    if (!armor.masterwork && allMasterworked) {
+      armor.mobility += 2;
+      armor.recovery += 2;
+      armor.resilience += 2;
+      armor.discipline += 2;
+      armor.intellect += 2;
+      armor.strength += 2;
+    }
+
+    if (armor.exotic && exoticsArtifice) armor.artifice = true;
+  });
+
+  modified.chest.forEach((armor) => {
+    if (!armor.masterwork && allMasterworked) {
+      armor.mobility += 2;
+      armor.recovery += 2;
+      armor.resilience += 2;
+      armor.discipline += 2;
+      armor.intellect += 2;
+      armor.strength += 2;
+    }
+
+    if (armor.exotic && exoticsArtifice) armor.artifice = true;
+  });
+
+  modified.legs.forEach((armor) => {
+    if (!armor.masterwork && allMasterworked) {
+      armor.mobility += 2;
+      armor.recovery += 2;
+      armor.resilience += 2;
+      armor.discipline += 2;
+      armor.intellect += 2;
+      armor.strength += 2;
+    }
+
+    if (armor.exotic && exoticsArtifice) armor.artifice = true;
+  });
+
+  modified.classItem.forEach((armor) => {
+    if (!armor.masterwork && allMasterworked) {
+      armor.mobility += 2;
+      armor.recovery += 2;
+      armor.resilience += 2;
+      armor.discipline += 2;
+      armor.intellect += 2;
+      armor.strength += 2;
+    }
+
+    if (armor.exotic && exoticsArtifice) armor.artifice = true;
+  });
+
+  return modified;
 }
