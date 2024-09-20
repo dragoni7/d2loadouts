@@ -1,16 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import {
-  Box,
-  Card,
-  Grid,
-  Typography,
-  IconButton,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-  Stack,
-} from '@mui/material';
+import { Box, Card, Grid, Typography, IconButton, Tooltip, useTheme, Stack } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { FilteredPermutation, Armor, StatName, StatModifiers } from '../../../types/d2l-types';
@@ -20,6 +10,7 @@ import { STATS } from '../../../lib/bungie_api/constants';
 import { RootState } from '../../../store';
 import useStatMods from '../../../hooks/use-stat-mods';
 import useArtificeMods from '../../../hooks/use-artifice-mods';
+import { statIcons } from '@/util/constants';
 
 interface PermutationsListProps {
   permutations: FilteredPermutation[];
@@ -72,8 +63,6 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const theme = useTheme();
-  const large = useMediaQuery(theme.breakpoints.between('lg', 'xl'));
-  const [itemsPerPage, setItemsPerPage] = useState<number>(4);
   const statMods = useStatMods();
   const artificeMods = useArtificeMods();
 
@@ -103,34 +92,17 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
     return modifications;
   }, [subclassConfig.fragments]);
 
-  useEffect(() => {
-    if (large) {
-      setItemsPerPage(4);
-    } else {
-      setItemsPerPage(3);
-    }
-  }, [large]);
-
   const paginatedData = useMemo(() => {
-    const start = currentPage * itemsPerPage;
-    const end = start + itemsPerPage;
+    const start = currentPage * 3;
+    const end = start + 3;
     return permutations.slice(start, end);
-  }, [currentPage, permutations, itemsPerPage]);
+  }, [currentPage, permutations]);
 
   const calculateTotal = (perm: FilteredPermutation, stat: StatName) => {
     const baseSum = perm.permutation.reduce((sum, item) => sum + (item[stat] || 0), 0);
     const modSum = perm.modsArray[stat]?.reduce((sum, mod) => sum + mod, 0) || 0;
     const fragmentMod = fragmentStatModifications[stat] || 0;
     return baseSum + modSum + fragmentMod;
-  };
-
-  const statIcons: Record<StatName, string> = {
-    mobility: 'assets/mob.png',
-    resilience: 'assets/res.png',
-    recovery: 'assets/rec.png',
-    discipline: 'assets/disc.png',
-    intellect: 'assets/int.png',
-    strength: 'assets/str.png',
   };
 
   const formatArmorStats = (armor: Armor) => {
@@ -184,7 +156,7 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
     <Grid container justifyContent="center" spacing={1}>
       <Grid item md={12}>
         <PageCount>
-          Page {currentPage + 1} of {Math.ceil(permutations.length / itemsPerPage)}
+          Page {currentPage + 1} of {Math.ceil(permutations.length / 3)}
         </PageCount>
       </Grid>
       <Grid item md={1}>
@@ -255,18 +227,16 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
       <Grid item md={1}>
         <ArrowButton
           onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, Math.ceil(permutations.length / itemsPerPage) - 1)
-            )
+            setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(permutations.length / 3) - 1))
           }
-          disabled={currentPage === Math.ceil(permutations.length / itemsPerPage) - 1}
+          disabled={currentPage === Math.ceil(permutations.length / 3) - 1}
         >
           <ChevronRightIcon />
         </ArrowButton>
       </Grid>
       <Grid item md={12}>
         <PageCount>
-          Page {currentPage + 1} of {Math.ceil(permutations.length / itemsPerPage)}
+          Page {currentPage + 1} of {Math.ceil(permutations.length / 3)}
         </PageCount>
       </Grid>
     </Grid>
