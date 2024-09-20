@@ -40,6 +40,7 @@ const selectLoadoutState = createSelector(
     gauntletMods: loadout.gauntletsMods,
     chestArmorMods: loadout.chestArmorMods,
     legArmorMods: loadout.legArmorMods,
+    classArmorMods: loadout.classArmorMods,
     subclassConfig: loadout.subclassConfig,
     selectedValues: dashboard.selectedValues,
     selectedExoticItemHash: String(dashboard.selectedExotic.itemHash),
@@ -128,8 +129,9 @@ const ShareLoadout: React.FC = () => {
       mods: {
         helmet: loadoutState.helmetMods.map((mod) => mod.itemHash),
         gauntlets: loadoutState.gauntletMods.map((mod) => mod.itemHash),
-        chest: loadoutState.chestArmorMods.map((mod) => mod.itemHash),
-        legs: loadoutState.legArmorMods.map((mod) => mod.itemHash),
+        chestArmor: loadoutState.chestArmorMods.map((mod) => mod.itemHash),
+        legArmor: loadoutState.legArmorMods.map((mod) => mod.itemHash),
+        classArmor: loadoutState.classArmorMods.map((mod) => mod.itemHash),
       },
       subclass: {
         damageType: loadoutState.subclassConfig.subclass.damageType,

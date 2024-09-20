@@ -7,6 +7,7 @@ import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
 import { BackButton } from './BackButton';
 import TotalStatsDisplay from './TotalStatsDisplay';
+import FadeIn from './FadeIn';
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;
@@ -82,7 +83,9 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
           </Container>
         </Grid>
         <Grid item md={1}>
-          <AbilitiesModification subclass={subclass} />
+          <FadeIn duration={400}>
+            <AbilitiesModification subclass={subclass} />
+          </FadeIn>
         </Grid>
         <Grid
           item
