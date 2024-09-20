@@ -46,7 +46,7 @@ import {
   updateSelectedCharacter,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
@@ -391,6 +391,24 @@ export const Dashboard: React.FC = () => {
     dispatch(resetLoadout());
     dispatch(updateLoadoutCharacter(characters[index]));
     setSubclasses(characters[index].subclasses);
+
+    const keys = Object.keys(characters[index].subclasses);
+
+    for (let i = 0; i < keys.length; i++) {
+      if (
+        characters[index].subclasses[Number(keys[i])] !== undefined &&
+        characters[index].subclasses[Number(keys[i])]!.damageType !== DAMAGE_TYPE.KINETIC
+      ) {
+        setSelectedSubclass(characters[index].subclasses[Number(keys[i])]!);
+        setLastNonPrismaticSubclass(characters[index].subclasses[Number(keys[i])]!);
+        dispatch(
+          updateSubclass({
+            subclass: characters[index].subclasses[Number(keys[i])],
+          })
+        );
+        break;
+      }
+    }
   };
 
   const handleSubclassSelect = (subclass: SubclassConfig) => {
@@ -453,12 +471,12 @@ export const Dashboard: React.FC = () => {
               width: '100vw',
               height: '100vh',
               overflowY: 'auto',
-              paddingTop: '130px',
+              paddingTop: '120px',
             }}
           >
             <DashboardContent item container md={12} justifyContent="space-evenly">
-              <Grid item container direction="column" md={4} spacing={6} sx={{ marginTop: '2%' }}>
-                <Grid item>
+              <Grid item container direction="column" md={4} spacing={3} sx={{ marginTop: '2%' }}>
+                <Grid item md={1}>
                   <SingleDiamondButton
                     subclasses={subclasses}
                     selectedSubclass={selectedSubclass}
@@ -466,40 +484,38 @@ export const Dashboard: React.FC = () => {
                     onSubclassRightClick={handleSubclassRightClick}
                   />
                 </Grid>
-                <Grid item>
+                <Grid item md={1}>
                   <NumberBoxes />
                 </Grid>
               </Grid>
               <Grid
-                container
                 item
+                container
                 md={4}
                 spacing={3}
                 direction="column"
-                justifyContent={'flex-start'}
+                justifyContent={'start'}
                 alignItems={'center'}
                 sx={{ marginTop: '1%' }}
               >
-                <Grid item>
+                <Grid item height="32vh">
                   <ExoticSelector
                     selectedCharacter={characters[selectedCharacterIndex]!}
                     selectedExoticItemHash={selectedExotic.itemHash}
                   />
                 </Grid>
-                <Grid item>
+                <Grid item alignSelf="flex-start">
                   <StatModifications />
                 </Grid>
               </Grid>
               <Grid item md={4} sx={{ marginTop: '1%' }}>
-                {generatingPermutations ? (
-                  <p>Loading...</p>
-                ) : filteredPermutations ? (
+                {filteredPermutations ? (
                   <PermutationsList
                     permutations={filteredPermutations}
                     onPermutationClick={openLoadoutCustomization}
                   />
                 ) : (
-                  <p>Loading....</p>
+                  false
                 )}
               </Grid>
               <Footer

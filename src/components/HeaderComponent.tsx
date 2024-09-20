@@ -8,14 +8,8 @@ import {
   HeaderBottomContainer,
   HeaderButtonContainer,
   HeaderCharacterText,
-  HeaderLinksContainer,
-  HeaderStyledLink,
   Header,
 } from '../styled';
-import LogoutButton from '@/features/auth/components/LogoutButton';
-import RefreshCharacters from './RefreshCharacters';
-import { Tooltip } from '@mui/material';
-import CoffeeButton from './CoffeeButton';
 
 interface HeaderComponentProps {
   emblemUrl: string;

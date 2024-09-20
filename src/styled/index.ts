@@ -6,7 +6,7 @@ export const Header = styled('div')<{ emblemUrl: string }>(({ emblemUrl }) => ({
   top: 0,
   left: 0,
   width: '100vw',
-  height: '130px',
+  height: '120px',
   backgroundImage: `url(${emblemUrl})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',

@@ -180,18 +180,8 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
     );
   }
 
-  return (
-    <Grid
-      container
-      justifyContent="center"
-      spacing={2}
-      sx={{
-        marginTop: theme.spacing(-1),
-        gap: theme.spacing(1),
-        height: '100%',
-        width: '100%',
-      }}
-    >
+  return permutations.length > 0 ? (
+    <Grid container justifyContent="center" spacing={1}>
       <Grid item md={12}>
         <PageCount>
           Page {currentPage + 1} of {Math.ceil(permutations.length / itemsPerPage)}
@@ -280,6 +270,24 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
         </PageCount>
       </Grid>
     </Grid>
+  ) : (
+    <Box
+      sx={{
+        padding: 2,
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+        backdropFilter: 'blur(5px)',
+        borderRadius: 0,
+        border: '1px solid rgba(255, 255, 255, 0.3)',
+        width: '80%',
+        height: '80%',
+        textAlign: 'center',
+        display: 'flex',
+      }}
+    >
+      <Typography typography="h5" margin="auto">
+        NO COMBINATIONS FOUND
+      </Typography>
+    </Box>
   );
 };
 
