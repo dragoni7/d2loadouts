@@ -19,6 +19,7 @@ export function generatePermutations(
     slot: null,
   },
   selectedExoticClassCombo?: ExoticClassCombo,
+  assumeMasterworked: boolean = false,
   fragmentStatModifications: FragmentStatModifications = {
     mobility: 0,
     resilience: 0,
@@ -116,17 +117,7 @@ export function generatePermutations(
 
   const heap = new MaxHeap<Armor[]>((a: Armor[], b: Armor[]) => {
     const getTotalStats = (permutation: Armor[]) => {
-      const totalStats = permutation.reduce(
-        (sum, item) => ({
-          mobility: sum.mobility + item.mobility,
-          resilience: sum.resilience + item.resilience,
-          recovery: sum.recovery + item.recovery,
-          discipline: sum.discipline + item.discipline,
-          intellect: sum.intellect + item.intellect,
-          strength: sum.strength + item.strength,
-        }),
-        { ...fragmentStatModifications } // Start with fragment modifications
-      );
+      const totalStats = reduceStats(permutation, assumeMasterworked, fragmentStatModifications);
       return Object.values(totalStats).reduce((a, b) => a + b, 0);
     };
     return getTotalStats(b) - getTotalStats(a);
@@ -135,16 +126,11 @@ export function generatePermutations(
   const generate = (currentPermutation: Armor[], currentTypeIndex: number, exoticCount: number) => {
     if (currentTypeIndex === armorTypes.length) {
       const modifiedPermutation = [...currentPermutation, bestClassArmor];
-      const totalStats = modifiedPermutation.reduce(
-        (sum, item) => ({
-          mobility: sum.mobility + item.mobility,
-          resilience: sum.resilience + item.resilience,
-          recovery: sum.recovery + item.recovery,
-          discipline: sum.discipline + item.discipline,
-          intellect: sum.intellect + item.intellect,
-          strength: sum.strength + item.strength,
-        }),
-        { ...fragmentStatModifications } // Start with fragment modifications
+
+      const totalStats = reduceStats(
+        modifiedPermutation,
+        assumeMasterworked,
+        fragmentStatModifications
       );
 
       const totalSum = Object.values(totalStats).reduce((a, b) => a + b, 0);
@@ -155,17 +141,23 @@ export function generatePermutations(
         const smallest = heap.peek();
         if (smallest) {
           const smallestTotalSum =
-            smallest.reduce(
-              (sum, item) =>
+            smallest.reduce((sum, item) => {
+              const extra = assumeMasterworked && !item.masterwork ? 2 : 0;
+              return (
                 sum +
                 item.mobility +
+                extra +
                 item.resilience +
+                extra +
                 item.recovery +
+                extra +
                 item.discipline +
+                extra +
                 item.intellect +
-                item.strength,
-              0
-            ) + Object.values(fragmentStatModifications).reduce((a, b) => a + b, 0);
+                extra +
+                item.strength
+              );
+            }, 0) + Object.values(fragmentStatModifications).reduce((a, b) => a + b, 0);
           if (totalSum > smallestTotalSum) {
             heap.pop();
             heap.push(modifiedPermutation);
@@ -191,4 +183,33 @@ export function generatePermutations(
   generate([], 0, 0);
 
   return heap.toArray();
+}
+
+function reduceStats(
+  permutation: Armor[],
+  assumeMasterworked: boolean,
+  fragmentStatModifications: FragmentStatModifications
+): {
+  mobility: number;
+  resilience: number;
+  recovery: number;
+  discipline: number;
+  intellect: number;
+  strength: number;
+} {
+  return permutation.reduce(
+    (sum, item) => {
+      const extra = assumeMasterworked && !item.masterwork ? 2 : 0;
+
+      return {
+        mobility: sum.mobility + item.mobility + extra,
+        resilience: sum.resilience + item.resilience + extra,
+        recovery: sum.recovery + item.recovery + extra,
+        discipline: sum.discipline + item.discipline + extra,
+        intellect: sum.intellect + item.intellect + extra,
+        strength: sum.strength + item.strength + extra,
+      };
+    },
+    { ...fragmentStatModifications } // Start with fragment modifications
+  );
 }

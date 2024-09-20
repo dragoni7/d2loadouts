@@ -328,6 +328,7 @@ export const Dashboard: React.FC = () => {
           characters[selectedCharacterIndex].armor,
           selectedExotic,
           selectedExoticClassCombo,
+          assumeMasterworked,
           fragmentStatModifications
         );
 
@@ -335,6 +336,7 @@ export const Dashboard: React.FC = () => {
         characters[selectedCharacterIndex].armor,
         selectedExotic,
         undefined,
+        assumeMasterworked,
         fragmentStatModifications
       );
     }
