@@ -326,16 +326,12 @@ export const Dashboard: React.FC = () => {
       if (selectedExoticClassCombo)
         return generatePermutations(
           characters[selectedCharacterIndex].armor,
-          selectedExotic,
-          selectedExoticClassCombo,
           assumeMasterworked,
           assumeExoticArtifice
         );
 
       return generatePermutations(
         characters[selectedCharacterIndex].armor,
-        selectedExotic,
-        undefined,
         assumeMasterworked,
         assumeExoticArtifice
       );
@@ -353,33 +349,48 @@ export const Dashboard: React.FC = () => {
   const filteredPermutations = useMemo(() => {
     let filtered: FilteredPermutation[] | null = null;
 
-    if (permutations && sharedLoadoutDto) {
-      const decodedLoadoutData: DecodedLoadoutData = {
-        selectedExoticItemHash: sharedLoadoutDto.selectedExoticItemHash,
-        selectedValues: {
-          mobility: sharedLoadoutDto.selectedValues.mobility || 0,
-          resilience: sharedLoadoutDto.selectedValues.resilience || 0,
-          recovery: sharedLoadoutDto.selectedValues.recovery || 0,
-          discipline: sharedLoadoutDto.selectedValues.discipline || 0,
-          intellect: sharedLoadoutDto.selectedValues.intellect || 0,
-          strength: sharedLoadoutDto.selectedValues.strength || 0,
-        },
-        statPriority: sharedLoadoutDto.statPriority as StatName[],
-        characterClass: sharedLoadoutDto.characterClass as CharacterClass,
-      };
+    if (permutations) {
+      if (sharedLoadoutDto) {
+        const decodedLoadoutData: DecodedLoadoutData = {
+          selectedExoticItemHash: sharedLoadoutDto.selectedExoticItemHash,
+          selectedValues: {
+            mobility: sharedLoadoutDto.selectedValues.mobility || 0,
+            resilience: sharedLoadoutDto.selectedValues.resilience || 0,
+            recovery: sharedLoadoutDto.selectedValues.recovery || 0,
+            discipline: sharedLoadoutDto.selectedValues.discipline || 0,
+            intellect: sharedLoadoutDto.selectedValues.intellect || 0,
+            strength: sharedLoadoutDto.selectedValues.strength || 0,
+          },
+          statPriority: sharedLoadoutDto.statPriority as StatName[],
+          characterClass: sharedLoadoutDto.characterClass as CharacterClass,
+        };
 
-      const sharedLoadoutPermutation = filterFromSharedLoadout(
-        decodedLoadoutData,
-        permutations,
-        fragmentStatModifications
-      );
-      filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
-    } else if (permutations && selectedValues) {
-      filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
+        const sharedLoadoutPermutation = filterFromSharedLoadout(
+          decodedLoadoutData,
+          permutations,
+          fragmentStatModifications
+        );
+        filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
+      } else {
+        filtered = filterPermutations(
+          permutations,
+          selectedValues,
+          fragmentStatModifications,
+          selectedExotic,
+          selectedExoticClassCombo
+        );
+      }
     }
 
     return filtered;
-  }, [permutations, selectedValues, sharedLoadoutDto, fragmentStatModifications]);
+  }, [
+    permutations,
+    selectedValues,
+    sharedLoadoutDto,
+    fragmentStatModifications,
+    selectedExotic,
+    selectedExoticClassCombo,
+  ]);
 
   useEffect(() => {
     if (filteredPermutations && sharedLoadoutDto) {
@@ -520,7 +531,9 @@ export const Dashboard: React.FC = () => {
         const filtered = filterPermutations(
           permutations,
           testSelectedValues,
-          fragmentStatModifications
+          fragmentStatModifications,
+          selectedExotic,
+          selectedExoticClassCombo
         );
 
         if (filtered && filtered.length > 0) {

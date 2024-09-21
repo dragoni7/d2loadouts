@@ -6,6 +6,7 @@ import {
   FilteredPermutation,
   StatName,
   FragmentStatModifications,
+  ExoticClassCombo,
 } from '../../types/d2l-types';
 
 /**
@@ -21,11 +22,21 @@ interface SelectedThresholds {
 export const filterPermutations = (
   permutations: Armor[][],
   thresholds: SelectedThresholds,
-  fragmentStatModifications: FragmentStatModifications
+  fragmentStatModifications: FragmentStatModifications,
+  selectedExotic: { itemHash: number | null; slot: string | null },
+  selectedExoticClass: ExoticClassCombo | null
 ): FilteredPermutation[] => {
   const results: FilteredPermutation[] = [];
+  let filtered = permutations;
 
-  for (const permutation of permutations) {
+  // use permutations with the selected exotic
+  if (selectedExotic.itemHash) {
+    filtered = filtered.filter(
+      (p) => p.find((armor) => Number(armor.itemHash) === selectedExotic.itemHash!) !== undefined
+    );
+  }
+
+  for (const permutation of filtered) {
     const modsArray: FilteredPermutation['modsArray'] = {
       mobility: [],
       resilience: [],
