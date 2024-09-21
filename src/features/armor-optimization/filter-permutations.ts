@@ -6,7 +6,6 @@ import {
   FilteredPermutation,
   StatName,
   FragmentStatModifications,
-  ExoticClassCombo,
 } from '../../types/d2l-types';
 
 /**
@@ -91,7 +90,10 @@ export const filterPermutations = (
     };
 
     if (tryModCombination(0, 0, 0)) {
-      results.push({ permutation, modsArray });
+      results.push({
+        permutation,
+        modsArray,
+      });
     }
   }
 

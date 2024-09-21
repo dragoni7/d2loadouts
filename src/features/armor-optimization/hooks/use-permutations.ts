@@ -1,7 +1,7 @@
-import { generatePermutations } from '@/features/armor-optimization/generate-permutations';
 import { RootState } from '@/store';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { generatePermutations } from '../generate-permutations';
 
 export default function usePermutations() {
   const characters = useSelector((state: RootState) => state.profile.characters);

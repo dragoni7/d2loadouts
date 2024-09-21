@@ -2,10 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
-import {
-  filterFromSharedLoadout,
-  filterPermutations,
-} from '../../features/armor-optimization/filter-permutations';
 import SingleDiamondButton from '../../components/SubclassSelector';
 import NumberBoxes from '../../features/armor-optimization/components/NumberBoxes';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
@@ -58,6 +54,11 @@ import FadeIn from '@/components/FadeIn';
 import usePermutations from '@/features/armor-optimization/hooks/use-permutations';
 import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
 import Filters from '@/features/armor-optimization/components/Filters';
+import {
+  filterFromSharedLoadout,
+  filterPermutations,
+} from '@/features/armor-optimization/filter-permutations';
+import { getModsFromPermutation } from '@/features/armor-optimization/util/permutation-utils';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${background})`,
@@ -99,10 +100,92 @@ export const Dashboard: React.FC = () => {
   const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
   const [loadingMessage, setLoadingMessage] = useState<String>('Loading...');
 
-  const statMods = useStatMods();
-  const artificeMods = useArtificeMods();
   const permutations = usePermutations();
   const fragmentStatModifications = useFragmentStats();
+
+  const filteredPermutations = useMemo(() => {
+    let filtered: FilteredPermutation[] | null = null;
+
+    if (permutations) {
+      if (sharedLoadoutDto) {
+        const decodedLoadoutData: DecodedLoadoutData = {
+          selectedExoticItemHash: sharedLoadoutDto.selectedExoticItemHash,
+          selectedValues: {
+            mobility: sharedLoadoutDto.selectedValues.mobility || 0,
+            resilience: sharedLoadoutDto.selectedValues.resilience || 0,
+            recovery: sharedLoadoutDto.selectedValues.recovery || 0,
+            discipline: sharedLoadoutDto.selectedValues.discipline || 0,
+            intellect: sharedLoadoutDto.selectedValues.intellect || 0,
+            strength: sharedLoadoutDto.selectedValues.strength || 0,
+          },
+          statPriority: sharedLoadoutDto.statPriority as StatName[],
+          characterClass: sharedLoadoutDto.characterClass as CharacterClass,
+        };
+
+        const sharedLoadoutPermutation = filterFromSharedLoadout(
+          decodedLoadoutData,
+          permutations,
+          fragmentStatModifications
+        );
+        filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
+      } else {
+        filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
+      }
+    }
+
+    return filtered;
+  }, [
+    permutations,
+    selectedValues,
+    sharedLoadoutDto,
+    fragmentStatModifications,
+    selectedExotic,
+    selectedExoticClassCombo,
+  ]);
+
+  const maxReachableValues = useMemo(() => {
+    if (!permutations) return null;
+
+    const maxValues: { [key in StatName]: number } = {
+      mobility: 0,
+      resilience: 0,
+      recovery: 0,
+      discipline: 0,
+      intellect: 0,
+      strength: 0,
+    };
+
+    STATS.forEach((stat) => {
+      let value = 100;
+      let permutationsFound = false;
+
+      while (value >= 0 && !permutationsFound) {
+        const testSelectedValues = {
+          ...selectedValues,
+          [stat]: value,
+        };
+
+        const filtered = filterPermutations(
+          permutations,
+          testSelectedValues,
+          fragmentStatModifications
+        );
+
+        if (filtered && filtered.length > 0) {
+          permutationsFound = true;
+          maxValues[stat as StatName] = value;
+        } else {
+          value -= 10;
+        }
+      }
+
+      if (!permutationsFound) {
+        maxValues[stat as StatName] = 0;
+      }
+    });
+
+    return maxValues;
+  }, [permutations, fragmentStatModifications, selectedValues]);
 
   useEffect(() => {
     const initSharedSubclass = async (
@@ -273,46 +356,6 @@ export const Dashboard: React.FC = () => {
     updateData().catch(console.error);
   }, []);
 
-  const filteredPermutations = useMemo(() => {
-    let filtered: FilteredPermutation[] | null = null;
-
-    if (permutations) {
-      if (sharedLoadoutDto) {
-        const decodedLoadoutData: DecodedLoadoutData = {
-          selectedExoticItemHash: sharedLoadoutDto.selectedExoticItemHash,
-          selectedValues: {
-            mobility: sharedLoadoutDto.selectedValues.mobility || 0,
-            resilience: sharedLoadoutDto.selectedValues.resilience || 0,
-            recovery: sharedLoadoutDto.selectedValues.recovery || 0,
-            discipline: sharedLoadoutDto.selectedValues.discipline || 0,
-            intellect: sharedLoadoutDto.selectedValues.intellect || 0,
-            strength: sharedLoadoutDto.selectedValues.strength || 0,
-          },
-          statPriority: sharedLoadoutDto.statPriority as StatName[],
-          characterClass: sharedLoadoutDto.characterClass as CharacterClass,
-        };
-
-        const sharedLoadoutPermutation = filterFromSharedLoadout(
-          decodedLoadoutData,
-          permutations,
-          fragmentStatModifications
-        );
-        filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
-      } else {
-        filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
-      }
-    }
-
-    return filtered;
-  }, [
-    permutations,
-    selectedValues,
-    sharedLoadoutDto,
-    fragmentStatModifications,
-    selectedExotic,
-    selectedExoticClassCombo,
-  ]);
-
   useEffect(() => {
     if (filteredPermutations && sharedLoadoutDto) {
       openLoadoutCustomization(filteredPermutations[0], false).catch(console.error);
@@ -328,38 +371,7 @@ export const Dashboard: React.FC = () => {
 
     dispatch(updateLoadoutArmor(filteredPermutation.permutation));
 
-    const allStatMods = statMods.concat(artificeMods);
-    let requiredMods: { mod: ManifestArmorStatMod; equipped: boolean }[] = [];
-
-    for (const [stat, costs] of Object.entries(filteredPermutation.modsArray)) {
-      for (const cost of costs) {
-        const matchedStatMod = allStatMods.find(
-          (mod) => mod[(stat + 'Mod') as StatModifiers] === cost
-        );
-        if (matchedStatMod !== undefined) {
-          requiredMods.push({
-            mod: {
-              energyCost: matchedStatMod.energyCost,
-              collectibleHash: matchedStatMod.collectibleHash,
-              mobilityMod: matchedStatMod.mobilityMod,
-              resilienceMod: matchedStatMod.resilienceMod,
-              recoveryMod: matchedStatMod.recoveryMod,
-              disciplineMod: matchedStatMod.disciplineMod,
-              intellectMod: matchedStatMod.intellectMod,
-              strengthMod: matchedStatMod.strengthMod,
-              category: matchedStatMod.category,
-              isOwned: matchedStatMod.isOwned,
-              itemHash: matchedStatMod.itemHash,
-              name: matchedStatMod.name,
-              icon: matchedStatMod.icon,
-            },
-            equipped: false,
-          });
-        }
-      }
-    }
-
-    dispatch(updateRequiredStatMods(requiredMods));
+    dispatch(updateRequiredStatMods(await getModsFromPermutation(filteredPermutation.modsArray)));
 
     setShowLoadoutCustomization(true);
   }
@@ -418,50 +430,6 @@ export const Dashboard: React.FC = () => {
     setShowAbilitiesModification(true);
   };
 
-  const calculateMaxReachableValues = useMemo(() => {
-    if (!permutations) return null;
-
-    const maxValues: { [key in StatName]: number } = {
-      mobility: 0,
-      resilience: 0,
-      recovery: 0,
-      discipline: 0,
-      intellect: 0,
-      strength: 0,
-    };
-
-    STATS.forEach((stat) => {
-      let value = 100;
-      let permutationsFound = false;
-
-      while (value >= 0 && !permutationsFound) {
-        const testSelectedValues = {
-          ...selectedValues,
-          [stat]: value,
-        };
-
-        const filtered = filterPermutations(
-          permutations,
-          testSelectedValues,
-          fragmentStatModifications
-        );
-
-        if (filtered && filtered.length > 0) {
-          permutationsFound = true;
-          maxValues[stat as StatName] = value;
-        } else {
-          value -= 10;
-        }
-      }
-
-      if (!permutationsFound) {
-        maxValues[stat as StatName] = 0;
-      }
-    });
-
-    return maxValues;
-  }, [permutations, fragmentStatModifications, selectedValues]);
-
   return (
     <>
       {showAbilitiesModification && customizingSubclass ? (
@@ -516,7 +484,7 @@ export const Dashboard: React.FC = () => {
                     />
                   </Grid>
                   <Grid item md={1}>
-                    <NumberBoxes maxReachableValues={calculateMaxReachableValues} />
+                    <NumberBoxes maxReachableValues={maxReachableValues} />
                   </Grid>
                 </Grid>
                 <Grid
@@ -546,6 +514,7 @@ export const Dashboard: React.FC = () => {
                   {filteredPermutations ? (
                     <PermutationsList
                       permutations={filteredPermutations}
+                      fragmentStatModifications={fragmentStatModifications}
                       onPermutationClick={openLoadoutCustomization}
                     />
                   ) : (
