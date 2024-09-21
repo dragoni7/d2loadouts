@@ -41,7 +41,9 @@ const ModSlot = styled(Paper)(({ theme }) => ({
   },
 }));
 
-const SubmenuContainer = styled(Paper)(({ theme }) => ({
+const SubmenuContainer = styled(Paper, {
+  shouldForwardProp: (prop) => prop !== 'top' && prop !== 'left',
+})<{ top: number; left: number }>(({ theme, top, left }) => ({
   position: 'fixed',
   zIndex: 1500,
   padding: theme.spacing(1.5),
@@ -52,6 +54,8 @@ const SubmenuContainer = styled(Paper)(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
   gap: theme.spacing(1.5),
+  top,
+  left,
 }));
 
 const OptionButton = styled(Button)(({ theme }) => ({
@@ -178,6 +182,23 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
   const dispatch = useDispatch();
   const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclassConfig);
 
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     if (subclass) {
       setLoading(true);
@@ -269,28 +290,56 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
     );
   };
 
-  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>, slotId: string) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const category = slotId.split('-')[0];
+  const calculateSubmenuPosition = useCallback(
+    (rect: DOMRect, category: string) => {
+      const submenuWidth = 850; // Adjust this value based on your submenu's actual width
+      const submenuHeight = 300; // Adjust this value based on your submenu's approximate height
+      let top = rect.bottom + window.scrollY;
+      let left = rect.left + window.scrollX;
 
-    if (category === 'FRAGMENTS') {
-      // Find the first fragment slot's position
-      const firstFragmentSlot = document.querySelector('[data-slot-id^="FRAGMENTS-"]');
-      if (firstFragmentSlot) {
-        const firstRect = firstFragmentSlot.getBoundingClientRect();
-        setSubmenuPosition({
-          top: firstRect.bottom + window.scrollY,
-          left: firstRect.left + window.scrollX,
-        });
+      // Adjust horizontal position if it goes off-screen
+      if (left + submenuWidth > windowDimensions.width) {
+        left = windowDimensions.width - submenuWidth - 10; // 10px padding
       }
-    } else {
-      setSubmenuPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
-    }
-    setHoveredSlot(slotId);
-  };
+
+      // Adjust vertical position if it goes off-screen
+      if (top + submenuHeight > windowDimensions.height) {
+        top = rect.top - submenuHeight + window.scrollY;
+      }
+
+      if (category === 'FRAGMENTS') {
+        // Find the first fragment slot's position
+        const firstFragmentSlot = document.querySelector('[data-slot-id^="FRAGMENTS-"]');
+        if (firstFragmentSlot) {
+          const firstRect = firstFragmentSlot.getBoundingClientRect();
+          left = firstRect.left + window.scrollX;
+          top = firstRect.bottom + window.scrollY;
+
+          // Readjust if it goes off-screen
+          if (left + submenuWidth > windowDimensions.width) {
+            left = windowDimensions.width - submenuWidth - 10;
+          }
+          if (top + submenuHeight > windowDimensions.height) {
+            top = firstRect.top - submenuHeight + window.scrollY;
+          }
+        }
+      }
+
+      return { top, left };
+    },
+    [windowDimensions]
+  );
+
+  const handleMouseEnter = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>, slotId: string) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      const category = slotId.split('-')[0];
+      const { top, left } = calculateSubmenuPosition(rect, category);
+      setSubmenuPosition({ top, left });
+      setHoveredSlot(slotId);
+    },
+    [calculateSubmenuPosition]
+  );
 
   const handleMouseLeave = () => {
     setHoveredSlot(null);
@@ -334,12 +383,7 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
               </SlotComponent>
             </HoverCard>
             {isHovered && !isDisabled && (
-              <SubmenuContainer
-                style={{
-                  top: submenuPosition.top,
-                  left: submenuPosition.left,
-                }}
-              >
+              <SubmenuContainer top={submenuPosition.top} left={submenuPosition.left}>
                 {mods[category]?.map((mod) => (
                   <HoverCard item={mod} key={mod.itemHash}>
                     <OptionButton
@@ -355,7 +399,14 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
         </Box>
       );
     },
-    [mods, handleModSelect, hoveredSlot, submenuPosition, calculateAvailableFragmentSlots]
+    [
+      mods,
+      handleModSelect,
+      hoveredSlot,
+      submenuPosition,
+      calculateAvailableFragmentSlots,
+      windowDimensions,
+    ]
   );
 
   if (loading) {
