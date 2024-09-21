@@ -1,7 +1,7 @@
 import { Box, CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
-import { refreshProfileCharacters } from '../util/profile-characters';
+import { refreshProfileCharacters } from '../features/profile/profile-data';
 import { useState } from 'react';
 
 export default function RefreshCharacters() {

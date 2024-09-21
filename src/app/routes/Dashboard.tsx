@@ -1,75 +1,61 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { styled } from '@mui/system';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
-import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
+import FadeIn from '@/components/FadeIn';
+import Filters from '@/features/armor-optimization/components/Filters';
 import {
   filterFromSharedLoadout,
   filterPermutations,
-} from '../../features/armor-optimization/filter-permutations';
+} from '@/features/armor-optimization/filter-permutations';
+import usePermutations from '@/features/armor-optimization/hooks/use-permutations';
+import { getModsFromPermutation } from '@/features/armor-optimization/util/permutation-utils';
+import { equipSharedMods } from '@/features/loadouts/util/loadout-utils';
+import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
+import { Box, CircularProgress, Grid, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Footer from '../../components/Footer';
+import HeaderComponent from '../../components/HeaderComponent';
+import LoadoutCustomization from '../../components/LoadoutCustomization';
 import SingleDiamondButton from '../../components/SubclassSelector';
+import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
 import NumberBoxes from '../../features/armor-optimization/components/NumberBoxes';
+import PermutationsList from '../../features/armor-optimization/components/PermutationsList';
+import { SharedLoadoutDto } from '../../features/loadouts/types';
+import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
+import { getProfileData } from '../../features/profile/profile-data';
+import StatModifications from '../../features/subclass/components/StatModifications';
+import SubclassCustomizationWrapper from '../../features/subclass/components/SubclassCustomizationWrapper';
+import { DAMAGE_TYPE, STATS } from '../../lib/bungie_api/constants';
+import { updateManifest } from '../../lib/bungie_api/manifest';
+import { AppDispatch, RootState } from '../../store';
+import {
+  resetDashboard,
+  updateSelectedCharacter,
+  updateSelectedExoticItemHash,
+} from '../../store/DashboardReducer';
+import { db } from '../../store/db';
+import {
+  resetLoadout,
+  resetLoadoutArmorMods,
+  updateLoadoutArmor,
+  updateLoadoutCharacter,
+  updateRequiredStatMods,
+  updateSubclass,
+  updateSubclassMods,
+} from '../../store/LoadoutReducer';
 import { updateMembership } from '../../store/MembershipReducer';
+import { updateProfileCharacters } from '../../store/ProfileReducer';
 import {
   ArmorSlot,
   Character,
   CharacterClass,
   DecodedLoadoutData,
   FilteredPermutation,
-  FragmentStatModifications,
-  StatModifiers,
   StatName,
   SubclassConfig,
 } from '../../types/d2l-types';
-import PermutationsList from '../../features/armor-optimization/components/PermutationsList';
-import HeaderComponent from '../../components/HeaderComponent';
-import { db } from '../../store/db';
-import {
-  resetLoadout,
-  resetLoadoutArmorMods,
-  updateLoadoutArmor,
-  updateLoadoutArmorMods,
-  updateLoadoutCharacter,
-  updateRequiredStatMods,
-  updateSubclass,
-  updateSubclassMods,
-} from '../../store/LoadoutReducer';
-import SubclassCustomizationWrapper from '../../features/subclass/components/SubclassCustomizationWrapper';
-import { updateManifest } from '../../lib/bungie_api/manifest';
-import LoadoutCustomization from '../../components/LoadoutCustomization';
+import { ManifestExoticArmor } from '../../types/manifest-types';
 import background from '/assets/background.png';
-import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
-import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../lib/bungie_api/constants';
-import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
-import {
-  resetDashboard,
-  updateAssumeExoticArtifice,
-  updateAssumeMasterwork,
-  updateSelectedCharacter,
-  updateSelectedExoticItemHash,
-} from '../../store/DashboardReducer';
-import {
-  CircularProgress,
-  Box,
-  Grid,
-  Typography,
-  Container,
-  Switch,
-  FormGroup,
-  FormControlLabel,
-  Stack,
-} from '@mui/material';
-import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
-import { SharedLoadoutDto } from '../../features/loadouts/types';
-import { updateProfileCharacters } from '../../store/ProfileReducer';
-import { getProfileData } from '../../util/profile-characters';
-import useArtificeMods from '../../hooks/use-artifice-mods';
-import useStatMods from '../../hooks/use-stat-mods';
-import StatModifications from '../../features/subclass/components/StatModifications';
-import Footer from '../../components/Footer';
-import { equipSharedMods } from '@/features/loadouts/util/loadout-utils';
-import FadeIn from '@/components/FadeIn';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${background})`,
@@ -93,64 +79,106 @@ const LoadingScreen = styled(Box)(({ theme }) => ({
 export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.characters);
-  const { selectedValues, selectedExotic, selectedExoticClassCombo } = useSelector(
-    (state: RootState) => state.dashboard
-  );
-
-  const selectedCharacterIndex = useSelector(
-    (state: RootState) => state.dashboard.selectedCharacter
-  );
-
-  const assumeMasterworked = useSelector((state: RootState) => state.dashboard.assumeMasterwork);
-  const assumeExoticArtifice = useSelector(
-    (state: RootState) => state.dashboard.assumeExoticArtifice
-  );
-
-  const fragments = useSelector(
-    (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
-  );
+  const { selectedValues, selectedExotic, selectedExoticClassCombo, selectedCharacter } =
+    useSelector((state: RootState) => state.dashboard);
 
   const [subclasses, setSubclasses] = useState<
     { [key: number]: SubclassConfig | undefined } | undefined
   >(undefined);
   const [selectedSubclass, setSelectedSubclass] = useState<SubclassConfig | null>(null);
   const [customizingSubclass, setCustomizingSubclass] = useState<SubclassConfig | null>(null);
-  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<SubclassConfig | null>(
-    null
-  );
   const [showLoadoutCustomization, setShowLoadoutCustomization] = useState(false);
   const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
   const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
   const [loadingMessage, setLoadingMessage] = useState<String>('Loading...');
 
-  const statMods = useStatMods();
-  const artificeMods = useArtificeMods();
+  const permutations = usePermutations();
+  const fragmentStatModifications = useFragmentStats();
 
-  const fragmentStatModifications = useMemo(() => {
-    return fragments.reduce(
-      (acc, fragment) => {
-        if (fragment.itemHash !== 0) {
-          acc.mobility += fragment.mobilityMod;
-          acc.resilience += fragment.resilienceMod;
-          acc.recovery += fragment.recoveryMod;
-          acc.discipline += fragment.disciplineMod;
-          acc.intellect += fragment.intellectMod;
-          acc.strength += fragment.strengthMod;
+  const filteredPermutations = useMemo(() => {
+    let filtered: FilteredPermutation[] | null = null;
+
+    if (permutations) {
+      if (sharedLoadoutDto) {
+        const decodedLoadoutData: DecodedLoadoutData = {
+          selectedExoticItemHash: sharedLoadoutDto.selectedExoticItemHash,
+          selectedValues: {
+            mobility: sharedLoadoutDto.selectedValues.mobility || 0,
+            resilience: sharedLoadoutDto.selectedValues.resilience || 0,
+            recovery: sharedLoadoutDto.selectedValues.recovery || 0,
+            discipline: sharedLoadoutDto.selectedValues.discipline || 0,
+            intellect: sharedLoadoutDto.selectedValues.intellect || 0,
+            strength: sharedLoadoutDto.selectedValues.strength || 0,
+          },
+          statPriority: sharedLoadoutDto.statPriority as StatName[],
+          characterClass: sharedLoadoutDto.characterClass as CharacterClass,
+        };
+
+        const sharedLoadoutPermutation = filterFromSharedLoadout(
+          decodedLoadoutData,
+          permutations,
+          fragmentStatModifications
+        );
+        filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
+      } else {
+        filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
+      }
+    }
+
+    return filtered;
+  }, [
+    permutations,
+    selectedValues,
+    sharedLoadoutDto,
+    fragmentStatModifications,
+    selectedExotic,
+    selectedExoticClassCombo,
+  ]);
+
+  const maxReachableValues = useMemo(() => {
+    if (!permutations) return null;
+
+    const maxValues: { [key in StatName]: number } = {
+      mobility: 0,
+      resilience: 0,
+      recovery: 0,
+      discipline: 0,
+      intellect: 0,
+      strength: 0,
+    };
+
+    STATS.forEach((stat) => {
+      let value = 100;
+      let permutationsFound = false;
+
+      while (value >= 0 && !permutationsFound) {
+        const testSelectedValues = {
+          ...selectedValues,
+          [stat]: value,
+        };
+
+        const filtered = filterPermutations(
+          permutations,
+          testSelectedValues,
+          fragmentStatModifications
+        );
+
+        if (filtered && filtered.length > 0) {
+          permutationsFound = true;
+          maxValues[stat as StatName] = value;
+        } else {
+          value -= 10;
         }
-        return acc;
-      },
-      {
-        mobility: 0,
-        resilience: 0,
-        recovery: 0,
-        discipline: 0,
-        intellect: 0,
-        strength: 0,
-      } as FragmentStatModifications
-    );
-  }, [fragments]);
+      }
+
+      if (!permutationsFound) {
+        maxValues[stat as StatName] = 0;
+      }
+    });
+
+    return maxValues;
+  }, [permutations, fragmentStatModifications, selectedValues]);
 
   useEffect(() => {
     const initSharedSubclass = async (
@@ -160,7 +188,6 @@ export const Dashboard: React.FC = () => {
       const damageType = sharedLoadoutDto.subclass.damageType;
       if (Object.keys(selectedCharacter.subclasses).includes(String(damageType))) {
         setSelectedSubclass(selectedCharacter.subclasses[damageType]!);
-        setLastNonPrismaticSubclass(selectedCharacter.subclasses[damageType]!);
 
         // set subclass abilities
         dispatch(
@@ -296,9 +323,6 @@ export const Dashboard: React.FC = () => {
             setSelectedSubclass(
               profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])]!
             );
-            setLastNonPrismaticSubclass(
-              profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])]!
-            );
             dispatch(
               updateSubclass({
                 subclass: profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])],
@@ -321,69 +345,6 @@ export const Dashboard: React.FC = () => {
     updateData().catch(console.error);
   }, []);
 
-  const permutations = useMemo(() => {
-    if (characters[selectedCharacterIndex] && selectedExotic !== undefined) {
-      if (selectedExoticClassCombo)
-        return generatePermutations(
-          characters[selectedCharacterIndex].armor,
-          selectedExotic,
-          selectedExoticClassCombo,
-          assumeMasterworked,
-          assumeExoticArtifice,
-          fragmentStatModifications
-        );
-
-      return generatePermutations(
-        characters[selectedCharacterIndex].armor,
-        selectedExotic,
-        undefined,
-        assumeMasterworked,
-        assumeExoticArtifice,
-        fragmentStatModifications
-      );
-    }
-    return null;
-  }, [
-    selectedCharacterIndex,
-    characters,
-    selectedExotic,
-    selectedExoticClassCombo,
-    fragmentStatModifications,
-    assumeMasterworked,
-    assumeExoticArtifice,
-  ]);
-
-  const filteredPermutations = useMemo(() => {
-    let filtered: FilteredPermutation[] | null = null;
-
-    if (permutations && sharedLoadoutDto) {
-      const decodedLoadoutData: DecodedLoadoutData = {
-        selectedExoticItemHash: sharedLoadoutDto.selectedExoticItemHash,
-        selectedValues: {
-          mobility: sharedLoadoutDto.selectedValues.mobility || 0,
-          resilience: sharedLoadoutDto.selectedValues.resilience || 0,
-          recovery: sharedLoadoutDto.selectedValues.recovery || 0,
-          discipline: sharedLoadoutDto.selectedValues.discipline || 0,
-          intellect: sharedLoadoutDto.selectedValues.intellect || 0,
-          strength: sharedLoadoutDto.selectedValues.strength || 0,
-        },
-        statPriority: sharedLoadoutDto.statPriority as StatName[],
-        characterClass: sharedLoadoutDto.characterClass as CharacterClass,
-      };
-
-      const sharedLoadoutPermutation = filterFromSharedLoadout(
-        decodedLoadoutData,
-        permutations,
-        fragmentStatModifications
-      );
-      filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
-    } else if (permutations && selectedValues) {
-      filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
-    }
-
-    return filtered;
-  }, [permutations, selectedValues, sharedLoadoutDto, fragmentStatModifications]);
-
   useEffect(() => {
     if (filteredPermutations && sharedLoadoutDto) {
       openLoadoutCustomization(filteredPermutations[0], false).catch(console.error);
@@ -399,44 +360,13 @@ export const Dashboard: React.FC = () => {
 
     dispatch(updateLoadoutArmor(filteredPermutation.permutation));
 
-    const allStatMods = statMods.concat(artificeMods);
-    let requiredMods: { mod: ManifestArmorStatMod; equipped: boolean }[] = [];
-
-    for (const [stat, costs] of Object.entries(filteredPermutation.modsArray)) {
-      for (const cost of costs) {
-        const matchedStatMod = allStatMods.find(
-          (mod) => mod[(stat + 'Mod') as StatModifiers] === cost
-        );
-        if (matchedStatMod !== undefined) {
-          requiredMods.push({
-            mod: {
-              energyCost: matchedStatMod.energyCost,
-              collectibleHash: matchedStatMod.collectibleHash,
-              mobilityMod: matchedStatMod.mobilityMod,
-              resilienceMod: matchedStatMod.resilienceMod,
-              recoveryMod: matchedStatMod.recoveryMod,
-              disciplineMod: matchedStatMod.disciplineMod,
-              intellectMod: matchedStatMod.intellectMod,
-              strengthMod: matchedStatMod.strengthMod,
-              category: matchedStatMod.category,
-              isOwned: matchedStatMod.isOwned,
-              itemHash: matchedStatMod.itemHash,
-              name: matchedStatMod.name,
-              icon: matchedStatMod.icon,
-            },
-            equipped: false,
-          });
-        }
-      }
-    }
-
-    dispatch(updateRequiredStatMods(requiredMods));
+    dispatch(updateRequiredStatMods(await getModsFromPermutation(filteredPermutation.modsArray)));
 
     setShowLoadoutCustomization(true);
   }
 
   const handleCharacterClick = (index: number) => {
-    if (index === selectedCharacterIndex) return;
+    if (index === selectedCharacter) return;
 
     dispatch(resetDashboard());
     dispatch(updateSelectedCharacter(index));
@@ -452,7 +382,7 @@ export const Dashboard: React.FC = () => {
         characters[index].subclasses[Number(keys[i])]!.damageType !== DAMAGE_TYPE.KINETIC
       ) {
         setSelectedSubclass(characters[index].subclasses[Number(keys[i])]!);
-        setLastNonPrismaticSubclass(characters[index].subclasses[Number(keys[i])]!);
+
         dispatch(
           updateSubclass({
             subclass: characters[index].subclasses[Number(keys[i])],
@@ -472,15 +402,12 @@ export const Dashboard: React.FC = () => {
       })
     );
 
-    if (selectedCharacterIndex) {
+    if (selectedCharacter) {
       dispatch(
         updateSubclass({
-          subclass: characters[selectedCharacterIndex].subclasses[subclass.damageType],
+          subclass: characters[selectedCharacter].subclasses[subclass.damageType],
         })
       );
-    }
-    if (subclass.damageType !== DAMAGE_TYPE.KINETIC) {
-      setLastNonPrismaticSubclass(subclass);
     }
   };
 
@@ -488,59 +415,6 @@ export const Dashboard: React.FC = () => {
     setCustomizingSubclass(subclass);
     setShowAbilitiesModification(true);
   };
-
-  const calculateMaxReachableValues = useMemo(() => {
-    if (!permutations) return null;
-
-    const stats: StatName[] = [
-      'mobility',
-      'resilience',
-      'recovery',
-      'discipline',
-      'intellect',
-      'strength',
-    ];
-
-    const maxValues: { [key in StatName]: number } = {
-      mobility: 0,
-      resilience: 0,
-      recovery: 0,
-      discipline: 0,
-      intellect: 0,
-      strength: 0,
-    };
-
-    stats.forEach((stat) => {
-      let value = 100;
-      let permutationsFound = false;
-
-      while (value >= 0 && !permutationsFound) {
-        const testSelectedValues = {
-          ...selectedValues,
-          [stat]: value,
-        };
-
-        const filtered = filterPermutations(
-          permutations,
-          testSelectedValues,
-          fragmentStatModifications
-        );
-
-        if (filtered && filtered.length > 0) {
-          permutationsFound = true;
-          maxValues[stat] = value;
-        } else {
-          value -= 10;
-        }
-      }
-
-      if (!permutationsFound) {
-        maxValues[stat] = 0;
-      }
-    });
-
-    return maxValues;
-  }, [permutations, fragmentStatModifications, selectedValues]);
 
   return (
     <>
@@ -565,14 +439,7 @@ export const Dashboard: React.FC = () => {
       ) : sharedLoadoutDto === undefined && selectedSubclass ? (
         <>
           <FadeIn duration={200}>
-            <HeaderComponent
-              emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
-              overlayUrl={characters[selectedCharacterIndex]?.emblem?.secondaryOverlay || ''}
-              displayName={membership.bungieGlobalDisplayName}
-              characters={characters}
-              selectedCharacter={characters[selectedCharacterIndex]!}
-              onCharacterClick={handleCharacterClick}
-            />
+            <HeaderComponent onCharacterClick={handleCharacterClick} />
           </FadeIn>
 
           <FadeIn duration={300}>
@@ -596,7 +463,7 @@ export const Dashboard: React.FC = () => {
                     />
                   </Grid>
                   <Grid item md={1}>
-                    <NumberBoxes maxReachableValues={calculateMaxReachableValues} />
+                    <NumberBoxes maxReachableValues={maxReachableValues} />
                   </Grid>
                 </Grid>
                 <Grid
@@ -610,39 +477,10 @@ export const Dashboard: React.FC = () => {
                   sx={{ marginTop: '1%' }}
                 >
                   <Grid item>
-                    <ExoticSelector
-                      selectedCharacter={characters[selectedCharacterIndex]!}
-                      selectedExoticItemHash={selectedExotic.itemHash}
-                    />
+                    <ExoticSelector />
                   </Grid>
                   <Grid item height="22vh">
-                    <FormGroup
-                      sx={{
-                        padding: 2,
-                        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                        backdropFilter: 'blur(5px)',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
-                      }}
-                    >
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={assumeMasterworked}
-                            onChange={() => dispatch(updateAssumeMasterwork())}
-                          />
-                        }
-                        label="Assume Armor Masterworked"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={assumeExoticArtifice}
-                            onChange={() => dispatch(updateAssumeExoticArtifice())}
-                          />
-                        }
-                        label="Assume Exotics are Artifice"
-                      />
-                    </FormGroup>
+                    <Filters />
                   </Grid>
                   <Grid item alignSelf="flex-start">
                     <StatModifications />
@@ -658,9 +496,7 @@ export const Dashboard: React.FC = () => {
                     false
                   )}
                 </Grid>
-                <Footer
-                  emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
-                />
+                <Footer />
               </DashboardContent>
             </Grid>
           </FadeIn>

@@ -1,16 +1,32 @@
 import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Card, Grid, Typography, IconButton, Tooltip, useTheme, Stack } from '@mui/material';
+import {
+  Box,
+  Card,
+  Grid,
+  Typography,
+  IconButton,
+  Tooltip,
+  useTheme,
+  Stack,
+  Fade,
+} from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { FilteredPermutation, Armor, StatName, StatModifiers } from '../../../types/d2l-types';
-import { useSelector } from 'react-redux';
+import {
+  FilteredPermutation,
+  Armor,
+  StatName,
+  StatModifiers,
+  FragmentStatModifications,
+} from '../../../types/d2l-types';
 import ArmorIcon from '../../../components/ArmorIcon';
 import { STATS } from '../../../lib/bungie_api/constants';
-import { RootState } from '../../../store';
 import useStatMods from '../../../hooks/use-stat-mods';
 import useArtificeMods from '../../../hooks/use-artifice-mods';
 import { statIcons } from '@/util/constants';
+import { D2LTooltip } from '@/components/D2LTooltip';
+import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
 
 interface PermutationsListProps {
   permutations: FilteredPermutation[];
@@ -65,32 +81,7 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
   const theme = useTheme();
   const statMods = useStatMods();
   const artificeMods = useArtificeMods();
-
-  const subclassConfig = useSelector(
-    (state: RootState) => state.loadoutConfig.loadout.subclassConfig
-  );
-
-  const fragmentStatModifications = useMemo(() => {
-    const modifications: { [key in StatName]: number } = {
-      mobility: 0,
-      resilience: 0,
-      recovery: 0,
-      discipline: 0,
-      intellect: 0,
-      strength: 0,
-    };
-
-    subclassConfig.fragments.forEach((fragment) => {
-      if (fragment.mobilityMod) modifications.mobility += fragment.mobilityMod;
-      if (fragment.resilienceMod) modifications.resilience += fragment.resilienceMod;
-      if (fragment.recoveryMod) modifications.recovery += fragment.recoveryMod;
-      if (fragment.disciplineMod) modifications.discipline += fragment.disciplineMod;
-      if (fragment.intellectMod) modifications.intellect += fragment.intellectMod;
-      if (fragment.strengthMod) modifications.strength += fragment.strengthMod;
-    });
-
-    return modifications;
-  }, [subclassConfig.fragments]);
+  const fragmentStatModifications = useFragmentStats();
 
   const paginatedData = useMemo(() => {
     const start = currentPage * 3;
@@ -108,7 +99,7 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
   const formatArmorStats = (armor: Armor) => {
     return STATS.map((stat) => {
       const statKey = stat as keyof Armor;
-      return `${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${armor[statKey] || 0}`;
+      return ` ${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${armor[statKey] || 0}`;
     }).join('\n');
   };
 
@@ -120,9 +111,18 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
 
     return perm.modsArray[stat].find((mod) => mod === modAmount) ? (
       <Stack sx={{ width: '2.5vw' }} spacing={0}>
-        <Tooltip title={matchedStatMod?.name} placement="top">
+        <D2LTooltip
+          arrow
+          maxWidth={300}
+          title={
+            matchedStatMod?.name +
+            ' x' +
+            perm.modsArray[stat].filter((mod) => mod === modAmount).length
+          }
+          placement="bottom"
+        >
           <img src={matchedStatMod?.icon} alt={matchedStatMod?.name} />
-        </Tooltip>
+        </D2LTooltip>
 
         <Grid
           container
@@ -133,7 +133,7 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
         >
           {perm.modsArray[stat]
             .filter((mod) => mod === modAmount)
-            .map((mod) => (
+            .map(() => (
               <Grid item md={4} display="flex" justifyContent="center" alignItems="center">
                 <Box
                   sx={{
@@ -180,11 +180,17 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
                 <Grid container spacing={0} sx={{ justifyContent: 'center', width: '100%' }}>
                   {perm.permutation.map((item, idx) => (
                     <Grid item md={2} key={idx}>
-                      <Tooltip title={`${item.name}\n${formatArmorStats(item)}`}>
+                      <D2LTooltip
+                        TransitionComponent={Fade}
+                        title={`${item.name}\n${formatArmorStats(item)}`}
+                        placement="left"
+                        arrow
+                        followCursor
+                      >
                         <Box>
                           <ArmorIcon armor={item} />
                         </Box>
-                      </Tooltip>
+                      </D2LTooltip>
                     </Grid>
                   ))}
                 </Grid>
@@ -256,6 +262,11 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
     >
       <Typography typography="h5" margin="auto">
         NO COMBINATIONS FOUND
+        <br />
+        <ul style={{ textAlign: 'start' }}>
+          <li>Try selecting another Exotic</li>
+          <li>Try changing desired stats / fragments</li>
+        </ul>
       </Typography>
     </Box>
   );

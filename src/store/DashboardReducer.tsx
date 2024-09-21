@@ -15,8 +15,8 @@ const initialState: DashboardState = {
   selectedExotic: { itemHash: null, slot: null },
   selectedExoticClassCombo: null,
   selectedCharacter: 0,
-  assumeMasterwork: false,
-  assumeExoticArtifice: false,
+  assumeMasterwork: true,
+  assumeExoticArtifice: true,
 };
 
 /**
@@ -27,7 +27,14 @@ const dashboardSlice = createSlice({
   initialState,
   reducers: {
     updateSelectedValues: (state, action: PayloadAction<{ [key: string]: number }>) => {
-      state.selectedValues = action.payload;
+      const keys = Object.keys(action.payload);
+
+      for (let i = 0; i < keys.length; i++) {
+        if (state.selectedValues[keys[i]] !== action.payload[keys[i]]) {
+          state.selectedValues = action.payload;
+          break;
+        }
+      }
     },
     updateSelectedExoticItemHash: (
       state,

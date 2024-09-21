@@ -184,15 +184,17 @@ export interface Subclass extends ManifestSubclass {
 
 export interface FilteredPermutation {
   permutation: Armor[];
-  modsArray: {
-    mobility: number[];
-    resilience: number[];
-    recovery: number[];
-    discipline: number[];
-    intellect: number[];
-    strength: number[];
-  };
+  modsArray: ModsArray;
 }
+
+export type ModsArray = {
+  mobility: number[];
+  resilience: number[];
+  recovery: number[];
+  discipline: number[];
+  intellect: number[];
+  strength: number[];
+};
 
 export interface FragmentStatModifications {
   mobility: number;

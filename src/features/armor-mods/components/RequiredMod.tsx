@@ -2,6 +2,7 @@ import { ManifestArmorStatMod } from '../../../types/manifest-types';
 import { Tooltip, styled } from '@mui/material';
 import { autoEquipStatMod } from '../mod-utils';
 import { useDispatch } from 'react-redux';
+import { D2LTooltip } from '@/components/D2LTooltip';
 
 interface RequiredModProps {
   required: { mod: ManifestArmorStatMod; equipped: boolean };
@@ -23,7 +24,7 @@ export default function RequiredMod({ required }: RequiredModProps) {
   }
 
   return (
-    <Tooltip title={required.mod.name}>
+    <D2LTooltip maxWidth={300} title={required.mod.name} arrow>
       <RequiredModImg
         src={required.mod.icon}
         onClick={handleOnClick}
@@ -32,6 +33,6 @@ export default function RequiredMod({ required }: RequiredModProps) {
           '&:hover': { scale: 1.07 },
         }}
       />
-    </Tooltip>
+    </D2LTooltip>
   );
 }
