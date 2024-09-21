@@ -26,10 +26,10 @@ import useStatMods from '../../../hooks/use-stat-mods';
 import useArtificeMods from '../../../hooks/use-artifice-mods';
 import { statIcons } from '@/util/constants';
 import { D2LTooltip } from '@/components/D2LTooltip';
+import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
 
 interface PermutationsListProps {
   permutations: FilteredPermutation[];
-  fragmentStatModifications: FragmentStatModifications;
   onPermutationClick: (filteredPermutation: FilteredPermutation) => void;
 }
 
@@ -75,13 +75,13 @@ const PageCount = styled(Typography)(({ theme }) => ({
 
 const PermutationsList: React.FC<PermutationsListProps> = ({
   permutations,
-  fragmentStatModifications,
   onPermutationClick,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const theme = useTheme();
   const statMods = useStatMods();
   const artificeMods = useArtificeMods();
+  const fragmentStatModifications = useFragmentStats();
 
   const paginatedData = useMemo(() => {
     const start = currentPage * 3;

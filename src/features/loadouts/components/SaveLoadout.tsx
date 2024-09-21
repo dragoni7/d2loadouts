@@ -1,31 +1,29 @@
 import {
-  Button,
-  Drawer,
-  Grid,
-  Box,
   Autocomplete,
-  TextField,
-  Select,
+  Box,
+  Drawer,
   FormControl,
-  InputLabel,
+  Grid,
   ImageList,
+  InputLabel,
+  Select,
   styled,
+  TextField,
 } from '@mui/material';
 import { useState } from 'react';
-import useLoadoutIdentifiers from '../hooks/use-loadout-identifiers';
+import { useDispatch, useSelector } from 'react-redux';
+import { D2LButton } from '../../../components/D2LButton';
+import { API_COMPONENTS } from '../../../lib/bungie_api/constants';
+import { getProfileDataRequest, snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
+import { RootState, store } from '../../../store';
+import { updateCharacterLoadouts } from '../../../store/ProfileReducer';
 import {
   ManifestLoadoutColor,
   ManifestLoadoutIcon,
   ManifestLoadoutName,
 } from '../../../types/manifest-types';
-import { getProfileDataRequest, snapShotLoadoutRequest } from '../../../lib/bungie_api/requests';
-import { RootState, store } from '../../../store';
-import { useSelector } from 'react-redux';
-import { API_COMPONENTS } from '../../../lib/bungie_api/constants';
-import { useDispatch } from 'react-redux';
-import { updateCharacterLoadouts } from '../../../store/ProfileReducer';
 import { getCharacterLoadoutsFromResponse } from '../../profile/profile-data';
-import { D2LButton } from '../../../components/D2LButton';
+import useLoadoutIdentifiers from '../hooks/use-loadout-identifiers';
 
 const LoadoutSlot = styled('img')(({ theme }) => ({
   backgroundSize: 'cover',

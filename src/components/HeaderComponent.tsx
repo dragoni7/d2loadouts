@@ -1,34 +1,30 @@
+import useSelectedCharacter from '@/hooks/use-selected-character';
+import { RootState } from '@/store';
 import React from 'react';
-import { Character } from '../types/d2l-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateSelectedCharacter } from '../store/DashboardReducer';
 import {
-  HeaderOverlayImage,
-  HeaderDisplayName,
+  Header,
   HeaderBottomContainer,
   HeaderButtonContainer,
   HeaderCharacterText,
-  Header,
+  HeaderDisplayName,
+  HeaderOverlayImage,
 } from '../styled';
 
 interface HeaderComponentProps {
-  emblemUrl: string;
-  overlayUrl: string;
-  displayName: string;
-  characters: Character[];
-  selectedCharacter: Character | null;
   onCharacterClick: (index: number) => void;
 }
 
-const HeaderComponent: React.FC<HeaderComponentProps> = ({
-  emblemUrl,
-  overlayUrl,
-  displayName,
-  characters,
-  selectedCharacter,
-  onCharacterClick,
-}) => {
+const HeaderComponent: React.FC<HeaderComponentProps> = ({ onCharacterClick }) => {
   const dispatch = useDispatch();
+
+  const selectedCharacter = useSelectedCharacter();
+
+  const characters = useSelector((root: RootState) => root.profile.characters);
+  const displayName = useSelector(
+    (root: RootState) => root.destinyMembership.membership.bungieGlobalDisplayName
+  );
 
   const handleCharacterClick = (index: number) => {
     onCharacterClick(index);
@@ -36,8 +32,8 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({
   };
 
   return (
-    <Header emblemUrl={emblemUrl}>
-      <HeaderOverlayImage src={overlayUrl} alt="Overlay" />
+    <Header emblemUrl={selectedCharacter?.emblem?.secondarySpecial!}>
+      <HeaderOverlayImage src={selectedCharacter?.emblem?.secondaryOverlay!} alt="Overlay" />
       <HeaderDisplayName>{displayName}</HeaderDisplayName>
       <HeaderBottomContainer>
         <HeaderButtonContainer>

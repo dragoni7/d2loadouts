@@ -1,23 +1,38 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { styled } from '@mui/system';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
-import SingleDiamondButton from '../../components/SubclassSelector';
-import NumberBoxes from '../../features/armor-optimization/components/NumberBoxes';
-import { getDestinyMembershipId } from '../../features/membership/bungie-account';
-import { updateMembership } from '../../store/MembershipReducer';
+import FadeIn from '@/components/FadeIn';
+import Filters from '@/features/armor-optimization/components/Filters';
 import {
-  ArmorSlot,
-  Character,
-  CharacterClass,
-  DecodedLoadoutData,
-  FilteredPermutation,
-  StatModifiers,
-  StatName,
-  SubclassConfig,
-} from '../../types/d2l-types';
-import PermutationsList from '../../features/armor-optimization/components/PermutationsList';
+  filterFromSharedLoadout,
+  filterPermutations,
+} from '@/features/armor-optimization/filter-permutations';
+import usePermutations from '@/features/armor-optimization/hooks/use-permutations';
+import { getModsFromPermutation } from '@/features/armor-optimization/util/permutation-utils';
+import { equipSharedMods } from '@/features/loadouts/util/loadout-utils';
+import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
+import { Box, CircularProgress, Grid, Typography } from '@mui/material';
+import { styled } from '@mui/system';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Footer from '../../components/Footer';
 import HeaderComponent from '../../components/HeaderComponent';
+import LoadoutCustomization from '../../components/LoadoutCustomization';
+import SingleDiamondButton from '../../components/SubclassSelector';
+import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
+import NumberBoxes from '../../features/armor-optimization/components/NumberBoxes';
+import PermutationsList from '../../features/armor-optimization/components/PermutationsList';
+import { SharedLoadoutDto } from '../../features/loadouts/types';
+import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
+import { getDestinyMembershipId } from '../../features/membership/bungie-account';
+import { getProfileData } from '../../features/profile/profile-data';
+import StatModifications from '../../features/subclass/components/StatModifications';
+import SubclassCustomizationWrapper from '../../features/subclass/components/SubclassCustomizationWrapper';
+import { DAMAGE_TYPE, STATS } from '../../lib/bungie_api/constants';
+import { updateManifest } from '../../lib/bungie_api/manifest';
+import { AppDispatch, RootState } from '../../store';
+import {
+  resetDashboard,
+  updateSelectedCharacter,
+  updateSelectedExoticItemHash,
+} from '../../store/DashboardReducer';
 import { db } from '../../store/db';
 import {
   resetLoadout,
@@ -28,37 +43,19 @@ import {
   updateSubclass,
   updateSubclassMods,
 } from '../../store/LoadoutReducer';
-import SubclassCustomizationWrapper from '../../features/subclass/components/SubclassCustomizationWrapper';
-import { updateManifest } from '../../lib/bungie_api/manifest';
-import LoadoutCustomization from '../../components/LoadoutCustomization';
-import background from '/assets/background.png';
-import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
-import { DAMAGE_TYPE, STATS } from '../../lib/bungie_api/constants';
-import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
-import {
-  resetDashboard,
-  updateSelectedCharacter,
-  updateSelectedExoticItemHash,
-} from '../../store/DashboardReducer';
-import { CircularProgress, Box, Grid, Typography } from '@mui/material';
-import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
-import { SharedLoadoutDto } from '../../features/loadouts/types';
+import { updateMembership } from '../../store/MembershipReducer';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
-import { getProfileData } from '../../features/profile/profile-data';
-import useArtificeMods from '../../hooks/use-artifice-mods';
-import useStatMods from '../../hooks/use-stat-mods';
-import StatModifications from '../../features/subclass/components/StatModifications';
-import Footer from '../../components/Footer';
-import { equipSharedMods } from '@/features/loadouts/util/loadout-utils';
-import FadeIn from '@/components/FadeIn';
-import usePermutations from '@/features/armor-optimization/hooks/use-permutations';
-import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
-import Filters from '@/features/armor-optimization/components/Filters';
 import {
-  filterFromSharedLoadout,
-  filterPermutations,
-} from '@/features/armor-optimization/filter-permutations';
-import { getModsFromPermutation } from '@/features/armor-optimization/util/permutation-utils';
+  ArmorSlot,
+  Character,
+  CharacterClass,
+  DecodedLoadoutData,
+  FilteredPermutation,
+  StatName,
+  SubclassConfig,
+} from '../../types/d2l-types';
+import { ManifestExoticArmor } from '../../types/manifest-types';
+import background from '/assets/background.png';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${background})`,
@@ -82,7 +79,6 @@ const LoadingScreen = styled(Box)(({ theme }) => ({
 export const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.characters);
   const { selectedValues, selectedExotic, selectedExoticClassCombo, selectedCharacter } =
     useSelector((state: RootState) => state.dashboard);
@@ -92,9 +88,6 @@ export const Dashboard: React.FC = () => {
   >(undefined);
   const [selectedSubclass, setSelectedSubclass] = useState<SubclassConfig | null>(null);
   const [customizingSubclass, setCustomizingSubclass] = useState<SubclassConfig | null>(null);
-  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<SubclassConfig | null>(
-    null
-  );
   const [showLoadoutCustomization, setShowLoadoutCustomization] = useState(false);
   const [showAbilitiesModification, setShowAbilitiesModification] = useState(false);
   const [sharedLoadoutDto, setSharedLoadoutDto] = useState<SharedLoadoutDto | undefined>(undefined);
@@ -195,7 +188,6 @@ export const Dashboard: React.FC = () => {
       const damageType = sharedLoadoutDto.subclass.damageType;
       if (Object.keys(selectedCharacter.subclasses).includes(String(damageType))) {
         setSelectedSubclass(selectedCharacter.subclasses[damageType]!);
-        setLastNonPrismaticSubclass(selectedCharacter.subclasses[damageType]!);
 
         // set subclass abilities
         dispatch(
@@ -331,9 +323,6 @@ export const Dashboard: React.FC = () => {
             setSelectedSubclass(
               profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])]!
             );
-            setLastNonPrismaticSubclass(
-              profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])]!
-            );
             dispatch(
               updateSubclass({
                 subclass: profileCharacters[targetCharacterIndex].subclasses[Number(keys[i])],
@@ -393,7 +382,7 @@ export const Dashboard: React.FC = () => {
         characters[index].subclasses[Number(keys[i])]!.damageType !== DAMAGE_TYPE.KINETIC
       ) {
         setSelectedSubclass(characters[index].subclasses[Number(keys[i])]!);
-        setLastNonPrismaticSubclass(characters[index].subclasses[Number(keys[i])]!);
+
         dispatch(
           updateSubclass({
             subclass: characters[index].subclasses[Number(keys[i])],
@@ -419,9 +408,6 @@ export const Dashboard: React.FC = () => {
           subclass: characters[selectedCharacter].subclasses[subclass.damageType],
         })
       );
-    }
-    if (subclass.damageType !== DAMAGE_TYPE.KINETIC) {
-      setLastNonPrismaticSubclass(subclass);
     }
   };
 
@@ -453,14 +439,7 @@ export const Dashboard: React.FC = () => {
       ) : sharedLoadoutDto === undefined && selectedSubclass ? (
         <>
           <FadeIn duration={200}>
-            <HeaderComponent
-              emblemUrl={characters[selectedCharacter]?.emblem?.secondarySpecial || ''}
-              overlayUrl={characters[selectedCharacter]?.emblem?.secondaryOverlay || ''}
-              displayName={membership.bungieGlobalDisplayName}
-              characters={characters}
-              selectedCharacter={characters[selectedCharacter]!}
-              onCharacterClick={handleCharacterClick}
-            />
+            <HeaderComponent onCharacterClick={handleCharacterClick} />
           </FadeIn>
 
           <FadeIn duration={300}>
@@ -498,10 +477,7 @@ export const Dashboard: React.FC = () => {
                   sx={{ marginTop: '1%' }}
                 >
                   <Grid item>
-                    <ExoticSelector
-                      selectedCharacter={characters[selectedCharacter]!}
-                      selectedExoticItemHash={selectedExotic.itemHash}
-                    />
+                    <ExoticSelector />
                   </Grid>
                   <Grid item height="22vh">
                     <Filters />
@@ -514,14 +490,13 @@ export const Dashboard: React.FC = () => {
                   {filteredPermutations ? (
                     <PermutationsList
                       permutations={filteredPermutations}
-                      fragmentStatModifications={fragmentStatModifications}
                       onPermutationClick={openLoadoutCustomization}
                     />
                   ) : (
                     false
                   )}
                 </Grid>
-                <Footer emblemUrl={characters[selectedCharacter]?.emblem?.secondarySpecial || ''} />
+                <Footer />
               </DashboardContent>
             </Grid>
           </FadeIn>

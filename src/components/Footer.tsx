@@ -3,12 +3,10 @@ import { Box, Stack, Typography } from '@mui/material';
 import LogoutButton from '@/features/auth/components/LogoutButton';
 import RefreshCharacters from './RefreshCharacters';
 import CoffeeButton from './CoffeeButton';
+import useSelectedCharacter from '@/hooks/use-selected-character';
 
-interface FooterProps {
-  emblemUrl: string;
-}
-
-const Footer: React.FC<FooterProps> = ({ emblemUrl }) => {
+const Footer: React.FC = () => {
+  const selectedcharacter = useSelectedCharacter();
   return (
     <Box
       sx={{
@@ -17,7 +15,7 @@ const Footer: React.FC<FooterProps> = ({ emblemUrl }) => {
         left: 0,
         right: 0,
         height: '5.4%',
-        backgroundImage: `url(${emblemUrl})`,
+        backgroundImage: `url(${selectedcharacter?.emblem?.secondarySpecial})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',

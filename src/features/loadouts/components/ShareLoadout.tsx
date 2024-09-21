@@ -31,6 +31,7 @@ import {
   StyledDialog,
   StyledTextField,
 } from '../styled';
+import useSelectedCharacter from '@/hooks/use-selected-character';
 
 const selectLoadoutState = createSelector(
   (state: RootState) => state.loadoutConfig.loadout,
@@ -45,11 +46,6 @@ const selectLoadoutState = createSelector(
     selectedValues: dashboard.selectedValues,
     selectedExoticItemHash: String(dashboard.selectedExotic.itemHash),
   })
-);
-
-const selectSelectedCharacterClass = createSelector(
-  (state: RootState) => state.profile.characters[state.dashboard.selectedCharacter].class,
-  (characterClass) => characterClass as CharacterClass | undefined
 );
 
 const StatPriorityList: React.FC<{
@@ -104,7 +100,7 @@ const StatPriorityList: React.FC<{
 
 const ShareLoadout: React.FC = () => {
   const loadoutState = useSelector(selectLoadoutState);
-  const selectedCharacterClass = useSelector(selectSelectedCharacterClass);
+  const selectedCharacterClass = useSelectedCharacter()?.class;
 
   const [open, setOpen] = useState(false);
   const [shareLink, setShareLink] = useState<string>('');

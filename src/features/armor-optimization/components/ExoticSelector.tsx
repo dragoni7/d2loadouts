@@ -19,11 +19,9 @@ import {
   ArrowButton,
   ArrowIcon,
 } from '../styled';
-
-interface ExoticSelectorProps {
-  selectedCharacter: Character | undefined;
-  selectedExoticItemHash: number | null;
-}
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
+import useSelectedCharacter from '@/hooks/use-selected-character';
 
 interface IntrinsicMod {
   itemHash: number;
@@ -31,10 +29,7 @@ interface IntrinsicMod {
   icon: string;
 }
 
-const ExoticSelector: React.FC<ExoticSelectorProps> = ({
-  selectedCharacter,
-  selectedExoticItemHash,
-}) => {
+const ExoticSelector: React.FC = () => {
   const dispatch = useDispatch();
   const [exotics, setExotics] = useState<ManifestExoticArmor[]>([]);
   const [comboInput, setComboInput] = useState('');
@@ -42,6 +37,12 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
   const [selectedCombo, setSelectedCombo] = useState<ExoticClassCombo | null>(null);
   const [inputValue, setInputValue] = React.useState('');
   const [intrinsicMods, setIntrinsicMods] = useState<{ [key: number]: IntrinsicMod }>({});
+  const selectedExoticItemHash = useSelector(
+    (state: RootState) => state.dashboard.selectedExotic.itemHash
+  );
+
+  const selectedCharacter = useSelectedCharacter();
+
   const exoticClassCombos = selectedCharacter?.exoticClassCombos;
 
   const fetchExoticData = async () => {
@@ -80,6 +81,8 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
   useEffect(() => {
     fetchExoticData();
     fetchIntrinsicModData();
+    setSelectedExotic(null);
+    setInputValue('');
   }, [selectedCharacter]);
 
   useEffect(() => {
@@ -90,11 +93,6 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
       setSelectedExotic(null);
     }
   }, [selectedExoticItemHash, exotics]);
-
-  useEffect(() => {
-    setSelectedExotic(null);
-    setInputValue('');
-  }, [selectedCharacter]);
 
   const handleExoticSelect = (newValue: ManifestExoticArmor | null) => {
     setSelectedExotic(newValue);
