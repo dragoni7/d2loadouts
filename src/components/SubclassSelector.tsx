@@ -49,10 +49,9 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     config: { duration: morphDuration },
   }));
 
-  // Swap animation adjustments
   const [{ x }, swapApi] = useSpring(() => ({
     x: 0,
-    config: { tension: 220, friction: 26 }, // Adjusted for smoother animation
+    config: { tension: 220, friction: 26 },
   }));
 
   const morph = useCallback(() => {
@@ -138,16 +137,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     onSubclassSelect(subclass);
   };
 
-  const handleReset = () => {
-    if (lastNonPrismaticSubclass) {
-      setIsPrismaticActive(false);
-      setCurrentSubclass(lastNonPrismaticSubclass);
-      onSubclassSelect(lastNonPrismaticSubclass);
-      swapApi.start({ x: 0 });
-    }
-  };
-
-  const handleRightClick = (event: React.MouseEvent, subclass: SubclassConfig) => {
+  const handleOpenSubclass = (event: React.MouseEvent, subclass: SubclassConfig) => {
     event.preventDefault();
     onSubclassRightClick(subclass);
   };
@@ -170,7 +160,6 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     <animated.div
       className={`single-diamond-wrapper ${isPrismaticActive ? 'prismatic-active' : ''}`}
       style={{
-        // Adjusted swap animation for smoother transition
         transform: x.to((x) => `translateX(${x * 40}px)`),
       }}
     >
@@ -194,7 +183,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
                   }}
                   onContextMenu={(event) => {
                     if (damageType in subclasses && selectedSubclass?.damageType === damageType)
-                      handleRightClick(event, subclasses[Number(damageType)]!);
+                      handleOpenSubclass(event, subclasses[Number(damageType)]!);
                   }}
                 >
                   <img
@@ -211,10 +200,9 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
         <>
           <div
             className="prismatic-button diamond-shape"
-            onClick={handleReset}
-            onContextMenu={(event) => {
+            onClick={(event) => {
               if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
-                handleRightClick(event, currentSubclass!);
+                handleOpenSubclass(event, currentSubclass!);
             }}
           >
             <div className="prismatic-glow diamond-shape"></div>
@@ -233,10 +221,6 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
               transform: x.to((x) => `scale(${1 - x * 0.4})`),
             }}
             onClick={() => handleSelect(lastNonPrismaticSubclass!)}
-            onContextMenu={(event) => {
-              if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
-                handleRightClick(event, lastNonPrismaticSubclass!);
-            }}
           >
             <img
               src={lastNonPrismaticSubclass!.subclass.icon}
@@ -252,9 +236,9 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
             style={{
               transform: x.to((x) => `scale(${1 - x * 0.4})`),
             }}
-            onContextMenu={(event) => {
+            onClick={(event) => {
               if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
-                handleRightClick(event, currentSubclass!);
+                handleOpenSubclass(event, currentSubclass!);
             }}
           >
             {currentSubclass && (
@@ -269,10 +253,6 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
             <div
               className="prismatic-button"
               onClick={() => handleSelect(subclasses[DAMAGE_TYPE.KINETIC]!)}
-              onContextMenu={(event) => {
-                if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
-                  handleRightClick(event, subclasses[DAMAGE_TYPE.KINETIC]!);
-              }}
             >
               <div className="prismatic-glow"></div>
               <RotatingShape />

@@ -99,7 +99,7 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
   const formatArmorStats = (armor: Armor) => {
     return STATS.map((stat) => {
       const statKey = stat as keyof Armor;
-      return `${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${armor[statKey] || 0}`;
+      return ` ${stat.charAt(0).toUpperCase() + stat.slice(1)}: ${armor[statKey] || 0}`;
     }).join('\n');
   };
 
@@ -182,7 +182,7 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
                     <Grid item md={2} key={idx}>
                       <D2LTooltip
                         TransitionComponent={Fade}
-                        title={formatArmorStats(item)}
+                        title={`${item.name}\n${formatArmorStats(item)}`}
                         placement="left"
                         arrow
                         followCursor
