@@ -326,12 +326,16 @@ export const Dashboard: React.FC = () => {
       if (selectedExoticClassCombo)
         return generatePermutations(
           characters[selectedCharacterIndex].armor,
+          selectedExotic,
+          selectedExoticClassCombo,
           assumeMasterworked,
           assumeExoticArtifice
         );
 
       return generatePermutations(
         characters[selectedCharacterIndex].armor,
+        selectedExotic,
+        undefined,
         assumeMasterworked,
         assumeExoticArtifice
       );

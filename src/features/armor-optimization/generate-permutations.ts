@@ -1,6 +1,12 @@
 import { ARMOR } from '../../lib/bungie_api/constants';
 import { Heap } from 'heap-js';
-import { ArmorSlot, Armor, ArmorBySlot, ExoticClassCombo } from '../../types/d2l-types';
+import {
+  ArmorSlot,
+  Armor,
+  ArmorBySlot,
+  ExoticClassCombo,
+  FragmentStatModifications,
+} from '../../types/d2l-types';
 /**
  * This function generates all possible permutations of armor based on class, selected exotic item (if any),
  * and fragment modifications. It tracks and stores the top 30,000 permutations in a max heap based on the total stats.
@@ -8,8 +14,21 @@ import { ArmorSlot, Armor, ArmorBySlot, ExoticClassCombo } from '../../types/d2l
  */
 export function generatePermutations(
   armorClass: ArmorBySlot,
+  selectedExoticItem: { itemHash: number | null; slot: ArmorSlot | null } = {
+    itemHash: null,
+    slot: null,
+  },
+  selectedExoticClassCombo?: ExoticClassCombo,
   assumeMasterworked: boolean = false,
-  exoticsArtifice: boolean = false
+  exoticsArtifice: boolean = false,
+  fragmentStatModifications: FragmentStatModifications = {
+    mobility: 0,
+    resilience: 0,
+    recovery: 0,
+    discipline: 0,
+    intellect: 0,
+    strength: 0,
+  }
 ): Armor[][] {
   const { helmet, arms, legs, chest, classItem } =
     assumeMasterworked || exoticsArtifice
@@ -22,6 +41,54 @@ export function generatePermutations(
   let filteredChest = chest;
   let filteredClass = classItem;
 
+  if (selectedExoticItem.slot !== null) {
+    switch (selectedExoticItem.slot) {
+      case ARMOR.HELMET:
+        filteredHelmet = helmet.filter(
+          (item) => Number(item.itemHash) === selectedExoticItem.itemHash
+        );
+        filteredArms = arms.filter((item) => !item.exotic);
+        filteredLegs = legs.filter((item) => !item.exotic);
+        filteredChest = chest.filter((item) => !item.exotic);
+        filteredClass = classItem.filter((item) => !item.exotic);
+        break;
+      case ARMOR.GAUNTLETS:
+        filteredHelmet = helmet.filter((item) => !item.exotic);
+        filteredArms = arms.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+        filteredLegs = legs.filter((item) => !item.exotic);
+        filteredChest = chest.filter((item) => !item.exotic);
+        filteredClass = classItem.filter((item) => !item.exotic);
+        break;
+      case ARMOR.LEG_ARMOR:
+        filteredHelmet = helmet.filter((item) => !item.exotic);
+        filteredArms = arms.filter((item) => !item.exotic);
+        filteredLegs = legs.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+        filteredChest = chest.filter((item) => !item.exotic);
+        filteredClass = classItem.filter((item) => !item.exotic);
+        break;
+      case ARMOR.CHEST_ARMOR:
+        filteredHelmet = helmet.filter((item) => !item.exotic);
+        filteredArms = arms.filter((item) => !item.exotic);
+        filteredLegs = legs.filter((item) => !item.exotic);
+        filteredChest = chest.filter(
+          (item) => Number(item.itemHash) === selectedExoticItem.itemHash
+        );
+        filteredClass = classItem.filter((item) => !item.exotic);
+        break;
+      case ARMOR.CLASS_ARMOR:
+        filteredHelmet = helmet.filter((item) => !item.exotic);
+        filteredArms = arms.filter((item) => !item.exotic);
+        filteredLegs = legs.filter((item) => !item.exotic);
+        filteredChest = chest.filter((item) => !item.exotic);
+        filteredClass = selectedExoticClassCombo
+          ? classItem.filter((item) =>
+              selectedExoticClassCombo.instanceHashes.includes(item.instanceHash)
+            )
+          : classItem.filter((item) => Number(item.itemHash) === selectedExoticItem.itemHash);
+        break;
+    }
+  }
+
   const armorTypes = [filteredHelmet, filteredArms, filteredChest, filteredLegs];
 
   // Find best class armor to use for permutation
@@ -31,7 +98,12 @@ export function generatePermutations(
   for (const item of filteredClass) {
     if (masterworkedClassArmor !== undefined && artificeMasterworkedClassArmor !== undefined) break;
 
-    if (item.exotic === true) continue;
+    if (
+      (selectedExoticItem.slot === null ||
+        selectedExoticItem.slot !== (ARMOR.CLASS_ARMOR as ArmorSlot)) &&
+      item.exotic === true
+    )
+      continue;
 
     if (item.masterwork === true) {
       masterworkedClassArmor = item;
@@ -49,7 +121,7 @@ export function generatePermutations(
 
   const heap = new Heap<Armor[]>((a: Armor[], b: Armor[]) => {
     const getTotalStats = (permutation: Armor[]) => {
-      const totalStats = reduceStats(permutation);
+      const totalStats = reduceStats(permutation, fragmentStatModifications);
       return Object.values(totalStats).reduce((a, b) => a + b, 0);
     };
     return getTotalStats(a) - getTotalStats(b);
@@ -59,7 +131,7 @@ export function generatePermutations(
     if (currentTypeIndex === armorTypes.length) {
       const modifiedPermutation = [...currentPermutation, bestClassArmor];
 
-      const totalStats = reduceStats(modifiedPermutation);
+      const totalStats = reduceStats(modifiedPermutation, fragmentStatModifications);
       const totalSum = Object.values(totalStats).reduce(
         (a, b) => Math.floor(a / 10) * 10 + Math.floor(b / 10) * 10,
         0
@@ -71,7 +143,7 @@ export function generatePermutations(
         const smallest = heap.peek();
 
         if (smallest) {
-          const smallestTotalStats = reduceStats(smallest);
+          const smallestTotalStats = reduceStats(smallest, fragmentStatModifications);
           const smallestTotalSum = Object.values(smallestTotalStats).reduce(
             (a, b) => Math.floor(a / 10) * 10 + Math.floor(b / 10) * 10,
             0
@@ -89,7 +161,7 @@ export function generatePermutations(
     const currentSlot = armorTypes[currentTypeIndex];
 
     for (const item of currentSlot) {
-      if (item.exotic && exoticCount > 0) {
+      if (item.exotic && exoticCount > 0 && Number(item.itemHash) !== selectedExoticItem.itemHash) {
         continue;
       }
 
@@ -104,7 +176,17 @@ export function generatePermutations(
   return heap.toArray();
 }
 
-function reduceStats(permutation: Armor[]) {
+function reduceStats(
+  permutation: Armor[],
+  fragmentStatModifications: FragmentStatModifications
+): {
+  mobility: number;
+  resilience: number;
+  recovery: number;
+  discipline: number;
+  intellect: number;
+  strength: number;
+} {
   return permutation.reduce(
     (sum, item) => {
       return {
@@ -116,7 +198,7 @@ function reduceStats(permutation: Armor[]) {
         strength: sum.strength + item.strength,
       };
     },
-    { mobility: 0, resilience: 0, recovery: 0, discipline: 0, intellect: 0, strength: 0 } // Start with fragment modifications
+    { ...fragmentStatModifications } // Start with fragment modifications
   );
 }
 

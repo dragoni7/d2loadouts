@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, styled } from '@mui/material';
+import { Box, styled, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../../store';
@@ -12,6 +12,8 @@ const StatModificationsContainer = styled(Box)(({ theme }) => ({
   backdropFilter: 'blur(5px)',
   borderRadius: 0,
   border: '1px solid rgba(255, 255, 255, 0.3)',
+  width: '100%',
+  height: '100%',
 }));
 
 const StatModificationItem = styled('div')(({ theme }) => ({
@@ -56,6 +58,17 @@ const StatModifications: React.FC = () => {
 
   return (
     <StatModificationsContainer>
+      <Typography
+        sx={{
+          opacity: 0.8,
+          borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
+          paddingBottom: 1,
+          marginBottom: 2,
+          width: '60%',
+        }}
+      >
+        Fragment Effects
+      </Typography>
       {modifications.map(({ stat, value, name }, index) => {
         const color = value > 0 ? 'green' : 'red';
         const sign = value > 0 ? '+' : '';

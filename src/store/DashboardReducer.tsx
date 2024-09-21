@@ -15,8 +15,8 @@ const initialState: DashboardState = {
   selectedExotic: { itemHash: null, slot: null },
   selectedExoticClassCombo: null,
   selectedCharacter: 0,
-  assumeMasterwork: false,
-  assumeExoticArtifice: false,
+  assumeMasterwork: true,
+  assumeExoticArtifice: true,
 };
 
 /**
