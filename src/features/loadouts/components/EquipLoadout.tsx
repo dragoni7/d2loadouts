@@ -13,8 +13,8 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { store } from '../../../store';
-import { useState } from 'react';
+import { RootState, store } from '../../../store';
+import { useEffect, useState } from 'react';
 import { EquipResult } from '../types';
 import { STATUS } from '../constants';
 import React from 'react';
@@ -26,6 +26,8 @@ import SaveLoadout from './SaveLoadout';
 import { refreshProfileCharacters } from '../../../util/profile-characters';
 import { useDispatch } from 'react-redux';
 import { D2LButton } from '../../../components/D2LButton';
+import { useSelector } from 'react-redux';
+import { ARMOR_ARRAY } from '@/lib/bungie_api/constants';
 
 const LoadoutDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -59,12 +61,36 @@ const EquipLoadout: React.FC = () => {
   const [results, setResults] = useState<EquipResult[][]>([]);
   const [equipping, setEquipping] = useState<boolean>(false);
   const [alertOpen, setAlertOpen] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string[]>([]);
+
+  const assumeMasterworked = useSelector((state: RootState) => state.dashboard.assumeMasterwork);
+  const assumeExoticsArtifice = useSelector(
+    (state: RootState) => state.dashboard.assumeExoticArtifice
+  );
+  const initialLoadout = store.getState().loadoutConfig.loadout;
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    let nonMasterworkedCount = 0;
+    let exoticNotArtifice = false;
+    let message = [];
+
+    ARMOR_ARRAY.forEach((armor) => {
+      if (initialLoadout[armor].masterwork === false && assumeMasterworked) nonMasterworkedCount++;
+
+      if (initialLoadout[armor].exotic === true && assumeExoticsArtifice) exoticNotArtifice = true;
+    });
+
+    if (nonMasterworkedCount > 0) message.push('Ensure all armor is masterworked!');
+
+    if (exoticNotArtifice) message.push('Ensure exotic armor artifice slot is unlocked!');
+
+    setAlertMessage(message);
+  }, [assumeMasterworked, assumeExoticsArtifice]);
+
   async function handleEquipLoadout() {
     const loadout = store.getState().loadoutConfig.loadout;
-
     // validate loadout
     if (
       loadout.characterId !== 0 &&
@@ -93,8 +119,19 @@ const EquipLoadout: React.FC = () => {
 
   async function onButtonClick() {
     const loadout = store.getState().loadoutConfig.loadout;
+    let message = alertMessage;
 
     if (loadout.requiredStatMods.some((required) => required.equipped === false)) {
+      if (!message.includes('Missing optimized stat mods!')) {
+        message.push('Missing optimized stat mods!');
+        setAlertMessage(message);
+      }
+    } else if (loadout.requiredStatMods.length > 0) {
+      message.pop();
+      setAlertMessage(message);
+    }
+
+    if (message.length > 0) {
       setAlertOpen(true);
       return;
     }
@@ -117,10 +154,12 @@ const EquipLoadout: React.FC = () => {
         aria-labelledby="dialog-title"
         aria-describedby="dialog-description"
       >
-        <DialogTitle id="dialog-title">{'MISSING REQUIRED MODS!'}</DialogTitle>
+        <DialogTitle id="dialog-title">{'ATTENTION'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="dialog-description">
-            Loadout missing optimized stat mods, are you sure you still want to equip?
+            {alertMessage.map((alert) => (
+              <Typography sx={{ paddingY: 0.5 }}>{alert}</Typography>
+            ))}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

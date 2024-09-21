@@ -54,11 +54,9 @@ import {
   Box,
   Grid,
   Typography,
-  Container,
   Switch,
   FormGroup,
   FormControlLabel,
-  Stack,
 } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
@@ -127,30 +125,6 @@ export const Dashboard: React.FC = () => {
 
   const statMods = useStatMods();
   const artificeMods = useArtificeMods();
-
-  const fragmentStatModifications = useMemo(() => {
-    return fragments.reduce(
-      (acc, fragment) => {
-        if (fragment.itemHash !== 0) {
-          acc.mobility += fragment.mobilityMod;
-          acc.resilience += fragment.resilienceMod;
-          acc.recovery += fragment.recoveryMod;
-          acc.discipline += fragment.disciplineMod;
-          acc.intellect += fragment.intellectMod;
-          acc.strength += fragment.strengthMod;
-        }
-        return acc;
-      },
-      {
-        mobility: 0,
-        resilience: 0,
-        recovery: 0,
-        discipline: 0,
-        intellect: 0,
-        strength: 0,
-      } as FragmentStatModifications
-    );
-  }, [fragments]);
 
   useEffect(() => {
     const initSharedSubclass = async (
@@ -320,6 +294,30 @@ export const Dashboard: React.FC = () => {
 
     updateData().catch(console.error);
   }, []);
+
+  const fragmentStatModifications = useMemo(() => {
+    return fragments.reduce(
+      (acc, fragment) => {
+        if (fragment.itemHash !== 0) {
+          acc.mobility += fragment.mobilityMod;
+          acc.resilience += fragment.resilienceMod;
+          acc.recovery += fragment.recoveryMod;
+          acc.discipline += fragment.disciplineMod;
+          acc.intellect += fragment.intellectMod;
+          acc.strength += fragment.strengthMod;
+        }
+        return acc;
+      },
+      {
+        mobility: 0,
+        resilience: 0,
+        recovery: 0,
+        discipline: 0,
+        intellect: 0,
+        strength: 0,
+      } as FragmentStatModifications
+    );
+  }, [fragments]);
 
   const permutations = useMemo(() => {
     if (characters[selectedCharacterIndex] && selectedExotic.itemHash !== null) {

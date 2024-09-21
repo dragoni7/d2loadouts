@@ -32,7 +32,7 @@ export function generatePermutations(
 ): Armor[][] {
   const { helmet, arms, legs, chest, classItem } =
     assumeMasterworked || exoticsArtifice
-      ? createFilteredArmorCollection(armorClass, assumeMasterworked, exoticsArtifice)
+      ? preFilterArmor(armorClass, assumeMasterworked, exoticsArtifice)
       : armorClass;
 
   let filteredHelmet = helmet;
@@ -202,7 +202,7 @@ function reduceStats(
   );
 }
 
-function createFilteredArmorCollection(
+function preFilterArmor(
   armorClass: ArmorBySlot,
   allMasterworked: boolean,
   exoticsArtifice: boolean
