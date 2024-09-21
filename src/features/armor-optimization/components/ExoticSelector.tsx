@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { Autocomplete, TextField, Popper } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 import { db } from '../../../store/db';
 import { ArmorSlot, Character, ExoticClassCombo } from '../../../types/d2l-types';
 import {
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
+  updateSelectedValues,
 } from '../../../store/DashboardReducer';
 import { useDispatch } from 'react-redux';
 import { ManifestExoticArmor } from '../../../types/manifest-types';
 import { ARMOR } from '../../../lib/bungie_api/constants';
 import {
-  SelectExotic,
   StyledPopper,
   ExoticIcon,
   ComboOption,
@@ -117,6 +116,7 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
     setSelectedExotic(null);
     setSelectedCombo(null);
     dispatch(updateSelectedExoticItemHash({ itemHash: null, slot: null }));
+    dispatch(updateSelectedValues({}));
   };
 
   return (
