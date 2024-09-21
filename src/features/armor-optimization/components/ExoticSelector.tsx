@@ -123,7 +123,6 @@ const ExoticSelector: React.FC<ExoticSelectorProps> = ({
     <>
       {!selectedExotic ? (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <SelectExotic>Select Exotic</SelectExotic>
           <Autocomplete
             disablePortal
             value={selectedExotic}

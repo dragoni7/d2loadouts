@@ -6,6 +6,8 @@ interface DashboardState {
   selectedExotic: { itemHash: number | null; slot: ArmorSlot | null };
   selectedExoticClassCombo: ExoticClassCombo | null;
   selectedCharacter: number;
+  assumeMasterwork: boolean;
+  assumeExoticArtifice: boolean;
 }
 
 const initialState: DashboardState = {
@@ -13,6 +15,8 @@ const initialState: DashboardState = {
   selectedExotic: { itemHash: null, slot: null },
   selectedExoticClassCombo: null,
   selectedCharacter: 0,
+  assumeMasterwork: false,
+  assumeExoticArtifice: false,
 };
 
 /**
@@ -37,6 +41,12 @@ const dashboardSlice = createSlice({
     updateSelectedCharacter: (state, action: PayloadAction<number>) => {
       state.selectedCharacter = action.payload;
     },
+    updateAssumeMasterwork: (state) => {
+      state.assumeMasterwork = !state.assumeMasterwork;
+    },
+    updateAssumeExoticArtifice: (state) => {
+      state.assumeExoticArtifice = !state.assumeExoticArtifice;
+    },
     resetDashboard: () => initialState,
   },
 });
@@ -46,6 +56,8 @@ export const {
   updateSelectedExoticItemHash,
   updateSelectedExoticClassCombo,
   updateSelectedCharacter,
+  updateAssumeMasterwork,
+  updateAssumeExoticArtifice,
   resetDashboard,
 } = dashboardSlice.actions;
 
