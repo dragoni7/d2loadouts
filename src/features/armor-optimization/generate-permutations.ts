@@ -139,7 +139,6 @@ export function generatePermutations(
 
       if (heap.size() < 30000) {
         heap.push(modifiedPermutation);
-        console.log('Pushed:' + totalSum);
       } else {
         const smallest = heap.peek();
 
@@ -153,7 +152,6 @@ export function generatePermutations(
           if (totalSum > smallestTotalSum) {
             heap.pop();
             heap.push(modifiedPermutation);
-            console.log('Popping: ' + smallestTotalSum + ' then pushing: ' + totalSum);
           }
         }
       }
