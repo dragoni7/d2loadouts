@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;
   gap: 40px;
+  overflow: visible;
 }
 
 .diamond-grid {
@@ -49,23 +50,21 @@
   z-index: 1;
 }
 
-.diamond-button:hover img {
-  width: 100%;
-  height: 100%;
-}
-
 .button-1 {
   top: 0;
   left: 60px;
 }
+
 .button-2 {
   top: 60px;
   left: 0;
 }
+
 .button-3 {
   top: 60px;
   left: 120px;
 }
+
 .button-4 {
   top: 120px;
   left: 60px;
@@ -85,24 +84,12 @@
 .single-diamond-button::before {
   content: '';
   position: absolute;
-  transition: all 0.3s ease;
-}
-
-.single-diamond-button:not(.prismatic-selected)::before {
   top: 20px;
   left: 20px;
   right: 20px;
   bottom: 20px;
   transform: rotate(45deg);
-}
-
-.single-diamond-button.prismatic-selected::before {
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  bottom: 5px;
-  border-radius: 50%;
-  border: none;
+  transition: all 0.3s ease;
 }
 
 .single-diamond-button:hover::before {
@@ -114,11 +101,6 @@
   height: 100%;
   transition: all 0.3s ease;
   z-index: 1;
-}
-
-.single-diamond-button:hover img {
-  width: 100%;
-  height: 100%;
 }
 
 .prismatic-button {
@@ -136,7 +118,6 @@
 
 .prismatic-glow {
   position: absolute;
-
   background: transparent;
   border-radius: 50%;
   transition: all 0.3s ease;
@@ -157,15 +138,6 @@
   border-radius: 50%;
 }
 
-.rotating-square {
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  border: 1px solid rgba(172, 172, 172, 0.5);
-  opacity: 0.3;
-  z-index: -1;
-}
-
 .rotating-shape {
   position: absolute;
   width: 120px;
@@ -178,4 +150,14 @@
 
 .prismatic-button.diamond-shape .rotating-square {
   transform: rotate(45deg);
+}
+
+/* Styles for reduced size when prismatic is active */
+.prismatic-active .single-diamond-button {
+  transition: all 0.3s ease;
+  
+}
+
+.prismatic-active.single-diamond-wrapper {
+  gap: 30px;
 }

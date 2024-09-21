@@ -49,6 +49,12 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
     config: { duration: morphDuration },
   }));
 
+  // Swap animation adjustments
+  const [{ x }, swapApi] = useSpring(() => ({
+    x: 0,
+    config: { tension: 220, friction: 26 }, // Adjusted for smoother animation
+  }));
+
   const morph = useCallback(() => {
     setIsOblong(!isOblong);
     shapeApi.start({
@@ -116,14 +122,17 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
       setLastNonPrismaticSubclass(defaultSubclass);
       onSubclassSelect(defaultSubclass!);
     }
-  }, [selectedSubclass, subclasses, onSubclassSelect, lastNonPrismaticSubclass]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSubclass, subclasses]);
 
   const handleSelect = (subclass: SubclassConfig) => {
     if (subclass.damageType === DAMAGE_TYPE.KINETIC) {
       setIsPrismaticActive(true);
+      swapApi.start({ x: 1 });
     } else {
       setIsPrismaticActive(false);
       setLastNonPrismaticSubclass(subclass);
+      swapApi.start({ x: 0 });
     }
     setCurrentSubclass(subclass);
     onSubclassSelect(subclass);
@@ -134,6 +143,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
       setIsPrismaticActive(false);
       setCurrentSubclass(lastNonPrismaticSubclass);
       onSubclassSelect(lastNonPrismaticSubclass);
+      swapApi.start({ x: 0 });
     }
   };
 
@@ -157,7 +167,13 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
   );
 
   return (
-    <div className="single-diamond-wrapper">
+    <animated.div
+      className={`single-diamond-wrapper ${isPrismaticActive ? 'prismatic-active' : ''}`}
+      style={{
+        // Adjusted swap animation for smoother transition
+        transform: x.to((x) => `translateX(${x * 40}px)`),
+      }}
+    >
       {!isPrismaticActive && (
         <div className="diamond-grid">
           {subclasses &&
@@ -211,8 +227,11 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
               className="diamond-icon"
             />
           </div>
-          <div
+          <animated.div
             className="single-diamond-button"
+            style={{
+              transform: x.to((x) => `scale(${1 - x * 0.4})`),
+            }}
             onClick={() => handleSelect(lastNonPrismaticSubclass!)}
             onContextMenu={(event) => {
               if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
@@ -224,12 +243,15 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
               alt={lastNonPrismaticSubclass!.subclass.name}
               className="diamond-icon"
             />
-          </div>
+          </animated.div>
         </>
       ) : (
         <>
-          <div
+          <animated.div
             className="single-diamond-button"
+            style={{
+              transform: x.to((x) => `scale(${1 - x * 0.4})`),
+            }}
             onContextMenu={(event) => {
               if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
                 handleRightClick(event, currentSubclass!);
@@ -242,7 +264,7 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
                 className="diamond-icon"
               />
             )}
-          </div>
+          </animated.div>
           {subclasses !== undefined && subclasses[DAMAGE_TYPE.KINETIC] ? (
             <div
               className="prismatic-button"
@@ -262,12 +284,10 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
                 className="circular-icon"
               />
             </div>
-          ) : (
-            false
-          )}
+          ) : null}
         </>
       )}
-    </div>
+    </animated.div>
   );
 };
 
