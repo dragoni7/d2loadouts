@@ -256,6 +256,11 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
     >
       <Typography typography="h5" margin="auto">
         NO COMBINATIONS FOUND
+        <br />
+        <ul style={{ textAlign: 'start' }}>
+          <li>Try selecting another Exotic</li>
+          <li>Try changing desired stats / fragments</li>
+        </ul>
       </Typography>
     </Box>
   );

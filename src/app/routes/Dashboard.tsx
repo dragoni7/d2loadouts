@@ -322,7 +322,7 @@ export const Dashboard: React.FC = () => {
   }, []);
 
   const permutations = useMemo(() => {
-    if (characters[selectedCharacterIndex] && selectedExotic !== undefined) {
+    if (characters[selectedCharacterIndex] && selectedExotic.itemHash !== null) {
       if (selectedExoticClassCombo)
         return generatePermutations(
           characters[selectedCharacterIndex].armor,
@@ -336,7 +336,7 @@ export const Dashboard: React.FC = () => {
         assumeExoticArtifice
       );
     }
-    return null;
+    return [];
   }, [
     selectedCharacterIndex,
     characters,
@@ -372,13 +372,7 @@ export const Dashboard: React.FC = () => {
         );
         filtered = sharedLoadoutPermutation === null ? null : [sharedLoadoutPermutation];
       } else {
-        filtered = filterPermutations(
-          permutations,
-          selectedValues,
-          fragmentStatModifications,
-          selectedExotic,
-          selectedExoticClassCombo
-        );
+        filtered = filterPermutations(permutations, selectedValues, fragmentStatModifications);
       }
     }
 
@@ -531,9 +525,7 @@ export const Dashboard: React.FC = () => {
         const filtered = filterPermutations(
           permutations,
           testSelectedValues,
-          fragmentStatModifications,
-          selectedExotic,
-          selectedExoticClassCombo
+          fragmentStatModifications
         );
 
         if (filtered && filtered.length > 0) {
