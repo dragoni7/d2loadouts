@@ -50,7 +50,7 @@ const features: Feature[] = [
     title: 'Share Your Build',
     description:
       'Generate a link that captures your preferred stats, armor mods, and subclass mods. Share it with friends or followers, enabling them to apply the loadout in-game with a single click.',
-    image: 'https://via.placeholder.com/400x200?text=Share+Your+Build',
+    image: './public/assets/shareloadout.gif',
   },
   {
     title: 'Looking Ahead!',

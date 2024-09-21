@@ -35,9 +35,10 @@ export const filterPermutations = (
       strength: [],
     };
 
-    const artificeCount = permutation.filter((armor) => armor.artifice).length;
+    const artificeCount = permutation.filter((armor) => armor.artifice === true).length;
 
     const statDeficits: Record<string, number> = {};
+
     for (const stat in thresholds) {
       const key = stat.toLowerCase() as keyof Armor & keyof FragmentStatModifications;
       const totalStat =
@@ -58,7 +59,7 @@ export const filterPermutations = (
       const stat = Object.keys(statDeficits)[statIndex];
       const deficit = statDeficits[stat];
 
-      if (deficit === 0) {
+      if (deficit <= 0) {
         return tryModCombination(statIndex + 1, artificeUsed, regularModsUsed);
       }
 

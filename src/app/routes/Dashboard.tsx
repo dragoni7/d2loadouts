@@ -44,10 +44,22 @@ import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
   resetDashboard,
+  updateAssumeExoticArtifice,
+  updateAssumeMasterwork,
   updateSelectedCharacter,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
-import { CircularProgress, Box, Grid, Typography, Container } from '@mui/material';
+import {
+  CircularProgress,
+  Box,
+  Grid,
+  Typography,
+  Container,
+  Switch,
+  FormGroup,
+  FormControlLabel,
+  Stack,
+} from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
@@ -90,6 +102,12 @@ export const Dashboard: React.FC = () => {
   const selectedCharacterIndex = useSelector(
     (state: RootState) => state.dashboard.selectedCharacter
   );
+
+  const assumeMasterworked = useSelector((state: RootState) => state.dashboard.assumeMasterwork);
+  const assumeExoticArtifice = useSelector(
+    (state: RootState) => state.dashboard.assumeExoticArtifice
+  );
+
   const fragments = useSelector(
     (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
   );
@@ -310,6 +328,8 @@ export const Dashboard: React.FC = () => {
           characters[selectedCharacterIndex].armor,
           selectedExotic,
           selectedExoticClassCombo,
+          assumeMasterworked,
+          assumeExoticArtifice,
           fragmentStatModifications
         );
 
@@ -317,6 +337,8 @@ export const Dashboard: React.FC = () => {
         characters[selectedCharacterIndex].armor,
         selectedExotic,
         undefined,
+        assumeMasterworked,
+        assumeExoticArtifice,
         fragmentStatModifications
       );
     }
@@ -327,6 +349,8 @@ export const Dashboard: React.FC = () => {
     selectedExotic,
     selectedExoticClassCombo,
     fragmentStatModifications,
+    assumeMasterworked,
+    assumeExoticArtifice,
   ]);
 
   const filteredPermutations = useMemo(() => {
@@ -585,11 +609,40 @@ export const Dashboard: React.FC = () => {
                   alignItems={'center'}
                   sx={{ marginTop: '1%' }}
                 >
-                  <Grid item height="32vh">
+                  <Grid item>
                     <ExoticSelector
                       selectedCharacter={characters[selectedCharacterIndex]!}
                       selectedExoticItemHash={selectedExotic.itemHash}
                     />
+                  </Grid>
+                  <Grid item height="22vh">
+                    <FormGroup
+                      sx={{
+                        padding: 2,
+                        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                        backdropFilter: 'blur(5px)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                      }}
+                    >
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={assumeMasterworked}
+                            onChange={() => dispatch(updateAssumeMasterwork())}
+                          />
+                        }
+                        label="Assume Armor Masterworked"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={assumeExoticArtifice}
+                            onChange={() => dispatch(updateAssumeExoticArtifice())}
+                          />
+                        }
+                        label="Assume Exotics are Artifice"
+                      />
+                    </FormGroup>
                   </Grid>
                   <Grid item alignSelf="flex-start">
                     <StatModifications />
