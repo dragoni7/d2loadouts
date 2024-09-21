@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { styled } from '@mui/system';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store';
-import { generatePermutations } from '../../features/armor-optimization/generate-permutations';
 import {
   filterFromSharedLoadout,
   filterPermutations,
@@ -17,7 +16,6 @@ import {
   CharacterClass,
   DecodedLoadoutData,
   FilteredPermutation,
-  FragmentStatModifications,
   StatModifiers,
   StatName,
   SubclassConfig,
@@ -29,7 +27,6 @@ import {
   resetLoadout,
   resetLoadoutArmorMods,
   updateLoadoutArmor,
-  updateLoadoutArmorMods,
   updateLoadoutCharacter,
   updateRequiredStatMods,
   updateSubclass,
@@ -40,34 +37,27 @@ import { updateManifest } from '../../lib/bungie_api/manifest';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
 import background from '/assets/background.png';
 import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
-import { ARMOR_ARRAY, DAMAGE_TYPE } from '../../lib/bungie_api/constants';
+import { DAMAGE_TYPE, STATS } from '../../lib/bungie_api/constants';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import {
   resetDashboard,
-  updateAssumeExoticArtifice,
-  updateAssumeMasterwork,
   updateSelectedCharacter,
   updateSelectedExoticItemHash,
 } from '../../store/DashboardReducer';
-import {
-  CircularProgress,
-  Box,
-  Grid,
-  Typography,
-  Switch,
-  FormGroup,
-  FormControlLabel,
-} from '@mui/material';
+import { CircularProgress, Box, Grid, Typography } from '@mui/material';
 import { ManifestArmorStatMod, ManifestExoticArmor } from '../../types/manifest-types';
 import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { updateProfileCharacters } from '../../store/ProfileReducer';
-import { getProfileData } from '../../util/profile-characters';
+import { getProfileData } from '../../features/profile/profile-data';
 import useArtificeMods from '../../hooks/use-artifice-mods';
 import useStatMods from '../../hooks/use-stat-mods';
 import StatModifications from '../../features/subclass/components/StatModifications';
 import Footer from '../../components/Footer';
 import { equipSharedMods } from '@/features/loadouts/util/loadout-utils';
 import FadeIn from '@/components/FadeIn';
+import usePermutations from '@/features/armor-optimization/hooks/use-permutations';
+import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
+import Filters from '@/features/armor-optimization/components/Filters';
 
 const DashboardContent = styled(Grid)(({ theme }) => ({
   backgroundImage: `url(${background})`,
@@ -93,22 +83,8 @@ export const Dashboard: React.FC = () => {
 
   const membership = useSelector((state: RootState) => state.destinyMembership.membership);
   const characters = useSelector((state: RootState) => state.profile.characters);
-  const { selectedValues, selectedExotic, selectedExoticClassCombo } = useSelector(
-    (state: RootState) => state.dashboard
-  );
-
-  const selectedCharacterIndex = useSelector(
-    (state: RootState) => state.dashboard.selectedCharacter
-  );
-
-  const assumeMasterworked = useSelector((state: RootState) => state.dashboard.assumeMasterwork);
-  const assumeExoticArtifice = useSelector(
-    (state: RootState) => state.dashboard.assumeExoticArtifice
-  );
-
-  const fragments = useSelector(
-    (state: RootState) => state.loadoutConfig.loadout.subclassConfig.fragments
-  );
+  const { selectedValues, selectedExotic, selectedExoticClassCombo, selectedCharacter } =
+    useSelector((state: RootState) => state.dashboard);
 
   const [subclasses, setSubclasses] = useState<
     { [key: number]: SubclassConfig | undefined } | undefined
@@ -125,6 +101,8 @@ export const Dashboard: React.FC = () => {
 
   const statMods = useStatMods();
   const artificeMods = useArtificeMods();
+  const permutations = usePermutations();
+  const fragmentStatModifications = useFragmentStats();
 
   useEffect(() => {
     const initSharedSubclass = async (
@@ -295,59 +273,6 @@ export const Dashboard: React.FC = () => {
     updateData().catch(console.error);
   }, []);
 
-  const fragmentStatModifications = useMemo(() => {
-    return fragments.reduce(
-      (acc, fragment) => {
-        if (fragment.itemHash !== 0) {
-          acc.mobility += fragment.mobilityMod;
-          acc.resilience += fragment.resilienceMod;
-          acc.recovery += fragment.recoveryMod;
-          acc.discipline += fragment.disciplineMod;
-          acc.intellect += fragment.intellectMod;
-          acc.strength += fragment.strengthMod;
-        }
-        return acc;
-      },
-      {
-        mobility: 0,
-        resilience: 0,
-        recovery: 0,
-        discipline: 0,
-        intellect: 0,
-        strength: 0,
-      } as FragmentStatModifications
-    );
-  }, [fragments]);
-
-  const permutations = useMemo(() => {
-    if (characters[selectedCharacterIndex] && selectedExotic.itemHash !== null) {
-      if (selectedExoticClassCombo)
-        return generatePermutations(
-          characters[selectedCharacterIndex].armor,
-          selectedExotic,
-          selectedExoticClassCombo,
-          assumeMasterworked,
-          assumeExoticArtifice
-        );
-
-      return generatePermutations(
-        characters[selectedCharacterIndex].armor,
-        selectedExotic,
-        undefined,
-        assumeMasterworked,
-        assumeExoticArtifice
-      );
-    }
-    return [];
-  }, [
-    selectedCharacterIndex,
-    characters,
-    selectedExotic,
-    selectedExoticClassCombo,
-    assumeMasterworked,
-    assumeExoticArtifice,
-  ]);
-
   const filteredPermutations = useMemo(() => {
     let filtered: FilteredPermutation[] | null = null;
 
@@ -440,7 +365,7 @@ export const Dashboard: React.FC = () => {
   }
 
   const handleCharacterClick = (index: number) => {
-    if (index === selectedCharacterIndex) return;
+    if (index === selectedCharacter) return;
 
     dispatch(resetDashboard());
     dispatch(updateSelectedCharacter(index));
@@ -476,10 +401,10 @@ export const Dashboard: React.FC = () => {
       })
     );
 
-    if (selectedCharacterIndex) {
+    if (selectedCharacter) {
       dispatch(
         updateSubclass({
-          subclass: characters[selectedCharacterIndex].subclasses[subclass.damageType],
+          subclass: characters[selectedCharacter].subclasses[subclass.damageType],
         })
       );
     }
@@ -496,15 +421,6 @@ export const Dashboard: React.FC = () => {
   const calculateMaxReachableValues = useMemo(() => {
     if (!permutations) return null;
 
-    const stats: StatName[] = [
-      'mobility',
-      'resilience',
-      'recovery',
-      'discipline',
-      'intellect',
-      'strength',
-    ];
-
     const maxValues: { [key in StatName]: number } = {
       mobility: 0,
       resilience: 0,
@@ -514,7 +430,7 @@ export const Dashboard: React.FC = () => {
       strength: 0,
     };
 
-    stats.forEach((stat) => {
+    STATS.forEach((stat) => {
       let value = 100;
       let permutationsFound = false;
 
@@ -532,14 +448,14 @@ export const Dashboard: React.FC = () => {
 
         if (filtered && filtered.length > 0) {
           permutationsFound = true;
-          maxValues[stat] = value;
+          maxValues[stat as StatName] = value;
         } else {
           value -= 10;
         }
       }
 
       if (!permutationsFound) {
-        maxValues[stat] = 0;
+        maxValues[stat as StatName] = 0;
       }
     });
 
@@ -570,11 +486,11 @@ export const Dashboard: React.FC = () => {
         <>
           <FadeIn duration={200}>
             <HeaderComponent
-              emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
-              overlayUrl={characters[selectedCharacterIndex]?.emblem?.secondaryOverlay || ''}
+              emblemUrl={characters[selectedCharacter]?.emblem?.secondarySpecial || ''}
+              overlayUrl={characters[selectedCharacter]?.emblem?.secondaryOverlay || ''}
               displayName={membership.bungieGlobalDisplayName}
               characters={characters}
-              selectedCharacter={characters[selectedCharacterIndex]!}
+              selectedCharacter={characters[selectedCharacter]!}
               onCharacterClick={handleCharacterClick}
             />
           </FadeIn>
@@ -615,38 +531,12 @@ export const Dashboard: React.FC = () => {
                 >
                   <Grid item>
                     <ExoticSelector
-                      selectedCharacter={characters[selectedCharacterIndex]!}
+                      selectedCharacter={characters[selectedCharacter]!}
                       selectedExoticItemHash={selectedExotic.itemHash}
                     />
                   </Grid>
                   <Grid item height="22vh">
-                    <FormGroup
-                      sx={{
-                        padding: 2,
-                        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                        backdropFilter: 'blur(5px)',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
-                      }}
-                    >
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={assumeMasterworked}
-                            onChange={() => dispatch(updateAssumeMasterwork())}
-                          />
-                        }
-                        label="Assume Armor Masterworked"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={assumeExoticArtifice}
-                            onChange={() => dispatch(updateAssumeExoticArtifice())}
-                          />
-                        }
-                        label="Assume Exotics are Artifice"
-                      />
-                    </FormGroup>
+                    <Filters />
                   </Grid>
                   <Grid item alignSelf="flex-start">
                     <StatModifications />
@@ -662,9 +552,7 @@ export const Dashboard: React.FC = () => {
                     false
                   )}
                 </Grid>
-                <Footer
-                  emblemUrl={characters[selectedCharacterIndex]?.emblem?.secondarySpecial || ''}
-                />
+                <Footer emblemUrl={characters[selectedCharacter]?.emblem?.secondarySpecial || ''} />
               </DashboardContent>
             </Grid>
           </FadeIn>

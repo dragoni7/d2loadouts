@@ -23,7 +23,7 @@ import FadeIn from '../../../components/FadeIn';
 import { equipLoadout } from '../util/loadout-utils';
 import { TransitionProps } from '@mui/material/transitions';
 import SaveLoadout from './SaveLoadout';
-import { refreshProfileCharacters } from '../../../util/profile-characters';
+import { refreshProfileCharacters } from '../../profile/profile-data';
 import { useDispatch } from 'react-redux';
 import { D2LButton } from '../../../components/D2LButton';
 import { useSelector } from 'react-redux';

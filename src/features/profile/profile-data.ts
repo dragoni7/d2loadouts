@@ -12,9 +12,9 @@ import {
   STAT_MOD_HASHES,
   COLLECTIBLE_OWNED,
   PRIMARY_STATS,
-} from '../lib/bungie_api/constants';
-import { getProfileDataRequest } from '../lib/bungie_api/requests';
-import { db } from '../store/db';
+} from '../../lib/bungie_api/constants';
+import { getProfileDataRequest } from '../../lib/bungie_api/requests';
+import { db } from '../../store/db';
 import {
   ArmorSlot,
   Character,
@@ -25,8 +25,8 @@ import {
   Emblem,
   Subclass,
   SubclassConfig,
-} from '../types/d2l-types';
-import { updateProfileCharacters } from '../store/ProfileReducer';
+} from '../../types/d2l-types';
+import { updateProfileCharacters } from '../../store/ProfileReducer';
 
 /**
  * Updates the character data

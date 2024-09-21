@@ -24,7 +24,7 @@ import { useSelector } from 'react-redux';
 import { API_COMPONENTS } from '../../../lib/bungie_api/constants';
 import { useDispatch } from 'react-redux';
 import { updateCharacterLoadouts } from '../../../store/ProfileReducer';
-import { getCharacterLoadoutsFromResponse } from '../../../util/profile-characters';
+import { getCharacterLoadoutsFromResponse } from '../../profile/profile-data';
 import { D2LButton } from '../../../components/D2LButton';
 
 const LoadoutSlot = styled('img')(({ theme }) => ({
