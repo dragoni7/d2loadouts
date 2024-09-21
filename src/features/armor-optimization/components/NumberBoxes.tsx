@@ -7,6 +7,7 @@ import { STATS } from '../../../lib/bungie_api/constants';
 import { updateSelectedValues } from '../../../store/DashboardReducer';
 import { statIcons } from '../../../util/constants';
 import { StatName } from '../../../types/d2l-types';
+import { D2LButton } from '@/components/D2LButton';
 
 interface NumberBoxProps {
   isSelected: boolean;
@@ -54,6 +55,14 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ maxReachableValues }) => {
     dispatch(updateSelectedValues(updatedValues));
   };
 
+  const handleClear = () => {
+    const clearedValues = Object.keys(selectedValues).reduce((acc, key) => {
+      acc[key as StatName] = 0;
+      return acc;
+    }, {} as { [key in StatName]: number });
+    dispatch(updateSelectedValues(clearedValues));
+  };
+
   return (
     <Box
       sx={{
@@ -95,6 +104,9 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ maxReachableValues }) => {
           </Grid>
         </Grid>
       ))}
+      <Grid container justifyContent="center" marginTop={2}>
+        <D2LButton onClick={handleClear}>Clear</D2LButton>
+      </Grid>
     </Box>
   );
 };
