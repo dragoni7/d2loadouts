@@ -123,7 +123,7 @@ const HoverCard: React.FC<HoverCardProps> = ({ item, children }) => {
 
   useEffect(() => {
     getItemData().catch(console.error);
-  }, []);
+  }, [item, children]);
 
   const renderEnergyCapacity = (capacity: number) => {
     return (
