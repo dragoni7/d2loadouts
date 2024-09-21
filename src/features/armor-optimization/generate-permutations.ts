@@ -1,12 +1,6 @@
 import { ARMOR } from '../../lib/bungie_api/constants';
 import { Heap } from 'heap-js';
-import {
-  ArmorSlot,
-  Armor,
-  ArmorBySlot,
-  ExoticClassCombo,
-  FragmentStatModifications,
-} from '../../types/d2l-types';
+import { ArmorSlot, Armor, ArmorBySlot, ExoticClassCombo } from '../../types/d2l-types';
 /**
  * This function generates all possible permutations of armor based on class, selected exotic item (if any),
  * and fragment modifications. It tracks and stores the top 30,000 permutations in a max heap based on the total stats.
@@ -20,15 +14,7 @@ export function generatePermutations(
   },
   selectedExoticClassCombo?: ExoticClassCombo,
   assumeMasterworked: boolean = false,
-  exoticsArtifice: boolean = false,
-  fragmentStatModifications: FragmentStatModifications = {
-    mobility: 0,
-    resilience: 0,
-    recovery: 0,
-    discipline: 0,
-    intellect: 0,
-    strength: 0,
-  }
+  exoticsArtifice: boolean = false
 ): Armor[][] {
   const { helmet, arms, legs, chest, classItem } =
     assumeMasterworked || exoticsArtifice
@@ -121,7 +107,7 @@ export function generatePermutations(
 
   const heap = new Heap<Armor[]>((a: Armor[], b: Armor[]) => {
     const getTotalStats = (permutation: Armor[]) => {
-      const totalStats = reduceStats(permutation, fragmentStatModifications);
+      const totalStats = reduceStats(permutation);
       return Object.values(totalStats).reduce((a, b) => a + b, 0);
     };
     return getTotalStats(a) - getTotalStats(b);
@@ -131,7 +117,7 @@ export function generatePermutations(
     if (currentTypeIndex === armorTypes.length) {
       const modifiedPermutation = [...currentPermutation, bestClassArmor];
 
-      const totalStats = reduceStats(modifiedPermutation, fragmentStatModifications);
+      const totalStats = reduceStats(modifiedPermutation);
       const totalSum = Object.values(totalStats).reduce(
         (a, b) => Math.floor(a / 10) * 10 + Math.floor(b / 10) * 10,
         0
@@ -143,7 +129,7 @@ export function generatePermutations(
         const smallest = heap.peek();
 
         if (smallest) {
-          const smallestTotalStats = reduceStats(smallest, fragmentStatModifications);
+          const smallestTotalStats = reduceStats(smallest);
           const smallestTotalSum = Object.values(smallestTotalStats).reduce(
             (a, b) => Math.floor(a / 10) * 10 + Math.floor(b / 10) * 10,
             0
@@ -176,17 +162,7 @@ export function generatePermutations(
   return heap.toArray();
 }
 
-function reduceStats(
-  permutation: Armor[],
-  fragmentStatModifications: FragmentStatModifications
-): {
-  mobility: number;
-  resilience: number;
-  recovery: number;
-  discipline: number;
-  intellect: number;
-  strength: number;
-} {
+function reduceStats(permutation: Armor[]) {
   return permutation.reduce(
     (sum, item) => {
       return {
@@ -198,7 +174,7 @@ function reduceStats(
         strength: sum.strength + item.strength,
       };
     },
-    { ...fragmentStatModifications } // Start with fragment modifications
+    { mobility: 0, resilience: 0, recovery: 0, discipline: 0, intellect: 0, strength: 0 } // Start with fragment modifications
   );
 }
 

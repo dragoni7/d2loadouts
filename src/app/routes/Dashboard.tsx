@@ -329,8 +329,7 @@ export const Dashboard: React.FC = () => {
           selectedExotic,
           selectedExoticClassCombo,
           assumeMasterworked,
-          assumeExoticArtifice,
-          fragmentStatModifications
+          assumeExoticArtifice
         );
 
       return generatePermutations(
@@ -338,8 +337,7 @@ export const Dashboard: React.FC = () => {
         selectedExotic,
         undefined,
         assumeMasterworked,
-        assumeExoticArtifice,
-        fragmentStatModifications
+        assumeExoticArtifice
       );
     }
     return null;
