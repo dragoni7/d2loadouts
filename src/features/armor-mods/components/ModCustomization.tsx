@@ -6,13 +6,7 @@ import useStatMods from '../../../hooks/use-stat-mods';
 import RequiredMod from './RequiredMod';
 import { useSelector } from 'react-redux';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-
-const StyledTitle = styled(Typography)(({ theme }) => ({
-  paddingBottom: theme.spacing(1),
-  marginBottom: theme.spacing(2),
-  fontSize: '28px',
-  fontWeight: 'bold',
-}));
+import { BoldTitle } from '@/components/BoldTitle';
 
 const StyledSubTitle = styled(Typography)(({ theme }) => ({
   opacity: 0.7,
@@ -33,7 +27,7 @@ const ModCustomization: React.FC = () => {
   return (
     <Grid container>
       <Grid item md={12} marginBottom={5} marginX={{ md: 5, lg: 8 }}>
-        <StyledTitle>MOD CUSTOMIZATION</StyledTitle>
+        <BoldTitle>MOD CUSTOMIZATION</BoldTitle>
       </Grid>
       {requiredMods.length !== 0 ? (
         <>

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Paper, Button, Typography, styled, CircularProgress } from '@mui/material';
+import { Paper, Button, Typography, styled, CircularProgress, Stack } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/subclass-constants';
 import { RootState } from '../../../store';
@@ -10,6 +10,7 @@ import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../../types/m
 import { DamageType, SubclassConfig } from '../../../types/d2l-types';
 import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../../lib/bungie_api/constants';
 import HoverCard from '../../../components/HoverCard';
+import { BoldTitle } from '@/components/BoldTitle';
 
 interface AbilitiesModificationProps {
   subclass: SubclassConfig;
@@ -98,12 +99,11 @@ const SuperModSlot = styled('div')(({ theme }) => ({
   },
 }));
 
-const StyledTitle = styled(Typography)(({ theme }) => ({
+const SectionSubtitle = styled(Typography)(({ theme }) => ({
   opacity: 0.7,
   borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
   paddingBottom: theme.spacing(1),
   marginBottom: theme.spacing(2),
-  width: '40%',
 }));
 
 const fetchMods = async (subclass: SubclassConfig) => {
@@ -431,16 +431,26 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
 
   return (
     <Container maxWidth="md">
-      <Box marginBottom={4}>
-        <StyledTitle variant="h4">{subclass.subclass.name}</StyledTitle>
-      </Box>
+      <Stack
+        direction="row"
+        marginBottom={4}
+        textAlign="start"
+        alignItems="center"
+        justifyContent="flex-start"
+        columnGap={1}
+      >
+        <img src={subclass.subclass.icon} width="8%" height="auto" />
+        <BoldTitle variant="h4">{subclass.subclass.name.toLocaleUpperCase()}</BoldTitle>
+      </Stack>
       <Box display="flex" flexDirection="row" gap={10}>
         <Box flex={1} display="flex" justifyContent="center" alignItems="flex-start" marginTop={15}>
           {renderModCategory('SUPERS', loadout.super)}
         </Box>
         <Box flex={3}>
           <Box marginBottom={2}>
-            <StyledTitle variant="h6">ABILITIES</StyledTitle>
+            <SectionSubtitle variant="h6" width="71%">
+              ABILITIES
+            </SectionSubtitle>
             <Box display="flex" flexWrap="wrap" gap={2}>
               {renderModCategory('CLASS_ABILITIES', loadout.classAbility)}
               {renderModCategory('MOVEMENT_ABILITIES', loadout.movementAbility)}
@@ -449,7 +459,9 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             </Box>
           </Box>
           <Box marginBottom={2}>
-            <StyledTitle variant="h6">ASPECTS</StyledTitle>
+            <SectionSubtitle variant="h6" width="34%">
+              ASPECTS
+            </SectionSubtitle>
             <Box display="flex" flexWrap="wrap" gap={2}>
               {loadout.aspects.map((aspect, index) => (
                 <React.Fragment key={index}>
@@ -459,7 +471,9 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             </Box>
           </Box>
           <Box marginBottom={2}>
-            <StyledTitle variant="h6">FRAGMENTS</StyledTitle>
+            <SectionSubtitle variant="h6" width="89%">
+              FRAGMENTS
+            </SectionSubtitle>
             <Box display="flex" flexWrap="wrap" gap={2}>
               {Array.from({ length: 5 }).map((_, index) => (
                 <React.Fragment key={index}>

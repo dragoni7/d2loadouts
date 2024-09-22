@@ -1,6 +1,5 @@
 import React from 'react';
 import AbilitiesModification from './AbilitiesModification';
-import './SubclassCustomizationWrapper.css';
 import { Box } from '@mui/material';
 import { SubclassConfig } from '../../../types/d2l-types';
 import { BackButton } from '../../../components/BackButton';
@@ -18,7 +17,19 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
   screenshot,
 }) => {
   return (
-    <Box className="subclass-customization-wrapper" sx={{ backgroundImage: `url(${screenshot})` }}>
+    <Box
+      sx={{
+        backgroundImage: `url(${screenshot})`,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        overflow: 'auto',
+      }}
+    >
       <Box position="absolute" top={16} left={16} zIndex={1000}>
         <BackButton onClick={onBackClick} startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}>
           Back
