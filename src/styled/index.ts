@@ -112,7 +112,7 @@ export const HoverCardContainer = styled('div')(({ theme }) => ({
   backgroundColor: 'rgba(0, 0, 0, 0.9)',
   borderRadius: '0px',
   boxShadow: theme.shadows[10],
-  width: '300px',
+  width: '14vw',
   pointerEvents: 'none',
   display: 'flex',
   flexDirection: 'column',

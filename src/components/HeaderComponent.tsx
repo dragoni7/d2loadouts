@@ -43,7 +43,7 @@ const HeaderComponent: React.FC<HeaderComponentProps> = ({ onCharacterClick }) =
               isSelected={selectedCharacter?.id === character.id}
               onClick={() => handleCharacterClick(index)}
             >
-              {character.class}
+              {character.class.toLocaleUpperCase()}
             </HeaderCharacterText>
           ))}
         </HeaderButtonContainer>

@@ -1,9 +1,10 @@
 import React from 'react';
 import AbilitiesModification from './AbilitiesModification';
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { SubclassConfig } from '../../../types/d2l-types';
 import { BackButton } from '../../../components/BackButton';
-import StatModifications from './StatModifications';
+import FragmentStats from './FragmentStats';
+import BuildStats from '@/components/BuildStats';
 
 interface SubclassCustomizationWrapperProps {
   onBackClick: () => void;
@@ -35,11 +36,14 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
           Back
         </BackButton>
       </Box>
-      <Box sx={{ marginTop: '5vh' }}>
+      <Box sx={{ marginTop: '7vh' }}>
         <AbilitiesModification subclass={subclass} />
       </Box>
-      <Box position="absolute" bottom={16} left={16} zIndex={1000}>
-        <StatModifications />
+      <Box position="absolute" bottom={50} left={16} zIndex={1000}>
+        <Stack spacing={5}>
+          <BuildStats />
+          <FragmentStats />
+        </Stack>
       </Box>
     </Box>
   );
