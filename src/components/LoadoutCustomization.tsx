@@ -68,7 +68,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
       />
 
       <Grid container columns={2} sx={{ position: 'relative', zIndex: 3, height: '100%' }}>
-        <Grid item md={1}>
+        <Grid item md={2}>
           <BackButton
             onClick={onBackClick}
             startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}
@@ -76,13 +76,13 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
             Back
           </BackButton>
         </Grid>
-        <Grid item md={1} />
+
         <Grid item md={1}>
           <Container maxWidth="lg">
             <ModCustomization />
           </Container>
         </Grid>
-        <Grid item md={1}>
+        <Grid item md={1} sx={{ marginTop: -4 }}>
           <FadeIn duration={400}>
             <AbilitiesModification subclass={subclass} />
           </FadeIn>
@@ -99,7 +99,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
         >
           <TotalStatsDisplay />
         </Grid>
-        <Grid item md={1} sx={{ textAlign: 'center', alignContent: 'end', paddingBottom: '6px' }}>
+        <Grid item md={1} sx={{ textAlign: 'center', alignContent: 'end', marginBottom: 5 }}>
           <EquipLoadout />
           <ShareLoadout />
         </Grid>
