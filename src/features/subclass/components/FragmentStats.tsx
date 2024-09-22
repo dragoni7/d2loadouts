@@ -10,7 +10,6 @@ const StatModificationsContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: 'rgba(0, 0, 0, 0.2)',
   backdropFilter: 'blur(5px)',
-  borderRadius: 0,
   border: '1px solid rgba(255, 255, 255, 0.3)',
   width: '100%',
   height: '100%',
@@ -67,7 +66,7 @@ const FragmentStats: React.FC = () => {
           width: '60%',
         }}
       >
-        Fragment Stats
+        FRAGMENT STATS
       </Typography>
       {modifications.map(({ stat, value, name }, index) => {
         const color = value > 0 ? 'green' : 'red';
