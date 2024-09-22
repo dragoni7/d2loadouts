@@ -52,18 +52,16 @@ const TotalStatsDisplay: React.FC = () => {
     <Box
       alignItems="center"
       justifyContent="center"
-      padding={1}
       sx={{
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(10px)',
-        borderRadius: '0px',
       }}
     >
-      <Grid container spacing={1} justifyContent="center">
+      <Grid container justifyContent="center" spacing={2}>
         {(STATS as StatName[]).map((stat) => (
           <Grid item key={stat}>
             <Box alignItems="center" margin={1}>
-              <img width={24} height={24} src={statIcons[stat]} alt={stat} />
+              <img width={22} height={22} src={statIcons[stat]} alt={stat} />
               <Typography color="white" fontWeight="bold" variant="body2">
                 {totalStats[stat]}
               </Typography>
