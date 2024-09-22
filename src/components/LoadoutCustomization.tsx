@@ -6,7 +6,7 @@ import AbilitiesModification from '../features/subclass/components/AbilitiesModi
 import ShareLoadout from '../features/loadouts/components/ShareLoadout';
 import { SubclassConfig } from '../types/d2l-types';
 import { BackButton } from './BackButton';
-import TotalStatsDisplay from './TotalStatsDisplay';
+import BuildStats from './BuildStats';
 import FadeIn from './FadeIn';
 
 interface LoadoutCustomizationProps {
@@ -97,7 +97,7 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
             alignItems: 'center',
           }}
         >
-          <TotalStatsDisplay />
+          <BuildStats />
         </Grid>
         <Grid item md={1} sx={{ textAlign: 'center', alignContent: 'end', marginBottom: 5 }}>
           <EquipLoadout />

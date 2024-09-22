@@ -7,7 +7,7 @@ import { StatName, ArmorModKeys } from '../types/d2l-types';
 import { ManifestStatPlug } from '../types/manifest-types';
 import { statIcons } from '../util/constants';
 
-const TotalStatsDisplay: React.FC = () => {
+const BuildStats: React.FC = () => {
   const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout);
 
   const totalStats = useMemo(() => {
@@ -73,4 +73,4 @@ const TotalStatsDisplay: React.FC = () => {
   );
 };
 
-export default TotalStatsDisplay;
+export default BuildStats;

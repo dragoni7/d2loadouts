@@ -3,8 +3,8 @@ import AbilitiesModification from './AbilitiesModification';
 import { Box, Stack } from '@mui/material';
 import { SubclassConfig } from '../../../types/d2l-types';
 import { BackButton } from '../../../components/BackButton';
-import StatModifications from './StatModifications';
-import TotalStatsDisplay from '@/components/TotalStatsDisplay';
+import FragmentStats from './FragmentStats';
+import BuildStats from '@/components/BuildStats';
 
 interface SubclassCustomizationWrapperProps {
   onBackClick: () => void;
@@ -41,8 +41,8 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
       </Box>
       <Box position="absolute" bottom={50} left={16} zIndex={1000}>
         <Stack spacing={5}>
-          <TotalStatsDisplay />
-          <StatModifications />
+          <BuildStats />
+          <FragmentStats />
         </Stack>
       </Box>
     </Box>

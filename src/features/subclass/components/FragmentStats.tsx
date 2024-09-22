@@ -49,7 +49,7 @@ const selectFragmentStatModifications = createSelector(
     }, [] as { stat: string; value: number; name: string }[])
 );
 
-const StatModifications: React.FC = () => {
+const FragmentStats: React.FC = () => {
   const modifications = useSelector(selectFragmentStatModifications);
 
   if (modifications.length === 0) {
@@ -67,7 +67,7 @@ const StatModifications: React.FC = () => {
           width: '60%',
         }}
       >
-        Fragment Effects
+        Fragment Stats
       </Typography>
       {modifications.map(({ stat, value, name }, index) => {
         const color = value > 0 ? 'green' : 'red';
@@ -90,4 +90,4 @@ const StatModifications: React.FC = () => {
   );
 };
 
-export default StatModifications;
+export default FragmentStats;

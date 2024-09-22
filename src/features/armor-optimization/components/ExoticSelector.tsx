@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
 import { db } from '../../../store/db';
-import { ArmorSlot, Character, ExoticClassCombo } from '../../../types/d2l-types';
+import { ArmorSlot, ExoticClassCombo } from '../../../types/d2l-types';
 import {
   updateSelectedExoticClassCombo,
   updateSelectedExoticItemHash,
@@ -157,7 +157,7 @@ const ExoticSelector: React.FC = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Exotics"
+                label="Select Exotic"
                 variant="outlined"
                 sx={{
                   '& .MuiOutlinedInput-root': {

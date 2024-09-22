@@ -23,7 +23,7 @@ import { SharedLoadoutDto } from '../../features/loadouts/types';
 import { decodeLoadout } from '../../features/loadouts/util/loadout-encoder';
 import { getDestinyMembershipId } from '../../features/membership/bungie-account';
 import { getProfileData } from '../../features/profile/profile-data';
-import StatModifications from '../../features/subclass/components/StatModifications';
+import FragmentStats from '../../features/subclass/components/FragmentStats';
 import SubclassCustomizationWrapper from '../../features/subclass/components/SubclassCustomizationWrapper';
 import { DAMAGE_TYPE, STATS } from '../../lib/bungie_api/constants';
 import { updateManifest } from '../../lib/bungie_api/manifest';
@@ -483,7 +483,7 @@ export const Dashboard: React.FC = () => {
                     <Filters />
                   </Grid>
                   <Grid item alignSelf="flex-start">
-                    <StatModifications />
+                    <FragmentStats />
                   </Grid>
                 </Grid>
                 <Grid item md={4} sx={{ marginTop: '1%' }}>
