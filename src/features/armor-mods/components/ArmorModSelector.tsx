@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box } from '@mui/system';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
-import { IconButton, styled } from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { IconButton, Stack, styled } from '@mui/material';
+import { ArrowRight, ArrowLeft } from '@mui/icons-material';
 import HoverCard from '../../../components/HoverCard';
 
 interface ModSelectorProps {
@@ -29,11 +28,8 @@ const Submenu = styled('div', { shouldForwardProp: (prop) => prop !== 'top' })<{
           [theme.breakpoints.between('lg', 'xl')]: {
             top: '100%',
           },
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(5px)',
           padding: '6px',
           zIndex: 1000,
-          width: '550px',
           borderRadius: '0px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }
@@ -42,11 +38,8 @@ const Submenu = styled('div', { shouldForwardProp: (prop) => prop !== 'top' })<{
           position: 'absolute',
           left: 0,
           top: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(5px)',
           padding: '6px',
           zIndex: 1000,
-          width: '550px',
           borderRadius: '0px',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }
@@ -64,7 +57,7 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({
   );
   const [top, setTop] = useState<number>(0);
   const elementRef = useRef<HTMLDivElement>(null);
-  const modsPerPage = 18; // 3 rows * 6 columns
+  const modsPerPage = 18;
 
   useEffect(() => {
     const element = elementRef.current;
@@ -115,74 +108,93 @@ const ArmorModSelector: React.FC<ModSelectorProps> = ({
           backgroundColor: 'rgba(10, 10, 10, 0.8)',
         }}
       />
-      <Submenu top={top} className="submenu-grid">
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            onClick={handlePrevious}
-            disabled={startIndex === 0}
-            sx={{ color: 'white', height: '100%', borderRadius: 0 }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
+      <Submenu
+        top={top}
+        className="submenu-grid"
+        sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(5px)' }}
+      >
+        <Stack direction="row" spacing={1}>
+          {startIndex > 0 && (
+            <IconButton
+              onClick={handlePrevious}
+              disabled={startIndex === 0}
+              sx={{
+                color: 'white',
+                height: '100%',
+                borderRadius: 0,
+                backgroundColor: 'grey',
+                opacity: 0.8,
+              }}
+            >
+              <ArrowLeft fontSize="large" />
+            </IconButton>
+          )}
           <Box
             sx={{
               display: 'grid',
               gridTemplateColumns: 'repeat(6, 74px)',
-              gap: '5px',
+              gap: '8px',
               justifyContent: 'center',
             }}
           >
             {mods.slice(startIndex, startIndex + modsPerPage).map((mod) => (
-              <Box key={mod.itemHash} sx={{ position: 'relative' }}>
-                <HoverCard item={mod}>
+              <HoverCard item={mod}>
+                <Box
+                  className="submenu-item"
+                  sx={{
+                    width: '74px',
+                    height: '74px',
+                    backgroundImage: `url(${mod.isOwned ? mod.icon : lockedModIcon})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    cursor: isModDisabled(mod) ? 'not-allowed' : 'pointer',
+                    backgroundColor: 'rgba(10, 10, 10, 0.8)',
+                    filter: isModDisabled(mod) ? 'grayscale(100%) brightness(50%)' : 'none',
+                    transition: 'filter 0.3s ease',
+                    border: '2px solid grey',
+                  }}
+                  onClick={() => !isModDisabled(mod) && onSelectMod(mod)}
+                  onMouseEnter={() => setHoveredMod(mod)}
+                  onMouseLeave={() => setHoveredMod(null)}
+                />
+                {hoveredMod === mod && isModDisabled(mod) && (
                   <Box
-                    className="submenu-item"
                     sx={{
-                      width: '74px',
-                      height: '74px',
-                      backgroundImage: `url(${mod.isOwned ? mod.icon : lockedModIcon})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      cursor: isModDisabled(mod) ? 'not-allowed' : 'pointer',
-                      backgroundColor: 'rgba(10, 10, 10, 0.8)',
-                      filter: isModDisabled(mod) ? 'grayscale(100%) brightness(50%)' : 'none',
-                      transition: 'filter 0.3s ease',
+                      position: 'absolute',
+                      top: -25,
+                      left: -140,
+                      width: '150%',
+                      backgroundColor: 'red',
+                      color: 'white',
+                      padding: '4px',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      zIndex: 1601,
                     }}
-                    onClick={() => !isModDisabled(mod) && onSelectMod(mod)}
-                    onMouseEnter={() => setHoveredMod(mod)}
-                    onMouseLeave={() => setHoveredMod(null)}
-                  />
-                  {hoveredMod === mod && isModDisabled(mod) && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: -25,
-                        left: -140,
-                        width: '150%',
-                        backgroundColor: 'red',
-                        color: 'white',
-                        padding: '4px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        zIndex: 1601,
-                      }}
-                    >
-                      {renderHoverMessage(mod)}
-                    </Box>
-                  )}
-                </HoverCard>
-              </Box>
+                  >
+                    {renderHoverMessage(mod)}
+                  </Box>
+                )}
+              </HoverCard>
             ))}
           </Box>
-          <IconButton
-            onClick={handleNext}
-            disabled={startIndex + modsPerPage >= mods.length}
-            sx={{ color: 'white', height: '100%', borderRadius: 0 }}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </Box>
+          {startIndex + modsPerPage < mods.length && (
+            <IconButton
+              onClick={handleNext}
+              disabled={startIndex + modsPerPage >= mods.length}
+              sx={{
+                color: 'white',
+                height: '100%',
+                borderRadius: 0,
+                backgroundColor: 'grey',
+                opacity: 0.8,
+              }}
+            >
+              <ArrowRight fontSize="large" />
+            </IconButton>
+          )}
+        </Stack>
       </Submenu>
     </Box>
   );

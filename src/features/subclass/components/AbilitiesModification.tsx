@@ -1,16 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Paper, Button, Typography, styled, CircularProgress, Stack } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Typography, styled, CircularProgress, Stack } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import { PLUG_CATEGORY_HASH } from '../../../lib/bungie_api/subclass-constants';
 import { RootState } from '../../../store';
 import { db } from '../../../store/db';
-import { updateSubclassMods } from '../../../store/LoadoutReducer';
 import { ManifestPlug, ManifestAspect, ManifestStatPlug } from '../../../types/manifest-types';
 import { DamageType, SubclassConfig } from '../../../types/d2l-types';
-import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '../../../lib/bungie_api/constants';
-import HoverCard from '../../../components/HoverCard';
+import { EMPTY_FRAGMENT } from '../../../lib/bungie_api/constants';
 import { BoldTitle } from '@/components/BoldTitle';
+import AbilitySelector from './AbilitySelector';
 
 interface AbilitiesModificationProps {
   subclass: SubclassConfig;
@@ -25,80 +24,6 @@ const subclassTypeMap: { [key in DamageType]: string } = {
   7: 'STRAND',
   5: '',
 };
-
-const ModSlot = styled(Paper)(({ theme }) => ({
-  width: 74,
-  height: 74,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  borderRadius: 0,
-  backgroundColor: 'transparent',
-  boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.2)',
-  '&:hover': {
-    boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.5)',
-  },
-}));
-
-const SubmenuContainer = styled(Paper, {
-  shouldForwardProp: (prop) => prop !== 'top' && prop !== 'left',
-})<{ top: number; left: number }>(({ theme, top, left }) => ({
-  position: 'fixed',
-  zIndex: 1500,
-  padding: theme.spacing(1.5),
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  backdropFilter: 'blur(10px)',
-  maxWidth: '850px',
-  boxShadow: theme.shadows[10],
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: theme.spacing(1.5),
-  top,
-  left,
-}));
-
-const OptionButton = styled(Button)(({ theme }) => ({
-  width: 74,
-  height: 74,
-  padding: 0,
-  minWidth: 'unset',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  borderRadius: 0,
-  margin: theme.spacing(0.25),
-}));
-
-const SuperModSlot = styled('div')(({ theme }) => ({
-  width: 250,
-  height: 250,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundSize: '100%',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center',
-  backgroundColor: 'transparent',
-  position: 'relative',
-  boxShadow: 'none',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    width: '70%',
-    height: '70%',
-    transform: 'translate(-50%, -50%) rotate(45deg)',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    boxSizing: 'border-box',
-    transition: 'border-color 0.3s ease',
-  },
-  '&:hover::before': {
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-  },
-}));
-
 const SectionSubtitle = styled(Typography)(({ theme }) => ({
   opacity: 0.7,
   borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
@@ -177,27 +102,7 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
   }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
-  const [submenuPosition, setSubmenuPosition] = useState({ top: 0, left: 0 });
-  const dispatch = useDispatch();
   const loadout = useSelector((state: RootState) => state.loadoutConfig.loadout.subclassConfig);
-
-  const [windowDimensions, setWindowDimensions] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     if (subclass) {
@@ -214,200 +119,6 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
         });
     }
   }, [subclass]);
-
-  const calculateAvailableFragmentSlots = useCallback(() => {
-    return loadout.aspects.reduce((total, aspect) => total + (aspect.energyCapacity || 0), 0);
-  }, [loadout.aspects]);
-
-  const handleModSelect = (
-    category: string,
-    mod: ManifestPlug | ManifestAspect | ManifestStatPlug,
-    index?: number
-  ) => {
-    let updatedMods;
-
-    switch (category) {
-      case 'ASPECTS':
-        updatedMods = [...loadout.aspects] as ManifestAspect[];
-        break;
-      case 'FRAGMENTS':
-        updatedMods = [...loadout.fragments] as ManifestStatPlug[];
-        break;
-      case 'SUPERS':
-      case 'CLASS_ABILITIES':
-      case 'MOVEMENT_ABILITIES':
-      case 'MELEE_ABILITIES':
-      case 'GRENADES':
-        updatedMods = [mod] as ManifestPlug[];
-        break;
-      default:
-        return;
-    }
-
-    if (category === 'ASPECTS' || category === 'FRAGMENTS') {
-      const modIndex = updatedMods.findIndex(
-        (existingMod) => existingMod.itemHash === mod.itemHash
-      );
-
-      if (modIndex !== -1 && modIndex !== index) {
-        updatedMods[modIndex] = category === 'ASPECTS' ? EMPTY_ASPECT : EMPTY_FRAGMENT;
-      }
-
-      updatedMods[index!] = mod as (typeof updatedMods)[number];
-
-      if (category === 'ASPECTS') {
-        const newAspects = updatedMods as ManifestAspect[];
-        const newAvailableSlots = newAspects.reduce(
-          (total, aspect) => total + (aspect.energyCapacity || 0),
-          0
-        );
-
-        const updatedFragments = loadout.fragments.map((fragment, idx) =>
-          idx < newAvailableSlots ? fragment : EMPTY_FRAGMENT
-        );
-
-        dispatch(
-          updateSubclassMods({
-            category: 'ASPECTS',
-            mods: newAspects,
-          })
-        );
-        dispatch(
-          updateSubclassMods({
-            category: 'FRAGMENTS',
-            mods: updatedFragments,
-          })
-        );
-        return;
-      }
-    }
-
-    dispatch(
-      updateSubclassMods({
-        category,
-        mods: updatedMods,
-      })
-    );
-  };
-
-  const calculateSubmenuPosition = useCallback(
-    (rect: DOMRect, category: string) => {
-      const submenuWidth = 850; // Adjust this value based on your submenu's actual width
-      const submenuHeight = 300; // Adjust this value based on your submenu's approximate height
-      let top = rect.bottom + window.scrollY;
-      let left = rect.left + window.scrollX;
-
-      // Adjust horizontal position if it goes off-screen
-      if (left + submenuWidth > windowDimensions.width) {
-        left = windowDimensions.width - submenuWidth - 10; // 10px padding
-      }
-
-      // Adjust vertical position if it goes off-screen
-      if (top + submenuHeight > windowDimensions.height) {
-        top = rect.top - submenuHeight + window.scrollY;
-      }
-
-      if (category === 'FRAGMENTS') {
-        // Find the first fragment slot's position
-        const firstFragmentSlot = document.querySelector('[data-slot-id^="FRAGMENTS-"]');
-        if (firstFragmentSlot) {
-          const firstRect = firstFragmentSlot.getBoundingClientRect();
-          left = firstRect.left + window.scrollX;
-          top = firstRect.bottom + window.scrollY;
-
-          // Readjust if it goes off-screen
-          if (left + submenuWidth > windowDimensions.width) {
-            left = windowDimensions.width - submenuWidth - 10;
-          }
-          if (top + submenuHeight > windowDimensions.height) {
-            top = firstRect.top - submenuHeight + window.scrollY;
-          }
-        }
-      }
-
-      return { top, left };
-    },
-    [windowDimensions]
-  );
-
-  const handleMouseEnter = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>, slotId: string) => {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const category = slotId.split('-')[0];
-      const { top, left } = calculateSubmenuPosition(rect, category);
-      setSubmenuPosition({ top, left });
-      setHoveredSlot(slotId);
-    },
-    [calculateSubmenuPosition]
-  );
-
-  const handleMouseLeave = () => {
-    setHoveredSlot(null);
-  };
-
-  const renderModCategory = useCallback(
-    (
-      category: string,
-      currentMod: ManifestPlug | ManifestAspect | ManifestStatPlug | null,
-      index?: number
-    ) => {
-      const isEmptyMod = !currentMod || currentMod.itemHash === 0;
-      const slotId = `${category}-${index ?? 0}`;
-      const isHovered = hoveredSlot === slotId;
-
-      const SlotComponent = category === 'SUPERS' ? SuperModSlot : ModSlot;
-
-      const availableFragmentSlots = calculateAvailableFragmentSlots();
-      const isDisabled = category === 'FRAGMENTS' && index! >= availableFragmentSlots;
-
-      return (
-        <Box key={slotId}>
-          <div
-            data-slot-id={slotId}
-            onMouseEnter={(e) => handleMouseEnter(e, slotId)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <HoverCard item={currentMod}>
-              <SlotComponent
-                style={{
-                  backgroundImage: currentMod ? `url(${currentMod.icon})` : 'none',
-                  opacity: isDisabled ? 0.5 : 1,
-                  pointerEvents: isDisabled ? 'none' : 'auto',
-                }}
-              >
-                {isEmptyMod && (
-                  <Typography variant="caption" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                    {isDisabled ? 'Locked' : 'Empty'}
-                  </Typography>
-                )}
-              </SlotComponent>
-            </HoverCard>
-            {isHovered && !isDisabled && (
-              <SubmenuContainer top={submenuPosition.top} left={submenuPosition.left}>
-                {mods[category]?.map((mod) => (
-                  <HoverCard item={mod} key={mod.itemHash}>
-                    <OptionButton
-                      onClick={() => handleModSelect(category, mod, index)}
-                      style={{ backgroundImage: `url(${mod.icon})` }}
-                      title={mod.name}
-                    />
-                  </HoverCard>
-                ))}
-              </SubmenuContainer>
-            )}
-          </div>
-        </Box>
-      );
-    },
-    [
-      mods,
-      handleModSelect,
-      hoveredSlot,
-      submenuPosition,
-      calculateAvailableFragmentSlots,
-      windowDimensions,
-    ]
-  );
 
   if (loading) {
     return (
@@ -433,7 +144,6 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
     <Container maxWidth="md">
       <Stack
         direction="row"
-        marginBottom={4}
         textAlign="start"
         alignItems="center"
         justifyContent="flex-start"
@@ -442,9 +152,9 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
         <img src={subclass.subclass.icon} width="8%" height="auto" />
         <BoldTitle variant="h4">{subclass.subclass.name.toLocaleUpperCase()}</BoldTitle>
       </Stack>
-      <Box display="flex" flexDirection="row" gap={10}>
-        <Box flex={1} display="flex" justifyContent="center" alignItems="flex-start" marginTop={15}>
-          {renderModCategory('SUPERS', loadout.super)}
+      <Box display="flex" flexDirection="row" gap={5}>
+        <Box flex={1} display="flex" justifyContent="center" alignItems="flex-start" marginTop={5}>
+          <AbilitySelector category="SUPERS" currentMod={loadout.super} mods={mods['SUPERS']} />
         </Box>
         <Box flex={3}>
           <Box marginBottom={2}>
@@ -452,10 +162,32 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
               ABILITIES
             </SectionSubtitle>
             <Box display="flex" flexWrap="wrap" gap={2}>
-              {renderModCategory('CLASS_ABILITIES', loadout.classAbility)}
-              {renderModCategory('MOVEMENT_ABILITIES', loadout.movementAbility)}
-              {renderModCategory('MELEE_ABILITIES', loadout.meleeAbility)}
-              {renderModCategory('GRENADES', loadout.grenade)}
+              <AbilitySelector
+                category="CLASS_ABILITIES"
+                currentMod={loadout.classAbility}
+                index={0}
+                mods={mods['CLASS_ABILITIES']}
+              />
+
+              <AbilitySelector
+                category="MOVEMENT_ABILITIES"
+                currentMod={loadout.movementAbility}
+                index={1}
+                mods={mods['MOVEMENT_ABILITIES']}
+              />
+
+              <AbilitySelector
+                category="MELEE_ABILITIES"
+                currentMod={loadout.meleeAbility}
+                index={2}
+                mods={mods['MELEE_ABILITIES']}
+              />
+              <AbilitySelector
+                category="GRENADES"
+                currentMod={loadout.grenade}
+                index={3}
+                mods={mods['GRENADES']}
+              />
             </Box>
           </Box>
           <Box marginBottom={2}>
@@ -464,24 +196,28 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
             </SectionSubtitle>
             <Box display="flex" flexWrap="wrap" gap={2}>
               {loadout.aspects.map((aspect, index) => (
-                <React.Fragment key={index}>
-                  {renderModCategory('ASPECTS', aspect, index)}
-                </React.Fragment>
+                <AbilitySelector
+                  category="ASPECTS"
+                  currentMod={aspect}
+                  index={index}
+                  mods={mods['ASPECTS']}
+                />
               ))}
             </Box>
           </Box>
-          <Box marginBottom={2}>
+          <Box>
             <SectionSubtitle variant="h6" width="89%">
               FRAGMENTS
             </SectionSubtitle>
             <Box display="flex" flexWrap="wrap" gap={2}>
               {Array.from({ length: 5 }).map((_, index) => (
                 <React.Fragment key={index}>
-                  {renderModCategory(
-                    'FRAGMENTS',
-                    loadout.fragments[index] || EMPTY_FRAGMENT,
-                    index
-                  )}
+                  <AbilitySelector
+                    category="FRAGMENTS"
+                    currentMod={loadout.fragments[index] || EMPTY_FRAGMENT}
+                    index={index}
+                    mods={mods['FRAGMENTS']}
+                  />
                 </React.Fragment>
               ))}
             </Box>

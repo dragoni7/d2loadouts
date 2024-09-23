@@ -10,7 +10,6 @@ const StatModificationsContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: 'rgba(0, 0, 0, 0.2)',
   backdropFilter: 'blur(5px)',
-  borderRadius: 0,
   border: '1px solid rgba(255, 255, 255, 0.3)',
   width: '100%',
   height: '100%',
@@ -49,7 +48,7 @@ const selectFragmentStatModifications = createSelector(
     }, [] as { stat: string; value: number; name: string }[])
 );
 
-const StatModifications: React.FC = () => {
+const FragmentStats: React.FC = () => {
   const modifications = useSelector(selectFragmentStatModifications);
 
   if (modifications.length === 0) {
@@ -67,7 +66,7 @@ const StatModifications: React.FC = () => {
           width: '60%',
         }}
       >
-        Fragment Effects
+        FRAGMENT STATS
       </Typography>
       {modifications.map(({ stat, value, name }, index) => {
         const color = value > 0 ? 'green' : 'red';
@@ -90,4 +89,4 @@ const StatModifications: React.FC = () => {
   );
 };
 
-export default StatModifications;
+export default FragmentStats;
