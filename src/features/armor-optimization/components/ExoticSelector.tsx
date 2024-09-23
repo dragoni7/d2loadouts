@@ -29,7 +29,7 @@ interface IntrinsicMod {
   icon: string;
 }
 
-const ExoticSelector: React.FC = () => {
+export default function ExoticSelector() {
   const dispatch = useDispatch();
   const [exotics, setExotics] = useState<ManifestExoticArmor[]>([]);
   const [comboInput, setComboInput] = useState('');
@@ -47,6 +47,7 @@ const ExoticSelector: React.FC = () => {
 
   const fetchExoticData = async () => {
     if (selectedCharacter) {
+      console.log(selectedCharacter.class);
       const data = await db.manifestExoticArmorCollection
         .where('class')
         .equalsIgnoreCase(selectedCharacter.class)
@@ -268,6 +269,4 @@ const ExoticSelector: React.FC = () => {
       )}
     </>
   );
-};
-
-export default ExoticSelector;
+}
