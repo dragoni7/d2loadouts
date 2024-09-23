@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Grid } from '@mui/material';
+import { Box, Container, Grid, styled, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
 import ModCustomization from '../features/armor-mods/components/ModCustomization';
 import EquipLoadout from '../features/loadouts/components/EquipLoadout';
 import AbilitiesModification from '../features/subclass/components/AbilitiesModification';
@@ -8,6 +8,27 @@ import { SubclassConfig } from '../types/d2l-types';
 import { BackButton } from './BackButton';
 import BuildStats from './BuildStats';
 import FadeIn from './FadeIn';
+
+export const WarningTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    maxWidth: 600,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    borderRadius: '0px',
+    boxShadow: 10,
+    fontFamily: 'Arial, sans-serif',
+    color: 'orange',
+    fontWeight: 'bold',
+    fontSize: 18,
+    [theme.breakpoints.down('lg')]: {
+      fontSize: 16,
+    },
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    color: 'black',
+  },
+}));
 
 interface LoadoutCustomizationProps {
   onBackClick: () => void;
@@ -99,10 +120,17 @@ const LoadoutCustomization: React.FC<LoadoutCustomizationProps> = ({
         >
           <BuildStats />
         </Grid>
-        <Grid item md={1} sx={{ textAlign: 'center', alignContent: 'end', marginBottom: 5 }}>
-          <EquipLoadout />
-          <ShareLoadout />
-        </Grid>
+        <WarningTooltip
+          title={'⚠️ You must be in orbit for equipping to occur properly ⚠️'}
+          placement="top"
+          slotProps={{ popper: { modifiers: [{ name: 'offset', options: { offset: [0, -30] } }] } }}
+          arrow
+        >
+          <Grid item md={1} sx={{ textAlign: 'center', alignContent: 'end', marginBottom: 5 }}>
+            <EquipLoadout />
+            <ShareLoadout />
+          </Grid>
+        </WarningTooltip>
       </Grid>
     </Box>
   );

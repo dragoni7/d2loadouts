@@ -181,8 +181,9 @@ const PermutationsList: React.FC<PermutationsListProps> = ({
                   {perm.permutation.map((item, idx) => (
                     <Grid item md={2} key={idx}>
                       <D2LTooltip
+                        maxWidth={300}
                         TransitionComponent={Fade}
-                        title={`${item.name}\n${formatArmorStats(item)}`}
+                        title={`${item.name}\n\n${formatArmorStats(item)}`}
                         placement="left"
                         arrow
                         followCursor

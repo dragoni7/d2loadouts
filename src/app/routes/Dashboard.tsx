@@ -460,25 +460,12 @@ export const Dashboard: React.FC = () => {
                   <NumberBoxes maxReachableValues={maxReachableValues} />
                 </Stack>
               </Grid>
-              <Grid
-                item
-                container
-                md={4}
-                spacing={3}
-                direction="column"
-                justifyContent={'start'}
-                alignItems={'center'}
-                sx={{ marginTop: '1%' }}
-              >
-                <Grid item>
+              <Grid item md={4} sx={{ marginTop: '2%' }}>
+                <Stack spacing={2} alignItems="center">
                   <ExoticSelector />
-                </Grid>
-                <Grid item height="20%">
                   <Filters />
-                </Grid>
-                <Grid item alignSelf="flex-start">
                   <FragmentStats />
-                </Grid>
+                </Stack>
               </Grid>
               <Grid item md={4} sx={{ marginTop: '1%' }}>
                 {filteredPermutations ? (

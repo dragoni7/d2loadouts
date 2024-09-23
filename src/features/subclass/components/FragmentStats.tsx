@@ -1,21 +1,21 @@
 import React from 'react';
-import { Box, styled, Typography } from '@mui/material';
+import { Stack, styled, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from '../../../store';
 import { ManifestStatPlug } from '../../../types/manifest-types';
 import { statIcons } from '../../../util/constants';
+import ClearFragments from './ClearFragments';
 
-const StatModificationsContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
+const FragmentStatsContainer = styled(Stack)(({ theme }) => ({
+  padding: theme.spacing(1),
   backgroundColor: 'rgba(0, 0, 0, 0.2)',
   backdropFilter: 'blur(5px)',
   border: '1px solid rgba(255, 255, 255, 0.3)',
-  width: '100%',
-  height: '100%',
+  width: '50%',
 }));
 
-const StatModificationItem = styled('div')(({ theme }) => ({
+const FragmentStatsItem = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   fontFamily: 'Helvetica, Arial, sans-serif',
@@ -51,19 +51,15 @@ const selectFragmentStatModifications = createSelector(
 const FragmentStats: React.FC = () => {
   const modifications = useSelector(selectFragmentStatModifications);
 
-  if (modifications.length === 0) {
-    return null;
-  }
-
   return (
-    <StatModificationsContainer>
+    <FragmentStatsContainer justifyContent="space-between" spacing={2}>
       <Typography
         sx={{
           opacity: 0.8,
           borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
           paddingBottom: 1,
           marginBottom: 2,
-          width: '60%',
+          width: '100%',
         }}
       >
         FRAGMENT STATS
@@ -72,7 +68,7 @@ const FragmentStats: React.FC = () => {
         const color = value > 0 ? 'green' : 'red';
         const sign = value > 0 ? '+' : '';
         return (
-          <StatModificationItem key={`${stat}-${index}`}>
+          <FragmentStatsItem key={`${stat}-${index}`}>
             <StatIcon
               src={statIcons[stat]}
               alt={stat}
@@ -82,10 +78,11 @@ const FragmentStats: React.FC = () => {
               {sign}
               {value} {name}
             </span>
-          </StatModificationItem>
+          </FragmentStatsItem>
         );
       })}
-    </StatModificationsContainer>
+      {modifications.length > 0 && <ClearFragments />}
+    </FragmentStatsContainer>
   );
 };
 

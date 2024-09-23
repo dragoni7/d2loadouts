@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography, Grid, Stack } from '@mui/material';
 import { ARMOR_ARRAY, STATS } from '../lib/bungie_api/constants';
 import { RootState } from '../store';
 import { StatName, ArmorModKeys } from '../types/d2l-types';
@@ -49,27 +49,27 @@ const BuildStats: React.FC = () => {
   }, [loadout]);
 
   return (
-    <Box
+    <Stack
+      padding={1}
+      direction="row"
+      spacing={2}
       alignItems="center"
       justifyContent="center"
       sx={{
+        border: '1px solid rgba(255, 255, 255, 0.3)',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(10px)',
       }}
     >
-      <Grid container justifyContent="center" spacing={2}>
-        {(STATS as StatName[]).map((stat) => (
-          <Grid item key={stat}>
-            <Box alignItems="center" margin={1}>
-              <img width={22} height={22} src={statIcons[stat]} alt={stat} />
-              <Typography color="white" fontWeight="bold" variant="body2">
-                {totalStats[stat]}
-              </Typography>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+      {(STATS as StatName[]).map((stat) => (
+        <Stack alignItems="center" spacing={1}>
+          <img width="60%" height="60%" src={statIcons[stat]} alt={stat} />
+          <Typography color="white" fontWeight="bold" variant="body2">
+            {totalStats[stat]}
+          </Typography>
+        </Stack>
+      ))}
+    </Stack>
   );
 };
 
