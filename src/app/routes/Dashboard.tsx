@@ -450,7 +450,7 @@ export const Dashboard: React.FC = () => {
               sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '120px' }}
             >
               <Grid item md={4} sx={{ marginTop: '1%' }}>
-                <Stack width="100%" spacing={1} rowGap={3} marginLeft={2}>
+                <Stack spacing={1} rowGap={6} marginLeft={1} alignItems="center">
                   <SubclassSelector
                     subclasses={subclasses}
                     selectedSubclass={selectedSubclass}
@@ -473,7 +473,7 @@ export const Dashboard: React.FC = () => {
                 <Grid item>
                   <ExoticSelector />
                 </Grid>
-                <Grid item height="22vh">
+                <Grid item height="20%">
                   <Filters />
                 </Grid>
                 <Grid item alignSelf="flex-start">

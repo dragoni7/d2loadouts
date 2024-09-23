@@ -164,7 +164,7 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
         transform: x.to((x) => `translateX(${x * 40}px)`),
       }}
     >
-      <Stack direction="row" columnGap={4} justifyContent="flex-start" alignItems="center">
+      <Stack direction="row" columnGap={8} justifyContent="flex-start" alignItems="center">
         {!isPrismaticActive && (
           <Box className="diamond-grid">
             {subclasses &&

@@ -66,8 +66,7 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ maxReachableValues }) => {
   return (
     <Box
       sx={{
-        paddingRight: 2,
-        paddingTop: 2,
+        padding: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
         backdropFilter: 'blur(5px)',
         width: '91%',
