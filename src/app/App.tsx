@@ -4,7 +4,6 @@ import { createRouter } from './routes';
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import { createTheme, ThemeProvider } from '@mui/material';
-import CustomCursor from '@/components/CustomCursor';
 
 const AppRouter = () => {
   const router = useMemo(() => createRouter(), []);
@@ -35,7 +34,6 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <CustomCursor />
         <AppRouter />
       </Provider>
     </ThemeProvider>
