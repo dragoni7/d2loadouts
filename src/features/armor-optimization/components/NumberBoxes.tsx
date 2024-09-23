@@ -69,11 +69,10 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ maxReachableValues }) => {
         padding: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
         backdropFilter: 'blur(5px)',
-        width: '91%',
       }}
     >
       {STATS.map((stat) => (
-        <Stack direction="row" key={stat} alignItems="center" spacing={1} marginY={1}>
+        <Stack direction="row" key={stat} alignItems="center" marginTop={1}>
           <img width="8%" height="8%" src={statIcons[stat.toLowerCase()]} alt={stat} />
           {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => {
             const statName = stat.toLowerCase() as StatName;
@@ -86,6 +85,7 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ maxReachableValues }) => {
                 isSelected={selectedValues[stat] !== undefined && number <= selectedValues[stat]}
                 disabled={isDisabled}
                 onClick={() => !isDisabled && handleSelect(stat, number)}
+                sx={{ ':hover': { scale: 1.08 } }}
               >
                 {number / 10}
               </NumberBox>
