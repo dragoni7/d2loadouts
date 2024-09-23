@@ -14,6 +14,7 @@ export const D2LTooltip = styled(({ className, ...props }: D2LTooltipProps) => (
     boxShadow: 10,
     fontFamily: 'Arial, sans-serif',
     color: '#ffffff',
+    whiteSpace: 'pre-wrap',
     fontWeight: 'bold',
     fontSize: 14,
     [theme.breakpoints.down('lg')]: {
