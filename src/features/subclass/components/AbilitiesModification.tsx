@@ -153,7 +153,7 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
         <BoldTitle variant="h4">{subclass.subclass.name.toLocaleUpperCase()}</BoldTitle>
       </Stack>
       <Box display="flex" flexDirection="row" gap={5}>
-        <Box flex={1} display="flex" justifyContent="center" alignItems="flex-start" marginTop={5}>
+        <Box flex={1} display="flex" justifyContent="center" alignItems="flex-start" marginTop={15}>
           <AbilitySelector category="SUPERS" currentMod={loadout.super} mods={mods['SUPERS']} />
         </Box>
         <Box flex={3}>
