@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Grid, ButtonBase, Stack } from '@mui/material';
+import { Box, ButtonBase, Stack } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { STATS } from '../../../lib/bungie_api/constants';
@@ -66,47 +66,37 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ maxReachableValues }) => {
   return (
     <Box
       sx={{
-        padding: 1,
-        marginLeft: 10,
-        marginRight: 10,
-        marginTop: 2,
+        paddingRight: 2,
+        paddingTop: 2,
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
         backdropFilter: 'blur(5px)',
-        borderRadius: 0,
+        width: '91%',
       }}
     >
       {STATS.map((stat) => (
-        <Grid key={stat} container alignItems="center" spacing={1} marginBottom={1}>
-          <Grid item md={2}>
-            <img width="50%" height="50%" src={statIcons[stat.toLowerCase()]} alt={stat} />
-          </Grid>
-          <Grid item md={10}>
-            <Stack direction="row">
-              {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => {
-                const statName = stat.toLowerCase() as StatName;
-                const isDisabled =
-                  maxReachableValues && number > (maxReachableValues[statName] || 0) ? true : false;
+        <Stack direction="row" key={stat} alignItems="center" spacing={1} marginY={1}>
+          <img width="8%" height="8%" src={statIcons[stat.toLowerCase()]} alt={stat} />
+          {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => {
+            const statName = stat.toLowerCase() as StatName;
+            const isDisabled =
+              maxReachableValues && number > (maxReachableValues[statName] || 0) ? true : false;
 
-                return (
-                  <NumberBox
-                    key={number}
-                    isSelected={
-                      selectedValues[stat] !== undefined && number <= selectedValues[stat]
-                    }
-                    disabled={isDisabled}
-                    onClick={() => !isDisabled && handleSelect(stat, number)}
-                  >
-                    {number / 10}
-                  </NumberBox>
-                );
-              })}
-            </Stack>
-          </Grid>
-        </Grid>
+            return (
+              <NumberBox
+                key={number}
+                isSelected={selectedValues[stat] !== undefined && number <= selectedValues[stat]}
+                disabled={isDisabled}
+                onClick={() => !isDisabled && handleSelect(stat, number)}
+              >
+                {number / 10}
+              </NumberBox>
+            );
+          })}
+        </Stack>
       ))}
-      <Grid container justifyContent="center" marginTop={2}>
+      <Box textAlign="center" marginTop={1}>
         <D2LButton onClick={handleClear}>Clear</D2LButton>
-      </Grid>
+      </Box>
     </Box>
   );
 };

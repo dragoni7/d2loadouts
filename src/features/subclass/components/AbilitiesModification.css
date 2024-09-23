@@ -146,10 +146,6 @@
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.selected-mod {
-  /* Additional styles for selected mods if needed */
-}
-
 .empty-slot {
   background-color: #333;
   font-size: 12px;

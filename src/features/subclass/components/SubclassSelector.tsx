@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSpring, animated, config, to } from 'react-spring';
 import './SubclassSelector.css';
-import { SubclassConfig } from '../types/d2l-types';
-import { DAMAGE_TYPE } from '../lib/bungie_api/constants';
+import { SubclassConfig } from '../../../types/d2l-types';
+import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
+import { Box, Stack } from '@mui/material';
 
-interface SingleDiamondButtonProps {
+interface SubclassSelectorProps {
   subclasses: { [key: number]: SubclassConfig | undefined } | undefined;
   selectedSubclass: SubclassConfig | null;
   onSubclassSelect: (subclass: SubclassConfig) => void;
   onSubclassRightClick: (subclass: SubclassConfig) => void;
 }
 
-const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
+const SubclassSelector: React.FC<SubclassSelectorProps> = ({
   subclasses,
   selectedSubclass,
   onSubclassSelect,
@@ -163,112 +164,114 @@ const SingleDiamondButton: React.FC<SingleDiamondButtonProps> = ({
         transform: x.to((x) => `translateX(${x * 40}px)`),
       }}
     >
-      {!isPrismaticActive && (
-        <div className="diamond-grid">
-          {subclasses &&
-            [
-              DAMAGE_TYPE.ARC,
-              DAMAGE_TYPE.SOLAR,
-              DAMAGE_TYPE.STASIS,
-              DAMAGE_TYPE.STRAND,
-              DAMAGE_TYPE.VOID,
-            ]
-              .filter((key) => Number(key) !== selectedSubclass?.damageType)
-              .map((damageType, index) => (
-                <div
-                  key={index}
-                  className={`diamond-button button-${index + 1}`}
-                  onClick={() => {
-                    if (damageType in subclasses) handleSelect(subclasses[Number(damageType)]!);
-                  }}
-                  onContextMenu={(event) => {
-                    if (damageType in subclasses && selectedSubclass?.damageType === damageType)
-                      handleOpenSubclass(event, subclasses[Number(damageType)]!);
-                  }}
-                >
-                  <img
-                    src={`/assets/subclass-icons/${damageType}.png`}
-                    alt={String(damageType)}
-                    className="diamond-icon"
-                    style={{ filter: damageType in subclasses ? 'none' : 'grayscale(100%)' }}
-                  />
-                </div>
-              ))}
-        </div>
-      )}
-      {isPrismaticActive ? (
-        <>
-          <div
-            className="prismatic-button diamond-shape"
-            onClick={(event) => {
-              if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
-                handleOpenSubclass(event, currentSubclass!);
-            }}
-          >
-            <div className="prismatic-glow diamond-shape"></div>
-            <RotatingShape />
-            <RotatingShape rotationOffset={120} />
-            <RotatingShape rotationOffset={240} />
-            <img
-              src={currentSubclass!.subclass.icon}
-              alt={currentSubclass!.subclass.name}
-              className="diamond-icon"
-            />
-          </div>
-          <animated.div
-            className="single-diamond-button"
-            style={{
-              transform: x.to((x) => `scale(${1 - x * 0.4})`),
-            }}
-            onClick={() => handleSelect(lastNonPrismaticSubclass!)}
-          >
-            <img
-              src={lastNonPrismaticSubclass!.subclass.icon}
-              alt={lastNonPrismaticSubclass!.subclass.name}
-              className="diamond-icon"
-            />
-          </animated.div>
-        </>
-      ) : (
-        <>
-          <animated.div
-            className="single-diamond-button"
-            style={{
-              transform: x.to((x) => `scale(${1 - x * 0.4})`),
-            }}
-            onClick={(event) => {
-              if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
-                handleOpenSubclass(event, currentSubclass!);
-            }}
-          >
-            {currentSubclass && (
-              <img
-                src={currentSubclass.subclass.icon}
-                alt={currentSubclass.subclass.name}
-                className="diamond-icon"
-              />
-            )}
-          </animated.div>
-          {subclasses !== undefined && subclasses[DAMAGE_TYPE.KINETIC] ? (
+      <Stack direction="row" columnGap={4} justifyContent="flex-start" alignItems="center">
+        {!isPrismaticActive && (
+          <Box className="diamond-grid">
+            {subclasses &&
+              [
+                DAMAGE_TYPE.ARC,
+                DAMAGE_TYPE.SOLAR,
+                DAMAGE_TYPE.STASIS,
+                DAMAGE_TYPE.STRAND,
+                DAMAGE_TYPE.VOID,
+              ]
+                .filter((key) => Number(key) !== selectedSubclass?.damageType)
+                .map((damageType, index) => (
+                  <div
+                    key={index}
+                    className={`diamond-button button-${index + 1}`}
+                    onClick={() => {
+                      if (damageType in subclasses) handleSelect(subclasses[Number(damageType)]!);
+                    }}
+                    onContextMenu={(event) => {
+                      if (damageType in subclasses && selectedSubclass?.damageType === damageType)
+                        handleOpenSubclass(event, subclasses[Number(damageType)]!);
+                    }}
+                  >
+                    <img
+                      src={`/assets/subclass-icons/${damageType}.png`}
+                      alt={String(damageType)}
+                      className="diamond-icon"
+                      style={{ filter: damageType in subclasses ? 'none' : 'grayscale(100%)' }}
+                    />
+                  </div>
+                ))}
+          </Box>
+        )}
+        {isPrismaticActive ? (
+          <>
             <div
-              className="prismatic-button"
-              onClick={() => handleSelect(subclasses[DAMAGE_TYPE.KINETIC]!)}
+              className="prismatic-button diamond-shape"
+              onClick={(event) => {
+                if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
+                  handleOpenSubclass(event, currentSubclass!);
+              }}
             >
-              <div className="prismatic-glow"></div>
+              <div className="prismatic-glow diamond-shape"></div>
               <RotatingShape />
               <RotatingShape rotationOffset={120} />
               <RotatingShape rotationOffset={240} />
               <img
-                src={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.icon}
-                alt={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.name}
-                className="circular-icon"
+                src={currentSubclass!.subclass.icon}
+                alt={currentSubclass!.subclass.name}
+                className="diamond-icon"
               />
             </div>
-          ) : null}
-        </>
-      )}
+            <animated.div
+              className="single-diamond-button"
+              style={{
+                transform: x.to((x) => `scale(${1 - x * 0.4})`),
+              }}
+              onClick={() => handleSelect(lastNonPrismaticSubclass!)}
+            >
+              <img
+                src={lastNonPrismaticSubclass!.subclass.icon}
+                alt={lastNonPrismaticSubclass!.subclass.name}
+                className="diamond-icon"
+              />
+            </animated.div>
+          </>
+        ) : (
+          <>
+            <animated.div
+              className="single-diamond-button"
+              style={{
+                transform: x.to((x) => `scale(${1 - x * 0.4})`),
+              }}
+              onClick={(event) => {
+                if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
+                  handleOpenSubclass(event, currentSubclass!);
+              }}
+            >
+              {currentSubclass && (
+                <img
+                  src={currentSubclass.subclass.icon}
+                  alt={currentSubclass.subclass.name}
+                  className="diamond-icon"
+                />
+              )}
+            </animated.div>
+            {subclasses !== undefined && subclasses[DAMAGE_TYPE.KINETIC] ? (
+              <div
+                className="prismatic-button"
+                onClick={() => handleSelect(subclasses[DAMAGE_TYPE.KINETIC]!)}
+              >
+                <div className="prismatic-glow"></div>
+                <RotatingShape />
+                <RotatingShape rotationOffset={120} />
+                <RotatingShape rotationOffset={240} />
+                <img
+                  src={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.icon}
+                  alt={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.name}
+                  className="circular-icon"
+                />
+              </div>
+            ) : null}
+          </>
+        )}
+      </Stack>
     </animated.div>
   );
 };
 
-export default SingleDiamondButton;
+export default SubclassSelector;

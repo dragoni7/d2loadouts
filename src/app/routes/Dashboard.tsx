@@ -8,14 +8,14 @@ import usePermutations from '@/features/armor-optimization/hooks/use-permutation
 import { getModsFromPermutation } from '@/features/armor-optimization/util/permutation-utils';
 import { equipSharedMods } from '@/features/loadouts/util/loadout-utils';
 import useFragmentStats from '@/features/subclass/hooks/use-fragment-stats';
-import { Box, CircularProgress, Grid, Typography } from '@mui/material';
+import { Box, CircularProgress, Grid, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Footer from '../../components/Footer';
 import HeaderComponent from '../../components/HeaderComponent';
 import LoadoutCustomization from '../../components/LoadoutCustomization';
-import SingleDiamondButton from '../../components/SubclassSelector';
+import SubclassSelector from '../../features/subclass/components/SubclassSelector';
 import ExoticSelector from '../../features/armor-optimization/components/ExoticSelector';
 import NumberBoxes from '../../features/armor-optimization/components/NumberBoxes';
 import PermutationsList from '../../features/armor-optimization/components/PermutationsList';
@@ -443,62 +443,55 @@ export const Dashboard: React.FC = () => {
           </FadeIn>
 
           <FadeIn duration={300}>
-            <Grid
+            <DashboardContent
               container
-              sx={{
-                width: '100vw',
-                height: '100vh',
-                overflowY: 'auto',
-                paddingTop: '120px',
-              }}
+              md={12}
+              justifyContent="space-evenly"
+              sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '120px' }}
             >
-              <DashboardContent item container md={12} justifyContent="space-evenly">
-                <Grid item container direction="column" md={4} spacing={3} sx={{ marginTop: '2%' }}>
-                  <Grid item md={1}>
-                    <SingleDiamondButton
-                      subclasses={subclasses}
-                      selectedSubclass={selectedSubclass}
-                      onSubclassSelect={handleSubclassSelect}
-                      onSubclassRightClick={handleSubclassRightClick}
-                    />
-                  </Grid>
-                  <Grid item md={1}>
-                    <NumberBoxes maxReachableValues={maxReachableValues} />
-                  </Grid>
+              <Grid item md={4} sx={{ marginTop: '1%' }}>
+                <Stack width="100%" spacing={1} rowGap={3} marginLeft={2}>
+                  <SubclassSelector
+                    subclasses={subclasses}
+                    selectedSubclass={selectedSubclass}
+                    onSubclassSelect={handleSubclassSelect}
+                    onSubclassRightClick={handleSubclassRightClick}
+                  />
+                  <NumberBoxes maxReachableValues={maxReachableValues} />
+                </Stack>
+              </Grid>
+              <Grid
+                item
+                container
+                md={4}
+                spacing={3}
+                direction="column"
+                justifyContent={'start'}
+                alignItems={'center'}
+                sx={{ marginTop: '1%' }}
+              >
+                <Grid item>
+                  <ExoticSelector />
                 </Grid>
-                <Grid
-                  item
-                  container
-                  md={4}
-                  spacing={3}
-                  direction="column"
-                  justifyContent={'start'}
-                  alignItems={'center'}
-                  sx={{ marginTop: '1%' }}
-                >
-                  <Grid item>
-                    <ExoticSelector />
-                  </Grid>
-                  <Grid item height="22vh">
-                    <Filters />
-                  </Grid>
-                  <Grid item alignSelf="flex-start">
-                    <StatModifications />
-                  </Grid>
+                <Grid item height="22vh">
+                  <Filters />
                 </Grid>
-                <Grid item md={4} sx={{ marginTop: '1%' }}>
-                  {filteredPermutations ? (
-                    <PermutationsList
-                      permutations={filteredPermutations}
-                      onPermutationClick={openLoadoutCustomization}
-                    />
-                  ) : (
-                    false
-                  )}
+                <Grid item alignSelf="flex-start">
+                  <StatModifications />
                 </Grid>
-                <Footer />
-              </DashboardContent>
-            </Grid>
+              </Grid>
+              <Grid item md={4} sx={{ marginTop: '1%' }}>
+                {filteredPermutations ? (
+                  <PermutationsList
+                    permutations={filteredPermutations}
+                    onPermutationClick={openLoadoutCustomization}
+                  />
+                ) : (
+                  false
+                )}
+              </Grid>
+              <Footer />
+            </DashboardContent>
           </FadeIn>
         </>
       ) : (

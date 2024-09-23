@@ -35,29 +35,28 @@ const Footer: React.FC = () => {
         zIndex: 1000,
       }}
     >
-      <Typography
-        variant="caption"
-        textAlign="center"
-        sx={{
-          color: 'white',
-          textAlign: 'center',
-          position: 'relative',
-          zIndex: 1,
-          width: '100%',
-        }}
-      >
-        Built by Dragoni and Rorschach. Destiny 2 and its assets are the property of Bungie. Used
-        under Bungie's Fan-Created Media and Art guidelines. Consider supporting us!
-      </Typography>
-
       <Stack
         direction="row"
-        alignItems="flex-end"
+        alignItems="center"
         justifyContent="center"
         spacing={2}
-        sx={{ position: 'absolute', right: 0, zIndex: 1001, width: '20%' }}
+        sx={{ position: 'absolute', right: 0, zIndex: 1001, width: '100%' }}
       >
-        <Box style={{ width: '50%' }}>
+        <Typography
+          variant="caption"
+          textAlign="center"
+          sx={{
+            color: 'white',
+            textAlign: 'center',
+            position: 'relative',
+            zIndex: 1,
+            width: '95%',
+          }}
+        >
+          Built by Dragoni and Rorschach. Destiny 2 and its assets are the property of Bungie. Used
+          under Bungie's Fan-Created Media and Art guidelines. Consider supporting us!
+        </Typography>
+        <Box style={{ width: '5%' }}>
           <CoffeeButton />
         </Box>
         <RefreshCharacters />
