@@ -1,6 +1,6 @@
 import React from 'react';
 import AbilitiesModification from './AbilitiesModification';
-import { Box, Stack } from '@mui/material';
+import { Box, Grid, Stack } from '@mui/material';
 import { SubclassConfig } from '../../../types/d2l-types';
 import { BackButton } from '../../../components/BackButton';
 import FragmentStats from './FragmentStats';
@@ -18,12 +18,12 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
   screenshot,
 }) => {
   return (
-    <Box
+    <Grid
+      container
+      alignItems="center"
+      justifyContent="flex-start"
       sx={{
         backgroundImage: `url(${screenshot})`,
-        position: 'fixed',
-        top: 0,
-        left: 0,
         width: '100vw',
         height: '100vh',
         backgroundSize: 'cover',
@@ -31,21 +31,34 @@ const SubclassCustomizationWrapper: React.FC<SubclassCustomizationWrapperProps> 
         overflow: 'auto',
       }}
     >
-      <Box position="absolute" top={16} left={16} zIndex={1000}>
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 0,
+        }}
+      />
+      <Grid item md={12}>
         <BackButton onClick={onBackClick} startIcon={<span style={{ fontSize: '1.2em' }}>←</span>}>
           Back
         </BackButton>
-      </Box>
-      <Box sx={{ marginTop: '7vh' }}>
-        <AbilitiesModification subclass={subclass} />
-      </Box>
-      <Box position="absolute" bottom={50} left={16} zIndex={1000}>
-        <Stack spacing={5}>
-          <BuildStats />
+      </Grid>
+      <Grid item md={4}>
+        <Stack spacing={2} alignItems="flex-start" justifyContent="center" marginLeft={2}>
+          <Box width="53%">
+            <BuildStats />
+          </Box>
           <FragmentStats />
         </Stack>
-      </Box>
-    </Box>
+      </Grid>
+      <Grid item height="95%" marginTop={2} zIndex={1}>
+        <AbilitiesModification subclass={subclass} />
+      </Grid>
+    </Grid>
   );
 };
 
