@@ -164,7 +164,7 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
         transform: x.to((x) => `translateX(${x * 40}px)`),
       }}
     >
-      <Stack direction="row" columnGap={8} justifyContent="flex-start" alignItems="center">
+      <Stack direction="row" spacing={10} justifyContent="center" alignItems="center">
         {!isPrismaticActive && (
           <Box className="diamond-grid">
             {subclasses &&
@@ -200,6 +200,19 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
         )}
         {isPrismaticActive ? (
           <>
+            <animated.div
+              className="single-diamond-button"
+              style={{
+                transform: x.to((x) => `scale(${1 - x * 0.4})`),
+              }}
+              onClick={() => handleSelect(lastNonPrismaticSubclass!)}
+            >
+              <img
+                src={lastNonPrismaticSubclass!.subclass.icon}
+                alt={lastNonPrismaticSubclass!.subclass.name}
+                className="diamond-icon"
+              />
+            </animated.div>
             <div
               className="prismatic-button diamond-shape"
               onClick={(event) => {
@@ -217,19 +230,7 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
                 className="diamond-icon"
               />
             </div>
-            <animated.div
-              className="single-diamond-button"
-              style={{
-                transform: x.to((x) => `scale(${1 - x * 0.4})`),
-              }}
-              onClick={() => handleSelect(lastNonPrismaticSubclass!)}
-            >
-              <img
-                src={lastNonPrismaticSubclass!.subclass.icon}
-                alt={lastNonPrismaticSubclass!.subclass.name}
-                className="diamond-icon"
-              />
-            </animated.div>
+            <Box className="diamond-grid" />
           </>
         ) : (
           <>
@@ -266,7 +267,9 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
                   className="circular-icon"
                 />
               </div>
-            ) : null}
+            ) : (
+              false
+            )}
           </>
         )}
       </Stack>

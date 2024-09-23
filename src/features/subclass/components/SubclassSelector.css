@@ -69,8 +69,8 @@
 }
 
 .single-diamond-button {
-  width: 28%;
-  height: 28%;
+  width: 20%;
+  height: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -153,8 +153,4 @@
 /* Styles for reduced size when prismatic is active */
 .prismatic-active .single-diamond-button {
   transition: all 0.3s ease;
-}
-
-.prismatic-active.single-diamond-wrapper {
-  gap: 1%;
 }
