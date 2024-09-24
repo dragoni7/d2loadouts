@@ -450,7 +450,7 @@ export const Dashboard: React.FC = () => {
               sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '120px' }}
             >
               <Grid item md={4} sx={{ marginTop: '2%' }}>
-                <Stack spacing={1} rowGap={6} marginLeft={1} alignItems="center">
+                <Stack spacing={1} rowGap={6} marginLeft={1} alignItems="center" marginTop={4}>
                   <SubclassSelector
                     subclasses={subclasses}
                     selectedSubclass={selectedSubclass}
