@@ -1,4 +1,4 @@
-import { RootState, store } from '../../../store';
+import { RootState } from '../../../store';
 import ArmorConfig from './ArmorConfig';
 import { Grid, Stack, styled, Typography } from '@mui/material';
 import useArtificeMods from '../../../hooks/use-artifice-mods';
@@ -32,7 +32,7 @@ const ModCustomization: React.FC = () => {
       {requiredMods.length !== 0 ? (
         <>
           <Grid item md={12} marginLeft={{ md: 4, lg: 8 }}>
-            <StyledSubTitle>REQUIRED MODS</StyledSubTitle>
+            <StyledSubTitle>REQUIRED MODS // CLICK MODS TO AUTO EQUIP</StyledSubTitle>
           </Grid>
           <Grid item md={10} marginBottom={6} marginLeft={{ md: 4, lg: 8 }}>
             <Stack direction="row" spacing={2}>
