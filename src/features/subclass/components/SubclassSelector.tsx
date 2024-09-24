@@ -1,9 +1,86 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSpring, animated, config, to } from 'react-spring';
-import './SubclassSelector.css';
+import React from 'react';
+import { styled } from '@mui/system';
+import { Box } from '@mui/material';
 import { SubclassConfig } from '../../../types/d2l-types';
 import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
-import { Box, Stack } from '@mui/material';
+import AnimatedBackground from '@/components/AnimatedBackground';
+
+const subclassColors = {
+  kinetic: '#ff52cd',
+  arc: '#9af9ff',
+  solar: '#ff8000',
+  void: '#800080',
+  strand: '#138035',
+  stasis: '#0062ff',
+};
+
+const Root = styled(Box)<{ $selectedColor: string }>(({ $selectedColor }) => ({
+  width: '200px',
+  height: '200px',
+  position: 'relative',
+  transform: 'rotate(45deg)',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gridTemplateRows: 'repeat(3, 1fr)',
+  gap: '1px',
+  padding: '1px',
+  boxSizing: 'border-box',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: '-100px',
+    left: '-100px',
+    right: '-100px',
+    bottom: '-100px',
+    background: `radial-gradient(circle, ${$selectedColor}66 0%, ${$selectedColor}33 30%, transparent 70%)`,
+    filter: 'blur(20px)',
+    transition: 'all 0.3s ease',
+    zIndex: -1,
+  },
+  '&:hover::before': {
+    background: `radial-gradient(circle, ${$selectedColor}99 0%, ${$selectedColor}66 30%, transparent 70%)`,
+    filter: 'blur(25px)',
+  },
+  '&:hover .subclass-icon': {
+    width: '130%',
+    height: '130%',
+    opacity: 1,
+    filter: 'none',
+  },
+}));
+
+const SubclassButton = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'isSelected' && prop !== 'isCenter',
+})<{ isSelected?: boolean; isCenter?: boolean }>(({ isSelected, isCenter }) => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  padding: 0,
+  overflow: 'hidden',
+  background: 'rgba(255, 255, 255, 0.05)',
+  '&:hover': {
+    background: 'rgba(255, 255, 255, 0.1)',
+  },
+  ...(isCenter && {
+    gridArea: '1 / 1 / 3 / 3',
+  }),
+}));
+
+const SubclassIcon = styled('img')<{ isCenter: boolean; isSelected: boolean }>(
+  ({ isCenter, isSelected }) => ({
+    width: isCenter || isSelected ? '130%' : '70%',
+    height: isCenter || isSelected ? '130%' : '70%',
+    objectFit: 'contain',
+    transform: 'rotate(-45deg)',
+    transition: 'all 0.3s ease',
+    filter: isSelected ? 'none' : 'brightness(0) invert(1)',
+    opacity: isSelected ? 1 : 0.5,
+  })
+);
 
 interface SubclassSelectorProps {
   subclasses: { [key: number]: SubclassConfig | undefined } | undefined;
@@ -18,123 +95,15 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
   onSubclassSelect,
   onSubclassRightClick,
 }) => {
-  const [currentSubclass, setCurrentSubclass] = useState<SubclassConfig | undefined>(undefined);
-  const [lastNonPrismaticSubclass, setLastNonPrismaticSubclass] = useState<
-    SubclassConfig | undefined
-  >(undefined);
-  const [isPrismaticActive, setIsPrismaticActive] = useState(false);
-  const [isAccelerating, setIsAccelerating] = useState(false);
-  const [isOblong, setIsOblong] = useState(false);
-
-  // Animation configuration
-  const normalSpeed = 15000;
-  const fastSpeed = 700;
-  const cycleLength = 10000;
-  const speedUpDuration = 1000;
-  const morphDuration = 50;
-
-  const [{ rotation }, rotationApi] = useSpring(() => ({
-    from: { rotation: 0 },
-    to: { rotation: 360 },
-    loop: true,
-    config: { duration: normalSpeed },
-  }));
-
-  const [{ scale }, scaleApi] = useSpring(() => ({
-    from: { scale: 1 },
-    config: config.wobbly,
-  }));
-
-  const [{ shape }, shapeApi] = useSpring(() => ({
-    shape: 0,
-    config: { duration: morphDuration },
-  }));
-
-  const [{ x }, swapApi] = useSpring(() => ({
-    x: 0,
-    config: { tension: 220, friction: 26 },
-  }));
-
-  const morph = useCallback(() => {
-    setIsOblong(!isOblong);
-    shapeApi.start({
-      to: { shape: isOblong ? 0 : 1 },
-    });
-  }, [isOblong, shapeApi]);
-
-  const accelerate = useCallback(() => {
-    setIsAccelerating(true);
-    morph();
-    setTimeout(() => {
-      rotationApi.start({
-        to: { rotation: rotation.get() + 360 },
-        config: { duration: fastSpeed },
-        onRest: () => {
-          setIsAccelerating(false);
-          rotationApi.start({
-            to: { rotation: rotation.get() + 360 },
-            config: { duration: normalSpeed },
-          });
-        },
-      });
-      scaleApi.start({ to: { scale: 1.2 }, config: { duration: speedUpDuration } });
-    }, morphDuration);
-  }, [rotationApi, scaleApi, rotation, normalSpeed, fastSpeed, speedUpDuration, morph]);
-
-  useEffect(() => {
-    const interval = setInterval(accelerate, cycleLength);
-    return () => clearInterval(interval);
-  }, [accelerate, cycleLength]);
-
-  useEffect(() => {
-    if (!isAccelerating) {
-      scaleApi.start({ to: { scale: 1 }, config: { duration: 500 } });
-    }
-  }, [isAccelerating, scaleApi]);
-
-  function getDefaultSubclass(): SubclassConfig | undefined {
-    if (subclasses) {
-      const keys = Object.keys(subclasses);
-      for (let i = 0; i < keys.length; i++) {
-        if (
-          subclasses[Number(keys[i])] !== undefined &&
-          subclasses[Number(keys[i])]?.damageType !== DAMAGE_TYPE.KINETIC
-        )
-          return subclasses[Number(keys[i])]!;
-      }
-    }
-
-    return undefined;
+  if (!subclasses || Object.keys(subclasses).length === 0) {
+    return <div>No subclasses available</div>;
   }
 
-  useEffect(() => {
-    if (selectedSubclass) {
-      setCurrentSubclass(selectedSubclass);
-      setIsPrismaticActive(selectedSubclass.subclass.damageType === DAMAGE_TYPE.KINETIC);
-      if (selectedSubclass.subclass.damageType !== DAMAGE_TYPE.KINETIC) {
-        setLastNonPrismaticSubclass(selectedSubclass);
-      } else if (!lastNonPrismaticSubclass) {
-        setLastNonPrismaticSubclass(getDefaultSubclass());
-      }
-    } else if (subclasses) {
-      const defaultSubclass = getDefaultSubclass();
-      setCurrentSubclass(defaultSubclass);
-      setLastNonPrismaticSubclass(defaultSubclass);
-      onSubclassSelect(defaultSubclass!);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSubclass, subclasses]);
+  const subclassEntries = Object.entries(subclasses)
+    .filter((entry): entry is [string, SubclassConfig] => entry[1] !== undefined)
+    .map(([_, subclass]) => subclass);
 
   const handleSelect = (subclass: SubclassConfig) => {
-    if (subclass.damageType === DAMAGE_TYPE.KINETIC) {
-      setIsPrismaticActive(true);
-      swapApi.start({ x: 1 });
-    } else {
-      setIsPrismaticActive(false);
-      setLastNonPrismaticSubclass(subclass);
-      swapApi.start({ x: 0 });
-    }
-    setCurrentSubclass(subclass);
     onSubclassSelect(subclass);
   };
 
@@ -143,137 +112,56 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
     onSubclassRightClick(subclass);
   };
 
-  const RotatingShape = ({ rotationOffset = 0 }: { rotationOffset?: number }) => (
-    <animated.div
-      className="rotating-shape"
-      style={{
-        transform: to(
-          [rotation, shape],
-          (r, s) => `rotate(${r + rotationOffset}deg) scale(${1 + s * 0.5}, ${1 - s * 0.1})`
-        ),
-        scale: scale,
-        borderRadius: shape.to((s) => `${s * 50}%`),
-      }}
-    />
-  );
+  const orderedSubclasses = [
+    ...(selectedSubclass ? [selectedSubclass] : []),
+    ...subclassEntries.filter((subclass) => subclass.damageType !== selectedSubclass?.damageType),
+  ];
+
+  const gridPositions = [
+    '1 / 1 / 3 / 3',
+    '1 / 3 / 2 / 4',
+    '2 / 3 / 3 / 4',
+    '3 / 1 / 4 / 2',
+    '3 / 2 / 4 / 3',
+    '3 / 3 / 4 / 4',
+  ];
+
+  const getSubclassColor = (subclass: SubclassConfig): string => {
+    const damageTypeName = DAMAGE_TYPE[subclass.damageType].toLowerCase();
+    return subclassColors[damageTypeName as keyof typeof subclassColors] || subclassColors.kinetic;
+  };
+
+  const selectedColor = selectedSubclass
+    ? getSubclassColor(selectedSubclass)
+    : subclassColors.kinetic;
 
   return (
-    <animated.div
-      className={`single-diamond-wrapper ${isPrismaticActive ? 'prismatic-active' : ''}`}
-      style={{
-        transform: x.to((x) => `translateX(${x * 40}px)`),
-      }}
-    >
-      <Stack direction="row" spacing={10} justifyContent="center" alignItems="center">
-        {!isPrismaticActive && (
-          <Box className="diamond-grid">
-            {subclasses &&
-              [
-                DAMAGE_TYPE.ARC,
-                DAMAGE_TYPE.SOLAR,
-                DAMAGE_TYPE.STASIS,
-                DAMAGE_TYPE.STRAND,
-                DAMAGE_TYPE.VOID,
-              ]
-                .filter((key) => Number(key) !== selectedSubclass?.damageType)
-                .map((damageType, index) => (
-                  <div
-                    key={index}
-                    className={`diamond-button button-${index + 1}`}
-                    onClick={() => {
-                      if (damageType in subclasses) handleSelect(subclasses[Number(damageType)]!);
-                    }}
-                    onContextMenu={(event) => {
-                      if (damageType in subclasses && selectedSubclass?.damageType === damageType)
-                        handleOpenSubclass(event, subclasses[Number(damageType)]!);
-                    }}
-                  >
-                    <img
-                      src={`/assets/subclass-icons/${damageType}.png`}
-                      alt={String(damageType)}
-                      className="diamond-icon"
-                      style={{ filter: damageType in subclasses ? 'none' : 'grayscale(100%)' }}
-                    />
-                  </div>
-                ))}
-          </Box>
-        )}
-        {isPrismaticActive ? (
-          <>
-            <animated.div
-              className="single-diamond-button"
-              style={{
-                transform: x.to((x) => `scale(${1 - x * 0.4})`),
-              }}
-              onClick={() => handleSelect(lastNonPrismaticSubclass!)}
-            >
-              <img
-                src={lastNonPrismaticSubclass!.subclass.icon}
-                alt={lastNonPrismaticSubclass!.subclass.name}
-                className="diamond-icon"
-              />
-            </animated.div>
-            <div
-              className="prismatic-button diamond-shape"
-              onClick={(event) => {
-                if (selectedSubclass?.damageType === DAMAGE_TYPE.KINETIC)
-                  handleOpenSubclass(event, currentSubclass!);
-              }}
-            >
-              <div className="prismatic-glow diamond-shape"></div>
-              <RotatingShape />
-              <RotatingShape rotationOffset={120} />
-              <RotatingShape rotationOffset={240} />
-              <img
-                src={currentSubclass!.subclass.icon}
-                alt={currentSubclass!.subclass.name}
-                className="diamond-icon"
-              />
-            </div>
-            <Box className="diamond-grid" />
-          </>
-        ) : (
-          <>
-            <animated.div
-              className="single-diamond-button"
-              style={{
-                transform: x.to((x) => `scale(${1 - x * 0.4})`),
-              }}
-              onClick={(event) => {
-                if (selectedSubclass?.damageType !== DAMAGE_TYPE.KINETIC)
-                  handleOpenSubclass(event, currentSubclass!);
-              }}
-            >
-              {currentSubclass && (
-                <img
-                  src={currentSubclass.subclass.icon}
-                  alt={currentSubclass.subclass.name}
-                  className="diamond-icon"
-                />
-              )}
-            </animated.div>
-            {subclasses !== undefined && subclasses[DAMAGE_TYPE.KINETIC] ? (
-              <div
-                className="prismatic-button"
-                onClick={() => handleSelect(subclasses[DAMAGE_TYPE.KINETIC]!)}
-              >
-                <div className="prismatic-glow"></div>
-                <RotatingShape />
-                <RotatingShape rotationOffset={120} />
-                <RotatingShape rotationOffset={240} />
-                <img
-                  src={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.icon}
-                  alt={subclasses[DAMAGE_TYPE.KINETIC]!.subclass.name}
-                  className="circular-icon"
-                />
-              </div>
-            ) : (
-              false
-            )}
-          </>
-        )}
-      </Stack>
-    </animated.div>
+    <Root $selectedColor={selectedColor}>
+      <AnimatedBackground />
+      {orderedSubclasses.map((subclass, index) => {
+        const isSelected = selectedSubclass?.damageType === subclass.damageType;
+        const isCenter = index === 0;
+
+        return (
+          <SubclassButton
+            key={subclass.damageType}
+            isSelected={isSelected}
+            isCenter={isCenter}
+            onClick={() => handleSelect(subclass)}
+            onContextMenu={(event) => handleOpenSubclass(event, subclass)}
+            style={{ gridArea: gridPositions[index] }}
+          >
+            <SubclassIcon
+              className="subclass-icon"
+              isCenter={isCenter}
+              isSelected={isSelected}
+              src={`/assets/subclass-icons/${subclass.damageType}.png`}
+              alt={`Subclass ${DAMAGE_TYPE[subclass.damageType]}`}
+            />
+          </SubclassButton>
+        );
+      })}
+    </Root>
   );
 };
 
