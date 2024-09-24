@@ -4,6 +4,7 @@ import LogoutButton from '@/features/auth/components/LogoutButton';
 import RefreshCharacters from './RefreshCharacters';
 import CoffeeButton from './CoffeeButton';
 import useSelectedCharacter from '@/hooks/use-selected-character';
+import packageJson from '../../package.json';
 
 const Footer: React.FC = () => {
   const selectedcharacter = useSelectedCharacter();
@@ -45,12 +46,23 @@ const Footer: React.FC = () => {
         <Typography
           variant="caption"
           textAlign="center"
+          width="10%"
           sx={{
             color: 'white',
-            textAlign: 'center',
             position: 'relative',
             zIndex: 1,
-            width: '95%',
+          }}
+        >
+          App Version: {packageJson.version}
+        </Typography>
+        <Typography
+          variant="caption"
+          textAlign="center"
+          width="95%"
+          sx={{
+            color: 'white',
+            position: 'relative',
+            zIndex: 1,
           }}
         >
           Built by Dragoni and Rorschach. Destiny 2 and its assets are the property of Bungie. Used
