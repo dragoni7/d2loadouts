@@ -455,7 +455,7 @@ export const Dashboard: React.FC = () => {
                     subclasses={subclasses}
                     selectedSubclass={selectedSubclass}
                     onSubclassSelect={handleSubclassSelect}
-                    onSubclassRightClick={handleSubclassRightClick}
+                    onSubclassOpen={handleSubclassRightClick}
                   />
                   <NumberBoxes maxReachableValues={maxReachableValues} />
                 </Stack>

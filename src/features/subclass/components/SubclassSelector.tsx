@@ -86,14 +86,14 @@ interface SubclassSelectorProps {
   subclasses: { [key: number]: SubclassConfig | undefined } | undefined;
   selectedSubclass: SubclassConfig | null;
   onSubclassSelect: (subclass: SubclassConfig) => void;
-  onSubclassRightClick: (subclass: SubclassConfig) => void;
+  onSubclassOpen: (subclass: SubclassConfig) => void;
 }
 
 const SubclassSelector: React.FC<SubclassSelectorProps> = ({
   subclasses,
   selectedSubclass,
   onSubclassSelect,
-  onSubclassRightClick,
+  onSubclassOpen: onSubclassOpen,
 }) => {
   if (!subclasses || Object.keys(subclasses).length === 0) {
     return <div>No subclasses available</div>;
@@ -109,7 +109,7 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
 
   const handleOpenSubclass = (event: React.MouseEvent, subclass: SubclassConfig) => {
     event.preventDefault();
-    onSubclassRightClick(subclass);
+    onSubclassOpen(subclass);
   };
 
   const orderedSubclasses = [
@@ -147,8 +147,10 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = ({
             key={subclass.damageType}
             isSelected={isSelected}
             isCenter={isCenter}
-            onClick={() => handleSelect(subclass)}
-            onContextMenu={(event) => handleOpenSubclass(event, subclass)}
+            onClick={(event) => {
+              handleSelect(subclass);
+              if (subclass === selectedSubclass) handleOpenSubclass(event, subclass);
+            }}
             style={{ gridArea: gridPositions[index] }}
           >
             <SubclassIcon
