@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { SubclassConfig } from '../../../types/d2l-types';
 import { DAMAGE_TYPE } from '../../../lib/bungie_api/constants';
 import AnimatedBackground from '@/components/AnimatedBackground';
+import { db } from '@/store/db';
+import { ManifestSubclass } from '@/types/manifest-types';
 
 const subclassColors: { [key: string]: string } = {
   kinetic: '#ff52cd',
@@ -82,6 +84,46 @@ const SubclassIcon = styled('img')<{ isCenter: boolean; isSelected: boolean }>(
   })
 );
 
+const HoverCard = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: '100%',
+  left: '50%',
+  transform: 'translateX(-50%) rotate(-45deg)',
+  width: '300px',
+  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  overflow: 'hidden',
+  zIndex: 1000,
+  pointerEvents: 'none',
+}));
+
+const HoverCardTitle = styled(Box)<{ $backgroundColor: string }>(({ $backgroundColor }) => ({
+  backgroundColor: `${$backgroundColor}44`,
+  color: 'white',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const HoverCardContent = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2),
+}));
+
+const FlavorTextContainer = styled(Box)({
+  opacity: 0.8,
+});
+
+const TitleIcon = styled('img')({
+  width: '60px',
+  height: '60px',
+  opacity: '0.7',
+});
+
+const MouseIconImage = styled('img')({
+  width: '16px',
+  height: '16px',
+  marginRight: '4px',
+});
+
 interface SubclassSelectorProps {
   subclasses: { [key: number]: SubclassConfig | undefined } | undefined;
   selectedSubclass: SubclassConfig | null;
@@ -91,6 +133,37 @@ interface SubclassSelectorProps {
 
 const SubclassSelector: React.FC<SubclassSelectorProps> = React.memo(
   ({ subclasses, selectedSubclass, onSubclassSelect, onSubclassOpen }) => {
+    const [hoveredSubclass, setHoveredSubclass] = useState<SubclassConfig | null>(null);
+    const [manifestSubclass, setManifestSubclass] = useState<ManifestSubclass | null>(null);
+
+    useEffect(() => {
+      if (hoveredSubclass) {
+        const fetchManifestSubclass = async () => {
+          try {
+            const data = await db.manifestSubclass
+              .where('itemHash')
+              .equals(hoveredSubclass.subclass.itemHash)
+              .first();
+            if (data) {
+              setManifestSubclass(data);
+            } else {
+              console.warn(
+                `No manifest data found for subclass with itemHash: ${hoveredSubclass.subclass.itemHash}`
+              );
+              setManifestSubclass(null);
+            }
+          } catch (error) {
+            console.error('Error fetching manifest subclass:', error);
+            setManifestSubclass(null);
+          }
+        };
+
+        fetchManifestSubclass();
+      } else {
+        setManifestSubclass(null);
+      }
+    }, [hoveredSubclass]);
+
     if (!subclasses || Object.keys(subclasses).length === 0) {
       return <div>No subclasses available</div>;
     }
@@ -137,6 +210,7 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = React.memo(
         {orderedSubclasses.map((subclass, index) => {
           const isSelected = selectedSubclass?.damageType === subclass.damageType;
           const isCenter = index === 0;
+          const subclassColor = getSubclassColor(subclass);
 
           return (
             <SubclassButton
@@ -148,6 +222,8 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = React.memo(
                 if (subclass === selectedSubclass) handleOpenSubclass(event, subclass);
               }}
               style={{ gridArea: gridPositions[index] }}
+              onMouseEnter={() => setHoveredSubclass(subclass)}
+              onMouseLeave={() => setHoveredSubclass(null)}
             >
               <SubclassIcon
                 className="subclass-icon"
@@ -156,6 +232,33 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = React.memo(
                 src={`/assets/subclass-icons/${subclass.damageType}.png`}
                 alt={`Subclass ${DAMAGE_TYPE[subclass.damageType]}`}
               />
+              {hoveredSubclass === subclass && manifestSubclass && (
+                <HoverCard>
+                  <HoverCardTitle $backgroundColor={subclassColor}>
+                    <TitleIcon
+                      src={`/assets/energy-icons/${subclass.damageType}.png`}
+                      alt="Energy icon"
+                    />
+                    <Typography variant="h6">{manifestSubclass.name}</Typography>
+                  </HoverCardTitle>
+                  <HoverCardContent>
+                    <img
+                      src={manifestSubclass.icon}
+                      alt={manifestSubclass.name}
+                      style={{ width: '48px', height: '48px', display: 'block', margin: '0 auto' }}
+                    />
+                    <FlavorTextContainer>
+                      <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
+                        {manifestSubclass.flavorText}
+                      </Typography>
+                    </FlavorTextContainer>
+                    <Box display="flex" alignItems="center" justifyContent="center">
+                      <MouseIconImage src="/assets/left.png" alt="Mouse icon" />
+                      <Typography variant="caption">Left-click for details</Typography>
+                    </Box>
+                  </HoverCardContent>
+                </HoverCard>
+              )}
             </SubclassButton>
           );
         })}
