@@ -71,6 +71,12 @@ const SubclassButton = styled(Box, {
   }),
 }));
 
+const SuperIcon = styled('img')({
+  width: '100%',
+  height: 'auto',
+  display: 'block',
+});
+
 const SubclassIcon = styled('img')<{ isCenter: boolean; isSelected: boolean }>(
   ({ isCenter, isSelected }) => ({
     width: isCenter || isSelected ? '100%' : '80%',
@@ -86,10 +92,10 @@ const SubclassIcon = styled('img')<{ isCenter: boolean; isSelected: boolean }>(
 
 const HoverCard = styled(Box)(({ theme }) => ({
   position: 'absolute',
-  top: '100%',
-  left: '50%',
+  top: '90%',
+  left: '80%',
   transform: 'translateX(-50%) rotate(-45deg)',
-  width: '300px',
+  width: '250px',
   backgroundColor: 'rgba(0, 0, 0, 0.8)',
   overflow: 'hidden',
   zIndex: 1000,
@@ -102,14 +108,31 @@ const HoverCardTitle = styled(Box)<{ $backgroundColor: string }>(({ $backgroundC
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  padding: '10px',
 }));
 
 const HoverCardContent = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
+  padding: '0 1px 1px',
 }));
 
 const FlavorTextContainer = styled(Box)({
   opacity: 0.8,
+  padding: '10px 0',
+  position: 'relative',
+  '&::before, &::after': {
+    content: '""',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: '1px',
+    background: 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent)',
+  },
+  '&::before': {
+    top: 0,
+  },
+  '&::after': {
+    bottom: 0,
+  },
 });
 
 const TitleIcon = styled('img')({
@@ -122,6 +145,23 @@ const MouseIconImage = styled('img')({
   width: '16px',
   height: '16px',
   marginRight: '4px',
+});
+
+const ClickInstructionContainer = styled(Box)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '10px 0 0',
+  position: 'relative',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '1px',
+    background: 'linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent)',
+  },
 });
 
 interface SubclassSelectorProps {
@@ -242,20 +282,19 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = React.memo(
                     <Typography variant="h6">{manifestSubclass.name}</Typography>
                   </HoverCardTitle>
                   <HoverCardContent>
-                    <img
-                      src={manifestSubclass.icon}
+                    <SuperIcon
+                      src={subclass.super.secondaryIcon || manifestSubclass.icon}
                       alt={manifestSubclass.name}
-                      style={{ width: '48px', height: '48px', display: 'block', margin: '0 auto' }}
                     />
                     <FlavorTextContainer>
-                      <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
-                        {manifestSubclass.flavorText}
-                      </Typography>
+                      <Typography variant="body2">{manifestSubclass.flavorText}</Typography>
                     </FlavorTextContainer>
-                    <Box display="flex" alignItems="center" justifyContent="center">
+                    <ClickInstructionContainer>
                       <MouseIconImage src="/assets/left.png" alt="Mouse icon" />
-                      <Typography variant="caption">Left-click for details</Typography>
-                    </Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                        {isSelected ? 'Left-click for details' : 'Left-click to select'}
+                      </Typography>
+                    </ClickInstructionContainer>
                   </HoverCardContent>
                 </HoverCard>
               )}
