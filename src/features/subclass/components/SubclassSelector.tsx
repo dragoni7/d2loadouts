@@ -89,7 +89,7 @@ const HoverCard = styled(Box)(({ theme }) => ({
   top: '100%',
   left: '50%',
   transform: 'translateX(-50%) rotate(-45deg)',
-  width: '300px',
+  width: '200px',
   backgroundColor: 'rgba(0, 0, 0, 0.8)',
   overflow: 'hidden',
   zIndex: 1000,
@@ -254,7 +254,9 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = React.memo(
                     </FlavorTextContainer>
                     <Box display="flex" alignItems="center" justifyContent="center">
                       <MouseIconImage src="/assets/left.png" alt="Mouse icon" />
-                      <Typography variant="caption">Left-click for details</Typography>
+                      <Typography variant="caption">
+                        {isSelected ? 'Left-click for details' : 'Left-click to select'}
+                      </Typography>
                     </Box>
                   </HoverCardContent>
                 </HoverCard>
