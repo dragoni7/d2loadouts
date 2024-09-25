@@ -48,7 +48,9 @@ const ModCustomization: React.FC = () => {
       {requiredMods.length !== 0 ? (
         <>
           <Grid item md={12} marginLeft={{ md: 4, lg: 8 }}>
-            <StyledSubTitle>REQUIRED MODS // CLICK MODS TO AUTO EQUIP</StyledSubTitle>
+            <StyledSubTitle>
+              REQUIRED MODS // CLICK MODS TO AUTO EQUIP TO AVAILABLE SLOTS
+            </StyledSubTitle>
           </Grid>
           <Grid item md={10} marginBottom={6} marginLeft={{ md: 4, lg: 8 }}>
             <Stack direction="row" spacing={2}>
