@@ -1,4 +1,4 @@
-import HoverCard from '@/components/HoverCard';
+import HoverCard from '@/components/hover/HoverCard';
 import { EMPTY_ASPECT, EMPTY_FRAGMENT } from '@/lib/bungie_api/constants';
 import { RootState } from '@/store';
 import { updateSubclassMods } from '@/store/LoadoutReducer';

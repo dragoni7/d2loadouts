@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { IconButton, Stack, styled } from '@mui/material';
 import { ArrowRight, ArrowLeft } from '@mui/icons-material';
-import HoverCard from '../../../components/HoverCard';
+import HoverCard from '@/components/hover/HoverCard';
 
 interface ModSelectorProps {
   selected: ManifestArmorMod | ManifestArmorStatMod;
