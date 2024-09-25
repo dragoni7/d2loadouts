@@ -92,8 +92,8 @@ const SubclassIcon = styled('img')<{ isCenter: boolean; isSelected: boolean }>(
 
 const HoverCard = styled(Box)(({ theme }) => ({
   position: 'absolute',
-  top: '100%',
-  left: '50%',
+  top: '90%',
+  left: '80%',
   transform: 'translateX(-50%) rotate(-45deg)',
   width: '250px',
   backgroundColor: 'rgba(0, 0, 0, 0.8)',
