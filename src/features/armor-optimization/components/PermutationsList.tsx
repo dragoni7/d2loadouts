@@ -47,8 +47,32 @@ const StyledCard = styled(Card)(({ theme }) => ({
   backdropFilter: 'blur(10px)',
   alignItems: 'center',
   justifyContent: 'center',
+  transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+  position: 'relative',
+  overflow: 'hidden',
   ':hover': {
     cursor: 'pointer',
+    transform: 'scale(1.05) translateY(-5px)',
+    boxShadow: '0 15px 30px rgba(191, 149, 63, 0.4), 0 10px 10px rgba(191, 149, 63, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    '&::before': {
+      opacity: 1,
+    },
+    '& > *': {
+      position: 'relative',
+      zIndex: 2,
+    },
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'linear-gradient(45deg, rgba(191, 149, 63, 0.3), rgba(251, 245, 183, 0.1))',
+    opacity: 0,
+    transition: 'opacity 0.3s ease',
   },
 }));
 
