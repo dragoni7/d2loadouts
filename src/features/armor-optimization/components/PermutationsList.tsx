@@ -43,7 +43,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   [theme.breakpoints.between('lg', 'xl')]: {
     height: '18.5vh',
   },
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out',
