@@ -1,6 +1,6 @@
 import { RootState } from '../../../store';
 import ArmorConfig from './ArmorConfig';
-import { Grid, Stack, styled, Typography } from '@mui/material';
+import { Grid, Stack, styled, Typography, keyframes } from '@mui/material';
 import useArtificeMods from '../../../hooks/use-artifice-mods';
 import useStatMods from '../../../hooks/use-stat-mods';
 import RequiredMod from './RequiredMod';
@@ -8,12 +8,28 @@ import { useSelector } from 'react-redux';
 import { ManifestArmorMod, ManifestArmorStatMod } from '../../../types/manifest-types';
 import { BoldTitle } from '@/components/BoldTitle';
 
+const shimmer = keyframes`
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+`;
+
 const StyledSubTitle = styled(Typography)(({ theme }) => ({
   opacity: 0.7,
   borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
   paddingBottom: theme.spacing(1),
   marginBottom: theme.spacing(2),
   width: '90%',
+  background:
+    'linear-gradient(90deg, rgba(255,255,255,0.4) 25%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0.4) 75%)',
+  backgroundSize: '200% 100%',
+  color: 'transparent',
+  WebkitBackgroundClip: 'text',
+  backgroundClip: 'text',
+  animation: `${shimmer} 8s linear infinite`,
 }));
 
 const ModCustomization: React.FC = () => {
