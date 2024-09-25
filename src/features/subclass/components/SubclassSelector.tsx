@@ -71,8 +71,8 @@ const SubclassButton = styled(Box, {
 
 const SubclassIcon = styled('img')<{ isCenter: boolean; isSelected: boolean }>(
   ({ isCenter, isSelected }) => ({
-    width: isCenter || isSelected ? '130%' : '70%',
-    height: isCenter || isSelected ? '130%' : '70%',
+    width: isCenter || isSelected ? '100%' : '80%',
+    height: isCenter || isSelected ? '100%' : '80%',
     objectFit: 'contain',
     transform: 'rotate(-45deg)',
     transition: 'transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease',
