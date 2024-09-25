@@ -451,12 +451,14 @@ export const Dashboard: React.FC = () => {
             >
               <Grid item md={4} sx={{ marginTop: '2%' }}>
                 <Stack spacing={1} rowGap={6} marginLeft={1} alignItems="center" marginTop={4}>
-                  <SubclassSelector
-                    subclasses={subclasses}
-                    selectedSubclass={selectedSubclass}
-                    onSubclassSelect={handleSubclassSelect}
-                    onSubclassOpen={handleSubclassRightClick}
-                  />
+                  <Box sx={{ zIndex: 1000 }}>
+                    <SubclassSelector
+                      subclasses={subclasses}
+                      selectedSubclass={selectedSubclass}
+                      onSubclassSelect={handleSubclassSelect}
+                      onSubclassOpen={handleSubclassRightClick}
+                    />
+                  </Box>
                   <NumberBoxes maxReachableValues={maxReachableValues} />
                 </Stack>
               </Grid>
