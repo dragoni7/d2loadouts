@@ -179,13 +179,13 @@ const AbilitiesModification: React.FC<AbilitiesModificationProps> = ({ subclass 
               <AbilitySelector
                 category="MELEE_ABILITIES"
                 currentMod={loadout.meleeAbility}
-                index={2}
+                index={0}
                 mods={mods['MELEE_ABILITIES']}
               />
               <AbilitySelector
                 category="GRENADES"
                 currentMod={loadout.grenade}
-                index={3}
+                index={1}
                 mods={mods['GRENADES']}
               />
             </Box>
