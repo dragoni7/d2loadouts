@@ -17,8 +17,8 @@ const subclassColors: { [key: string]: string } = {
 };
 
 const Root = styled(Box)<{ $selectedColor: string }>(({ $selectedColor }) => ({
-  width: '200px',
-  height: '200px',
+  width: '190px',
+  height: '190px',
   position: 'relative',
   transform: 'rotate(45deg)',
   display: 'grid',

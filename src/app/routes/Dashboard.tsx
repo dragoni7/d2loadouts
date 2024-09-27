@@ -475,7 +475,7 @@ export const Dashboard: React.FC = () => {
               subclassColor={subclassColor}
             >
               <Grid item md={4} sx={{ marginTop: '2%' }}>
-                <Stack spacing={1} rowGap={6} marginLeft={1} alignItems="center" marginTop={4}>
+                <Stack spacing={1} rowGap={5} marginLeft={1} alignItems="center" marginTop={2}>
                   <Box sx={{ zIndex: 1000 }}>
                     <SubclassSelector
                       subclasses={subclasses}
