@@ -57,10 +57,28 @@ import { ManifestExoticArmor } from '../../types/manifest-types';
 import background from '/assets/background.png';
 import FragmentStats from '@/features/subclass/components/FragmentStats';
 
-const DashboardContent = styled(Grid)(({ theme }) => ({
-  backgroundImage: `url(${background})`,
+const subclassColors: { [key: string]: string } = {
+  kinetic: '#cc41a3',
+  arc: '#7bc7cc',
+  solar: '#cc6600',
+  void: '#660066',
+  strand: '#0f6629',
+  stasis: '#004fb3',
+};
+
+interface DashboardContentProps {
+  subclassColor: string;
+}
+
+const DashboardContent = styled(Grid)<DashboardContentProps>(({ theme, subclassColor }) => ({
+  backgroundImage: `
+    radial-gradient(circle at 50% 50%, ${subclassColor}40 0%, transparent 60%),
+    url(${background})
+  `,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
+  backgroundBlendMode: 'screen',
+  transition: 'background-image 0.3s ease-in-out',
 }));
 
 const LoadingScreen = styled(Box)(({ theme }) => ({
@@ -415,7 +433,13 @@ export const Dashboard: React.FC = () => {
     setCustomizingSubclass(subclass);
     setShowAbilitiesModification(true);
   };
-
+  const subclassColor = useMemo(() => {
+    if (selectedSubclass) {
+      const damageTypeName = DAMAGE_TYPE[selectedSubclass.damageType].toLowerCase();
+      return subclassColors[damageTypeName] || subclassColors.kinetic;
+    }
+    return subclassColors.kinetic;
+  }, [selectedSubclass]);
   return (
     <>
       {showAbilitiesModification && customizingSubclass ? (
@@ -448,6 +472,7 @@ export const Dashboard: React.FC = () => {
               md={12}
               justifyContent="space-evenly"
               sx={{ width: '100vw', height: '100vh', overflowY: 'auto', paddingTop: '120px' }}
+              subclassColor={subclassColor}
             >
               <Grid item md={4} sx={{ marginTop: '2%' }}>
                 <Stack spacing={1} rowGap={6} marginLeft={1} alignItems="center" marginTop={4}>
