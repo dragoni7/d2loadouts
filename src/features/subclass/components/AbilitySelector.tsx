@@ -175,12 +175,16 @@ export default function AbilitySelector({
           position: 'relative',
           cursor: 'pointer',
           '&:hover .submenu-grid': { display: 'flex' },
+          '&:hover .hovered': {
+            boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.8)',
+          },
           maxWidth: '100%',
           height: 'auto',
         }}
       >
         <HoverCard item={currentMod}>
           <SlotComponent
+            className="hovered"
             style={{
               backgroundImage: currentMod ? `url(${currentMod.icon})` : 'none',
               opacity: isDisabled ? 0.5 : 1,
@@ -222,9 +226,10 @@ export default function AbilitySelector({
             <Box
               sx={{
                 display: 'grid',
-                gridTemplateColumns: `repeat(${mods.length < 5 ? mods.length : 5}, 74px)`,
-                gap: '5px',
-                justifyContent: 'center',
+                gridTemplateColumns: `repeat(${
+                  mods.length < 5 ? mods.length : category === 'FRAGMENTS' ? 5 : 4
+                }, 73px)`,
+                gap: '4px',
               }}
             >
               {mods?.slice(startIndex, startIndex + modsPerPage).map((mod) => (
