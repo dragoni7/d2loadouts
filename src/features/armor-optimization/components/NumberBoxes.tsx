@@ -17,15 +17,14 @@ interface NumberBoxProps {
 const NumberBox = styled(ButtonBase, {
   shouldForwardProp: (prop) => prop !== 'isSelected' && prop !== 'disabled',
 })<NumberBoxProps>(({ isSelected, disabled, theme }) => ({
-  width: '40px',
-  height: '40px',
+  width: '38px',
+  height: '38px',
   fontSize: 16,
   [theme.breakpoints.between('lg', 'xl')]: {
-    width: '50px',
-    height: '50px',
-    fontSize: 20,
+    width: '58px',
+    height: '58px',
+    fontSize: 22,
   },
-  textAlign: 'center',
   border: `1px solid ${isSelected ? '#bdab6d' : 'rgba(255, 255, 255, 0.5)'}`,
   margin: '0 2px',
   backgroundColor: isSelected ? 'rgba(189, 171, 109, 0.2)' : 'transparent',
@@ -66,13 +65,13 @@ const NumberBoxes: React.FC<NumberBoxesProps> = ({ maxReachableValues }) => {
   return (
     <Box
       sx={{
-        padding: 1,
+        padding: 0.75,
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
         backdropFilter: 'blur(5px)',
       }}
     >
       {STATS.map((stat) => (
-        <Stack direction="row" key={stat} alignItems="center" marginTop={1}>
+        <Stack direction="row" key={stat} alignItems="center" marginTop={0.5}>
           <img width="8%" height="8%" src={statIcons[stat.toLowerCase()]} alt={stat} />
           {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((number) => {
             const statName = stat.toLowerCase() as StatName;
