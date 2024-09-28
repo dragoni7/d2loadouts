@@ -1,5 +1,5 @@
 import { ManifestArmorStatMod } from '../../../types/manifest-types';
-import { Tooltip, styled } from '@mui/material';
+import { Badge, Tooltip, styled } from '@mui/material';
 import { autoEquipStatMod } from '../mod-utils';
 import { useDispatch } from 'react-redux';
 import { D2LTooltip } from '@/components/D2LTooltip';
@@ -43,7 +43,7 @@ export default function RequiredMod({ required }: RequiredModProps) {
       <RequiredModImg
         src={required.mod.icon}
         onClick={handleOnClick}
-        style={required.equipped ? { border: '2px solid transparent' } : border}
+        style={required.equipped ? { border: '2px solid green' } : border}
         sx={{
           '&:hover': { scale: 1.07 },
         }}
