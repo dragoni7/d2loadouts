@@ -8,8 +8,10 @@ import {
   PLUG_CATEGORY_HASH,
   STAT_HASH,
 } from './constants';
+import { ManifestStatPlug } from '@/types/manifest-types';
 
 const EXOTIC = 2759499571;
+const SPARK_OF_FOCUS = 1727069360;
 const urlPrefix = 'https://bungie.net';
 
 export async function updateManifest() {
@@ -163,7 +165,7 @@ export async function updateManifest() {
                   energyCapacity: current.investmentStats[0].value,
                 });
               } else if (current.itemTypeDisplayName.includes('Fragment')) {
-                await db.manifestSubclassFragmentsDef.add({
+                let newFragment: ManifestStatPlug = {
                   itemHash: Number(itemHash),
                   name: current.displayProperties.name,
                   icon: urlPrefix + current.displayProperties.icon,
@@ -201,7 +203,15 @@ export async function updateManifest() {
                     current.investmentStats.find(
                       (stat: any) => stat.statTypeHash === STAT_HASH.STRENGTH
                     )?.value,
-                });
+                };
+
+                // fix for spark of focus having incorrect penalty in manifest
+                if (newFragment.itemHash === SPARK_OF_FOCUS) {
+                  newFragment.mobilityMod = 0;
+                  newFragment.resilienceMod = 0;
+                }
+
+                await db.manifestSubclassFragmentsDef.add(newFragment);
               } else {
                 await db.manifestSubclassModDef.add({
                   itemHash: Number(itemHash),

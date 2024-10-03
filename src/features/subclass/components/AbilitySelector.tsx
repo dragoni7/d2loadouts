@@ -176,7 +176,7 @@ export default function AbilitySelector({
           cursor: 'pointer',
           '&:hover .submenu-grid': { display: 'flex' },
           '&:hover .hovered': {
-            boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.8)',
+            boxShadow: category !== 'SUPERS' ? 'inset 0 0 0 2px rgba(255, 255, 255, 0.8)' : 'none',
           },
           maxWidth: '100%',
           height: 'auto',

@@ -24,6 +24,7 @@ const subclassTypeMap: { [key in DamageType]: string } = {
   7: 'STRAND',
   5: '',
 };
+
 const SectionSubtitle = styled(Typography)(({ theme }) => ({
   opacity: 0.7,
   borderBottom: '2px solid rgba(255, 255, 255, 0.5)',
