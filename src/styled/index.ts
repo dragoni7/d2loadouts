@@ -105,12 +105,11 @@ export const HeaderStyledLink = styled('a')({
 
 export const HoverCardContainer = styled('div')(({ theme }) => ({
   position: 'absolute',
-  top: '-100%',
-  right: '100%',
+  bottom: -100,
+  right: 75,
   zIndex: 1600,
   padding: theme.spacing(1.5),
   backgroundColor: 'rgba(0, 0, 0, 0.9)',
-  borderRadius: '0px',
   boxShadow: theme.shadows[10],
   width: '14vw',
   pointerEvents: 'none',
