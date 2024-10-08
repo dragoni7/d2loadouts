@@ -1,4 +1,3 @@
-import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 
 export default function DiscordButton() {
