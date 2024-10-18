@@ -258,8 +258,11 @@ const SubclassSelector: React.FC<SubclassSelectorProps> = React.memo(
               isSelected={isSelected}
               isCenter={isCenter}
               onClick={(event) => {
-                handleSelect(subclass);
-                if (subclass === selectedSubclass) handleOpenSubclass(event, subclass);
+                if (subclass === selectedSubclass) {
+                  handleOpenSubclass(event, subclass);
+                } else {
+                  handleSelect(subclass);
+                }
               }}
               style={{ gridArea: gridPositions[index] }}
               onMouseEnter={() => setHoveredSubclass(subclass)}

@@ -429,10 +429,11 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const handleSubclassRightClick = (subclass: SubclassConfig) => {
+  const handleSubclassOpen = (subclass: SubclassConfig) => {
     setCustomizingSubclass(subclass);
     setShowAbilitiesModification(true);
   };
+
   const subclassColor = useMemo(() => {
     if (selectedSubclass) {
       const damageTypeName = DAMAGE_TYPE[selectedSubclass.damageType].toLowerCase();
@@ -440,6 +441,7 @@ export const Dashboard: React.FC = () => {
     }
     return subclassColors.kinetic;
   }, [selectedSubclass]);
+
   return (
     <>
       {showAbilitiesModification && customizingSubclass ? (
@@ -481,7 +483,7 @@ export const Dashboard: React.FC = () => {
                       subclasses={subclasses}
                       selectedSubclass={selectedSubclass}
                       onSubclassSelect={handleSubclassSelect}
-                      onSubclassOpen={handleSubclassRightClick}
+                      onSubclassOpen={handleSubclassOpen}
                     />
                   </Box>
                   <NumberBoxes maxReachableValues={maxReachableValues} />
